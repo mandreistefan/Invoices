@@ -1,0 +1,9 @@
+.add-new-customer{
+    display:flex
+}
+
+.add-new-customer-intro{
+    display:inherit;
+    flex-direction: row;
+    justify-content: space-around;
+}

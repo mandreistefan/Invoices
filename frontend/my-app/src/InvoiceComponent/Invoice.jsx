@@ -1,0 +1,540 @@
+import React from "react";
+import ClientForm from '../ClientForm/ClientForm.jsx';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import './InvoiceAdd.css';
+import Snackbar from '../Snackbar/Snackbar.jsx'
+import PredefinedProducts from '../PredefinedProducts/ExistingProducts.jsx'
+
+export default class Invoice extends React.Component{
+    
+    //set the elements we will be working with
+    constructor(props) {
+        super(props);
+        this.state = {
+            invoiceID: (props.predefined) ? props.predefined.invoiceID : null,
+            userData: null,
+            billingType: "one-time-billing-option",
+            billingFrequency: "monthly-billing",
+            monthlyBillingDate: new Date(),
+            yearlyBillingDate: new Date(),
+            //id: products can have IDs if the products are added from the predefined products list; preloaded - the product has been preloaded from prop data; valid - i want to use this to validate form data
+            tableElements: [{properties:{preloaded:false, id:null, entry: null, valid:true}, data:["", "", "", "10", "0", ""]}],
+            total_prod_quantity: 0,
+            total_prod_price: (props.predefined) ? props.predefined.userData.total.price : 0,  
+            total_tax:(props.predefined) ? props.predefined.userData.total.tax : 0,
+            activeClient: (props.activeClient) ? props.activeClient : null,
+            alertUser: null,
+            invoice_server_status: (props.predefined) ? props.predefined.userData.invoice_status : "draft",
+            invoice_status: (props.predefined) ? props.predefined.userData.invoice_status : "draft",
+            invoice_pay_method: (props.predefined) ? props.predefined.userData.invoice_pay_method : "cash",            
+            invoice_bank_ref: (props.predefined) ? props.predefined.userData.invoice_bank_ref : "",
+            isFormDisabled: (props.predefined) ? ((props.predefined.userData.invoice_status==="draft") ? false : true) : false,
+            predefinedList: false,
+            refreshFunction: props.refresh
+        };
+    }
+
+    //let's check for some invoice data
+    componentDidMount(){
+        //fill the data from the DB
+        if(this.state.invoiceID){
+            this.fetchInvoiceData(this.state.invoiceID)
+        }
+    }
+
+    //gets all the data linked to an invoice; sets the state of certain elements based on retrieved data
+    fetchInvoiceData=(invoice)=>{
+        fetch(`./invoiceGenerator/?filter=invoiceID&filterBy=${invoice}`)
+        .then(response=>response.json())
+        .then(data=>{
+            let invoiceData = data.data
+            this.setState({
+                userData: {
+                    client_first_name: invoiceData.invoiceProperty.client_first_name, 
+                    client_last_name: invoiceData.invoiceProperty.client_last_name, 
+                    client_phone: invoiceData.invoiceProperty.client_billing_adress.phone,
+                    client_email: invoiceData.invoiceProperty.client_billing_adress.email,
+                    client_county: invoiceData.invoiceProperty.client_billing_adress.county,
+                    client_city: invoiceData.invoiceProperty.client_billing_adress.city,
+                    client_street: invoiceData.invoiceProperty.client_billing_adress.street,
+                    client_adress_number: invoiceData.invoiceProperty.client_billing_adress.number,
+                    client_zip: invoiceData.invoiceProperty.client_billing_adress.zip
+                },
+                tableElements: this.decodeTableElements(invoiceData.invoiceProducts),
+                total_prod_price: invoiceData.invoiceProperty.total.price,  
+                total_tax: invoiceData.invoiceProperty.total.tax,
+                invoice_server_status: invoiceData.invoiceProperty.invoice_status,
+                invoice_status: invoiceData.invoiceProperty.invoice_status,
+                invoice_pay_method: invoiceData.invoiceProperty.invoice_pay_method,            
+                invoice_bank_ref: invoiceData.invoiceProperty.invoice_bank_ref,
+                isFormDisabled: (invoiceData.invoiceProperty.invoice_status==="draft") ? false : true
+            })
+        })
+    }
+
+    //json data is transformed to a table containing products
+    decodeTableElements =(dataAsArray)=>{
+        let decodedData=[]
+        dataAsArray.forEach(element=>{
+            decodedData.push({properties:{preloaded:true, id:null, entry: element.entry, valid:true},data:[element.name, element.um, element.quantity, element.tax_percentage, element.tax, element.ppu]})
+        })
+        return decodedData;        
+    }
+
+    //strucutre of a products table row
+    productsTableRow = () =>{
+        return(
+            <tr>
+                <td><input type="text" name="invoice-product-name" className="form-control-sm invoice-product-name" autocomplete="off"/></td>
+                <td><input type="text" name="invoice-product-um" className="form-control-sm invoice-product-um" autocomplete="off"/></td>
+                <td><input type="text" name="invoice-product-quantity" className="form-control-sm invoice-product-quantity" autocomplete="off"/></td>
+                <td><input type="text" name="invoice-product-tax" className="form-control-sm invoice-product-tax" disabled="true" autocomplete="off"/></td>
+                <td><input type="text" name="invoice-product-ppi" className="form-control-sm invoice-product-ppi" disabled="false" autocomplete="off"/></td>
+            </tr>
+        )
+    }
+
+    setElementTables=(props)=>{
+        this.setState({billingElements:props})
+    }
+
+    //small valdiations at submit
+    clientDataValid=()=>{
+        let validatingThis;
+        //first name
+        validatingThis=document.getElementById("client_first_name").value
+        if(validatingThis.length==0){
+            console.log("Invalid data for first name")
+            return false
+        }
+        //last name
+        validatingThis=document.getElementById("client_last_name").value
+        if(validatingThis.length==0){
+            console.log("Invalid data for last name")
+            return false
+        }
+        //phone name
+        validatingThis=document.getElementById("client_phone").value
+        if(validatingThis.length!=10){
+            console.log("Invalid data for phone")
+            return false
+        }
+        //email - only if filled
+        validatingThis=document.getElementById("client_email").value        
+        if(validatingThis.length>0){
+            if((validatingThis.indexOf("@")==-1)||(validatingThis.indexOf(".")==-1)){
+                console.log("Invalid data for email")
+                return false
+            }
+        }
+        //last name
+        validatingThis=document.getElementById("client_county").value
+        if(validatingThis.length==0){
+            console.log("Invalid data for county")
+            return false
+        }
+        //last name
+        validatingThis=document.getElementById("client_city").value
+        if(validatingThis.length==0){
+            console.log("Invalid data for city")
+            return false
+        }
+        //last name
+        validatingThis=document.getElementById("client_street").value
+        if(validatingThis.length==0){
+            console.log("Invalid data for street")
+            return false
+        }
+        //all good
+        return true
+    }
+
+    //the Array containing products data has, for each element, properties and values; based on these, return an Array that can be sent to the server
+    billedProductsServerFormat=(data, bool)=>{
+        let responseArray=[]
+        data.forEach((element, index)=>{
+            //only the newly added
+            if(element.properties.preloaded===false){
+                element.data.push(element.properties.id)
+                responseArray.push(element.data)
+            }                        
+        })        
+
+        return responseArray;
+    }
+
+    //submits data to the server
+    submitData = (event) => {
+        //prevent default submit
+        event.preventDefault(); 
+
+        let method="POST";
+        let dataToBeSent = ({});
+
+        //logic for a new invoice
+        if(this.state.invoiceID===null){
+            //set recurrency properties
+            let billingReccurencyDate;
+            let isReccurent = (this.state.billingType==="one-time-billing-option") ? false : true;
+            if(isReccurent){
+                switch(this.state.billingFrequency){
+                    case "monthly-billing":
+                        billingReccurencyDate=this.state.monthlyBillingDate;
+                        break;
+                    case "yearly-billing":
+                        billingReccurencyDate=this.state.yearlyBillingDate;
+                        break;
+                    default:
+                        billingReccurencyDate=new Date();
+                        break; 
+                }
+            }
+
+            //creates an invoice for a predefined client - user-data is preloaded, shouldn't be checked
+            if(this.state.activeClient!=null){ 
+                //recurrent invoices           
+                if(isReccurent){
+                    dataToBeSent=({clientID: this.state.activeClient, billingProducts: this.billedProductsServerFormat(this.state.tableElements), billingReccurency: isReccurent, billingFrequency: this.state.billingFrequency, billingReDate: billingReccurencyDate})
+                }else{
+                    //non-recurrent
+                    dataToBeSent=({clientID: this.state.activeClient, billingProducts: this.billedProductsServerFormat(this.state.tableElements), invoice_status: this.state.invoice_status, invoice_pay_method: this.state.invoice_pay_method, invoice_bank_ref: this.state.invoice_bank_ref})
+                }
+            //creates an invoice for a non-existent user - no preloaded user-data
+            }else{
+                //don't submit an invoice with no user data
+                if(!this.clientDataValid()){
+                    console.log("clientDatainvalid")
+                    return false
+                }
+                dataToBeSent=({client_first_name: event.target.client_first_name.value, client_last_name: event.target.client_last_name.value, client_phone: event.target.client_phone.value, client_email: event.target.client_email.value, client_county: event.target.client_county.value, client_city: event.target.client_city.value, client_street: event.target.client_street.value, client_adress_number: event.target.client_adress_number.value, client_zip: event.target.client_zip.value, client_phone: event.target.client_phone.value, billingProducts: this.billedProductsServerFormat(this.state.tableElements), invoice_status: this.state.invoice_status, invoice_pay_method: this.state.invoice_pay_method, invoice_bank_ref: this.state.invoice_bank_ref})
+            }
+        }else{
+            method="PUT";
+            //editing an existing invoice that has an ID
+            if(event.target.client_first_name.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_first_name=event.target.client_first_name.value;
+            if(event.target.client_last_name.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_last_name=event.target.client_last_name.value;
+            if(event.target.client_phone.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_phone=event.target.client_phone.value;
+            if(event.target.client_email.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_email=event.target.client_email.value;
+            if(event.target.client_county.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_county=event.target.client_county.value;
+            if(event.target.client_city.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_city=event.target.client_city.value;
+            if(event.target.client_street.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_street=event.target.client_street.value;
+            if(event.target.client_adress_number.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_adress_number=event.target.client_adress_number.value;
+            if(event.target.client_zip.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_zip=event.target.client_zip.value;
+            if(event.target.client_phone.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_phone=event.target.client_phone.value;            
+            if(event.target.invoice_status.attributes.getNamedItem('modified').value==="true") dataToBeSent.invoice_status=event.target.invoice_status.value;
+            if(event.target.invoice_status.value==="finalised"){
+                if((event.target.invoice_pay_method.attributes.getNamedItem('modified').value==="true")||(event.target.invoice_status.value==="finalised")) dataToBeSent.invoice_pay_method=event.target.invoice_pay_method.value;
+                if(event.target.invoice_pay_method.value==="bank") dataToBeSent.invoice_bank_ref=event.target.invoice_bank_ref.value
+            }       
+
+            dataToBeSent.billingProducts=this.billedProductsServerFormat(this.state.tableElements)
+            dataToBeSent.invoiceID=this.state.invoiceID;
+        }        
+        
+        //sends data
+        fetch(`/invoices`, {
+            method:method,
+            headers: { 'Content-Type': 'application/json' },
+            body:JSON.stringify(dataToBeSent)
+        })
+        .then(response=>response.json())
+        .then(data=>{
+            if(data.status==="OK"){
+                let invoiceID = this.state.invoiceID
+                //notify the user
+                this.setState({alertUser:"Success"})
+                //if we updated some data, let's reinterogate the server and reset with the data on DB
+                //this should prevent certain issues, like removing a newly submitted products that doesn't have an entry
+                if(method==="POST"){
+                    invoiceID = data.invoiceID
+                    this.setState({invoiceID: invoiceID})
+                }
+                //all is good, reload data; use a local because the state-update can be too slow and the state.invoiceID will be kept null when fetchInvoiceData is called
+                this.fetchInvoiceData(invoiceID)
+            }else{
+                this.setState({alertUser:"An error occured"})
+            }
+        })
+    }
+
+    handleSelect = (event) =>{
+        let triggerName = event.target.name;
+        
+        if(triggerName==="billingType"){
+            if(event.target.value==="recurring-billing-option" && this.state.activeClient===null){
+                this.setState({
+                    alertUser:"Recurrent invoices can be created for registered users only!",
+                    billingType: "one-time-billing-option"
+                })
+                return;
+            }
+        }
+        this.setState({[triggerName]: event.target.value});
+        event.target.attributes.getNamedItem('modified').value=true;
+    }
+
+    //pretty obvious what it does
+    calculateTotalandTax(){
+        let total=0;
+        let tax=0;
+        this.state.tableElements.map(element=>{
+            if(element.data[2]*element.data[5]*element.data[3]>0){
+                total=total+(element.data[2]*element.data[5])
+                element.data[4]=parseFloat((((element.data[2]*element.data[5])/100)*element.data[3]))
+                tax=tax+element.data[4]
+            }
+        })  
+        this.setState({
+            total_prod_price:total,
+            total_tax:tax
+        })        
+    }
+
+    //when the value of a input changes, it is first validated
+    validateAndUpdate = (event) => { 
+        let value=event.target.value
+        let eventName=event.target.getAttribute('name') 
+        let position = event.target.getAttribute('position').split(',')     
+        let validNumber = new RegExp(/^\d*\.?\d*$/);
+
+        switch (eventName){
+            case "product_name":
+                this.updateTable(position, value, (this.state.invoiceID===null ? false : true))
+                break
+            case "product_um":
+                this.updateTable(position, value, (this.state.invoiceID===null ? false : true))
+                break
+            case "product_quantity":
+                if(validNumber.test(value)){
+                    this.updateTable(position, value, (this.state.invoiceID===null ? false : true));
+                    this.calculateTotalandTax()
+                }
+                break                 
+            case "product_tax":
+                if(validNumber.test(value)){
+                    this.updateTable(position, value, (this.state.invoiceID===null ? false : true))
+                    this.calculateTotalandTax()
+                }
+                break    
+            case "product_price":
+                if(validNumber.test(value)){
+                    this.updateTable(position, value, (this.state.invoiceID===null ? false : true))
+                    this.calculateTotalandTax()
+                }
+                break   
+            default:                      
+        }        
+    }
+
+
+    updateTable = (position, value) =>{
+        let items = [...this.state.tableElements]
+        items[position[0]].data[position[1]]=value;
+        this.setState({tableElements: items})   
+    }
+
+    addNewRow = () =>{
+        this.setState({tableElements:[...this.state.tableElements,{properties:{preloaded:false, id:null, entry:null, valid:true}, data:["", "", "1", "10", "0", ""]}]})
+        this.calculateTotalandTax()
+    }
+
+    //element added from predefined products list
+    addPredefinedElement = (dataObject) =>{
+        //remove the last row that is empty
+        if((this.state.tableElements[this.state.tableElements.length-1].data[0])===""){
+            //create a copy of the array, modify the element and setState
+            let arr = this.state.tableElements
+            //remove the last element from the copy
+            arr.pop()
+            //update the state table
+            this.setState({tableElements: arr})           
+        }
+
+        //add a new row
+        this.setState({tableElements:[...this.state.tableElements,{properties:{preloaded:false, id:dataObject.id, entry: null, valid:true}, data:[dataObject.name, dataObject.um, "1", dataObject.tax, ((dataObject.price/100)*dataObject.tax), dataObject.price]}]})
+        this.setState({total_tax:this.state.total_tax+((dataObject.price/100)*dataObject.tax), total_prod_price:this.state.total_prod_price+(dataObject.price)})
+
+        //close the predefined elements list
+        this.setState({predefinedList: false})
+    }
+
+    //remove an entry from the products table
+    //entry has value if the product is a product already saved in the database and linked with the invoice OR is null because the row has been added but not submitted
+    removeEntry=(rowIndex)=>{
+        let entry=this.state.tableElements[rowIndex].properties.entry
+        //element does not have an entry, no need to alter the database
+        if(entry===null){
+            this.removeTableElement(rowIndex)
+            return false
+        }
+        //remove the product from the database
+        fetch(`/products/${entry}`,{
+            method:"DELETE",
+            headers: { 'Content-Type': 'application/json' }
+        }).then(response=>response.json())
+        .then(data=>{
+            //succesfull in removing the element from the DB
+            if(data.status==="OK"){
+                this.removeTableElement(rowIndex)
+            }
+        })
+    }
+
+    //takes a row index as parameter; remove the row from the data-set, updates totals
+    removeTableElement=(rowIndex)=>{
+        let shallowCopy=this.state.tableElements
+        shallowCopy.splice(rowIndex, 1)
+        this.setState({tableElements:shallowCopy})
+        this.calculateTotalandTax()
+    }
+
+    render()
+        {
+            return(
+                <div className="invoices-add-container"> 
+                    <div className="invoices-add-actions">
+                        <button className="actions-button action-green-button" disabled={(this.state.invoice_server_status==="finalised") ? true : false} form="invoice-form" id="submit-invoice-button"><span className="action-button-label"><span className="material-icons-outlined">save</span>SAVE</span></button>                            
+                    </div>                                  
+                    <form id="invoice-form" onSubmit={this.submitData}>
+                            <div className="client-info-container form-sub-container">
+                                <ClientForm editable={((this.state.activeClient!=null)||this.state.isFormDisabled) ? false : true} isSubmitable={false} clientID={this.state.activeClient} userData={this.state.userData}/>
+                            </div>  
+
+                            <div className="billing-info-container form-sub-container"> 
+                                <span className="form-subsection-label">Billing type *</span>                  
+                                <div className="form-group col-md-2">  
+                                    <select className="form-control form-control-sm" id="billing-type" name="billingType" value={this.state.billingType} modified="false" onChange={this.handleSelect} disabled={(this.state.activeClient!=null) ? false : true}>
+                                        <option value="one-time-billing-option">One-time fee</option>
+                                        <option value="recurring-billing-option">Reccurent</option>
+                                    </select>
+                                </div>                                 
+
+                                {this.state.billingType==="recurring-billing-option" && this.state.activeClient &&
+                                    <div className="reccurent-bill-options">
+                                        <div className="form-group col-md-2">  
+                                            <label htmlFor="billing-frequency">Billing frequency:</label><br/>
+                                            <select className="form-control form-control-sm" id="billing-frequency" name="billingFrequency" modified="false" onChange={this.handleSelect} disabled={(this.state.invoice_server_status==="finalised") ? true : false}>
+                                                <option value="monthly-billing">Monthly</option>
+                                                <option value="yearly-billing">Yearly</option>
+                                            </select>
+                                        </div> 
+    
+                                        {this.state.billingFrequency==="monthly-billing" &&
+                                            <div className="form-group">  
+                                                <label htmlFor="billing_rec">Billing date:</label><br/>
+                                                <DatePicker id="billing-date-monthly"  selected={this.state.monthlyBillingDate} disabled={(this.state.invoice_server_status==="finalised") ? true : false} onChange={(date:Date) => this.setState({monthlyBillingDate:date})}/>
+                                            </div>                                                
+                                        }   
+                                        {this.state.billingFrequency==="yearly-billing" &&
+                                            <div className="form-group">  
+                                                <label htmlFor="billing_rec">Billing date:</label><br/>
+                                                <DatePicker id="billing-date-yearly"  selected={this.state.yearlyBillingDate} disabled={(this.state.invoice_server_status==="finalised") ? true : false} onChange={(date:Date) => this.setState({yearlyBillingDate:date})}/>
+                                            </div>
+                                        }
+                                    </div>
+                                } 
+                            </div>
+                            <div>                                
+                                <div className="save-as-container">                                      
+                                    <div className="form-group col-md-2">  
+                                        <span className="form-subsection-label">Save invoice as **</span><br/>  
+                                        <select className="form-control form-control-sm" id="invoice_status" name="invoice_status" value={this.state.invoice_status} modified="false" disabled={(this.state.invoice_server_status==="finalised") ? true : false} onChange={this.handleSelect}>
+                                            <option hidden={(this.state.isFormDisabled) ? true : false} value="draft">Draft</option>
+                                            <option value="finalised">Finalised</option>
+                                        </select>
+                                    </div> 
+                                    {this.state.invoice_status==="finalised" &&
+                                        <div className="form-group col-md-2">  
+                                            <span className="form-subsection-label">Paid with:</span><br/>
+                                            <select className="form-control form-control-sm" id="invoice_pay_method" name="invoice_pay_method" disabled={(this.state.invoice_server_status==="finalised") ? true : false} value={this.state.invoice_pay_method} modified="false" onChange={this.handleSelect}>
+                                                <option value="cash">Cash</option>
+                                                <option value="bank">Bank</option>
+                                            </select>
+                                        </div>
+                                    }
+                                    {this.state.invoice_pay_method==="bank" &&
+                                        <div className="form-group col-md-2">   
+                                            <span className="form-subsection-label">Ref:</span><br/>
+                                            <input type="text" id="invoice_bank_ref" name="invoice_bank_ref" className="form-control" modified="false" onChange={this.handleSelect}  disabled={(this.state.invoice_server_status==="finalised") ? true : false} value={this.state.invoice_bank_ref}/>
+                                        </div>
+                                    }
+                                </div> 
+                                <div className="alert alert-secondary" style={{marginTop:'20px',marginLeft:'10px', marginRight:'10px'}} role="alert">
+                                    <p className="lead" style={{fontSize: '16px', marginBottom:'0'}}>* Billing type can be either:
+                                        <ul class="info-text-list">
+                                            <li><b>One-time fee</b>: a single invoice</li>
+                                            <li><b>Recurrent</b>: a recurrency schema. Based on this schema, one-time invoices will be generated by the server at the seleted interval</li>
+                                        </ul>
+                                        ** Invoices ca be saved as:
+                                        <ul class="info-text-list">
+                                            <li><b>Drafts</b>: an invoice that is saved and can be further edited</li>
+                                            <li><b>Finalised</b>: the invoice is permanenlty closed and the user has been billed</li>
+                                        </ul>
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="billing-products-container form-sub-container">                                 
+                                <div className="invoice-products-container form-group">
+                                    <h6>Billed products</h6>  
+                                        <div className="">
+                                            <div className="row billing-products-header">
+                                                <div className="col-4">Name</div>
+                                                <div className="col-2">UM</div>
+                                                <div className="col-1">Quantity</div>
+                                                <div className="col-1">Tax(%)</div>
+                                                <div className="col-1">Tax</div>
+                                                <div className="col-1">Price</div>
+                                                <div className="col-1">Price total</div>
+                                                <div className="col-1"></div>
+                                            </div>
+                                            <div className="billing-products-body">
+                                                {                                                
+                                                    this.state.tableElements.map((element, index)=>(
+                                                        <div className="row" key={index} id={index}>
+                                                            <div className="col-4"><input type="text" className={element.properties.valid ? "product_name billing-products-input" : "product_name billing-products-input invalid-input"} name="product_name" disabled={element.properties.preloaded===true ? true : false} position={[index,0]} autoComplete="off" value={element.data[0]} onChange={this.validateAndUpdate}/></div>
+                                                            <div className="col-2"><input type="text" className={element.properties.valid ? "product_um billing-products-input": "product_um billing-products-input invalid-input"} name="product_um" disabled={element.properties.preloaded===true ? true : false} position={[index,1]} autoComplete="off" value={element.data[1]} onChange={this.validateAndUpdate}/></div>
+                                                            <div className="col-1"><input type="text" className={element.properties.valid ? "product_q billing-products-input" : "product_q billing-products-input invalid-input"}name="product_quantity" disabled={element.properties.preloaded===true ? true : false} position={[index,2]} autoComplete="off" value={element.data[2]} onChange={this.validateAndUpdate}/></div>
+                                                            <div className="col-1"><input type="text" className={element.properties.valid ? "product_tax billing-products-input": "product_tax billing-products-input invalid-input"} name="product_tax"  disabled={element.properties.preloaded===true ? true : false} position={[index,3]} autoComplete="off" value={element.data[3]} onChange={this.validateAndUpdate}/></div>
+                                                            <div className="col-1"><input type="text" className={element.properties.valid ? "product_tax billing-products-input": "product_tax billing-products-input invalid-input"} name="product_tax_value"  position={[index,4]} autoComplete="off" disabled={true} value={element.data[4]}/></div>
+                                                            <div className="col-1"><input type="text" className={element.properties.valid ? "product_ppu billing-products-input": "product_ppu billing-products-input invalid-input"} name="product_price" disabled={element.properties.preloaded===true ? true : false} position={[index,5]} autoComplete="off" value={element.data[5]} onChange={this.validateAndUpdate}/></div>
+                                                            <div className="col-1"><input type="text" className="product_ppu billing-products-input" name="product_price" disabled={true} position={[index,6]} autoComplete="off" value={element.data[5]*element.data[2]} onChange={this.validateAndUpdate}/></div>
+                                                            <div className="col-1 remove-product-button-container"><button type="button" className="remove-product-button" disabled={((this.state.invoice_status==="finalised") ? true : false)||(this.state.tableElements.length<2)} onClick={()=>{this.removeEntry(index)}}><span className="material-icons-outlined">close</span></button></div>
+                                                        </div>                                                          
+                                                    ))                                                
+                                                }
+                                            </div>
+                                            <div className="row billing-products-footer">
+                                                <div className="col-4" style={{visibility:'hidden'}}><input type="text" className="product_name_total billing-products-footer-input" disabled={true} /></div>
+                                                <div className="col-2" style={{visibility:'hidden'}}><input type="text" className="product_um_total billing-products-footer-input" disabled={true} /></div>
+                                                <div className="col-1" style={{visibility:'hidden'}}><input type="text" className="product_q_total billing-products-footer-input" disabled={true} /></div>
+                                                <div className="col-1" style={{visibility:'hidden'}}><input type="text" className="product_tax billing-products-footer-input" disabled={true} /></div>
+                                                <div className="col-1"><input type="text" className="product_tax_total billing-products-footer-input" disabled={true} value={`${this.state.total_tax}`}/></div>
+                                                <div className="col-2"><input type="text" className="product_price_total billing-products-footer-input" id="product_price_total" disabled={true} value={`${this.state.total_prod_price} RON`}/></div>
+                                                <div className="col-1" style={{visibility:'hidden'}}><input type="text" className="product_tax billing-products-footer-input" disabled={true} /></div>
+                                            </div>
+                                        </div>
+                                    <button type="button" className="btn btn-light btn-sm" disabled={(this.state.invoice_server_status==="finalised") ? true : false} style={{marginRight:'5px'}} onClick={this.addNewRow}><span className="action-button-label"><span className="material-icons-outlined">add</span>Add row</span></button>
+                                    <button type="button" className="btn btn-light btn-sm" disabled={(this.state.invoice_server_status==="finalised") ? true : false} onClick={()=>{this.setState({predefinedList: true})}}><span className="action-button-label"><span className="material-icons-outlined">apps</span>Add a predefined product</span></button>
+                                </div>
+                            </div>                            
+                    </form>
+                    {this.state.predefinedList&&
+                        <div> 
+                            <div className="blur-overlap"></div>     
+                            <div className="overlapping-component-inner">
+                                <div className="overlapping-component-actions">
+                                    <span className="bd-lead">Predefined products:</span>
+                                    <button type="button" className="action-close-window" onClick={()=>{this.setState({predefinedList: false})}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
+                                </div>
+                                <PredefinedProducts addElement={this.addPredefinedElement} insertable={true}/> 
+                            </div>              
+                        </div>
+                    }                                              
+                    <Snackbar text={this.state.alertUser} closeSnack={()=>{this.setState({alertUser:null})}}/>        
+                </div>
+            ) 
+        }   
+
+}
+

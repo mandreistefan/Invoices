@@ -1,0 +1,41 @@
+
+
+.form-sub-category{
+    display: flex;
+    justify-content: flex-start; 
+    width: 100%;   
+}
+
+.form-element{
+    margin-left:10px !important;
+}
+
+.form-row{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.form-subsection-label{
+    font-size:0.9rem;
+    color:gray
+}
+
+.form-group{
+    padding:10px
+}
+
+.client-form-button{
+    width:fit-content;
+    height: 30px;
+    border-radius: 5px;
+    border:none;
+    margin-right: 5px;
+    background-color: #5d9659;
+    color:#F7F7F8;
+}
+
+.form-group .form-subsection-label{
+    padding:0!important;
+}

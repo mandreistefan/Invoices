@@ -1,0 +1,22 @@
+.productPropertyHeader{
+    display:flex;
+    flex-direction: row;
+    font-weight: 600;
+}
+
+.productRow{
+    display:flex;
+    flex-direction: row;
+    width: 100%;
+    margin-bottom: 5px;
+    border-bottom: 1px solid gray;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.new-product-form{
+    width: 100%;
+    display:flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}

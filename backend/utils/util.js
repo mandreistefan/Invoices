@@ -1,0 +1,339 @@
+
+//calculates the next billing date 
+//takes recurrency type and a date as paramenters
+//calculates and returns the next date in three formats
+function calculateNextInvoiceDate(recurrencyType, recDate){
+    //sometimes, the date can be a String; working with object
+    if(typeof recDate === 'string'){
+        let dateFormat = new Date(recDate)        
+        recDate=dateFormat
+    }    
+
+    //recurrencyDate info
+    let recurrencyDateArray=recDate.toString().split(" ")
+    let recurrencyDay=parseInt(recurrencyDateArray[2])
+    let recurrencyMonth=recurrencyDateArray[1]
+    let recurrencyYear=parseInt(recurrencyDateArray[3])
+
+    console.log(`Date received: ${recurrencyDay}, ${recurrencyMonth}, ${recurrencyYear}`)
+
+    //current day info
+    const currentDate = new Date();
+    let currentDay=currentDate.getDate();
+    let currentYear = currentDate.getFullYear();
+    let currentMonth = currentDate.getMonth();
+
+    let invoiceDate=new Date()
+
+    let mS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    let nextBillingMonth;
+    let nextBillingDay;
+    let nextBillingYear;
+
+    const dateArr=[
+        31, ((currentYear%4===0) ? 27: 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+    ]
+
+    if(recurrencyType==="monthly-billing"){
+
+        if((recurrencyYear>currentYear)||(mS.indexOf(recurrencyMonth)>currentMonth)||(recurrencyDay>currentDay)){
+            nextBillingDay=recurrencyDay
+            nextBillingMonth=mS.indexOf(recurrencyMonth)
+            nextBillingYear=recurrencyYear
+        }else{
+            //next billing day
+            if(recurrencyDay>dateArr[mS.indexOf(recurrencyMonth)]){
+                nextBillingDay=dateArr[mS.indexOf(recurrencyMonth)]
+            }else{
+                nextBillingDay=recurrencyDay
+            }
+
+            //next billing month
+            if(currentMonth===mS.indexOf(recurrencyMonth)){
+                if(recurrencyDay>currentDay){
+                    nextBillingMonth=recurrencyMonth
+                }else if(recurrencyDay===currentDay){
+                    nextBillingMonth=mS.indexOf(recurrencyMonth)+1
+                }else{
+                    nextBillingMonth=mS.indexOf(recurrencyMonth)
+                }                
+            }else{
+                nextBillingMonth=mS.indexOf(recurrencyMonth)
+            }   
+
+            //next billing year
+            if(nextBillingMonth>11){
+                nextBillingMonth=0;
+                nextBillingYear=currentYear+1
+            }else{
+                nextBillingYear=currentYear
+            }
+        }
+        
+        invoiceDate.setDate(nextBillingDay)
+        invoiceDate.setMonth(nextBillingMonth)
+        invoiceDate.setFullYear(nextBillingYear)
+
+    }else if(recurrencyType==="yearly-billing"){
+        //check if the month is February, make sure there are enough days in the month next year
+        if(recurrencyMonth==="Feb"){
+            if(recurrencyDay>dateArr[mS.indexOf(recurrencyMonth)]){
+                nextBillingDay=dateArr[mS.indexOf(recurrencyMonth)]
+            }else{
+                nextBillingDay=recurrencyDay
+            }
+        }else{
+            nextBillingDay=recurrencyDay
+        }        
+
+        //add one more year, month is unchanged
+        nextBillingYear=recurrencyYear+1
+        nextBillingMonth=mS.indexOf(recurrencyMonth)
+
+        invoiceDate.setDate(nextBillingDay)
+        invoiceDate.setMonth(nextBillingMonth)
+        invoiceDate.setFullYear(nextBillingYear)
+    }
+
+    return({
+        dateAsDate: invoiceDate,
+        dateAsString: `${nextBillingDay}/${nextBillingMonth+1}/${nextBillingYear}`,
+        dateAsMYSQLString: `${nextBillingYear}-${nextBillingMonth+1}-${nextBillingDay}`
+    })
+
+}
+
+function normalDate(date){
+    let stringDate = date.toString().split(" ");
+    return(`${stringDate[2]} ${stringDate[1]} ${stringDate[3]}`)
+}
+
+
+//prettify the recurrency date, from a xx/yy/zzzz format to a xst/ xnd/ xrd etc of the month format
+function normalRecurrenyDate(a, b, c){
+
+    if(a==="monthly-billing"){
+        let dateString=b.toString().split(" ")
+
+        if(dateString.length===1){
+            if(dateString[2]==="1"){
+                return "1st of each month"
+            }else if(dateString[2]==="2"){
+                return "2nd of each month"
+            }else if(dateString[2]==="3"){
+                return "3rd of each month"
+            }
+        }else{
+                if(dateString[1]==="1"){
+                    return `${dateString[2][0]}1st of each month`
+                }else if(dateString[2][1]==="2"){
+                    return `${dateString[0]}2nd of each month`
+                }else if(dateString[2][1]==="3"){
+                    return `${dateString[0]}3rd of each month`
+                }else{
+                    return `${dateString[2]}th of each month`
+                }            
+        }
+    }else if(a==="yearly-billing"){
+
+        let dateString=c.toString().split(" ");
+
+        if(dateString[2].length===1){
+            if(dateString[2]==="1"){
+                return `${dateString[1]}, 1st`
+            }else if(dateString[2]==="2"){
+                return `${dateString[1]}, 2nd`
+            }else if(dateString[2]==="3"){
+                return `${dateString[1]}, 3rd`
+            }
+        }else{
+            if(dateString[2][1]==="1"){
+                return `${dateString[1]}, ${dateString[0]}1st`
+            }else if(dateString[2][1]==="2"){
+                return `${dateString[1]}, ${dateString[0]}2nd`
+            }else if(dateString[2][1]==="3"){
+                return `${dateString[1]}, ${dateString[0]}3rd`
+            }else{
+                return `${dateString[1]}, ${dateString[2]}th`
+            }            
+        }
+        return "NA";
+    }
+
+    return "NA";
+
+}
+
+//calculates the next billing date based on recurrency, monthly/ yearly recurrency dates
+function nextDate(rec, mo, y){
+    if(rec==="monthly-billing"){
+        return calculateNextInvoiceDate(rec, mo)
+    }else if(rec==="yearly-billing"){
+        return normalDate(y)
+    }
+
+    return "NA"
+
+}
+
+//process recurrency data for front-end
+function procesRecData(data){
+
+    let returnArr = []
+
+    data.forEach(element => {
+            returnArr.push({
+                rec_number: element.rec_number,
+                client_first_name: element.client_first_name,
+                client_last_name: element.client_last_name,
+                client_county: element.client_county,
+                client_city: element.client_city,
+                client_street: element.client_street,
+                client_adress_number: element.client_adress_number,
+                client_zip: element.client_zip,
+                invoice_recurrency: element.invoice_recurrency.replace("-", " "),
+                invoice_active: element.invoice_active,
+                invoice_next_date: element.next_invoice_date
+            })       
+    });    
+
+    return(returnArr)    
+}
+
+//processes raw data from the billed products table for front-end
+//[0] - products as array, [1] - total number of products, [2] - total tax
+function procesBilledProductsData(data){
+    let billedProductsArray=data;
+    let processedProductsData=[];
+    let taxTotal=0;
+    for(let i=0; i<billedProductsArray.length; i++){
+        processedProductsData.push({
+            entry: billedProductsArray[i].id,
+            name: billedProductsArray[i].product_name,
+            um: billedProductsArray[i].product_mu,
+            quantity: billedProductsArray[i].product_quantity,
+            ppu: billedProductsArray[i].product_price,
+            tax_percentage: billedProductsArray[i].product_tax_pr,
+            tax: billedProductsArray[i].total_tax,
+            price: billedProductsArray[i].total_price
+        })
+        taxTotal=taxTotal+parseFloat(billedProductsArray[i].total_tax);
+    }
+
+    return [processedProductsData, billedProductsArray.length, taxTotal];
+
+}
+
+//returns the date in a 01 JAN 2022 format
+function simpleDate(aDate){  
+    let dateArray=aDate.toString().split(" ")
+    return(`${dateArray[2]} ${dateArray[1]} ${dateArray[3]}`)
+}
+
+function returnal(status, data){
+    return ({
+        status: status,
+        data:data
+    })
+}
+
+//returns an 2D array in which each element consists of: [month-as-integer, month, year, number-of-invoices/month, total/ month]
+//data comes ordered by date, no need to sort
+function parsePeriod(dataArray){
+    let mS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    let periodicalData=[]
+    let totalSumForMonth=0
+    let invoicesPerMonth=0
+    let currentMonth = dataArray[0].invoice_date.toString().split(" ")[1]
+    dataArray.forEach((element, index)=>{
+        if(index!=dataArray.length-1){
+            //current month is initially the first month of the data-array
+            //go through the array; if the current element month is equal to the current month, add totals and number of invoices; if the current element month is different, push the sums in the array and reset the sums
+            if(currentMonth===element.invoice_date.toString().split(" ")[1]){
+                totalSumForMonth = totalSumForMonth+element.invoice_total_sum
+                invoicesPerMonth += 1
+            }else{
+                //push the totals
+                periodicalData.push([mS.indexOf(currentMonth)+1, currentMonth, element.invoice_date.toString().split(" ")[3], invoicesPerMonth, totalSumForMonth])
+                //reset the totals
+                currentMonth = element.invoice_date.toString().split(" ")[1]
+                totalSumForMonth=element.invoice_total_sum
+                invoicesPerMonth=1 
+            }          
+        }else{
+            //when the element is the final element, always do an array-push 
+            if(currentMonth===element.invoice_date.toString().split(" ")[1]){
+                totalSumForMonth = totalSumForMonth+element.invoice_total_sum
+                invoicesPerMonth += 1
+                periodicalData.push([mS.indexOf(element.invoice_date.toString().split(" ")[1])+1, element.invoice_date.toString().split(" ")[1], element.invoice_date.toString().split(" ")[3], invoicesPerMonth, totalSumForMonth])
+            }else{
+                periodicalData.push([mS.indexOf(element.invoice_date.toString().split(" ")[1])+1, element.invoice_date.toString().split(" ")[1], element.invoice_date.toString().split(" ")[3], 1, element.invoice_total_sum])
+            }
+        }
+    })
+    return periodicalData
+}
+
+
+//calculates the total sum and tax for all data in a timespan
+function processFinancial(data){
+    //default values
+    let returnObj={total:0, total_tax:0, total_net:0, total_number_invoices:0, avg_per_invoice:0, avg_per_step:0, periodicalData:null}
+    //no data to process
+    if(data.length===0) return returnObj
+    //process data - calculate totals and data for the graph
+    data.forEach(element=>{
+        returnObj.total+=element.invoice_total_sum
+        returnObj.total_tax+=element.invoice_tax               
+    })
+
+    returnObj.total_number_invoices=data.length
+    returnObj.total_net=returnObj.total-returnObj.total_tax
+    returnObj.avg_per_invoice=returnObj.total/returnObj.total_number_invoices
+    returnObj.periodicalData=parsePeriod(data)
+    returnObj.avg_per_step=returnObj.total / returnObj.periodicalData.length
+
+    return returnObj;
+
+}
+
+//calculate the tax based on quantity, tax as percentage and total price of product
+function calculateTax(quantity, tax, price){
+    let taxTotal = (((parseInt(quantity)*parseFloat(price))/100)*parseFloat(tax))
+    taxTotal=taxTotal.toFixed(2)
+    return taxTotal;
+}
+
+function toCreateInvoice(date, recurrencyType, monthlyDate, yearlyDate){
+    if(recurrencyType==="monthly-billing"){
+        let nextBillingDate=calculateNextInvoiceDate(recurrencyType, monthlyDate)
+        console.log(nextBillingDate)
+    }else if(recurrencyType==="yearly-billing"){
+
+    }else{
+
+    }
+}
+
+function calculateTotalSum(data){
+    let totalSum=0;
+    let totalTax=0;
+    data.forEach(element=>{
+        totalSum=totalSum+(parseFloat(element.product_quantity)*parseFloat(element.product_price))
+        totalTax=calculateTax(element.product_quantity, element.product_tax_pr, element.product_price)
+    })
+    return {totalSum: totalSum, totalTax: totalTax};
+}
+
+
+module.exports = {
+    procesRecData: procesRecData,
+    procesBilledProductsData: procesBilledProductsData,
+    simpleDate:simpleDate,
+    returnal:returnal,
+    processFinancial: processFinancial,
+    calculateTax: calculateTax,
+    toCreateInvoice: toCreateInvoice,
+    calculateNextInvoiceDate:calculateNextInvoiceDate,
+    calculateTotalSum:calculateTotalSum
+}

@@ -1,0 +1,48 @@
+.invoice-component-container{
+    width: 100%;
+}
+
+.invoices-add-form{
+    width: 100%;
+}
+
+.invoices-add-form-selector{
+    margin-bottom:25px;
+    display:flex;
+    background-color: #F6F2F5;
+    width: fit-content;
+    border-radius:6px;
+}
+
+.button-label{
+    display: flex;
+    align-items: center;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    padding-right: 3px;
+    padding-left: 3px;
+}
+
+.button-label .material-icons-outlined{
+    margin-right:5px;
+}
+
+#invoices-overview-button{
+    border-bottom-left-radius: 6px;
+    border-top-left-radius: 6px;
+}
+
+#new-invoice-button{
+    border-bottom-right-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+.invoices-add-form-selector button{
+    border:1px solid #F6F2F5;
+    color:black;
+    background-color: transparent;
+}
+
+.invoice_total{
+    font-size:1.2rem;
+}

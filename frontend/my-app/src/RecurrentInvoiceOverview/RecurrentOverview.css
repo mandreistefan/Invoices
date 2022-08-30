@@ -1,0 +1,30 @@
+.recurrent-info{
+
+}
+
+.recurrent-general-info{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom:20px;
+}
+
+.recurrent-general-info div{
+
+}
+
+.recurrent-freq-type h5{
+    font-size:1.5rem;
+    color: #3A7F9F
+}
+
+.recurrent-next-date h5{
+    font-size:1.5rem;
+    color: #3A7F9F
+}
+
+.recurrent-client-info h5{
+    font-size:1.5rem;
+    color: #3A7F9F
+}

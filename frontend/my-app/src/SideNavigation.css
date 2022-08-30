@@ -1,0 +1,30 @@
+.side-navigation{
+    height: 100vh;
+    background-color: #284B63;
+}
+
+.side-nav-elements{
+    list-style: none;
+    padding:0;
+    background-color: #284B63;
+}
+
+.side-nav-element{
+    background-color: transparent;
+    margin: 10px;
+}
+
+.side-nav-element button{
+    background-color: transparent;
+}
+
+.side-nav-button{
+    width:70px;
+    height: 70px;
+    color:#9dafc1;
+    border:0;
+}
+
+.selected-nav-element{
+    color:#F6F2F5
+}

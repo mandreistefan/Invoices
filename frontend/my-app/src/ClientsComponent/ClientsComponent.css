@@ -1,0 +1,31 @@
+.add-new-customer{
+    display:flex;
+    flex-direction: column;
+    background-color: white;
+    padding: 15px;
+    z-index: 4;
+    position:absolute;
+    left:50%;
+    transform:translate(-50%);
+    top:150px;
+    width:800px;
+}
+
+.add-new-customer-intro{
+    display:inherit;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.add-new-customer-form{
+    display:inherit;
+    flex-direction: column;
+}
+
+.close-adder-button{
+    width: 25px;
+    height: 25px;
+    border-radius: 25px;
+    background-color: black;
+    color:white
+}

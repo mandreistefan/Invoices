@@ -1,0 +1,88 @@
+.pretty-invoice-container{
+    padding: 10px;
+    background-color:white;
+}
+
+.pretty-invoice-header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.company-customer-info-container{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.company-info{
+    display:inherit;
+    flex-direction: column;
+    background-color: lightgray;
+    padding: 8px;
+    width:40%
+}
+
+.customer-info{
+    display:inherit;
+    flex-direction: column;
+    border: 1px solid lightgray;
+    padding: 8px;
+    width:40%
+}
+
+.billed-products-container{
+    margin-top:20px;
+    margin-bottom: 20px;
+}
+
+.billed-products-table{
+    
+    width:100%
+}
+
+.billed-products-table thead{
+    border:1px solid lightgray;
+    border-bottom: 0;
+}
+
+.billed-products-table tbody{
+    border:1px solid lightgray;
+}
+
+.table-total-summary{
+    background-color: lightgray;
+    border:1px solid lightgray;
+}
+
+#invoice-number{
+    font-size:2rem;
+    color:black
+}
+
+#invoice-date{
+    font-size: 1.15rem;
+    color:black;
+}
+
+#invoice-info-total{
+    font-size: 1.15rem;
+    color:black;
+}
+
+.invoice-name{
+    color:#3A7F9F;
+    font-weight: 500;
+    font-size:1.2rem
+}
+
+.invoice-info-container span{
+    font-weight:500;
+    font-size:"1rem";
+    color: gray;
+}
