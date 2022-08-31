@@ -2,20 +2,22 @@ import React from "react";
 import './FinancialComponent.css'
 import Snackbar from '../Snackbar/Snackbar.jsx'
 import FinancialChart from './FinancialChart.jsx'
+import DatePicker from "react-datepicker";
 
 let Financial = (props) =>{
 
     let [financialData, setFinancialData] = React.useState(null)
-    let [periodOfInterest, setPeriod] = React.useState(["yearly", "current", "q1", "010122-020122"])
+    let [periodOfInterest, setPeriod] = React.useState(["yearly", "current", "q1"])
     let [alertUser, setUserAlert] =React.useState({text: null})
     //use for the horizontal scale of the chart
     let [chartInterval, setChartInterval] = React.useState(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
     let [chartValues, setChartValues] = React.useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     let [chartTitle, setChartTile] = React.useState("Current year")
 
-    let year = new Date().getFullYear();
+    let currentDate = new Date()
+    let year = currentDate.getFullYear();
     let activeYear=[{id:"current", descr:"Current year"}, {id:year-1, descr:year-1}, {id:year-2, descr:year-2}]
-    
+    let [dateInterval, setInterval] = React.useState({start: currentDate, end: currentDate})
 
     React.useEffect(()=>{
         fetchData()
@@ -176,12 +178,8 @@ let Financial = (props) =>{
                         </select>
                     </div>
                     <div className="col-2" disabled={(periodOfInterest[0]==="custom") ? false : true}>
-                        <input  className="form-control form-control-sm" id="custom-interval-1" name="customInterval-start-day" value={`${periodOfInterest[3][0]}${periodOfInterest[3][1]}`} onChange={selector}></input>
-                        <input  className="form-control form-control-sm" id="custom-interval-2" name="customInterval-start-month" value={`${periodOfInterest[3][2]}${periodOfInterest[3][3]}`} onChange={selector}></input>
-                        <input  className="form-control form-control-sm" id="custom-interval-3" name="customInterval-start-year" value={`${periodOfInterest[3][4]}${periodOfInterest[3][5]}`} onChange={selector}></input>
-                        <input  className="form-control form-control-sm" id="custom-interval-4" name="customInterval-end-day" value={`${periodOfInterest[3][7]}${periodOfInterest[3][8]}`} onChange={selector}></input>
-                        <input  className="form-control form-control-sm" id="custom-interval-5" name="customInterval-end-month" value={`${periodOfInterest[3][9]}${periodOfInterest[3][10]}`} onChange={selector}></input>
-                        <input  className="form-control form-control-sm" id="custom-interval-6" name="customInterval-end-year" value={`${periodOfInterest[3][11]}${periodOfInterest[3][12]}`} onChange={selector}></input>
+                        <DatePicker id="billing-date-yearly"  selected={currentDate} disabled={false} onChange={(date:Date) => setInterval({start: date, end: dateInterval.end})}/>
+                        <DatePicker id="billing-date-yearly"  selected={currentDate} disabled={false} onChange={(date:Date) => setInterval({start: dateInterval.start, end: date})}/>
                     </div>
                     <div className="col-1">
                         <button className="actions-button" onClick={()=>{fetchData()}}><span className="action-button-label"><span className="material-icons-outlined">refresh</span>Refresh</span></button>
@@ -202,7 +200,6 @@ let Financial = (props) =>{
                         <span className="card-head-text black-text">{financialData.total} RON</span>
                         <p className="mb-0 opacity-75">Total sum(incl. tax) billed in the specified time-period</p>
                     </div>
-                    <small className="opacity-50 text-nowrap">now</small>
                     </div>
                 </a>
                 <a className="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
@@ -217,7 +214,6 @@ let Financial = (props) =>{
                         <span className="card-head-text red-text">{financialData.total_tax} RON</span>  
                         <p className="mb-0 opacity-75">Total tax for the specified time-period</p>
                     </div>
-                    <small className="opacity-50 text-nowrap">3d</small>
                     </div>
                 </a>
                 <a className="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
@@ -232,7 +228,6 @@ let Financial = (props) =>{
                         <span className="card-head-text green-text">{financialData.total_net} RON</span> 
                         <p className="mb-0 opacity-75">Revenue calculated as Total income - Total tax</p>
                     </div>
-                    <small className="opacity-50 text-nowrap">1w</small>
                     </div>
                 </a>
                 <a className="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
@@ -251,16 +246,15 @@ let Financial = (props) =>{
                             </div>
                             <div className="financial-card">
                                 <h6 className="mb-0">Average per invoice</h6>
-                                <span className="card-head-text black-text">{financialData.avg_per_invoice}</span>  
+                                <span className="card-head-text black-text">{parseFloat(financialData.avg_per_invoice).toFixed(2)}</span>  
 
                             </div>
                             <div className="financial-card">
                                 <h6 className="mb-0">Average per month</h6>
-                                <span className="card-head-text black-text">{financialData.avg_per_step}</span>                 
+                                <span className="card-head-text black-text">{parseFloat(financialData.avg_per_step).toFixed(2)}</span>                 
                             </div>
                         </div>
                     </div>
-                    <small className="opacity-50 text-nowrap">1w</small>
                     </div>
                 </a>
             </div>

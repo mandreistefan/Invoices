@@ -5,6 +5,7 @@ import ClientsComponent from './ClientsComponent/ClientsComponent.jsx'
 import InvoicesComponent from './InvoiceComponent/InvoicesComponent.jsx'
 import FinancialComponent from './FinancialComponent/FinancialComponent.jsx'
 import Products from './PredefinedProducts/PredefinedProducts.jsx'
+import DatabaseOperations from './DatabaseOperations/DatabaseOperations.jsx'
 
 export default class App extends React.Component {
 
@@ -29,6 +30,7 @@ render()
           {this.state.activeComponent===1 && <InvoicesComponent/>}
           {this.state.activeComponent===2 && <Products/>}
           {this.state.activeComponent===3 && <FinancialComponent/>}
+          {this.state.activeComponent===4 && <DatabaseOperations/>}
         </div>        
       </div>
     )

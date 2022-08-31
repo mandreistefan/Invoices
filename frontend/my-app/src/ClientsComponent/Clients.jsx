@@ -76,50 +76,45 @@ let Clients = (props) =>{
         allClients &&
             <div className='clients-container app-data-container'>
                 {showInfo&&
+                <div>
                     <div className="info-text">
                         <h1 className="info-text-header">Clients</h1>
                         <div className="info-text-box">                                
                             <p className="lead">Provides an overview of all clients.</p>
                         </div>
-                        <div class="row g-4 py-2 row-cols-1 row-cols-lg-4">
-                            <div class="col d-flex align-items-start">
-                                <div class="icon-square text-bg-light d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
-                                    <span style={{marginRight:"10px"}} className="material-icons-outlined">add</span>
-                                </div>
-                                <div>
-                                    <h4>New invoice</h4>
-                                    <p>Add a new voice for a registered client. Client data is auto-filled</p>
-                                </div>
+                    </div>                  
+
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 py-2">
+                        <div class="col d-flex align-items-start">
+                        <span style={{fontSize:'30px'}} className="material-icons-outlined me-3">add</span>
+                            <div>
+                                <h4 class="fw-bold mb-0">New invoice</h4>
+                                <p>Add a new voice for a registered client. Client data is auto-filled</p>
                             </div>
-                            <div class="col d-flex align-items-start">
-                                <div class="icon-square text-bg-light d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
-                                    <span style={{marginRight:"10px"}} className="material-icons-outlined">open_in_new</span>
-                                </div>
-                                <div>
-                                    <h4>Invoices</h4>
-                                    <p>Show all invoices that are linked with the client</p>
-                                </div>
+                        </div>
+                        <div class="col d-flex align-items-start">
+                        <span  style={{fontSize:'30px'}} className="material-icons-outlined me-3">open_in_new</span>
+                            <div>
+                                <h4 class="fw-bold mb-0">Invoices</h4>
+                                <p>Show all invoices that are linked with the client</p>
                             </div>
-                            <div class="col d-flex align-items-start">
-                                <div class="icon-square text-bg-light d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
-                                    <span style={{marginRight:"10px"}} className="material-icons-outlined">edit</span>
-                                </div>
-                                <div>
-                                    <h4>Edit</h4>
-                                    <p>Edit the client info</p>
-                                </div>
+                        </div>
+                        <div class="col d-flex align-items-start">
+                        <span  style={{fontSize:'30px'}} className="material-icons-outlined me-3">edit</span>
+                            <div>
+                                <h4 class="fw-bold mb-0">Edit</h4>
+                                <p>Edit the client info</p>
                             </div>
-                            <div class="col d-flex align-items-start">
-                                <div class="icon-square text-bg-light d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
-                                    <span style={{marginRight:"10px"}} className="material-icons-outlined">delete</span>
-                                </div>
-                                <div>
-                                    <h4>Delete</h4>
-                                    <p>Delete the registered client. Deleted clients are NOT erased, but they are archived</p>
-                                </div>
+                        </div>
+                        <div class="col d-flex align-items-start">
+                        <span style={{fontSize:'30px'}}  className="material-icons-outlined me-3">delete</span>
+                            <div>
+                                <h4 class="fw-bold mb-0">Delete</h4>
+                                <p>Delete the registered client. Deleted clients are NOT erased, but they are archived</p>
                             </div>
                         </div>
                     </div>
+                </div>
                 }                  
                 <table className='table table-hover'>
                     <thead className='table-active'>

@@ -18,7 +18,8 @@ let SideNavigation = (props) =>{
         {id:0, name: "clients", displayName:'Clients', icon:'account_circle'},
         {id:1, name: "invoices", displayName:'Invoices', icon:'receipt_long'},
         {id:2, name: "products", displayName:'Products', icon:'sell'},
-        {id:3, name: "financial", displayName:'Financial', icon:'attach_money'}
+        {id:3, name: "financial", displayName:'Financial', icon:'attach_money'},
+        {id:4, name: "database", displayName:'Database', icon:'cloud'}
     ]
 
     //initial setup can be saved in localstorage

@@ -222,4 +222,29 @@ app.delete('/products/*',(req, res)=>{
     })
 })
 
+//serves a HTML file to the front-end; the HTML files acts as a template for the invoice; used to print
+app.get("/generateInvoice/*",(req,res)=>{
+    res.sendFile(path.join(__dirname,'../frontend/my-app/public/test.html'))
+})
+
+//exports a DB in a CSV file format
+app.get("/export", (req, res)=>{
+    databaseController.createExportableData()
+})
+
+//get some info on the DB
+app.get("/database", (req, res)=>{
+    let data = databaseController.getDatabaseInfo()
+    res.send(data)
+})
+
+//exports a DB in a CSV file format
+app.get("/switchDatabase", (req, res)=>{
+    databaseController.changeDatabaseInfo(callback=>{
+        res.send(callback)
+    })
+    
+})
+
+
 app.listen(3001)

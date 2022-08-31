@@ -60,21 +60,6 @@
     border:1px solid lightgray;
 }
 
-#invoice-number{
-    font-size:2rem;
-    color:black
-}
-
-#invoice-date{
-    font-size: 1.15rem;
-    color:black;
-}
-
-#invoice-info-total{
-    font-size: 1.15rem;
-    color:black;
-}
-
 .invoice-name{
     color:#3A7F9F;
     font-weight: 500;
@@ -82,7 +67,7 @@
 }
 
 .invoice-info-container span{
-    font-weight:500;
-    font-size:"1rem";
-    color: gray;
+    color:black;
+    font-size:1.1rem;
 }
+

@@ -401,45 +401,44 @@ export default class Invoice extends React.Component{
                                 <ClientForm editable={((this.state.activeClient!=null)||this.state.isFormDisabled) ? false : true} isSubmitable={false} clientID={this.state.activeClient} userData={this.state.userData}/>
                             </div>  
 
-                            <div className="billing-info-container form-sub-container"> 
-                                <span className="form-subsection-label">Billing type *</span>                  
-                                <div className="form-group col-md-2">  
-                                    <select className="form-control form-control-sm" id="billing-type" name="billingType" value={this.state.billingType} modified="false" onChange={this.handleSelect} disabled={(this.state.activeClient!=null) ? false : true}>
-                                        <option value="one-time-billing-option">One-time fee</option>
-                                        <option value="recurring-billing-option">Reccurent</option>
-                                    </select>
-                                </div>                                 
-
-                                {this.state.billingType==="recurring-billing-option" && this.state.activeClient &&
-                                    <div className="reccurent-bill-options">
-                                        <div className="form-group col-md-2">  
-                                            <label htmlFor="billing-frequency">Billing frequency:</label><br/>
-                                            <select className="form-control form-control-sm" id="billing-frequency" name="billingFrequency" modified="false" onChange={this.handleSelect} disabled={(this.state.invoice_server_status==="finalised") ? true : false}>
-                                                <option value="monthly-billing">Monthly</option>
-                                                <option value="yearly-billing">Yearly</option>
-                                            </select>
-                                        </div> 
-    
-                                        {this.state.billingFrequency==="monthly-billing" &&
-                                            <div className="form-group">  
-                                                <label htmlFor="billing_rec">Billing date:</label><br/>
-                                                <DatePicker id="billing-date-monthly"  selected={this.state.monthlyBillingDate} disabled={(this.state.invoice_server_status==="finalised") ? true : false} onChange={(date:Date) => this.setState({monthlyBillingDate:date})}/>
-                                            </div>                                                
-                                        }   
-                                        {this.state.billingFrequency==="yearly-billing" &&
-                                            <div className="form-group">  
-                                                <label htmlFor="billing_rec">Billing date:</label><br/>
-                                                <DatePicker id="billing-date-yearly"  selected={this.state.yearlyBillingDate} disabled={(this.state.invoice_server_status==="finalised") ? true : false} onChange={(date:Date) => this.setState({yearlyBillingDate:date})}/>
-                                            </div>
-                                        }
+                            <div className="row">
+                                <div className="col-md-4">
+                                    <span className="form-subsection-label">Billing type *</span>                  
+                                    <div className="form-group">  
+                                        <select className="form-control form-control-sm" id="billing-type" name="billingType" value={this.state.billingType} modified="false" onChange={this.handleSelect} disabled={(this.state.activeClient!=null) ? false : true}>
+                                            <option value="one-time-billing-option">One-time fee</option>
+                                            <option value="recurring-billing-option">Reccurent</option>
+                                        </select>
+                                    </div>    
+                                </div>
+                                {this.state.billingType==="recurring-billing-option" && this.state.activeClient &&    
+                                    <div className="form-group col-md-2">  
+                                        <label htmlFor="billing-frequency">Billing frequency:</label><br/>
+                                        <select className="form-control form-control-sm" id="billing-frequency" name="billingFrequency" modified="false" onChange={this.handleSelect} disabled={(this.state.invoice_server_status==="finalised") ? true : false}>
+                                            <option value="monthly-billing">Monthly</option>
+                                            <option value="yearly-billing">Yearly</option>
+                                        </select>
+                                    </div> 
+                                }
+                                {this.state.billingType==="recurring-billing-option" && this.state.activeClient && this.state.billingFrequency==="monthly-billing" &&
+                                    <div className="form-group col-md-2">  
+                                        <label htmlFor="billing_rec">Billing date:</label><br/>
+                                        <DatePicker id="billing-date-monthly"  selected={this.state.monthlyBillingDate} disabled={(this.state.invoice_server_status==="finalised") ? true : false} onChange={(date:Date) => this.setState({monthlyBillingDate:date})}/>
+                                    </div>                                                
+                                }   
+                                {this.state.billingType==="recurring-billing-option" && this.state.activeClient && this.state.billingFrequency==="yearly-billing" &&
+                                    <div className="form-group col-md-2">  
+                                        <label htmlFor="billing_rec">Billing date:</label><br/>
+                                        <DatePicker id="billing-date-yearly"  selected={this.state.yearlyBillingDate} disabled={(this.state.invoice_server_status==="finalised") ? true : false} onChange={(date:Date) => this.setState({yearlyBillingDate:date})}/>
                                     </div>
-                                } 
+                                }                                
                             </div>
+                            
                             <div>                                
                                 <div className="save-as-container">                                      
                                     <div className="form-group col-md-2">  
                                         <span className="form-subsection-label">Save invoice as **</span><br/>  
-                                        <select className="form-control form-control-sm" id="invoice_status" name="invoice_status" value={this.state.invoice_status} modified="false" disabled={(this.state.invoice_server_status==="finalised") ? true : false} onChange={this.handleSelect}>
+                                        <select className="form-control form-control-sm shadow-none" id="invoice_status" name="invoice_status" value={this.state.invoice_status} modified="false" disabled={(this.state.invoice_server_status==="finalised") ? true : false} onChange={this.handleSelect}>
                                             <option hidden={(this.state.isFormDisabled) ? true : false} value="draft">Draft</option>
                                             <option value="finalised">Finalised</option>
                                         </select>
@@ -447,7 +446,7 @@ export default class Invoice extends React.Component{
                                     {this.state.invoice_status==="finalised" &&
                                         <div className="form-group col-md-2">  
                                             <span className="form-subsection-label">Paid with:</span><br/>
-                                            <select className="form-control form-control-sm" id="invoice_pay_method" name="invoice_pay_method" disabled={(this.state.invoice_server_status==="finalised") ? true : false} value={this.state.invoice_pay_method} modified="false" onChange={this.handleSelect}>
+                                            <select className="form-control form-control-sm shadow-none" id="invoice_pay_method" name="invoice_pay_method" disabled={(this.state.invoice_server_status==="finalised") ? true : false} value={this.state.invoice_pay_method} modified="false" onChange={this.handleSelect}>
                                                 <option value="cash">Cash</option>
                                                 <option value="bank">Bank</option>
                                             </select>
@@ -456,16 +455,12 @@ export default class Invoice extends React.Component{
                                     {this.state.invoice_pay_method==="bank" &&
                                         <div className="form-group col-md-2">   
                                             <span className="form-subsection-label">Ref:</span><br/>
-                                            <input type="text" id="invoice_bank_ref" name="invoice_bank_ref" className="form-control" modified="false" onChange={this.handleSelect}  disabled={(this.state.invoice_server_status==="finalised") ? true : false} value={this.state.invoice_bank_ref}/>
+                                            <input type="text" id="invoice_bank_ref" name="invoice_bank_ref" className="form-control shadow-none" modified="false" onChange={this.handleSelect}  disabled={(this.state.invoice_server_status==="finalised") ? true : false} value={this.state.invoice_bank_ref}/>
                                         </div>
                                     }
                                 </div> 
                                 <div className="alert alert-secondary" style={{marginTop:'20px',marginLeft:'10px', marginRight:'10px'}} role="alert">
-                                    <p className="lead" style={{fontSize: '16px', marginBottom:'0'}}>* Billing type can be either:
-                                        <ul class="info-text-list">
-                                            <li><b>One-time fee</b>: a single invoice</li>
-                                            <li><b>Recurrent</b>: a recurrency schema. Based on this schema, one-time invoices will be generated by the server at the seleted interval</li>
-                                        </ul>
+                                    <p className="lead" style={{fontSize: '16px', marginBottom:'0'}}>* Option not available<br/>
                                         ** Invoices ca be saved as:
                                         <ul class="info-text-list">
                                             <li><b>Drafts</b>: an invoice that is saved and can be further edited</li>
@@ -475,8 +470,7 @@ export default class Invoice extends React.Component{
                                 </div>
                             </div>
                             <div className="billing-products-container form-sub-container">                                 
-                                <div className="invoice-products-container form-group">
-                                    <h6>Billed products</h6>  
+                                <div className="invoice-products-container form-group"> 
                                         <div className="">
                                             <div className="row billing-products-header">
                                                 <div className="col-4">Name</div>

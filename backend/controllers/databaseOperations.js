@@ -1,5 +1,10 @@
 const mysql = require('mysql2');
 const utile = require('../utils/util.js')
+const Json2csvParser = require("json2csv").Parser;
+const fs = require("fs");
+
+const testDB = "invoicemanager"
+const liveDB = "baza_date_facturi"
 
 const connection=mysql.createConnection({
     host:"localhost",
@@ -826,6 +831,102 @@ function getRecordsNumber(queryDB, queryFilter, queryFilterData){
     }) 
 }
 
+async function exportData(){
+
+    if (!fs.existsSync('./exports')){
+        fs.mkdirSync('./exports');
+    }
+
+    let exportInvoices = new Promise((resolve, reject)=>{
+        connection.query("SELECT * FROM invoices", function(error, data, fields) {
+            if (error) throw error;
+            const jsonData = JSON.parse(JSON.stringify(data));
+            const json2csvParser = new Json2csvParser({ header: true});
+            const csv = json2csvParser.parse(jsonData);
+            fs.writeFile("./exports/invoices.csv", csv, function(error) {
+              if (error) throw error;
+              console.log("invoices.csv generated");
+              resolve("OK")
+            });
+        });
+    })
+
+    let exportBilledProjects = new Promise((resolve, reject)=>{
+        connection.query("SELECT * FROM invoices_billed_products", function(error, data, fields) {
+            if (error) throw error;
+            const jsonData = JSON.parse(JSON.stringify(data));
+            const json2csvParser = new Json2csvParser({ header: true});
+            const csv = json2csvParser.parse(jsonData);
+            fs.writeFile("./exports/invoices_billed_products.csv", csv, function(error) {
+              if (error) throw error;
+              console.log("invoices_billed_products.csv generated");
+              resolve("OK")
+            });
+        });
+    })
+
+    let predefinedProducts = new Promise((resolve, reject)=>{
+        connection.query("SELECT * FROM predefined_products", function(error, data, fields) {
+            if (error) throw error;
+            const jsonData = JSON.parse(JSON.stringify(data));
+            const json2csvParser = new Json2csvParser({ header: true});
+            const csv = json2csvParser.parse(jsonData);
+            fs.writeFile("./exports/predefined_products.csv", csv, function(error) {
+              if (error) throw error;
+              console.log("predefined_products.csv generated");
+              resolve("OK")
+            });
+        });
+    })
+
+    let clients = new Promise((resolve, reject)=>{
+        connection.query("SELECT * FROM clients", function(error, data, fields) {
+            if (error) throw error;
+            const jsonData = JSON.parse(JSON.stringify(data));
+            const json2csvParser = new Json2csvParser({ header: true});
+            const csv = json2csvParser.parse(jsonData);
+            fs.writeFile("./exports/clients.csv", csv, function(error) {
+              if (error) throw error;
+              console.log("clients.csv generated");
+              resolve("OK")
+            });
+        });
+    })
+
+    Promise.all([exportInvoices, exportBilledProjects, predefinedProducts, clients]).then((values) => {
+        return(values)
+    });
+
+}
+
+function getDBinfo(){
+    return({
+        host: connection.config.host,
+        user:connection.config.user,
+        database:connection.config.database
+    })
+}
+
+function changeDBinfo(){
+    return new Promise((resolve, reject)=>{
+        if(connection.config.database===testDB){
+            connection.changeUser({database : liveDB}, function(err) {
+                if (err){
+                    connection.changeUser({database : testDB}, function(err) {})
+                    reject(false)
+                }
+                resolve(liveDB)
+            })
+        }else{
+            connection.changeUser({database : testDB}, function(err) {
+                if (err) reject(false)
+                resolve(testDB)
+            })
+        }
+    })
+
+}
+
 module.exports ={
     getAllClients:getAllClients,
     addElement:addElement,
@@ -855,5 +956,8 @@ module.exports ={
     getProductInvoice:getProductInvoice,
     updateInvoiceTotals:updateInvoiceTotals,
     registerBilledProducts: registerBilledProducts,
-    getRecordsNumber:getRecordsNumber
+    getRecordsNumber:getRecordsNumber,
+    exportData:exportData,
+    getDBinfo:getDBinfo,
+    changeDBinfo:changeDBinfo
 }

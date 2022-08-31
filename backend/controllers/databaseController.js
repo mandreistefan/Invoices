@@ -237,7 +237,7 @@ function archiveInvoice(invoiceID, callback){
 
 async function fetchInvoiceData(querryObject){
     let dataArray={
-        invoiceProperty:({number:"", client_first_name:"", client_last_name:"", client_billing_adress:{county:"", city:"", street:"", number:"", zip:"", phone:"", email:""}, date:"", total:({price:0, tax:0, items:0})}),
+        invoiceProperty:({number:"", date:"", client_first_name:"", client_last_name:"", client_billing_adress:{county:"", city:"", street:"", number:"", zip:"", phone:"", email:""}, date:"", total:({price:0, tax:0, items:0})}),
         invoiceProducts:{}
     }
 
@@ -247,6 +247,7 @@ async function fetchInvoiceData(querryObject){
 
     //populate the object
     dataArray.invoiceProperty.number=invoiceData.data[0].invoice_number
+    dataArray.invoiceProperty.date=utile.simpleDate(invoiceData.data[0].invoice_date)
     dataArray.invoiceProperty.client_first_name=invoiceData.data[0].client_first_name
     dataArray.invoiceProperty.client_last_name=invoiceData.data[0].client_last_name
     dataArray.invoiceProperty.client_billing_adress.county=invoiceData.data[0].client_county
@@ -453,6 +454,24 @@ async function removeProduct(entry){
     }
 }
 
+async function createExportableData(){
+    let status= await databaseOperations.exportData()
+}
+
+function getDatabaseInfo(){
+    let data = databaseOperations.getDBinfo()
+    return data
+}
+
+function changeDatabaseInfo(callback){
+    databaseOperations.changeDBinfo().then(data=>{
+        callback(data)
+    })
+    .catch(data=>{
+        callback(data)
+    })
+}
+
 module.exports={
     fetchClients:fetchClients,
     addInvoice:addInvoice,
@@ -467,5 +486,8 @@ module.exports={
     getRecurrentInvoiceProducts: getRecurrentInvoiceProducts,
     getPredefinedProducts:getPredefinedProducts,
     handleProduct:handleProduct,
-    removeProduct:removeProduct
+    removeProduct:removeProduct,
+    createExportableData:createExportableData,
+    getDatabaseInfo:getDatabaseInfo,
+    changeDatabaseInfo:changeDatabaseInfo
 }

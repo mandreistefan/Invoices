@@ -85,6 +85,10 @@ let InvoicesOverview = (props) =>{
         setPage(pageNumber)
     }
 
+    let openInvoice=(invoiceID)=>{
+        window.open(`http://localhost:3001/generateInvoice/${invoiceID}`).focus();
+    }
+
     return(
         <div className="app-data-container">         
             {invoicesData &&
@@ -96,35 +100,29 @@ let InvoicesOverview = (props) =>{
                                 <div className="info-text-box">                                
                                     <p className="lead">Provides an overview of all invoices. <b>Draft</b> invoices are saved, but can still be edited; draft invoices are not considered for financial calculations. <b>Finalised</b> invoices can no longer be edited and are considered proof of bill.</p>
                                 </div>
-                                <div class="row g-4 py-2 row-cols-1 row-cols-lg-3">
+                                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 py-2">
                                     <div class="col d-flex align-items-start">
-                                        <div class="icon-square text-bg-light d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
-                                            <span style={{marginRight:"10px"}} className="material-icons-outlined">open_in_new</span>
-                                        </div>
+                                    <span style={{fontSize:'30px'}} className="material-icons-outlined me-3">open_in_new</span>
                                         <div>
-                                            <h4>Open</h4>
+                                            <h4 class="fw-bold mb-0">Open</h4>
                                             <p>Generate a printable copy of the invoice. INFO: all invoices can be generated, including draft invoices</p>
                                         </div>
                                     </div>
                                     <div class="col d-flex align-items-start">
-                                        <div class="icon-square text-bg-light d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
-                                            <span style={{marginRight:"10px"}} className="material-icons-outlined">edit</span>
-                                        </div>
+                                    <span  style={{fontSize:'30px'}} className="material-icons-outlined me-3">edit</span>
                                         <div>
-                                            <h4>Edit</h4>
+                                            <h4 class="fw-bold mb-0">Edit</h4>
                                             <p>Edit invoices. Finalised invoices cannot be edited</p>
                                         </div>
                                     </div>
                                     <div class="col d-flex align-items-start">
-                                        <div class="icon-square text-bg-light d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
-                                            <span style={{marginRight:"10px"}} className="material-icons-outlined">delete</span>
-                                        </div>
+                                    <span  style={{fontSize:'30px'}} className="material-icons-outlined me-3">delete</span>
                                         <div>
-                                            <h4>Delete</h4>
+                                            <h4 class="fw-bold mb-0">Delete</h4>
                                             <p>Delete an invoice. Deleted invoices are NOT erased, but they are archived</p>
                                         </div>
                                     </div>
-                                </div>
+                                </div>                               
                             </div>
                         </div>
                     }
@@ -157,7 +155,7 @@ let InvoicesOverview = (props) =>{
                                     <td>
                                         <div className='actions-container'>                                    
                                             <SmallMenu items={[
-                                                {name:"Open", icon:"open_in_new", disabled: false, clickAction:()=>{setActiveInvoice(element.invoice_number)}}, 
+                                                {name:"Open", icon:"open_in_new", disabled: false, clickAction:()=>{openInvoice(element.invoice_number)}}, 
                                                 {name:"Edit", icon:"edit", disabled: element.invoice_status==="finalised" ? true :  false, clickAction:()=>{setEditInvoice({enabled:true, invoiceID:element.invoice_number})}}, 
                                                 {name:"Delete", icon:"delete", disabled:false, clickAction:()=>{deleteInvoice(element.invoice_number)}}
                                             ]}/>

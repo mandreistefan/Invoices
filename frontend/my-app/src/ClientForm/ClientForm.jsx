@@ -240,41 +240,41 @@ let TheClientForm = (props)=>{
             <div className='form-row'>
                 <div className="form-group col-md-3">            
                     <label className="form-subsection-label" htmlFor="client_first_name">First name:</label><br/>
-                    <input type="text" id="client_first_name" name="client_first_name" disabled={(props.editable===false) ?  true: false} className="form-control" modified="false" autoComplete="off" onChange={changeFormData} value={data.client_first_name_input}/>
+                    <input type="text" id="client_first_name" name="client_first_name" disabled={(props.editable===false) ?  true: false} className="form-control shadow-none" modified="false" autoComplete="off" onChange={changeFormData} value={data.client_first_name_input}/>
                 </div>
                 <div className="form-group col-md-3">   
                     <label className="form-subsection-label" htmlFor="client_last_name">Last name:</label><br/>
-                    <input type="text" id="client_last_name" name="client_last_name" disabled={(props.editable===false) ?  true: false} className="form-control" modified="false" onChange={changeFormData} value={data.client_last_name_input}/>
+                    <input type="text" id="client_last_name" name="client_last_name" disabled={(props.editable===false) ?  true: false} className="form-control shadow-none" modified="false" onChange={changeFormData} value={data.client_last_name_input}/>
                 </div>
                 <div className="form-group col-md-3">  
                     <label className="form-subsection-label" htmlFor="client_phone">Phone number:</label><br/>
-                    <input type="text" id="client_phone" name="client_phone" disabled={(props.editable===false) ?  true: false} className="form-control" modified="false" onChange={changeFormData} value={data.client_phone_input}/>
+                    <input type="text" id="client_phone" name="client_phone" disabled={(props.editable===false) ?  true: false} className="form-control shadow-none" modified="false" onChange={changeFormData} value={data.client_phone_input}/>
                 </div>
                 <div className="form-group col-md-3">   
                     <label className="form-subsection-label" htmlFor="client_email">Email Adress:</label><br/>
-                    <input type="email" id="client_email" name="client_email" disabled={(props.editable===false) ?  true: false} className="form-control" modified="false" onChange={changeFormData} value={data.client_email_input}/>
+                    <input type="email" id="client_email" name="client_email" disabled={(props.editable===false) ?  true: false} className="form-control shadow-none" modified="false" onChange={changeFormData} value={data.client_email_input}/>
                 </div>
             </div>
             <div className='form-row'>
                 <div className="form-group col-md-2">  
                     <label className="form-subsection-label" htmlFor="client_county">County:</label><br/>
-                    <input type="text" id="client_county" name="client_county" disabled={(props.editable===false) ?  true: false} className="form-control" modified="false" onChange={changeFormData} value={data.client_county_input}/>
+                    <input type="text" id="client_county" name="client_county" disabled={(props.editable===false) ?  true: false} className="form-control shadow-none" modified="false" onChange={changeFormData} value={data.client_county_input}/>
                 </div>
                 <div className="form-group col-md-2">   
                     <label className="form-subsection-label" htmlFor="client_city">City:</label><br/>
-                    <input type="text" id="client_city" name="client_city" disabled={(props.editable===false) ?  true: false} className="form-control" modified="false" onChange={changeFormData} value={data.client_city_input}/>
+                    <input type="text" id="client_city" name="client_city" disabled={(props.editable===false) ?  true: false} className="form-control shadow-none" modified="false" onChange={changeFormData} value={data.client_city_input}/>
+                </div>
+                <div className="form-group col-md-4">   
+                    <label className="form-subsection-label" htmlFor="client_street">Street:</label><br/>
+                    <input type="text" id="client_street" name="client_street" disabled={(props.editable===false) ?  true: false} className="form-control shadow-none" modified="false" onChange={changeFormData} value={data.client_street_input}/>
                 </div>
                 <div className="form-group col-md-2">   
-                    <label className="form-subsection-label" htmlFor="client_street">Street:</label><br/>
-                    <input type="text" id="client_street" name="client_street" disabled={(props.editable===false) ?  true: false} className="form-control" modified="false" onChange={changeFormData} value={data.client_street_input}/>
-                </div>
-                <div className="form-group col-md-1">   
                     <label className="form-subsection-label" htmlFor="client_adress_number">Number:</label><br/>
-                    <input type="text" id="client_adress_number" name="client_adress_number" disabled={(props.editable===false) ?  true: false} className="form-control" modified="false" onChange={changeFormData} value={data.client_adress_number_input}/>
+                    <input type="text" id="client_adress_number" name="client_adress_number" disabled={(props.editable===false) ?  true: false} className="form-control shadow-none" modified="false" onChange={changeFormData} value={data.client_adress_number_input}/>
                 </div>
-                <div className="form-group col-md-5">   
+                <div className="form-group col-md-2">   
                     <label className="form-subsection-label" htmlFor="client_zip">ZIP:</label><br/>
-                    <input type="text" id="client_zip" name="client_zip" disabled={(props.editable===false) ?  true: false} className="form-control" modified="false" onChange={changeFormData} value={data.client_zip_input}/>
+                    <input type="text" id="client_zip" name="client_zip" disabled={(props.editable===false) ?  true: false} className="form-control shadow-none" modified="false" onChange={changeFormData} value={data.client_zip_input}/>
                 </div>
             </div>
             {(props.isSubmitable===true) && <button id="edit-client-data" className="client-form-button"><span className="action-button-label" onClick={()=>{submitClientData()}}>SUBMIT</span></button>}
