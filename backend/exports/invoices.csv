@@ -1,18 +1,1 @@
 "invoice_number","invoice_status","invoice_pay_method","invoice_bank_ref","rec_number","customer_id","client_first_name","client_last_name","client_county","client_city","client_street","client_adress_number","client_zip","client_phone","client_email","invoice_date","invoice_tax","invoice_total_sum"
-254,"unpaid","null","null",,0,"Stefan","Andrei","Brasov","Brasov","Vlahuta","63","123456","undefined","undefined","2022-07-05T21:00:00.000Z",20,200
-269,"unpaid","null","null",,0,"Stefan","Andrei","Brasov","Brasov","Vlahuta","63","123456","undefined","undefined","2022-07-11T21:00:00.000Z",20,200
-270,"paid","cash",,,0,"Stefan","Andrei","Brasov","Brasov","Vlahuta","63","123456","undefined","undefined","2022-07-11T21:00:00.000Z",20,200
-292,"undefined","undef","undefined",245,21,"Andrei","Stefan","Bacau","Tg. Ocna","C. Negri","G8","123456","0744256233","mandreistefan@gmail.com","2022-07-20T21:00:00.000Z",13,130
-293,"undefined","undef","undefined",246,22,"Stefan","Andrei","Brasov","Brasov","Vlahuta","63","123456","1234567890","stefandrei@mail.com","2022-07-24T21:00:00.000Z",5,50
-294,"finalised","cash","",,0,"Popescu","Mihaiiescu","Bacau","Tg. Ocna","C. Negri","G8","1234567","0744256233","mandreistefan@gmail.com","2022-07-26T21:00:00.000Z",30,890
-295,"finalised","cash","",,0,"Mihai","Mihai","Bacau","Oras","sStrada","123","1234","1234567890","mail@mail.com","2022-07-27T21:00:00.000Z",17.8,178
-299,"finalised","cash","",,21,"Andreiut","Stefan","Bacau","Tg. Ocna","C. Negri","G89","123456","0744256233","mandreistefan@gmail.com","2022-08-01T21:00:00.000Z",30,760
-306,"finalised","bank","x123456bc8",,21,"Andrei","Stefan","Bacau","Tg. Ocna","C. Negri","G8","123456","0744256233","mandreistefan@gmail.com","2022-08-02T21:00:00.000Z",40,590
-307,"draft","cash","",,0,"NumeFamilie","Prenume","Judet","Oras","Strada leStrada","12","12345","1234567890","mail@mail.com","2022-08-02T21:00:00.000Z",12.3,123
-308,"draft","cash","",,21,"Andrei","Stefan","Bacau","Tg. Ocna","C. Negri","G8","123456","0744256233","mandreistefan@gmail.com","2022-08-03T21:00:00.000Z",10,100
-309,"draft","cash","",,22,"Stefan","Andrei","Brasov","Brasov","Vlahuta","63","123456","1234567890","stefandrei@mail.com","2022-08-03T21:00:00.000Z",10,180
-310,"draft","cash","",,22,"Stefan","Andrei","Brasov","Brasov","Vlahuta","63","123456","1234567890","stefandrei@mail.com","2022-08-10T21:00:00.000Z",50,600
-311,"draft","cash","",,22,"Stefan","Andrei","Brasov","Brasov","Vlahuta","63","123456","1234567890","stefandrei@mail.com","2022-08-28T21:00:00.000Z",8,203
-312,"finalised","cash","",,29,"Nume","Prenume","Bacau","Oras","Strada","1234","1234","0744256233","mail@mail.com","2022-08-29T21:00:00.000Z",10,100
-313,"finalised","bank","234gdfg123",,0,"Nume","Prenume","bacau","oras","strada","123","123","1234","mail@mail.com","2022-08-29T21:00:00.000Z",10,100
-315,"finalised","bank","1234cccasd",,0,"Nume","Nume","bacau","oras","strada","","","1234567890","mail@mail.com","2022-08-29T21:00:00.000Z",10,100
