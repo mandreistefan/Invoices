@@ -36,6 +36,7 @@ let PredefinedProductsManager = (props) =>{
                 </thead>               
                 <tbody className='clients-table-body app-data-table-body'>
                 {
+                    predefinedProducts.length>0 ? 
                     predefinedProducts.map((element, index)=>(
                         <tr key={index} className='clients-table-row app-data-table-row'>
                             <td>{index+1}</td>
@@ -68,10 +69,11 @@ let PredefinedProductsManager = (props) =>{
                                 }
                             </td>
                         </tr>
-                    ))
+                    )):""
                 }
                 </tbody>
             </table>
+            {predefinedProducts.length==0 ? <div style={{textAlign:"center", width:"100%"}}><h4 >No data</h4></div> : ""}
             {productProps!=null &&
                 <div> 
                     <div className="blur-overlap"></div>     

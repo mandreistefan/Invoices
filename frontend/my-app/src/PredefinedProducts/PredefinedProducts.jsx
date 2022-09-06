@@ -19,10 +19,8 @@ let Products=()=>{
                 <div className="info-text-box">                                
                     <p className="lead">Provides an overview of all predefined products. Editing a predefined product will NOT overwrite data in existing invoices.</p>
                 </div>
-                <div className="available-products invoice-products-container form-group"> 
-                    <p class="lead">Products</p>            
+                <div className="available-products form-group">          
                     <ExistingProducts insertable={false} actions={true}/>
-
                     {addProduct &&
                         <div> 
                             <div className="blur-overlap"></div>     

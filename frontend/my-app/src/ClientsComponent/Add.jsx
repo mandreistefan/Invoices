@@ -32,18 +32,16 @@ let Add = (props) =>{
         })
     }
 
-    return(
-          
-            <div>
-                <div className="overlapping-component-inner">
-                    <div style={{width: "100%",height:"40px",padding:"5px"}}>
-                        <button style={{float: "right"}} type="button" className="action-red-button" onClick={()=>{props.setDisplay(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
-                    </div>
-                    <ClientForm/>
+    return(          
+        <div>
+            <div className="overlapping-component-inner">
+                <div style={{width: "100%",height:"40px",padding:"5px"}}>
+                    <button style={{float: "right"}} type="button" className="action-red-button" onClick={()=>{props.setDisplay(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
                 </div>
-                <div className="blur-overlap"></div>  
-            </div>  
-
+                <ClientForm title={"Add client"}/>
+            </div>
+            <div className="blur-overlap"></div>  
+        </div>
     )
 }
 

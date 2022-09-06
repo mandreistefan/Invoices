@@ -7,7 +7,7 @@ import PageNavigation from '../PageNavigation.jsx'
 
 let Clients = (props) =>{
 
-    const [allClients, setAllClients] = React.useState(null)
+    const [allClients, setAllClients] = React.useState([])
     const [clientID, setClientID] = React.useState(null)
     const [editableClient, setEditableClient] = React.useState(null)
     const [showClientInvoices, setShowClientInvoices] = React.useState(null)
@@ -36,7 +36,7 @@ let Clients = (props) =>{
         .then(response=>response.json())
         .then(data=>{
             if(data.status==="OK"){
-                setAllClients(data.data)
+                if(data.data) setAllClients(data.data)
                 if(numberOfElements===null) setNOE(data.totalRecordsNumber)
             }else{
                 setAlertUser({text:"Something went wrong"})
@@ -73,94 +73,73 @@ let Clients = (props) =>{
     }
 
     return(
-        allClients &&
-            <div className='clients-container app-data-container'>
+            <div className='app-data-container'>
                 {showInfo&&
-                <div>
-                    <div className="info-text">
-                        <h1 className="info-text-header">Clients</h1>
-                        <div className="info-text-box">                                
-                            <p className="lead">Provides an overview of all clients.</p>
-                        </div>
-                    </div>                  
-
-                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 py-2">
-                        <div class="col d-flex align-items-start">
-                        <span style={{fontSize:'30px'}} className="material-icons-outlined me-3">add</span>
-                            <div>
-                                <h4 class="fw-bold mb-0">New invoice</h4>
-                                <p>Add a new voice for a registered client. Client data is auto-filled</p>
+                    <div>
+                        <div className="info-text">
+                            <h1 className="info-text-header">Clients</h1>
+                            <div className="info-text-box">                                
+                                <p className="lead">Provides an overview of all clients.</p>
                             </div>
-                        </div>
-                        <div class="col d-flex align-items-start">
-                        <span  style={{fontSize:'30px'}} className="material-icons-outlined me-3">open_in_new</span>
-                            <div>
-                                <h4 class="fw-bold mb-0">Invoices</h4>
-                                <p>Show all invoices that are linked with the client</p>
-                            </div>
-                        </div>
-                        <div class="col d-flex align-items-start">
-                        <span  style={{fontSize:'30px'}} className="material-icons-outlined me-3">edit</span>
-                            <div>
-                                <h4 class="fw-bold mb-0">Edit</h4>
-                                <p>Edit the client info</p>
-                            </div>
-                        </div>
-                        <div class="col d-flex align-items-start">
-                        <span style={{fontSize:'30px'}}  className="material-icons-outlined me-3">delete</span>
-                            <div>
-                                <h4 class="fw-bold mb-0">Delete</h4>
-                                <p>Delete the registered client. Deleted clients are NOT erased, but they are archived</p>
-                            </div>
-                        </div>
+                        </div> 
                     </div>
-                </div>
-                }                  
-                <table className='table table-hover'>
-                    <thead className='table-active'>
-                        <tr className='app-data-table-row'>
-                            <th>Name</th>
-                            <th>County</th>
-                            <th>City</th>
-                            <th>Street</th>
-                            <th>Phone number</th>
-                            <th>Email</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody className='clients-table-body app-data-table-body'>              
-                        {allClients.map(element=>(
-                            <tr key={element.id} className='clients-table-row app-data-table-row'>
-                                <td>{element.client_first_name} {element.client_last_name}</td>
-                                <td>{element.client_county}</td> 
-                                <td>{element.client_city}</td>
-                                <td>{element.client_street}</td>                               
-                                <td>{element.client_phone}</td>
-                                <td>{element.client_email}</td>
-                                <td>
-                                    <div className='actions-container'>
-                                        <SmallMenu items={[
-                                            {name:"New invoice", icon:"add", clickAction:()=>{props.enableInvoiceApp(true, element.id)}}, 
-                                            {name:"Invoices", icon:"file_open", clickAction:()=>{enableClientInvoices(element.id)}}, 
-                                            {name:"Edit", icon:"edit", clickAction:()=>{enableClientEditing(element.id)}},
-                                            {name:"Delete", icon:"delete", clickAction:()=>{deleteClient(element.id)}}
-                                        ]}/>
-                                    </div>                                    
-                                </td>
+                }     
+
+
+                <table className='table table-hover' style={{marginTop:'20px'}}>
+                        <thead className='table-active'>
+                            <tr>  
+                                <th>#</th>
+                                <th>NUME</th> 
+                                <th>ADRESA</th>
+                                <th>TELEFON</th>                                
+                                <th>MAIL</th>
+                                <th>NOTE</th>
+                                <th></th>
                             </tr>
-                        ))}
-                    </tbody>  
-                </table>
+                        </thead>
+                        <tbody className='clients-table-body'>              
+                            {allClients.length>0 ? 
+                                allClients.map((element, index)=>(
+                                    <tr key={element.invoice_number} className='clients-table-row'>  
+                                        <td>{index+1}</td>         
+                                        <td> 
+                                            <div style={{display:'flex', flexDirection:'row', alignItems:'center'}}>
+                                                <div className="name-badge">{element.client_first_name.substring(0,1)}{element.client_last_name.substring(0,1)}</div>
+                                                {element.client_first_name} {element.client_last_name}     
+                                            </div>
+                                        </td>               
+                                        <td>{element.client_county}, {element.client_city} ,{element.client_street}, {element.client_adress_number}, {element.client_zip}</td>                            
+                                        <td>{element.client_phone}</td>
+                                        <td>{element.client_email}</td>      
+                                        <td style={{maxWidth:'400px'}} className="text-overflow-hide">{element.client_notes}</td>                           
+                                        <td>
+                                            <div className='actions-container'>                                    
+                                                <SmallMenu items={[
+                                                    {name:"Bill", icon:"receipt_long", clickAction:()=>{props.enableInvoiceApp(true, element.id)}}, 
+                                                    {name:"Invoices", icon:"file_open", clickAction:()=>{enableClientInvoices(element.id)}}, 
+                                                    {name:"Edit", icon:"edit", clickAction:()=>{enableClientEditing(element.id)}},
+                                                    {name:"Delete", icon:"delete", clickAction:()=>{deleteClient(element.id)}}
+                                                ]}/>
+                                            </div> 
+                                        </td>
+                                    </tr>
+                            )):""}
+                        </tbody>  
+                    </table>
+                {allClients.length==0 && <div style={{textAlign:"center", width:"100%"}}><h4 >No data</h4></div>}
                 <PageNavigation numberOfItems={numberOfElements} changePage={changePage}/>
                 {(editableClient!=null) &&
                     <div> 
                         <div className="blur-overlap"></div>     
                         <div className="overlapping-component-inner">
                             <div className="overlapping-component-actions">
-                                <span className="bd-lead">Edit client info</span>
+                                <h4><span className="material-icons-outlined" style={{marginRight:'5px'}}>edit</span>Edit</h4>
                                 <button type="button" className="action-close-window" onClick={()=>{setEditableClient(null)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
                             </div>
-                            <ClientForm editable={editableClient} isSubmitable={true} clientID={editableClient}/>
+                            <div class="app-content" style={{height:'fit-content'}}>
+                                <ClientForm editable={editableClient} isSubmitable={true} clientID={editableClient}/>
+                            </div>
                         </div>              
                     </div>
                 }  
@@ -169,7 +148,7 @@ let Clients = (props) =>{
                         <div className="blur-overlap"></div>     
                         <div className="overlapping-component-inner">
                             <div className="overlapping-component-actions">
-                                <span className="bd-lead">Client invoices</span>
+                                <span className="bd-lead"></span>
                                 <button type="button" className="action-close-window" onClick={()=>{setShowClientInvoices(null)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
                             </div>
                             <Invoices queryFilterBy="clientID" queryFilterData={showClientInvoices}/>

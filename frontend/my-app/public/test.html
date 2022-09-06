@@ -9,14 +9,13 @@
             </div>
             <div class="company-customer-info-container">
                 <div class="company-info">
-                    <span class="invoice-name">Numele companiei</span>
-                    <span>CIF: RO1234567</span>
-                    <span>Reg.com: SER13/123FFR/56AS</span>
-                    <span>Adresa: Judet, Oras, Str. Strada firmei, 89, Romania</span>                    
-                    <span>Telefon: 123456789</span>
-                    <span>Email: contact@contact.com</span>
-                    <span>Cont: RO1234BTRL5567889</span>
-                    <span>Cota TVA: TBD%</span>
+                    <span class="invoice-name">DoriFlor Ando SRL</span>
+                    <span>CIF: <b>RO1234567</b></span>
+                    <span>Reg.com: <b>SER13/123FFR/56AS</b></span>
+                    <span>Adresa: <b>Judet, Oras, Str. Strada firmei, 89, Romania</b></span>                    
+                    <span>Telefon: <b>123456789</b></span>
+                    <span>Email: <b>contact@contact.com</b></span>
+                    <span>Cont: <b>RO1234BTRL5567889</b></span>
                 </div>
                 <div class="customer-info">
                     <div class="invoice-info-container">
@@ -85,12 +84,12 @@
         function fillInvoiceWithData(invoiceData){
             document.getElementById("invoice-number").innerHTML=invoiceData.invoiceProperty.number
             document.getElementById("invoice-date").innerHTML=invoiceData.invoiceProperty.date
-            document.getElementById("invoice-info-total").innerHTML=invoiceData.invoiceProperty.total.price
+            document.getElementById("invoice-info-total").innerHTML=`${invoiceData.invoiceProperty.total.price} RON`
             document.getElementById("client-name").innerHTML=`${invoiceData.invoiceProperty.client_first_name}, ${invoiceData.invoiceProperty.client_last_name}`
             document.getElementById("client-adress").innerHTML=`${invoiceData.invoiceProperty.client_billing_adress.county}, ${invoiceData.invoiceProperty.client_billing_adress.city}, ${invoiceData.invoiceProperty.client_billing_adress.street}, ${invoiceData.invoiceProperty.client_billing_adress.number}`
             document.getElementById("billed-products-table-body").innerHTML = generateTable(invoiceData.invoiceProducts)
-            document.getElementById("invoice-total").innerHTML = `${invoiceData.invoiceProperty.total.price} RON`
-            document.getElementById("invoice-total-tax").innerHTML = `${invoiceData.invoiceProperty.total.tax} RON`
+            document.getElementById("invoice-total").innerHTML = `<b>${invoiceData.invoiceProperty.total.price} RON</b>`
+            document.getElementById("invoice-total-tax").innerHTML = `<b>${invoiceData.invoiceProperty.total.tax} RON</b>`
         }
 
         //fetch data from the DB
@@ -185,6 +184,7 @@
         }
 
         tfoot{
+            border: 1px solid lightgray;
             background-color: #d3d3d3;
         }
 

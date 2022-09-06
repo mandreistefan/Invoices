@@ -34,18 +34,16 @@ let SmallMenu = (props) =>{
     //rise-above class only has z-index>1, so that each menu is above other menus
     //use different logic depending on the status of menuVisible (true if the menu is open and false if not)
     return(       
-        <div className={ (menuVisible) ? 'small-menu-container rise-above' : 'small-menu-container' } ref={carlig}>
-            <div className='handler-bar'><button className='small-menu-button' style={{float:'right'}}onClick={()=>{(menuVisible) ? setVisibility(false): setVisibility(true)}}><span className="material-icons-outlined">{(menuVisible) ? 'arrow_drop_up' : 'arrow_drop_down'}</span></button></div>
-            <div className='menu-content'>
-                {menuVisible&&
-                    props.items.map((element, index)=>(
+        <div class="dropdown" ref={carlig}>
+            <button onClick={()=>{setVisibility(true)}} className="dropbtn"><span class="material-icons-outlined">more_vert</span></button>
+            <div id="myDropdown" className={menuVisible ? "dropdown-content show" : "dropdown-content"} ref={carlig}>
+                {props.items.map((element, index)=>(
                         <button key={index} className='small-menu-button' disabled={element.disabled ? true : false} onClick={()=>{handleButtonClick(element.clickAction)}}>                                
                             <div className='inner-button-content'>
                                 <span className="material-icons-outlined">{element.icon}</span>{element.name}
                             </div>
                         </button>
-                    ))
-                }
+                ))}
             </div>
         </div>
     )

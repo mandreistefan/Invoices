@@ -15,18 +15,17 @@ async function fetchClients(querryObject){
     })
 }
 
+//add or edit client data
 function handleClientData(data, callback){
     if(data.clientID!=null){
-        databaseOperations.editElement(data)
-        .then(result=>{
+        databaseOperations.editElement(data).then(result=>{
             callback(result)
         })
         .catch(err=>{
             callback(utile.returnal("ERROR", null))
         })
     }else{
-        databaseOperations.addElement(data)
-        .then(result=>{
+        databaseOperations.addElement(data).then(result=>{
             callback(result)
         })
         .catch(err=>{
@@ -258,6 +257,9 @@ async function fetchInvoiceData(querryObject){
     dataArray.invoiceProperty.client_billing_adress.phone=invoiceData.data[0].client_phone
     dataArray.invoiceProperty.client_billing_adress.email=invoiceData.data[0].client_email
     dataArray.invoiceProperty.invoice_date=invoiceData.data[0].invoice_date
+    dataArray.invoiceProperty.invoice_status=invoiceData.data[0].invoice_status
+    dataArray.invoiceProperty.invoice_pay_method=invoiceData.data[0].invoice_pay_method
+    dataArray.invoiceProperty.invoice_bank_ref=invoiceData.data[0].invoice_bank_ref
     dataArray.invoiceProperty.total.price=invoiceData.data[0].invoice_total_sum
 
     //products linked with the invoice

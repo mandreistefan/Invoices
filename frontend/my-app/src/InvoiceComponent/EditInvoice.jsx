@@ -10,9 +10,7 @@ let EditInvoice=(props)=>{
     },[])
 
     let getData=(invoice)=>{
-        fetch(`./invoiceGenerator/inv/invoiceID/${invoice}`)
-        .then(response=>response.json())
-        .then(data=>{
+        fetch(`./invoiceGenerator/inv/invoiceID/${invoice}`).then(response=>response.json()).then(data=>{
             setPassedData(data.data)
         })
     }

@@ -33,6 +33,7 @@ export default class ClientsComponent extends React.Component{
         })
     }
 
+    //search - not implemented
     searchInDatabase = () =>{
         fetch("/search", {
             method:"POST",
@@ -56,7 +57,7 @@ export default class ClientsComponent extends React.Component{
         return(
             <div>
                 <div className="app-submenu-selector">
-                    <button id="add-client" onClick={()=>{this.displayClientAdder(true)}}><span className="button-label"><span className="material-icons-outlined">add</span>Add client</span></button>
+                    <button id="add-client" onClick={()=>{this.displayClientAdder(true)}}><span className="button-label"><span className="material-icons-outlined">person_add</span>Add client</span></button>
                 </div>
 
                 {this.state.showAddNewClient && 
@@ -64,10 +65,12 @@ export default class ClientsComponent extends React.Component{
                         <div className="blur-overlap"></div>     
                         <div className="overlapping-component-inner">
                             <div className="overlapping-component-actions">
-                                <span className="bd-lead">Invoice overview</span>
+                                <h4><span className="material-icons-outlined" style={{marginRight:'5px'}}>person_add</span>Add client</h4>
                                 <button type="button" className="action-close-window" onClick={()=>{this.displayClientAdder(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
                             </div>
-                            <ClientForm editable={true} isSubmitable={true} clientID={null}/>
+                            <div class="app-content" style={{height:'fit-content'}}>
+                                <ClientForm editable={true} isSubmitable={true} clientID={null}/>
+                            </div>                            
                         </div>              
                     </div>
                 }
@@ -79,7 +82,7 @@ export default class ClientsComponent extends React.Component{
                         <div className="blur-overlap"></div>     
                         <div className="overlapping-component-inner">
                             <div className="overlapping-component-actions">
-                                <span className="bd-lead">Add a new invoice</span>
+                                <h4><span className="material-icons-outlined" style={{marginRight:'5px'}}>receipt_long</span>New invoice</h4>
                                 <button type="button" className="action-close-window" onClick={()=>{this.enableInvoiceApp(false, null)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
                             </div>
                             <Invoice activeClient={this.state.activeClient} enableInvoiceApp={this.enableInvoiceApp}/>

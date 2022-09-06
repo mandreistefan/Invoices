@@ -205,6 +205,7 @@ export default class Invoice extends React.Component{
                 //don't submit an invoice with no user data
                 if(!this.clientDataValid()){
                     console.log("clientDatainvalid")
+                    this.setState({alertUser:"Invalid form data!"})
                     return false
                 }
                 dataToBeSent=({client_first_name: event.target.client_first_name.value, client_last_name: event.target.client_last_name.value, client_phone: event.target.client_phone.value, client_email: event.target.client_email.value, client_county: event.target.client_county.value, client_city: event.target.client_city.value, client_street: event.target.client_street.value, client_adress_number: event.target.client_adress_number.value, client_zip: event.target.client_zip.value, client_phone: event.target.client_phone.value, billingProducts: this.billedProductsServerFormat(this.state.tableElements), invoice_status: this.state.invoice_status, invoice_pay_method: this.state.invoice_pay_method, invoice_bank_ref: this.state.invoice_bank_ref})
@@ -238,14 +239,13 @@ export default class Invoice extends React.Component{
             headers: { 'Content-Type': 'application/json' },
             body:JSON.stringify(dataToBeSent)
         })
-        .then(response=>response.json())
-        .then(data=>{
+        .then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 let invoiceID = this.state.invoiceID
                 //notify the user
                 this.setState({alertUser:"Success"})
                 //if we updated some data, let's reinterogate the server and reset with the data on DB
-                //this should prevent certain issues, like removing a newly submitted products that doesn't have an entry
+                //this should prevent certain issues, like removing a newly submitted product that doesn't have an entry
                 if(method==="POST"){
                     invoiceID = data.invoiceID
                     this.setState({invoiceID: invoiceID})
@@ -398,7 +398,7 @@ export default class Invoice extends React.Component{
                     </div>                                  
                     <form id="invoice-form" onSubmit={this.submitData}>
                             <div className="client-info-container form-sub-container">
-                                <ClientForm editable={((this.state.activeClient!=null)||this.state.isFormDisabled) ? false : true} isSubmitable={false} clientID={this.state.activeClient} userData={this.state.userData}/>
+                                <ClientForm editable={((this.state.activeClient!=null)||this.state.isFormDisabled||this.state.invoiceID!=null) ? false : true} isSubmitable={false} clientID={this.state.activeClient} userData={this.state.userData}/>
                             </div>  
 
                             <div className="row">

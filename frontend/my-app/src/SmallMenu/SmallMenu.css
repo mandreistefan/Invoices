@@ -1,44 +1,64 @@
-.small-menu-container{
-    display: flex;
-    flex-direction: column;
-    width:fit-content;
-    max-width: 150px;
-    border:1px solid #DEE2E6;
-    border-radius: 5px;    
+/* Dropdown Button */
+.dropbtn {
+    background-color: transparent;
+    color: black;
+    padding: 4px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius:4px;
+  }
+  
+  /* Dropdown button on hover & focus */
+  .dropbtn:hover, .dropbtn:focus {
+    background-color: #D9D9D9;
+  }
+  
+  /* The container <div> - needed to position the dropdown content */
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  /* Dropdown Content (Hidden by Default) */
+  .dropdown-content {
+    display: none;
     position: absolute;
-    background-color: #edf2f4;
-}
-
-.menu-content{
-    display: flex;
-    flex-direction: column;
-}
-
-.rise-above{
-    z-index:5;
-    -webkit-box-shadow: 0px 1px 5px 1px rgba(0,0,0,0.3); 
-    box-shadow: 0px 1px 5px 1px rgba(0,0,0,0.3);
-}
-
-.small-menu-button{
+    left:-80px;
+    background-color: #f1f1f1;
+    width: 120px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius:4px
+  }
+  
+  /* Links inside the dropdown */
+  .dropdown-content button {
+    color: black;
+    padding: 6px 8px;
+    text-decoration: none;
+    display: block;
     border:none;
-    background-color: inherit;
-}
+    width: 100%;
+    text-align: left;
+  }
 
-.small-menu-button:hover{
-    background-color: #d9d9d9;
-}
+  /* Links inside the dropdown */
+  .dropdown-content button:hover {
+    background-color: #D9D9D9;
+  }
+  
+  .dropdown-content button:disabled{
+    color:lightgray
+  }
 
-.inner-button-content{
+  /* Change color of dropdown links on hover */
+  .dropdown-content a:hover {background-color: #ddd;}
+  
+  /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+  .show {display:block;}
+
+  .inner-button-content{
     display: flex;
-    justify-content: start;
     align-items: center;
-}
-
-.handler-bar{
-    height: 24px;
-}
-
-.handler-bar button{
-    height: 24px;
-}
+  }

@@ -26,15 +26,6 @@
     padding:10px
 }
 
-.client-form-button{
-    width:fit-content;
-    height: 30px;
-    border-radius: 5px;
-    border:none;
-    margin-right: 5px;
-    background-color: #5d9659;
-    color:#F7F7F8;
-}
 
 .form-group .form-subsection-label{
     padding:0!important;

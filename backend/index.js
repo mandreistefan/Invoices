@@ -57,7 +57,7 @@ app.post("/clients",(req,res)=>{
     let data=req.body
     databaseController.handleClientData(data,(callback)=>{
         if(callback.status==="OK"){
-            res.send({status:"OK"})
+            res.send(callback)
         }else{
             res.send({status:"ERROR"})
         }

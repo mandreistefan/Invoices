@@ -68,7 +68,7 @@ function addElement(data){
             if(result.insertId){
                 resolve({
                     status: "OK",
-                    data: null
+                    data: result.insertId
                 })
             }else{
                 resolve({
