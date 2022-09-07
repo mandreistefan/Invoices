@@ -10,8 +10,9 @@ let Financial = (props) =>{
     let [alertUser, setUserAlert] =React.useState({text: null})
     //use for the horizontal scale of the chart
     let [chartInterval, setChartInterval] = React.useState(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
-    let [chartValues, setChartValues] = React.useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+    let [chartValues, setChartValues] = React.useState([0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     let [chartTitle, setChartTile] = React.useState("Current year")
+    let [chartData, setChartData] = React.useState([{month:8, year:2022, total:0}, {month:9, year:2022, total:0}])
 
     let currentDate = new Date()
     let initialStartDate = new Date()
@@ -40,25 +41,17 @@ let Financial = (props) =>{
         let querry = `/financial/?filter=interval&filterBy=${filterBy}`
         fetch(querry).then(response=>response.json()).then(data=>{
                 if(data.status==="OK"){
-                    setFinancialData(data.data)
-                    /*//periodicalData has a different use
-                    let chartData = data.data.periodicalData
+                    //periodicalData has a different use
+                    setChartData(data.data.periodicalData)
                     delete data.data.periodicalData
                     //contains totals and statistics
                     setFinancialData(data.data)
                     //contains data for plotting a chart
-                    setChartData(chartData)
-                    setChartTile(`Yearly, ${periodOfInterest[1]}`)
+                    setChartTile(`${interval.startDay}/${interval.startMonth}/${interval.startYear} - ${interval.endDay}/${interval.endMonth}/${interval.endYear}`)
                 }else if(data.status==="NO_DATA"){
-                    delete data.data.periodicalData
-                    //contains totals and statistics
-                    setFinancialData(data.data)
-                    setUserAlert({text: "No data available"})
-                    setChartInterval(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
-                    setChartValues([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-                    setChartTile(`${periodOfInterest[0]}, ${periodOfInterest[2]}, ${periodOfInterest[1]}`)
+
                 }else{
-                    setUserAlert({text: "There has been an error"})*/
+                    setUserAlert({text: "There has been an error"})
                 }
             })
     }
@@ -157,7 +150,7 @@ let Financial = (props) =>{
             </div>
 
             <div id="financial-chart">
-                <FinancialChart data={chartValues} intervals={chartInterval} plottedFor={chartTitle}/>             
+                <FinancialChart data={chartData} plottedFor={chartTitle}/>             
             </div>            
             <Snackbar text={alertUser.text} closeSnack={()=>{setUserAlert({text:null})}}/>  
         </div>

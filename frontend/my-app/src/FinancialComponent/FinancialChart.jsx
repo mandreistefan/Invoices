@@ -42,10 +42,19 @@ let FinanchialChart=(props)=>{
 
     //get dataset and intervals from props
     React.useEffect(()=>{
-        if(props.data!=null){      
+        if(props.data!=null){  
+            let labels=[], dataArray=[]    
             let shallowCopy = data
-            shallowCopy.labels=props.intervals
-            shallowCopy.datasets[0].data=props.data
+            console.log(props.data)
+            //decoding the data
+            props.data.forEach(element=>{
+                labels.push(`${element.month} ${element.year}`)
+                dataArray.push(element.total)
+            })
+            //labels array
+            shallowCopy.labels=labels
+            //data array
+            shallowCopy.datasets[0].data=dataArray
             setData(shallowCopy)            
         }
     },[props])
@@ -54,26 +63,7 @@ let FinanchialChart=(props)=>{
         <div className='px-4 py-2 my-2 text-center alert alert-light'>
             <h2 className='my-5'>{props.plottedFor}</h2>
             <Line key={props.plottedFor} options={options} data={data}/>
-            <table class="table table-striped table-sm">
-                <thead>
-                    <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Month</th>
-                    <th scope="col">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        props.intervals.map((element, index)=>(
-                            <tr key={index+1}>
-                                <td>{index+1}</td>
-                                <td>{element}</td>
-                                <td>{props.data[index]}</td>
-                            </tr>
-                        ))
-                    }          
-                </tbody>
-            </table>
+
         </div>
     )
     

@@ -299,19 +299,63 @@ function processFinancial(data, interval){
     if(data.length===0) return returnObj
     //data to process
     let currentInvoice = data[0].invoiceID
+    //used to calculate total/ month
+    let currentYear= data[0].invoice_date.getFullYear()
+    let currentMonth = data[0].invoice_date.getMonth()
+    let stepSum = 0
+    //format of {month: mm, year: yy, total:total sum for the month}
+    let arr=[]
     //process data - calculate totals and data for the graph
     data.forEach(element=>{
         returnObj.total+=element.total_price
-        returnObj.total_tax+=element.total_tax   
+        returnObj.total_tax+=element.total_tax 
+        //totals per month
+        if(element.invoice_date.getMonth()===currentMonth){
+            stepSum=stepSum+element.total_price
+        }else{
+            arr.push({month: currentMonth+1, year:currentYear, total:stepSum})
+            currentMonth=element.invoice_date.getMonth()
+            stepSum=element.total_price
+        }
+        //number of unique invoices 
         if(element.invoice_number!=currentInvoice){
             returnObj.total_number_invoices=returnObj.total_number_invoices+1
             currentInvoice=element.invoice_number
         }          
     })
 
+    //forEach finished, some data is in stepSum
+    arr.push({month: currentMonth+1, year:currentYear, total:stepSum})
+
+    let arr2=[]
+    let i=0, iMonth=0, iYear=startYear
+    do{
+        //the month
+        iMonth=i+startMonth>12 ? (i+startMonth)%12 : i+startMonth
+        iYear=i+startMonth>12 ? startYear+parseInt((i+startMonth)/12) : startYear
+        //console.log(iMonth, iYear)
+
+        arr2.push({month: iMonth, year:2000+iYear, total:0})
+
+        //number of steps
+        i=i+1
+    }while(i<noMonths)
+
+    //merge the two - arr holds only the months and totals for where there is data; arr2 holds an array that has one element for each month in the interval startmonth, startmonth+number of months
+    //merging the two means that for months from arr2 where there is data in arr(those months have invoices), update the totals and send an arr in the format [{month:2, year:2021, total:0},..,{month:2, year:2022, total:342},..]
+    arr2.map(element=>{
+        arr.map((element2, index)=>{
+            if(element.month===element2.month&&element.year===element2.year){
+                element.total=element2.total
+                arr.splice(index,1)
+                return true
+            }
+        })
+    })
+
     returnObj.total_net=returnObj.total-returnObj.total_tax
     returnObj.avg_per_invoice=returnObj.total/returnObj.total_number_invoices
-    returnObj.periodicalData=parsePeriod(data)
+    returnObj.periodicalData=arr2
     returnObj.avg_per_step=returnObj.total / noMonths
 
     return returnObj;
