@@ -130,26 +130,26 @@ let ProductForm = (props) =>{
         <div className='form-row' ref={carlig}>
             <div className="form-group col-2">            
                 <label className="form-subsection-label" htmlFor="pp_name">Product name:</label><br/>
-                <input type="text" id="pp_name" name="pp_name" className="form-control" onChange={changeFormData} value={arrayData.pp_name.value}/>
+                <input type="text" id="pp_name" name="pp_name" className="form-control shadow-none" onChange={changeFormData} value={arrayData.pp_name.value}/>
             </div>
             <div className="form-group col-2">   
                 <label className="form-subsection-label" htmlFor="pp_um">UM:</label><br/>
-                <input type="text" id="pp_um" name="pp_um"  className="form-control" onChange={changeFormData} value={arrayData.pp_um.value}/>
+                <input type="text" id="pp_um" name="pp_um"  className="form-control shadow-none" onChange={changeFormData} value={arrayData.pp_um.value}/>
             </div>
             <div className="form-group col-2">  
                 <label className="form-subsection-label" htmlFor="pp_price_per_item">Price per unit:</label><br/>
-                <input type="text" id="pp_price_per_item" name="pp_price_per_item"  className="form-control"onChange={changeFormData} value={arrayData.pp_price_per_item.value}/>
+                <input type="text" id="pp_price_per_item" name="pp_price_per_item"  className="form-control shadow-none"onChange={changeFormData} value={arrayData.pp_price_per_item.value}/>
             </div>
             <div className="form-group col-2">   
                 <label className="form-subsection-label" htmlFor="pp_tax">Tax:</label><br/>
-                <input type="email" id="pp_tax" name="pp_tax"  className="form-control"onChange={changeFormData} value={arrayData.pp_tax.value}/>
+                <input type="email" id="pp_tax" name="pp_tax"  className="form-control shadow-none"onChange={changeFormData} value={arrayData.pp_tax.value}/>
             </div>
             <div className="form-group col-4">   
                 <label className="form-subsection-label" htmlFor="pp_description">Description:</label><br/>
-                <input type="email" id="pp_description" name="pp_description"  className="form-control" onChange={changeFormData} value={arrayData.pp_description.value}/>
+                <input type="email" id="pp_description" name="pp_description"  className="form-control shadow-none" onChange={changeFormData} value={arrayData.pp_description.value}/>
             </div>
         </div>
-        <button className='btn btn-success btn-sm' onClick={()=>{submitData()}}><span className="action-button-label">Submit</span></button>
+        <button className='actions-button' onClick={()=>{submitData()}}><span className="action-button-label"><span class="material-icons-outlined">save</span> SAVE</span></button>
         <Snackbar text={snackBarText} closeSnack={()=>{setSnackBarText(null)}}/>
     </div>
     )

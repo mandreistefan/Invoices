@@ -26,13 +26,12 @@ let Products=()=>{
                             <div className="blur-overlap"></div>     
                             <div className="overlapping-component-inner">
                                 <div className="overlapping-component-actions">
-                                    <span className="bd-lead">Add a product</span>
+                                    <h4>Add a product</h4>
                                     <button type="button" className="action-close-window " onClick={()=>{setaddProduct(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
                                 </div>
-                                <div class="col-lg-6">
-                                    <p class="lead">Add a new predefined product that can be quickly added to an invoice<br/></p>
+                                <div class="app-content" style={{height:'fit-content'}}>
+                                    <ProductForm/> 
                                 </div>
-                                <ProductForm/> 
                             </div>              
                         </div>
                     }                               

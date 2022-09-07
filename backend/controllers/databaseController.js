@@ -295,62 +295,39 @@ function assignCustomDates(filterBy, object){
 
 async function getFinancials(querryObject){
 
-    let filterObject = {timeUnit:null, year: null, yearStart:null, yearEnd:null, monthStart:null, monthEnd:null, dayStart:null, dayEnd:null, quarter: null}
+    //some initial checks of the request
+    if(querryObject.filter!="interval"){
+        return({status:"INVALID_REQUEST", data: null})
+    }
+    if(querryObject.filterBy.length!=13){
+        return({status:"INVALID_REQUEST", data: null})
+    }
+    if(querryObject.filterBy.indexOf("-")<0){
+        return({status:"INVALID_REQUEST", data: null})
+    }
+
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
 
-    //filter is y=yearly, q=quarterly, c=custom
-    //custom needs to have a ddmmyy-ddmmyy formated string in filterBy
-    //q=quarterly uses custom fetcher
-    switch(querryObject.filter){
-        case "y":
-            filterObject.timeUnit="yearly"
-            filterObject.year=querryObject.filterBy
-            break
-        case "q":
-            filterObject.timeUnit="custom"
-            filterObject.yearStart=currentYear
-            filterObject.yearEnd=currentYear
-            switch(querryObject.filterBy.toLowerCase()){
-                case "q1":
-                    filterObject.monthStart="01"
-                    filterObject.dayStart="01"
-                    filterObject.monthEnd="03"
-                    filterObject.dayEnd="31"
-                    break
-                case "q2":
-                    filterObject.monthStart="04"
-                    filterObject.dayStart="01"
-                    filterObject.monthEnd="06"
-                    filterObject.dayEnd="30"
-                    break
-                case "q3":
-                    filterObject.monthStart="07"
-                    filterObject.dayStart="01"
-                    filterObject.monthEnd="09"
-                    filterObject.dayEnd="30"
-                    break
-                case "q4":
-                    filterObject.monthStart="10"
-                    filterObject.dayStart="01"
-                    filterObject.monthEnd="12"
-                    filterObject.dayEnd="31"
-                    break
-                default:
-                    return({status:"INVALID_REQUEST"})
-            }
-            break
-        case "c":
-            if(assignCustomDates(querryObject.filterBy, filterObject)===false) return({status:"INVALID_REQUEST"})
-            filterObject.timeUnit="custom"
-            break
-        default:
-            return({status:"INVALID_REQUEST"})
+    let interval={startDay:"", startMonth:"", startYear:"", endDay:"", endMonth:"", endYear:""}
+
+    if(querryObject.filter==="interval"){
+        let firstSplit = querryObject.filterBy.split("-")
+        interval={
+            startDay:`${firstSplit[0][0]}${firstSplit[0][1]}`,
+            startMonth:`${firstSplit[0][2]}${firstSplit[0][3]}`,
+            startYear:`${firstSplit[0][4]}${firstSplit[0][5]}`,
+            endDay:`${firstSplit[1][0]}${firstSplit[1][1]}`,
+            endMonth:`${firstSplit[1][2]}${firstSplit[1][3]}`,
+            endYear:`${firstSplit[1][4]}${firstSplit[1][5]}`,
+        }
+    }else{
+        //not applicable for now
     }
 
-    let data = await databaseOperations.getFinancialData(filterObject)
+    let data = await databaseOperations.getFinancialData(interval)
     if(data.status==="OK"){
-        return({status:data.data.length===0 ? "NO_DATA" : "OK", data: utile.processFinancial(data.data)})        
+        return({status:data.data.length===0 ? "NO_DATA" : "OK", data: utile.processFinancial(data.data, interval)})        
     }else{
         return({status:"ERROR", data: null})       
     }   
@@ -385,6 +362,10 @@ async function updateInvoice(data){
                 //register products
                 let productsUpdateStatus = await databaseOperations.registerBilledProducts(invoice_number, billingProducts)
                 if(productsUpdateStatus.status!="OK") return("UPDATE_PRODUCTS_ERROR")                
+            }
+            //update tax in invoices table if the invoice is done
+            if(data.invoice_status==="finalised"){
+                databaseOperations.updateInvoiceTotals(invoice_number)
             }
             return "OK"
         }

@@ -119,6 +119,10 @@
   filter: brightness(110%);
 }
 
+.actions-button:disabled{
+  background-color: #D9D9D9;
+}
+
 .action-button-label{
   display:flex;
   align-items: center;

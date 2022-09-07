@@ -62,8 +62,8 @@ export default class Invoice extends React.Component{
                     client_zip: invoiceData.invoiceProperty.client_billing_adress.zip
                 },
                 tableElements: this.decodeTableElements(invoiceData.invoiceProducts),
-                total_prod_price: invoiceData.invoiceProperty.total.price,  
-                total_tax: invoiceData.invoiceProperty.total.tax,
+                total_prod_price: parseFloat(invoiceData.invoiceProperty.total.price).toFixed(2),  
+                total_tax: parseFloat(invoiceData.invoiceProperty.total.tax).toFixed(2),
                 invoice_server_status: invoiceData.invoiceProperty.invoice_status,
                 invoice_status: invoiceData.invoiceProperty.invoice_status,
                 invoice_pay_method: invoiceData.invoiceProperty.invoice_pay_method,            
@@ -77,7 +77,7 @@ export default class Invoice extends React.Component{
     decodeTableElements =(dataAsArray)=>{
         let decodedData=[]
         dataAsArray.forEach(element=>{
-            decodedData.push({properties:{preloaded:true, id:null, entry: element.entry, valid:true},data:[element.name, element.um, element.quantity, element.tax_percentage, element.tax, element.ppu]})
+            decodedData.push({properties:{preloaded:true, id:element.id, entry: element.entry, valid:true},data:[element.name, element.um, element.quantity, element.tax_percentage, element.tax, element.ppu]})
         })
         return decodedData;        
     }
@@ -286,8 +286,8 @@ export default class Invoice extends React.Component{
             }
         })  
         this.setState({
-            total_prod_price:total,
-            total_tax:tax
+            total_prod_price:parseFloat(total).toFixed(2),
+            total_tax:parseFloat(tax).toFixed(2)
         })        
     }
 
@@ -341,22 +341,37 @@ export default class Invoice extends React.Component{
 
     //element added from predefined products list
     addPredefinedElement = (dataObject) =>{
-        //remove the last row that is empty
-        if((this.state.tableElements[this.state.tableElements.length-1].data[0])===""){
-            //create a copy of the array, modify the element and setState
-            let arr = this.state.tableElements
-            //remove the last element from the copy
-            arr.pop()
-            //update the state table
-            this.setState({tableElements: arr})           
+        let productAlready=false
+        //make sure that the predefined product isnt already in the invoice
+        this.state.tableElements.map(element=>{
+            if(element.properties.id){
+                if(element.properties.id===dataObject.id){
+                    productAlready=true;
+                    this.setState({alertUser:"Product already added!"})
+                    return false
+                }
+            }
+        })
+
+        if(!productAlready){
+            //remove the last row that is empty
+            if((this.state.tableElements[this.state.tableElements.length-1].data[0])===""){
+                //create a copy of the array, modify the element and setState
+                let arr = this.state.tableElements
+                //remove the last element from the copy
+                arr.pop()
+                //update the state table
+                this.setState({tableElements: arr})           
+            }
+
+            //add a new row
+            this.setState({tableElements:[...this.state.tableElements,{properties:{preloaded:false, id:dataObject.id, entry: null, valid:true}, data:[dataObject.name, dataObject.um, "1", dataObject.tax, parseFloat(((dataObject.price/100)*dataObject.tax)).toFixed(2), dataObject.price]}]})
+            this.setState({total_tax:parseFloat(this.state.total_tax+((dataObject.price/100)*dataObject.tax)).toFixed(2), total_prod_price:parseFloat(this.state.total_prod_price+(dataObject.price)).toFixed(2)})
+
+            //close the predefined elements list
+            this.setState({predefinedList: false})
         }
 
-        //add a new row
-        this.setState({tableElements:[...this.state.tableElements,{properties:{preloaded:false, id:dataObject.id, entry: null, valid:true}, data:[dataObject.name, dataObject.um, "1", dataObject.tax, ((dataObject.price/100)*dataObject.tax), dataObject.price]}]})
-        this.setState({total_tax:this.state.total_tax+((dataObject.price/100)*dataObject.tax), total_prod_price:this.state.total_prod_price+(dataObject.price)})
-
-        //close the predefined elements list
-        this.setState({predefinedList: false})
     }
 
     //remove an entry from the products table
@@ -394,18 +409,18 @@ export default class Invoice extends React.Component{
             return(
                 <div className="invoices-add-container"> 
                     <div className="invoices-add-actions">
-                        <button className="actions-button action-green-button" disabled={(this.state.invoice_server_status==="finalised") ? true : false} form="invoice-form" id="submit-invoice-button"><span className="action-button-label"><span className="material-icons-outlined">save</span>SAVE</span></button>                            
+                        <button className="actions-button" disabled={(this.state.invoice_server_status==="finalised") ? true : false} form="invoice-form" id="submit-invoice-button"><span className="action-button-label"><span className="material-icons-outlined">save</span>SAVE</span></button>                            
                     </div>                                  
                     <form id="invoice-form" onSubmit={this.submitData}>
                             <div className="client-info-container form-sub-container">
-                                <ClientForm editable={((this.state.activeClient!=null)||this.state.isFormDisabled||this.state.invoiceID!=null) ? false : true} isSubmitable={false} clientID={this.state.activeClient} userData={this.state.userData}/>
+                                <ClientForm editable={((this.state.activeClient!=null)||this.state.isFormDisabled||this.state.invoiceID!=null||this.state.invoice_status==="finalised") ? false : true} isSubmitable={false} clientID={this.state.activeClient} userData={this.state.userData}/>
                             </div>  
 
                             <div className="row">
                                 <div className="col-md-4">
                                     <span className="form-subsection-label">Billing type *</span>                  
                                     <div className="form-group">  
-                                        <select className="form-control form-control-sm" id="billing-type" name="billingType" value={this.state.billingType} modified="false" onChange={this.handleSelect} disabled={(this.state.activeClient!=null) ? false : true}>
+                                        <select className="form-control form-control-sm" id="billing-type" name="billingType" value={this.state.billingType} modified="false" onChange={this.handleSelect} disabled={((this.state.activeClient!=null) ? false : true)||this.state.invoice_status==="finalised"}>
                                             <option value="one-time-billing-option">One-time fee</option>
                                             <option value="recurring-billing-option">Reccurent</option>
                                         </select>
@@ -490,9 +505,9 @@ export default class Invoice extends React.Component{
                                                             <div className="col-2"><input type="text" className={element.properties.valid ? "product_um billing-products-input": "product_um billing-products-input invalid-input"} name="product_um" disabled={element.properties.preloaded===true ? true : false} position={[index,1]} autoComplete="off" value={element.data[1]} onChange={this.validateAndUpdate}/></div>
                                                             <div className="col-1"><input type="text" className={element.properties.valid ? "product_q billing-products-input" : "product_q billing-products-input invalid-input"}name="product_quantity" disabled={element.properties.preloaded===true ? true : false} position={[index,2]} autoComplete="off" value={element.data[2]} onChange={this.validateAndUpdate}/></div>
                                                             <div className="col-1"><input type="text" className={element.properties.valid ? "product_tax billing-products-input": "product_tax billing-products-input invalid-input"} name="product_tax"  disabled={element.properties.preloaded===true ? true : false} position={[index,3]} autoComplete="off" value={element.data[3]} onChange={this.validateAndUpdate}/></div>
-                                                            <div className="col-1"><input type="text" className={element.properties.valid ? "product_tax billing-products-input": "product_tax billing-products-input invalid-input"} name="product_tax_value"  position={[index,4]} autoComplete="off" disabled={true} value={element.data[4]}/></div>
+                                                            <div className="col-1"><input type="text" className={element.properties.valid ? "product_tax billing-products-input": "product_tax billing-products-input invalid-input"} name="product_tax_value"  position={[index,4]} autoComplete="off" disabled={true} value={parseFloat(element.data[4]).toFixed(2)}/></div>
                                                             <div className="col-1"><input type="text" className={element.properties.valid ? "product_ppu billing-products-input": "product_ppu billing-products-input invalid-input"} name="product_price" disabled={element.properties.preloaded===true ? true : false} position={[index,5]} autoComplete="off" value={element.data[5]} onChange={this.validateAndUpdate}/></div>
-                                                            <div className="col-1"><input type="text" className="product_ppu billing-products-input" name="product_price" disabled={true} position={[index,6]} autoComplete="off" value={element.data[5]*element.data[2]} onChange={this.validateAndUpdate}/></div>
+                                                            <div className="col-1"><input type="text" className="product_ppu billing-products-input" name="product_price" disabled={true} position={[index,6]} autoComplete="off" value={parseFloat(element.data[5]*element.data[2]).toFixed(2)} onChange={this.validateAndUpdate}/></div>
                                                             <div className="col-1 remove-product-button-container"><button type="button" className="remove-product-button" disabled={((this.state.invoice_status==="finalised") ? true : false)||(this.state.tableElements.length<2)} onClick={()=>{this.removeEntry(index)}}><span className="material-icons-outlined">close</span></button></div>
                                                         </div>                                                          
                                                     ))                                                

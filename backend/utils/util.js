@@ -215,7 +215,8 @@ function procesBilledProductsData(data){
             ppu: billedProductsArray[i].product_price,
             tax_percentage: billedProductsArray[i].product_tax_pr,
             tax: billedProductsArray[i].total_tax,
-            price: billedProductsArray[i].total_price
+            price: billedProductsArray[i].total_price,
+            id: billedProductsArray[i].product_id
         })
         taxTotal=taxTotal+parseFloat(billedProductsArray[i].total_tax);
     }
@@ -276,22 +277,42 @@ function parsePeriod(dataArray){
 
 
 //calculates the total sum and tax for all data in a timespan
-function processFinancial(data){
+function processFinancial(data, interval){
     //default values
     let returnObj={total:0, total_tax:0, total_net:0, total_number_invoices:0, avg_per_invoice:0, avg_per_step:0, periodicalData:null}
+    //step
+    let startYear, endYear, startMonth, endMonth, noMonths=0
+
+    startYear = interval.startYear.indexOf(0)==="0" ? parseInt(interval.startYear.substring(1,1)) : parseInt(interval.startYear)
+    endYear = interval.endYear.indexOf(0)==="0" ? parseInt(interval.endYear.substring(1,1)) : parseInt(interval.endYear)
+    if(endYear-startYear===0){
+        startMonth = interval.startMonth.indexOf(0)==="0" ? parseInt(interval.startMonth.substring(1,1)) : parseInt(interval.startMonth)
+        endMonth = interval.endMonth.indexOf(0)==="0" ? parseInt(interval.endMonth.substring(1,1)) : parseInt(interval.endMonth)
+        noMonths=endMonth-startMonth+1
+    }else if(endYear-startYear>0){
+        startMonth = interval.startMonth.indexOf(0)==="0" ? parseInt(interval.startMonth.substring(1,1)) : parseInt(interval.startMonth)
+        endMonth = interval.endMonth.indexOf(0)==="0" ? parseInt(interval.endMonth.substring(1,1)) : parseInt(interval.endMonth)
+        noMonths=endMonth+(12-startMonth)+1+(12*(endYear-startYear-1))
+    }
+
     //no data to process
     if(data.length===0) return returnObj
+    //data to process
+    let currentInvoice = data[0].invoiceID
     //process data - calculate totals and data for the graph
     data.forEach(element=>{
-        returnObj.total+=element.invoice_total_sum
-        returnObj.total_tax+=element.invoice_tax               
+        returnObj.total+=element.total_price
+        returnObj.total_tax+=element.total_tax   
+        if(element.invoice_number!=currentInvoice){
+            returnObj.total_number_invoices=returnObj.total_number_invoices+1
+            currentInvoice=element.invoice_number
+        }          
     })
 
-    returnObj.total_number_invoices=data.length
     returnObj.total_net=returnObj.total-returnObj.total_tax
     returnObj.avg_per_invoice=returnObj.total/returnObj.total_number_invoices
     returnObj.periodicalData=parsePeriod(data)
-    returnObj.avg_per_step=returnObj.total / returnObj.periodicalData.length
+    returnObj.avg_per_step=returnObj.total / noMonths
 
     return returnObj;
 
@@ -301,7 +322,7 @@ function processFinancial(data){
 function calculateTax(quantity, tax, price){
     let taxTotal = (((parseInt(quantity)*parseFloat(price))/100)*parseFloat(tax))
     taxTotal=taxTotal.toFixed(2)
-    return taxTotal;
+    return parseFloat(taxTotal)
 }
 
 function toCreateInvoice(date, recurrencyType, monthlyDate, yearlyDate){
@@ -319,8 +340,9 @@ function calculateTotalSum(data){
     let totalSum=0;
     let totalTax=0;
     data.forEach(element=>{
+        console.log(element.product_quantity, element.product_tax_pr, element.product_price)
         totalSum=totalSum+(parseFloat(element.product_quantity)*parseFloat(element.product_price))
-        totalTax=calculateTax(element.product_quantity, element.product_tax_pr, element.product_price)
+        totalTax=totalTax+parseFloat(calculateTax(element.product_quantity, element.product_tax_pr, element.product_price))
     })
     return {totalSum: totalSum, totalTax: totalTax};
 }

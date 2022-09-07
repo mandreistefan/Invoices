@@ -7,7 +7,6 @@ import DatePicker from "react-datepicker";
 let Financial = (props) =>{
 
     let [financialData, setFinancialData] = React.useState(null)
-    let [periodOfInterest, setPeriod] = React.useState(["yearly", "current", "q1"])
     let [alertUser, setUserAlert] =React.useState({text: null})
     //use for the horizontal scale of the chart
     let [chartInterval, setChartInterval] = React.useState(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
@@ -15,36 +14,34 @@ let Financial = (props) =>{
     let [chartTitle, setChartTile] = React.useState("Current year")
 
     let currentDate = new Date()
-    let year = currentDate.getFullYear();
-    let activeYear=[{id:"current", descr:"Current year"}, {id:year-1, descr:year-1}, {id:year-2, descr:year-2}]
-    let [dateInterval, setInterval] = React.useState({start: currentDate, end: currentDate})
+    let initialStartDate = new Date()
+    initialStartDate.setFullYear(currentDate.getFullYear()-1)
+    let year = currentDate.getFullYear();    
+    let [dateInterval, setInterval] = React.useState({start: initialStartDate, end: currentDate})
 
     React.useEffect(()=>{
         fetchData()
     }, [])
 
-    let fetchData = ()=>{        
-        let querry, filter, filterer;
-        filter=periodOfInterest[0][0];
-        switch(filter){
-            case "y":
-                filterer= (periodOfInterest[1]==="current") ? year : periodOfInterest[1]
-                break
-            case "q":
-                filterer= periodOfInterest[2]
-                break
-            case "c":
-                filterer= ""
-                break
+    let fetchData=()=>{
+
+        let interval={
+            startDay:dateInterval.start.getDate().toString().length===1 ? `0${dateInterval.start.getDate().toString()}`:`${dateInterval.start.getDate().toString()}`,
+            endDay: dateInterval.end.getDate().toString().length===1 ? `0${dateInterval.end.getDate().toString()}`:`${dateInterval.end.getDate().toString()}`,
+            startMonth: dateInterval.start.getMonth().toString().length===1 ? `0${(dateInterval.start.getMonth()+1).toString()}`:`${(dateInterval.start.getMonth()+1).toString()}`,
+            endMonth: dateInterval.end.getMonth().toString().length===1 ? `0${(dateInterval.end.getMonth()+1).toString()}`:`${(dateInterval.end.getMonth()+1).toString()}`,
+            startYear: dateInterval.start.getFullYear().toString().substring(2,4),
+            endYear: dateInterval.end.getFullYear().toString().substring(2,4)
         }
 
-        querry = `/financial/?filter=${filter}&filterBy=${filterer}`
+        let filterBy=`${interval.startDay}${interval.startMonth}${interval.startYear}-${interval.endDay}${interval.endMonth}${interval.endYear}`
+        console.log(filterBy)
 
-        fetch(querry)
-            .then(response=>response.json())
-            .then(data=>{
+        let querry = `/financial/?filter=interval&filterBy=${filterBy}`
+        fetch(querry).then(response=>response.json()).then(data=>{
                 if(data.status==="OK"){
-                    //periodicalData has a different use
+                    setFinancialData(data.data)
+                    /*//periodicalData has a different use
                     let chartData = data.data.periodicalData
                     delete data.data.periodicalData
                     //contains totals and statistics
@@ -61,84 +58,9 @@ let Financial = (props) =>{
                     setChartValues([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
                     setChartTile(`${periodOfInterest[0]}, ${periodOfInterest[2]}, ${periodOfInterest[1]}`)
                 }else{
-                    setUserAlert({text: "There has been an error"})
+                    setUserAlert({text: "There has been an error"})*/
                 }
             })
-    }
-
-    let selector = (event) =>{
-        if(event.target.name==="financialPeriod"){
-            if(event.target.value==="yearly"){
-                setPeriod(["yearly", periodOfInterest[1], periodOfInterest[2], periodOfInterest[3]])
-            }else if(event.target.value==="quarterly"){
-                setPeriod(["quarterly", periodOfInterest[1], periodOfInterest[2], periodOfInterest[3]])
-            }else{
-                setPeriod(["custom", periodOfInterest[1], periodOfInterest[2], periodOfInterest[3]])
-            }               
-        }else if(event.target.name==="yearInterval"){
-            setPeriod([periodOfInterest[0], event.target.value, periodOfInterest[2], periodOfInterest[3]])
-        }else if(event.target.name==="quarterInterval"){
-            setPeriod([periodOfInterest[0],  periodOfInterest[1], event.target.value, periodOfInterest[3]])
-        }else if(event.target.name.indexOf("customInterval")>-1){    
-            validateCustomInterval(event.target.value, event.target.name)      
-        }
-    }
-
-    let validateCustomInterval=(key, who)=>{
-        let validNumber = new RegExp(/^\d*\.?\d*$/);
-        let intervalAsString = periodOfInterest[3].toString()
-    
-        if(validNumber.test(key)){
-           switch(who){
-            case "customInterval-start-day":
-                setPeriod(periodOfInterest[0], periodOfInterest[1], periodOfInterest[2], intervalAsString)
-                break;
-
-           }
-        }
-
-    }
-
-    let setChartData=(data)=>{
-        let shallowCopy;
-        switch(periodOfInterest[0]){
-            case "yearly":
-                setChartInterval(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
-                shallowCopy = chartValues
-                data.forEach(element=>{
-                    shallowCopy[element[0]]=element[4]
-                })
-                setChartValues(shallowCopy)                
-                break
-            case "quarterly":
-                //set the chgart data
-                shallowCopy = chartValues
-                data.forEach(element=>{
-                    shallowCopy[element[0]]=element[4]
-                })
-                //filter chart data and set intervals
-                switch(periodOfInterest[1].toLowerCase()){
-                    case "q1":
-                        setChartInterval(['Jan', 'Feb', 'Mar'])
-                        setChartValues(shallowCopy.substring(0,3))
-                        break
-                    case "q2":
-                        setChartInterval(['Apr', 'May', 'Jun'])
-                        setChartValues(shallowCopy.substring(3,6))
-                        break
-                    case "q3":
-                        setChartInterval(['Jul', 'Aug', 'Sep'])
-                        setChartValues(shallowCopy.substring(6,9))
-                        break
-                    case "q4":
-                        setChartInterval(['Oct', 'Nov', 'Dec'])
-                        setChartValues(shallowCopy.substring(9))
-                        break    
-                }
-                break
-            default:
-                break
-        }
     }
 
     return(
@@ -150,36 +72,11 @@ let Financial = (props) =>{
                 <span className="bd-lead financial-container-title">Filter data</span>
                 <div className="row financial-container-header">
                     <div className="col-2"><span>Period:</span></div>
-                    <div className="col-2"><span>Year:</span></div>
-                    <div className="col-2"><span>Quarter:</span></div>
-                    <div className="col-2"><span>Custom:</span></div>
                 </div>
                 <div className="row financial-container-body">
-                    <div className="col-2">
-                        <select className="form-control form-control-sm" id="finacial-period" name="financialPeriod" value={periodOfInterest[0]} onChange={selector}>
-                            <option value="yearly">Yearly</option>
-                            <option value="quarterly">Quarterly</option>
-                            <option value="custom">Custom</option>
-                        </select>
-                    </div>
-                    <div className="col-2">
-                        <select disabled={(periodOfInterest[0]==="yearly") ? false : true} className="form-control form-control-sm" id="year-interval" name="yearInterval" value={periodOfInterest[1]} onChange={selector}>
-                            {activeYear.map(element=>(
-                                <option key={element.id} value={element.id}>{element.descr}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="col-2">
-                        <select disabled={(periodOfInterest[0]==="quarterly") ? false : true} className="form-control form-control-sm" id="quarter-interval" name="quarterInterval" value={periodOfInterest[2]} onChange={selector}>
-                            <option value="Q1">Q1</option>
-                            <option value="Q2">Q2</option>
-                            <option value="Q3">Q3</option>
-                            <option value="Q4">Q4</option>
-                        </select>
-                    </div>
-                    <div className="col-2" disabled={(periodOfInterest[0]==="custom") ? false : true}>
-                        <DatePicker id="billing-date-yearly"  selected={currentDate} disabled={false} onChange={(date:Date) => setInterval({start: date, end: dateInterval.end})}/>
-                        <DatePicker id="billing-date-yearly"  selected={currentDate} disabled={false} onChange={(date:Date) => setInterval({start: dateInterval.start, end: date})}/>
+                    <div className="col-6" style={{display:'flex', flexDirection:'row', justifyContent:"flex-start"}}>
+                        <DatePicker style={{width:'fit-content'}} dateFormat="dd/MM/yyyy" id="billing-date-yearly"  selected={dateInterval.start} disabled={false} onChange={(date:Date) => setInterval({start: date, end: dateInterval.end})}/>
+                        <DatePicker style={{width:'fit-content'}} dateFormat="dd/MM/yyyy" id="billing-date-yearly"  selected={dateInterval.end} disabled={false} onChange={(date:Date) => setInterval({start: dateInterval.start, end: date})}/>
                     </div>
                     <div className="col-1">
                         <button className="actions-button" onClick={()=>{fetchData()}}><span className="action-button-label"><span className="material-icons-outlined">refresh</span>Refresh</span></button>

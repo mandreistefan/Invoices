@@ -584,18 +584,8 @@ function getRecInfo(queryFilter, queryFilterData,){
 }
 
 function getFinancialData(filterObject){
-    let querry;
-    switch (filterObject.timeUnit){
-        case "yearly":
-            querry=`SELECT invoice_pay_method, invoice_tax, invoice_total_sum, invoice_date  FROM invoices WHERE invoice_date >= "${filterObject.year}-01-01" AND invoice_date < "${filterObject.year}-12-31" AND invoice_status='finalised'`
-            break  
-        case "custom":
-            querry=`SELECT invoice_pay_method, invoice_tax, invoice_total_sum, invoice_date  FROM invoices WHERE invoice_date >= "${filterObject.yearStart}-${filterObject.monthStart}-${filterObject.dayStart}" AND invoice_date < "${filterObject.yearEnd}-${filterObject.monthEnd}-${filterObject.dayEnd}" AND invoice_status='finalised'`
-            break           
-    }
-
     return new Promise((resolve, reject)=>{
-        connection.query(querry, function(error, result){
+        connection.query(`SELECT invoice_number, invoiceID, invoice_status, invoice_pay_method, invoice_date, product_id, product_quantity, product_tax_pr, total_tax, product_price, total_price FROM invoices join invoices_billed_products productsTable on productsTable.invoiceID=invoice_number WHERE invoice_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND invoice_date < "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" AND invoice_status='finalised' order by invoice_number;`, function(error, result){
             if(error){
                 console.log(error)
                 reject({status:"ERROR"})
