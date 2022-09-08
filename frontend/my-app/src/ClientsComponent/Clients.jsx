@@ -54,7 +54,11 @@ let Clients = (props) =>{
         })
         .then(response=>response.json())
         .then(data=>{
-            console.log(data.status)
+            if(data.status==="OK"){
+                setAlertUser({text:"Client archived"})
+            }else{
+                setAlertUser({text:"Something went wrong"})
+            }
         })
     }
 
@@ -84,7 +88,6 @@ let Clients = (props) =>{
                         </div> 
                     </div>
                 }     
-
 
                 <table className='table table-hover' style={{marginTop:'20px'}}>
                         <thead className='table-active'>

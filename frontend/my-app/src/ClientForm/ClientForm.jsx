@@ -160,7 +160,6 @@ let TheClientForm = (props)=>{
         let elementTrigger = `${event.target.name}`;
         let happenedIn = `${elementTrigger}_input`;
         if(validateInput(elementTrigger, event.target.value, happenedIn)){ 
-            console.log(event.target.attributes.getNamedItem('modified').value)
             event.target.attributes.getNamedItem('modified').value=true;
         }
     }

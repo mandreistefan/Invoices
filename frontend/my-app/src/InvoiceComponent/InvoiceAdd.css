@@ -129,15 +129,15 @@
 
 .billing-products-input:focus{
     outline: none;
-    border-bottom:2px solid #3F51B5 ;
+    border-bottom:2px solid #353535 ;
     background-color: #f9f9f9;
     border-bottom: 2px solid #353535;
 }
 
 .billing-products-footer-input{
     width: 100%;
-    border-bottom: 2px solid #3F51B5 ;
-    color:#3F51B5 ;
+    border-bottom: 2px solid #353535 ;
+    color:#353535 ;
     font-weight: 600;
     font-size: 20px;
     padding-left: 6px;

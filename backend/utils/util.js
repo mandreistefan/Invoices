@@ -279,7 +279,7 @@ function parsePeriod(dataArray){
 //calculates the total sum and tax for all data in a timespan
 function processFinancial(data, interval){
     //default values
-    let returnObj={total:0, total_tax:0, total_net:0, total_number_invoices:0, avg_per_invoice:0, avg_per_step:0, periodicalData:null}
+    let returnObj={total:0, total_tax:0, total_net:0, total_number_invoices:1, avg_per_invoice:0, avg_per_step:0, periodicalData:null}
     //step
     let startYear, endYear, startMonth, endMonth, noMonths=0
 
@@ -306,7 +306,7 @@ function processFinancial(data, interval){
     //format of {month: mm, year: yy, total:total sum for the month}
     let arr=[]
     //process data - calculate totals and data for the graph
-    data.forEach(element=>{
+    data.forEach((element, index)=>{
         returnObj.total+=element.total_price
         returnObj.total_tax+=element.total_tax 
         //totals per month
@@ -316,7 +316,7 @@ function processFinancial(data, interval){
             arr.push({month: currentMonth+1, year:currentYear, total:stepSum})
             currentMonth=element.invoice_date.getMonth()
             stepSum=element.total_price
-        }
+        }        
         //number of unique invoices 
         if(element.invoice_number!=currentInvoice){
             returnObj.total_number_invoices=returnObj.total_number_invoices+1

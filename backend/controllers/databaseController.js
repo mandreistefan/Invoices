@@ -184,53 +184,65 @@ function fetchRecInvData(queryFilter, queryFilterData, callback){
 
 function archiveClient(clientID, callback){
     if(clientID!=null){
-        databaseOperations.archiveClientData(clientID)
-        .then((data)=>{
+        //move client data to a different table
+        databaseOperations.archiveClientData(clientID).then((data)=>{
+            //if data has been moved, we can remove it from the table
             if(data.status==="OK"){
+                console.log(`Client ${clientID} archived`)
                 databaseOperations.deleteClient(clientID)
                 .then((data)=>{
                     if(data.status==="OK"){
                         callback({status:"OK"})
                     }else{
-                        callback(utile.returnal("FAIL", "FAILED to delete"))
+                        console.log("Could not delete the client")
+                        callback({status:"FAIL"})
                     }                
                 })
                 .catch((err)=>{
-                    callback(utile.returnal("ERROR", "ERROR at delete"))
+                    console.log("Could not archive client data")
+                    callback({status:"ERROR"})
                 })
             }
         })
+        //could not move the data
         .catch((err)=>{
-            callback(utile.returnal("ERROR", "ERROR at archiving"))
+            callback({status:"ERROR"})
         })
+    //issue with the cliendID
     }else{
-        callback(utile.returnal("ERROR", "INVALID clientID"))
+        callback({status:"INVALID_REQUEST"})
     }
 }
 
 function archiveInvoice(invoiceID, callback){
     if(invoiceID!=null){
-        databaseOperations.archiveInvoice(invoiceID)
-        .then((data)=>{
+        //move invoice data to a different table
+        databaseOperations.archiveInvoice(invoiceID).then((data)=>{
+            //if data has been moved, we can remove it from the table
             if(data.status==="OK"){
+                console.log(`Invoice ${invoiceID} archived`)
                 databaseOperations.deleteInvoice(invoiceID)
                 .then((data)=>{
                     if(data.status==="OK"){
                         callback({status:"OK"})
                     }else{
-                        callback(utile.returnal("FAIL", "FAILED to delete"))
+                        console.log("Could not delete invoice")
+                        callback({status:"FAIL"})
                     }                
                 })
+                //could not move the invoice data
                 .catch((err)=>{
-                    callback(utile.returnal("ERROR", "ERROR at delete"))
+                    console.log("Could not archive invoice")
+                    callback({status:"ERROR"})
                 })
             }
         })
         .catch((err)=>{
-            callback(utile.returnal("ERROR", "ERROR archiving invoice data"))
+            callback({status:"ERROR"})
         })
+    //issue with the invoice ID
     }else{
-        callback(utile.returnal("ERROR", "INVALID invoiceID"))
+        callback({status:"ERROR"})
     }
 }
 

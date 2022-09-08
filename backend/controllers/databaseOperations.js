@@ -227,14 +227,14 @@ function getInvoices(querryObject){
 
 function archiveClientData(clientID){
     return new Promise((resolve, reject)=>{
-        connection.query(`INSERT INTO clients_archived(id, client_first_name, client_last_name, client_adress, client_billing_adress, client_phone, client_email, client_notes, archived) select * from clients where id='${clientID}'`, function(err, result){
+        connection.query(`INSERT INTO clients_archived(id, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_billing_adress, client_phone, client_email, client_notes) select * from clients where id='${clientID}'`, function(err, result){
             if(err){
                 reject({
                     status:"ERROR",
                     data:"ERROR archiving client"
                 })
             }
-            if(result.affectedRows>0){
+            if(result.insertId>0){
                 resolve({
                     status:"OK",
                     data:null
@@ -276,7 +276,7 @@ function deleteClient(clientID){
 
 function archiveInvoice(invoiceID){
     return new Promise((resolve, reject)=>{
-        connection.query(`INSERT INTO invoices_archived(rec_number, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, invoice_total_sum, invoice_date) SELECT rec_number, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, invoice_total_sum, invoice_date FROM invoices where rec_number=${invoiceID}`, function(err, result){
+        connection.query(`INSERT INTO invoices_archived(invoice_number, invoice_status, invoice_pay_method, invoice_bank_ref, rec_number, customer_id, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_phone, client_email, invoice_date, invoice_tax, invoice_total_sum) SELECT * FROM invoices where invoice_number=${invoiceID}`, function(err, result){
             if(err){
                 console.log(err)
                 reject({                    
@@ -284,7 +284,7 @@ function archiveInvoice(invoiceID){
                     data:"ERROR archiving invoice"
                 })
             }
-            if(result){
+            if(result.insertId>0){
                 resolve({
                     status:"OK",
                     data:null
@@ -301,7 +301,7 @@ function archiveInvoice(invoiceID){
 
 function deleteInvoice(invoiceID){
     return new Promise((resolve, reject)=>{
-        connection.query(`DELETE FROM invoices WHERE rec_number=${invoiceID}`, function(err, result){
+        connection.query(`DELETE FROM invoices WHERE invoice_number=${invoiceID}`, function(err, result){
             if(err){
                 reject({
                     status:"ERROR",
@@ -584,7 +584,8 @@ function getRecInfo(queryFilter, queryFilterData,){
 }
 
 function getFinancialData(filterObject){
-    return new Promise((resolve, reject)=>{        
+    return new Promise((resolve, reject)=>{  
+        console.log(`SELECT invoice_number, invoiceID, invoice_status, invoice_pay_method, invoice_date, product_id, product_quantity, product_tax_pr, total_tax, product_price, total_price FROM invoices join invoices_billed_products productsTable on productsTable.invoiceID=invoice_number WHERE invoice_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND invoice_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" AND invoice_status='finalised' order by invoice_number;`)      
         connection.query(`SELECT invoice_number, invoiceID, invoice_status, invoice_pay_method, invoice_date, product_id, product_quantity, product_tax_pr, total_tax, product_price, total_price FROM invoices join invoices_billed_products productsTable on productsTable.invoiceID=invoice_number WHERE invoice_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND invoice_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" AND invoice_status='finalised' order by invoice_number;`, function(error, result){
             if(error){
                 console.log(error)
@@ -903,14 +904,14 @@ function changeDBinfo(){
             connection.changeUser({database : liveDB}, function(err) {
                 if (err){
                     connection.changeUser({database : testDB}, function(err) {})
-                    reject(false)
+                    reject({status:"ERROR", database:null})
                 }
-                resolve(liveDB)
+                resolve({status:"OK", database:liveDB})
             })
         }else{
             connection.changeUser({database : testDB}, function(err) {
-                if (err) reject(false)
-                resolve(testDB)
+                if (err) reject({status:"ERROR", database:null})
+                resolve({status:"OK", database:testDB})
             })
         }
     })

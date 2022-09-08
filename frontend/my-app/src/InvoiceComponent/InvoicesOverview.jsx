@@ -109,12 +109,12 @@ let InvoicesOverview = (props) =>{
                             <tr>  
                                 <th></th> 
                                 <th></th>
-                                <th>Invoice no.</th>                                
-                                <th>Client name</th>
-                                <th>Client adress</th>
-                                <th>Status</th>
-                                <th>Date</th>
-                                <th>Total</th>
+                                <th>NUMAR</th>                                
+                                <th>NUME CLIENT</th>
+                                <th>ADRESA CLIENT</th>
+                                <th>STATUT</th>
+                                <th>DATA</th>
+                                <th>TOTAL</th>
                                 <th></th>
                             </tr>
                         </thead>

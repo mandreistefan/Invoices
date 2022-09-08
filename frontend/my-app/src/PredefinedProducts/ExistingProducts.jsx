@@ -26,11 +26,11 @@ let PredefinedProductsManager = (props) =>{
                 <thead className='table-active'>
                     <tr className='app-data-table-row'>
                         <th>#</th>
-                        <th>Name</th>
-                        <th>UM number</th>
-                        <th>Price per item</th>
-                        <th>Tax</th>
-                        <th>Description</th>
+                        <th>NUME</th>
+                        <th>UM</th>
+                        <th>PRET</th>
+                        <th>TAXA</th>
+                        <th>DESCRIERE</th>
                         <th></th>
                     </tr>    
                 </thead>               

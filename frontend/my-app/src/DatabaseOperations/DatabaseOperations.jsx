@@ -28,8 +28,8 @@ let DatabaseOperations=()=>{
 
     let switchDB=()=>{
         fetch('./switchDatabase').then(response=>response.json()).then(data=>{
-            if(data){
-                setActiveDB(data)
+            if(data.status==="OK"){
+                setActiveDB(data.database)
                 setUserAlert({text:"Active database changed"})
             }else{
                 setUserAlert({text:"An error occured"})
