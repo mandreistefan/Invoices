@@ -11,7 +11,7 @@ let PageNavigation=(props)=>{
 
     //based on number of total elements, set the pages
     let numberOfPages=(itemsNumber)=>{
-        let numberOfPages = parseInt(itemsNumber/10+1)
+        let numberOfPages = itemsNumber%10>0 ? parseInt(itemsNumber/10+1) : parseInt(itemsNumber/10)
         buildPagesArray(numberOfPages)
         return numberOfPages
     }

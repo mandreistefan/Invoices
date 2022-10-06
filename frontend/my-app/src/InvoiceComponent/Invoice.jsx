@@ -45,9 +45,7 @@ export default class Invoice extends React.Component{
 
     //gets all the data linked to an invoice; sets the state of certain elements based on retrieved data
     fetchInvoiceData=(invoice)=>{
-        fetch(`./invoiceGenerator/?filter=invoiceID&filterBy=${invoice}`)
-        .then(response=>response.json())
-        .then(data=>{
+        fetch(`./invoice/?filter=invoiceID&filterBy=${invoice}`).then(response=>response.json()).then(data=>{
             let invoiceData = data.data
             this.setState({
                 userData: {
@@ -279,7 +277,9 @@ export default class Invoice extends React.Component{
         let total=0;
         let tax=0;
         this.state.tableElements.map(element=>{
-            if(element.data[2]*element.data[5]*element.data[3]>0){
+            //quantity and price should be >0
+            if(element.data[2]*element.data[5]>0){
+                console.log(element.data[2], element.data[5])
                 total=total+(element.data[2]*element.data[5])
                 element.data[4]=parseFloat((((element.data[2]*element.data[5])/100)*element.data[3]))
                 tax=tax+element.data[4]
@@ -354,7 +354,7 @@ export default class Invoice extends React.Component{
         })
 
         if(!productAlready){
-            //remove the last row that is empty
+            //remove the last row if it is empty
             if((this.state.tableElements[this.state.tableElements.length-1].data[0])===""){
                 //create a copy of the array, modify the element and setState
                 let arr = this.state.tableElements
@@ -366,7 +366,7 @@ export default class Invoice extends React.Component{
 
             //add a new row
             this.setState({tableElements:[...this.state.tableElements,{properties:{preloaded:false, id:dataObject.id, entry: null, valid:true}, data:[dataObject.name, dataObject.um, "1", dataObject.tax, parseFloat(((dataObject.price/100)*dataObject.tax)).toFixed(2), dataObject.price]}]})
-            this.setState({total_tax:parseFloat(this.state.total_tax+((dataObject.price/100)*dataObject.tax)).toFixed(2), total_prod_price:parseFloat(this.state.total_prod_price+(dataObject.price)).toFixed(2)})
+            this.setState({total_tax:parseFloat(parseFloat(this.state.total_tax)+((dataObject.price/100)*dataObject.tax)).toFixed(2), total_prod_price:parseFloat(parseFloat(this.state.total_prod_price)+(dataObject.price)).toFixed(2)})
 
             //close the predefined elements list
             this.setState({predefinedList: false})
@@ -474,7 +474,7 @@ export default class Invoice extends React.Component{
                                         </div>
                                     }
                                 </div> 
-                                <div className="alert alert-secondary" style={{marginTop:'20px',marginLeft:'10px', marginRight:'10px'}} role="alert">
+                                {false&&<div className="alert alert-secondary" style={{marginTop:'20px',marginLeft:'10px', marginRight:'10px'}} role="alert">
                                     <p className="lead" style={{fontSize: '16px', marginBottom:'0'}}>* Option not available<br/>
                                         ** Invoices ca be saved as:
                                         <ul class="info-text-list">
@@ -482,7 +482,7 @@ export default class Invoice extends React.Component{
                                             <li><b>Finalised</b>: the invoice is permanenlty closed and the user has been billed</li>
                                         </ul>
                                     </p>
-                                </div>
+                                </div>}
                             </div>
                             <div className="billing-products-container form-sub-container">                                 
                                 <div className="invoice-products-container form-group"> 

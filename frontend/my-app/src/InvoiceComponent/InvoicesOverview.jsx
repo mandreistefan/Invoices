@@ -177,7 +177,7 @@ let InvoicesOverview = (props) =>{
                     <div className="overlapping-component-inner">
                         <div className="overlapping-component-actions">
                             <h4><span class="material-icons-outlined" style={{marginRight:'5px'}}>edit</span>Edit invoice</h4>
-                            <button type="button" className="action-close-window " onClick={()=>{setEditInvoice({enabled:false, invoiceID:null})}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
+                            <button type="button" className="action-close-window " onClick={()=>{setEditInvoice({enabled:false, invoiceID:null});fetchData()}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
                         </div>
                         <EditInvoice invoiceID={editInvoice.invoiceID}/>
                     </div>              

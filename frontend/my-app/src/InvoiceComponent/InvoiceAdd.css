@@ -124,7 +124,7 @@
 }
 
 .billing-products-input:disabled{
-    background-color: white;
+    background-color: #e9ecef;
 }
 
 .billing-products-input:focus{

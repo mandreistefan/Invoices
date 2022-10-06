@@ -309,13 +309,13 @@ async function getFinancials(querryObject){
 
     //some initial checks of the request
     if(querryObject.filter!="interval"){
-        return({status:"INVALID_REQUEST", data: null})
+        return({status:"INVALID_REQUEST", data: "filter"})
     }
     if(querryObject.filterBy.length!=13){
-        return({status:"INVALID_REQUEST", data: null})
+        return({status:"INVALID_REQUEST", data: "filterBy"})
     }
     if(querryObject.filterBy.indexOf("-")<0){
-        return({status:"INVALID_REQUEST", data: null})
+        return({status:"INVALID_REQUEST", data: "filterBy"})
     }
 
     const currentDate = new Date();

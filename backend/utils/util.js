@@ -391,6 +391,30 @@ function calculateTotalSum(data){
     return {totalSum: totalSum, totalTax: totalTax};
 }
 
+//takes a string as parameter; looks for predefined keys, fetches the data from the string and returns an object
+//string should be invoices?page=1&filter=something
+//target should be optional, is "invoices"
+//keys are page and filter, data is 1 and something
+function qParser(dataString){
+    //the filterObject
+    let filterObject={
+        target: null,
+        page: 1,
+        filter:null,
+        filterBy:null
+    }
+    //split it based on the ampersand
+    let query_parameters = dataString.substring(dataString.indexOf("?")+1, (dataString.length)).split("&")
+    //populate the object
+    query_parameters.forEach(element=>{
+        if(element.indexOf("page=")>-1) filterObject.page=element.substring(element.indexOf("=")+1, element.length)
+        if(element.indexOf("filter=")>-1) filterObject.filter=element.substring(element.indexOf("=")+1, element.length)
+        if(element.indexOf("filterBy=")>-1) filterObject.filterBy=element.substring(element.indexOf("=")+1, element.length)
+        if(element.indexOf("target=")>-1) filterObject.target=element.substring(element.indexOf("=")+1, element.length)
+    })
+
+    return filterObject
+}
 
 module.exports = {
     procesRecData: procesRecData,
@@ -401,5 +425,6 @@ module.exports = {
     calculateTax: calculateTax,
     toCreateInvoice: toCreateInvoice,
     calculateNextInvoiceDate:calculateNextInvoiceDate,
-    calculateTotalSum:calculateTotalSum
+    calculateTotalSum:calculateTotalSum,
+    qParser: qParser
 }

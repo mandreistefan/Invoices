@@ -29,15 +29,17 @@ let Financial = (props) =>{
     }, [])
 
     let fetchData=()=>{
-
+        
         let interval={
             startDay:dateInterval.start.getDate().toString().length===1 ? `0${dateInterval.start.getDate().toString()}`:`${dateInterval.start.getDate().toString()}`,
             endDay: dateInterval.end.getDate().toString().length===1 ? `0${dateInterval.end.getDate().toString()}`:`${dateInterval.end.getDate().toString()}`,
-            startMonth: dateInterval.start.getMonth().toString().length===1 ? `0${(dateInterval.start.getMonth()+1).toString()}`:`${(dateInterval.start.getMonth()+1).toString()}`,
-            endMonth: dateInterval.end.getMonth().toString().length===1 ? `0${(dateInterval.end.getMonth()+1).toString()}`:`${(dateInterval.end.getMonth()+1).toString()}`,
+            startMonth: parseInt(dateInterval.start.getMonth())+1<10 ? `0${(dateInterval.start.getMonth()+1).toString()}`:`${(dateInterval.start.getMonth()+1).toString()}`,
+            endMonth: parseInt(dateInterval.start.getMonth())+1<10 ? `0${(dateInterval.end.getMonth()+1).toString()}`:`${(dateInterval.end.getMonth()+1).toString()}`,
             startYear: dateInterval.start.getFullYear().toString().substring(2,4),
             endYear: dateInterval.end.getFullYear().toString().substring(2,4)
         }
+
+        console.log(parseInt(dateInterval.start.getMonth()))
 
         let filterBy=`${interval.startDay}${interval.startMonth}${interval.startYear}-${interval.endDay}${interval.endMonth}${interval.endYear}`
 

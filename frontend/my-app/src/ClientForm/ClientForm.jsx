@@ -82,18 +82,21 @@ let TheClientForm = (props)=>{
         let validatingThis;
         //first name
         validatingThis=document.getElementById("client_first_name").value
+        //must have data
         if(validatingThis.length==0){
             console.log("Invalid data for first name")
             return false
         }
         //last name
         validatingThis=document.getElementById("client_last_name").value
+        //must have data
         if(validatingThis.length==0){
             console.log("Invalid data for last name")
             return false
         }
         //phone name
         validatingThis=document.getElementById("client_phone").value
+        //must have data
         if(validatingThis.length!=10){
             console.log("Invalid data for phone")
             return false
@@ -106,19 +109,19 @@ let TheClientForm = (props)=>{
                 return false
             }
         }
-        //last name
+        //county
         validatingThis=document.getElementById("client_county").value
         if(validatingThis.length==0){
             console.log("Invalid data for county")
             return false
         }
-        //last name
+        //city
         validatingThis=document.getElementById("client_city").value
         if(validatingThis.length==0){
             console.log("Invalid data for city")
             return false
         }
-        //last name
+        //street
         validatingThis=document.getElementById("client_street").value
         if(validatingThis.length==0){
             console.log("Invalid data for street")
@@ -133,18 +136,14 @@ let TheClientForm = (props)=>{
         let validNumber = new RegExp(/^\d*\.?\d*$/);
         switch(who){
             case "client_phone":
+                //only numbers
                 if(validNumber.test(what)){
                     setTheData({...data,[where]:what})
                     return true
                 }
                 return false
             case "client_zip":
-                if(validNumber.test(what)){
-                    setTheData({...data,[where]:what})
-                    return true
-                }
-                return false
-            case "client_adress_number":
+                //only numbers
                 if(validNumber.test(what)){
                     setTheData({...data,[where]:what})
                     return true

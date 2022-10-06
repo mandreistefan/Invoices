@@ -10,14 +10,13 @@ let EditInvoice=(props)=>{
     },[])
 
     let getData=(invoice)=>{
-        fetch(`./invoiceGenerator/inv/invoiceID/${invoice}`).then(response=>response.json()).then(data=>{
+        fetch(`./invoice/?filter=invoiceID&filterBy=${invoice}`).then(response=>response.json()).then(data=>{
             setPassedData(data.data)
         })
     }
 
     return(
-        passedData&& 
-        <Invoice predefined={{tableElements:passedData.invoiceProducts, userData:passedData.invoiceProperty, invoiceID:props.invoiceID}}/>
+        passedData&&<Invoice predefined={{tableElements:passedData.invoiceProducts, userData:passedData.invoiceProperty, invoiceID:props.invoiceID}}/>
     )
 
 }

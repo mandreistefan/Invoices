@@ -112,7 +112,7 @@ let Clients = (props) =>{
                                                 {element.client_first_name} {element.client_last_name}     
                                             </div>
                                         </td>               
-                                        <td>{element.client_county}, {element.client_city} ,{element.client_street}, {element.client_adress_number}, {element.client_zip}</td>                            
+                                        <td>{element.client_county}, {element.client_city}, {element.client_street}, {element.client_adress_number}, {element.client_zip}</td>                            
                                         <td>{element.client_phone}</td>
                                         <td>{element.client_email}</td>      
                                         <td style={{maxWidth:'400px'}} className="text-overflow-hide">{element.client_notes}</td>                           
