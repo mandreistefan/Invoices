@@ -2,7 +2,7 @@
     border-radius: 5px;
     border:1px solid #F6F2F5;
     padding:10px;
-    background-color: #F6F2F5;
+    background-color: #D9D9D9;
 }
 
 .invoices-add-header{
@@ -112,6 +112,7 @@
 
 .billing-products-input{
     width: 100%;
+    border:none;
     border-bottom: 1px solid #353535;
     padding-left: 6px;
     padding-right: 6px;
@@ -120,17 +121,17 @@
 }
 
 .billing-products-input:hover{
-    background-color: #f9f9f9;
+    /*background-color: #f9f9f9;*/
 }
 
 .billing-products-input:disabled{
-    background-color: #e9ecef;
+    /*background-color: #e9ecef;*/
+    color:gray;
 }
 
 .billing-products-input:focus{
     outline: none;
     border-bottom:2px solid #353535 ;
-    background-color: #f9f9f9;
     border-bottom: 2px solid #353535;
 }
 

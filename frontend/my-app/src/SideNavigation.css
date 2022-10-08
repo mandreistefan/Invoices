@@ -1,12 +1,19 @@
 .side-navigation{
     height: 100vh;
-    background-color: #284B63;
+    background-color: #004643;
+}
+
+.side-navigation h6{
+    margin-top:8px;
+    text-align: center;
+    font-size:600;
+    color:white
 }
 
 .side-nav-elements{
     list-style: none;
     padding:0;
-    background-color: #284B63;
+    background-color: #004643;
 }
 
 .side-nav-element{
@@ -19,12 +26,22 @@
 }
 
 .side-nav-button{
-    width:70px;
-    height: 70px;
+    width:125px;
+    height: 40px;
     color:#9dafc1;
     border:0;
 }
 
+.side-nav-button div{
+    display: flex;
+    flex-direction: row;
+    font-weight: 600;
+}
+
+.side-nav-button .material-icons-outlined{
+    margin-right: 5px;
+}
+
 .selected-nav-element{
-    color:#F6F2F5
+    color:#fffffe
 }

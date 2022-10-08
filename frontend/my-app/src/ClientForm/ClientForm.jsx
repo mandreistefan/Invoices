@@ -20,6 +20,7 @@ let TheClientForm = (props)=>{
     let [alertUser, setAlertUser] = React.useState({text: null})
     let [clientID, setclientid] = React.useState(null)
     let [fieldsDisabled, setFieldsDisabled] = React.useState(false)
+    let [invalidDataItems, setInvalidData] = React.useState([])
 
     React.useEffect(()=>{
 
@@ -79,55 +80,59 @@ let TheClientForm = (props)=>{
 
     //small valdiations at submit
     let newClientDataValid=()=>{
-        let validatingThis;
+        let validatingThis, invalidDataArray=[];
         //first name
         validatingThis=document.getElementById("client_first_name").value
         //must have data
         if(validatingThis.length==0){
             console.log("Invalid data for first name")
-            return false
+            invalidDataArray.push("client_first_name")
         }
         //last name
         validatingThis=document.getElementById("client_last_name").value
         //must have data
         if(validatingThis.length==0){
+            invalidDataArray.push("client_last_name")
             console.log("Invalid data for last name")
-            return false
         }
         //phone name
         validatingThis=document.getElementById("client_phone").value
         //must have data
         if(validatingThis.length!=10){
             console.log("Invalid data for phone")
-            return false
+            invalidDataArray.push("client_phone")
         }
         //email - only if filled
         validatingThis=document.getElementById("client_email").value        
         if(validatingThis.length>0){
             if((validatingThis.indexOf("@")==-1)||(validatingThis.indexOf(".")==-1)){
                 console.log("Invalid data for email")
-                return false
             }
         }
         //county
         validatingThis=document.getElementById("client_county").value
         if(validatingThis.length==0){
             console.log("Invalid data for county")
-            return false
+            invalidDataArray.push("client_county")
         }
         //city
         validatingThis=document.getElementById("client_city").value
         if(validatingThis.length==0){
             console.log("Invalid data for city")
-            return false
+            invalidDataArray.push("client_city")
         }
         //street
         validatingThis=document.getElementById("client_street").value
         if(validatingThis.length==0){
             console.log("Invalid data for street")
+            invalidDataArray.push("client_street")
+        }
+        if(invalidDataArray.length>0){
+            setInvalidData(invalidDataArray)
             return false
         }
         //all good
+        setInvalidData([])
         return true
     }
 
@@ -244,56 +249,56 @@ let TheClientForm = (props)=>{
     }
 
     return(            
-        <div> 
-            <h5>{props.title}</h5>
+        <div className={(props.isSubmitable===true) ? "form-container" : ""}> 
+            <h6>Date client</h6>
             <div className='form-row'>
                 <div className="form-group col-md-3">            
-                    <label className="form-subsection-label" htmlFor="client_first_name">First name:</label><br/>
-                    <input type="text" id="client_first_name" name="client_first_name" disabled={(fieldsDisabled===false) ?  true: false} className="form-control shadow-none" modified="false" autoComplete="off" onChange={changeFormData} value={data.client_first_name_input}/>
+                    <label className="form-subsection-label" htmlFor="client_first_name">Nume*</label><br/>
+                    <input type="text" id="client_first_name" name="client_first_name" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("client_first_name") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" autoComplete="off" onChange={changeFormData} value={data.client_first_name_input}/>
                 </div>
                 <div className="form-group col-md-3">   
-                    <label className="form-subsection-label" htmlFor="client_last_name">Last name:</label><br/>
-                    <input type="text" id="client_last_name" name="client_last_name" disabled={(fieldsDisabled===false) ?  true: false} className="form-control shadow-none" modified="false" onChange={changeFormData} value={data.client_last_name_input}/>
+                    <label className="form-subsection-label" htmlFor="client_last_name">Prenume*</label><br/>
+                    <input type="text" id="client_last_name" name="client_last_name" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("client_last_name") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.client_last_name_input}/>
                 </div>
                 <div className="form-group col-md-3">  
-                    <label className="form-subsection-label" htmlFor="client_phone">Phone number:</label><br/>
-                    <input type="text" id="client_phone" name="client_phone" disabled={(fieldsDisabled===false) ?  true: false} className="form-control shadow-none" modified="false" onChange={changeFormData} value={data.client_phone_input}/>
+                    <label className="form-subsection-label" htmlFor="client_phone">Telefon*</label><br/>
+                    <input type="text" id="client_phone" name="client_phone" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("client_phone") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.client_phone_input}/>
                 </div>
                 <div className="form-group col-md-3">   
-                    <label className="form-subsection-label" htmlFor="client_email">Email Adress:</label><br/>
-                    <input type="email" id="client_email" name="client_email" disabled={(fieldsDisabled===false) ?  true: false} className="form-control shadow-none" modified="false" onChange={changeFormData} value={data.client_email_input}/>
+                    <label className="form-subsection-label" htmlFor="client_email">Adresa email</label><br/>
+                    <input type="email" id="client_email" name="client_email" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("client_email") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.client_email_input}/>
                 </div>
             </div>
             <div className='form-row'>
                 <div className="form-group col-md-2">  
-                    <label className="form-subsection-label" htmlFor="client_county">County:</label><br/>
-                    <input type="text" id="client_county" name="client_county" disabled={(fieldsDisabled===false) ?  true: false} className="form-control shadow-none" modified="false" onChange={changeFormData} value={data.client_county_input}/>
+                    <label className="form-subsection-label" htmlFor="client_county">Judet*</label><br/>
+                    <input type="text" id="client_county" name="client_county" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("client_county") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.client_county_input}/>
                 </div>
                 <div className="form-group col-md-2">   
-                    <label className="form-subsection-label" htmlFor="client_city">City:</label><br/>
-                    <input type="text" id="client_city" name="client_city" disabled={(fieldsDisabled===false) ?  true: false} className="form-control shadow-none" modified="false" onChange={changeFormData} value={data.client_city_input}/>
+                    <label className="form-subsection-label" htmlFor="client_city">Oras*</label><br/>
+                    <input type="text" id="client_city" name="client_city" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("client_city") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.client_city_input}/>
                 </div>
                 <div className="form-group col-md-4">   
-                    <label className="form-subsection-label" htmlFor="client_street">Street:</label><br/>
-                    <input type="text" id="client_street" name="client_street" disabled={(fieldsDisabled===false) ?  true: false} className="form-control shadow-none" modified="false" onChange={changeFormData} value={data.client_street_input}/>
+                    <label className="form-subsection-label" htmlFor="client_street">Strada*</label><br/>
+                    <input type="text" id="client_street" name="client_street" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("client_street") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.client_street_input}/>
                 </div>
                 <div className="form-group col-md-2">   
-                    <label className="form-subsection-label" htmlFor="client_adress_number">Number:</label><br/>
-                    <input type="text" id="client_adress_number" name="client_adress_number" disabled={(fieldsDisabled===false) ?  true: false} className="form-control shadow-none" modified="false" onChange={changeFormData} value={data.client_adress_number_input}/>
+                    <label className="form-subsection-label" htmlFor="client_adress_number">Numar</label><br/>
+                    <input type="text" id="client_adress_number" name="client_adress_number" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("client_adress_number") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.client_adress_number_input}/>
                 </div>
                 <div className="form-group col-md-2">   
-                    <label className="form-subsection-label" htmlFor="client_zip">ZIP:</label><br/>
-                    <input type="text" id="client_zip" name="client_zip" disabled={(fieldsDisabled===false) ?  true: false} className="form-control shadow-none" modified="false" onChange={changeFormData} value={data.client_zip_input}/>
+                    <label className="form-subsection-label" htmlFor="client_zip">ZIP</label><br/>
+                    <input type="text" id="client_zip" name="client_zip" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("client_zip") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.client_zip_input}/>
                 </div>
             </div>
             <div className='form-row'>
                 <div className="form-group col-md-12">   
-                    <label className="form-subsection-label" htmlFor="client_notes">Client notes:</label><br/>
-                    <textarea class="form-control" id="client_notes" name="client_notes" rows="2" disabled={(fieldsDisabled===false) ?  true: false} className="form-control shadow-none" modified="false" onChange={changeFormData} value={data.client_notes_input}></textarea>
+                    <label className="form-subsection-label" htmlFor="client_notes">Informatii aditionale:</label><br/>
+                    <textarea class="form-control" id="client_notes" name="client_notes" rows="2" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("client_notes") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.client_notes_input}></textarea>
                     
                 </div>
             </div>
-            {(props.isSubmitable===true) && <button id="edit-client-data" className="actions-button action-green-button"><span className="action-button-label" onClick={()=>{submitClientData()}}><span class="material-icons-outlined">save</span> SAVE</span></button>}
+            {(props.isSubmitable===true) && <button id="edit-client-data" className="btn btn-sm btn-success actions-button"><span className="action-button-label" onClick={()=>{submitClientData()}}><span class="material-icons-outlined">save</span> SAVE</span></button>}
             <Snackbar text={alertUser.text} closeSnack={()=>{setAlertUser({text:null})}}/>   
         </div>
     )       

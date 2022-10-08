@@ -7,36 +7,22 @@ import ProductForm from "./ProductForm.jsx";
 let Products=()=>{   
 
     let [addProduct, setaddProduct]=React.useState(false)
+    let [activeElement, setActiveElement] = React.useState("overview")
 
     return(
         <div>
-            <div className="app-submenu-selector">
-                <button id="add-client" onClick={()=>{setaddProduct(true)}}><span className="button-label"><span className="material-icons-outlined">add</span>Add product</span></button>
+            <div className="app-title-container">
+                <h4>Produse</h4>
+                <div className="app-submenu-selector">
+                    <button id="overview" disabled={activeElement==="overview" ? true : false } onClick={()=>{setActiveElement("overview")}}><span className="button-label"><span className="material-icons-outlined">home</span>Overview</span></button>
+                    <button id="add-client" disabled={activeElement==="add" ? true : false } onClick={()=>{setActiveElement("add")}}><span className="button-label"><span className="material-icons-outlined">add</span>Produs nou</span></button>
+                </div>
             </div>
+            <hr/>
 
-            <div className="app-data-container">
-                <h1 className="info-text-header">Predefined products</h1>
-                <div className="info-text-box">                                
-                    <p className="lead">Provides an overview of all predefined products. Editing a predefined product will NOT overwrite data in existing invoices.</p>
-                </div>
-                <div className="available-products form-group">          
-                    <ExistingProducts insertable={false} actions={true}/>
-                    {addProduct &&
-                        <div> 
-                            <div className="blur-overlap"></div>     
-                            <div className="overlapping-component-inner">
-                                <div className="overlapping-component-actions">
-                                    <h4>Add a product</h4>
-                                    <button type="button" className="action-close-window " onClick={()=>{setaddProduct(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
-                                </div>
-                                <div class="app-content" style={{height:'fit-content'}}>
-                                    <ProductForm/> 
-                                </div>
-                            </div>              
-                        </div>
-                    }                               
-                </div>
-            </div>
+            {activeElement==="overview"&&<ExistingProducts insertable={false} actions={true}/>}
+            {activeElement==="add"&&<ProductForm/>}
+
         </div>
 
 

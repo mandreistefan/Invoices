@@ -21,15 +21,15 @@ export default class Invoice extends React.Component{
             //id: products can have IDs if the products are added from the predefined products list; preloaded - the product has been preloaded from prop data; valid - i want to use this to validate form data
             tableElements: [{properties:{preloaded:false, id:null, entry: null, valid:true}, data:["", "", "", "10", "0", ""]}],
             total_prod_quantity: 0,
-            total_prod_price: (props.predefined) ? props.predefined.userData.total.price : 0,  
-            total_tax:(props.predefined) ? props.predefined.userData.total.tax : 0,
-            activeClient: (props.activeClient) ? props.activeClient : null,
+            total_prod_price: 0,  
+            total_tax:0,
+            activeClient: props.activeClient ? props.activeClient : null,
             alertUser: null,
-            invoice_server_status: (props.predefined) ? props.predefined.userData.invoice_status : "draft",
-            invoice_status: (props.predefined) ? props.predefined.userData.invoice_status : "draft",
-            invoice_pay_method: (props.predefined) ? props.predefined.userData.invoice_pay_method : "cash",            
-            invoice_bank_ref: (props.predefined) ? props.predefined.userData.invoice_bank_ref : "",
-            isFormDisabled: (props.predefined) ? ((props.predefined.userData.invoice_status==="draft") ? false : true) : false,
+            invoice_server_status: "draft",
+            invoice_status: "draft",
+            invoice_pay_method: "cash",            
+            invoice_bank_ref: "",
+            isFormDisabled: false,
             predefinedList: false,
             refreshFunction: props.refresh
         };
@@ -407,22 +407,19 @@ export default class Invoice extends React.Component{
     render()
         {
             return(
-                <div className="invoices-add-container"> 
-                    <div className="invoices-add-actions">
-                        <button className="actions-button" disabled={(this.state.invoice_server_status==="finalised") ? true : false} form="invoice-form" id="submit-invoice-button"><span className="action-button-label"><span className="material-icons-outlined">save</span>SAVE</span></button>                            
-                    </div>                                  
+                <div className="invoices-add-container">                              
                     <form id="invoice-form" onSubmit={this.submitData}>
                             <div className="client-info-container form-sub-container">
                                 <ClientForm editable={((this.state.activeClient!=null)||this.state.isFormDisabled||this.state.invoiceID!=null||this.state.invoice_status==="finalised") ? false : true} isSubmitable={false} clientID={this.state.activeClient} userData={this.state.userData}/>
                             </div>  
-
+                            <h6>Setari factura</h6>
                             <div className="row">
-                                <div className="col-md-4">
-                                    <span className="form-subsection-label">Billing type *</span>                  
+                                <div className="col-md-2">
+                                    <span className="form-subsection-label">Tip *</span>                  
                                     <div className="form-group">  
                                         <select className="form-control form-control-sm" id="billing-type" name="billingType" value={this.state.billingType} modified="false" onChange={this.handleSelect} disabled={((this.state.activeClient!=null) ? false : true)||this.state.invoice_status==="finalised"}>
-                                            <option value="one-time-billing-option">One-time fee</option>
-                                            <option value="recurring-billing-option">Reccurent</option>
+                                            <option value="one-time-billing-option">Unica</option>
+                                            <option value="recurring-billing-option">Recurenta</option>
                                         </select>
                                     </div>    
                                 </div>
@@ -452,18 +449,18 @@ export default class Invoice extends React.Component{
                             <div>                                
                                 <div className="save-as-container">                                      
                                     <div className="form-group col-md-2">  
-                                        <span className="form-subsection-label">Save invoice as **</span><br/>  
+                                        <span className="form-subsection-label">Status **</span><br/>  
                                         <select className="form-control form-control-sm shadow-none" id="invoice_status" name="invoice_status" value={this.state.invoice_status} modified="false" disabled={(this.state.invoice_server_status==="finalised") ? true : false} onChange={this.handleSelect}>
-                                            <option hidden={(this.state.isFormDisabled) ? true : false} value="draft">Draft</option>
-                                            <option value="finalised">Finalised</option>
+                                            <option hidden={(this.state.isFormDisabled) ? true : false} value="draft">Ciorna</option>
+                                            <option value="finalised">Finalizata</option>
                                         </select>
                                     </div> 
                                     {this.state.invoice_status==="finalised" &&
                                         <div className="form-group col-md-2">  
-                                            <span className="form-subsection-label">Paid with:</span><br/>
+                                            <span className="form-subsection-label">Plata cu:</span><br/>
                                             <select className="form-control form-control-sm shadow-none" id="invoice_pay_method" name="invoice_pay_method" disabled={(this.state.invoice_server_status==="finalised") ? true : false} value={this.state.invoice_pay_method} modified="false" onChange={this.handleSelect}>
                                                 <option value="cash">Cash</option>
-                                                <option value="bank">Bank</option>
+                                                <option value="bank">Banca</option>
                                             </select>
                                         </div>
                                     }
@@ -484,17 +481,19 @@ export default class Invoice extends React.Component{
                                     </p>
                                 </div>}
                             </div>
-                            <div className="billing-products-container form-sub-container">                                 
+                            
+                            <div className="billing-products-container form-sub-container">
+                                <h6>Produse facturate</h6>                                 
                                 <div className="invoice-products-container form-group"> 
                                         <div className="">
                                             <div className="row billing-products-header">
-                                                <div className="col-4">Name</div>
+                                                <div className="col-4">Nume</div>
                                                 <div className="col-2">UM</div>
-                                                <div className="col-1">Quantity</div>
-                                                <div className="col-1">Tax(%)</div>
-                                                <div className="col-1">Tax</div>
-                                                <div className="col-1">Price</div>
-                                                <div className="col-1">Price total</div>
+                                                <div className="col-1">Cantitate</div>
+                                                <div className="col-1">Taxa(%)</div>
+                                                <div className="col-1">Taxa</div>
+                                                <div className="col-1">Pret</div>
+                                                <div className="col-1">Pret total</div>
                                                 <div className="col-1"></div>
                                             </div>
                                             <div className="billing-products-body">
@@ -523,19 +522,17 @@ export default class Invoice extends React.Component{
                                                 <div className="col-1" style={{visibility:'hidden'}}><input type="text" className="product_tax billing-products-footer-input" disabled={true} /></div>
                                             </div>
                                         </div>
-                                    <button type="button" className="btn btn-light btn-sm" disabled={(this.state.invoice_server_status==="finalised") ? true : false} style={{marginRight:'5px'}} onClick={this.addNewRow}><span className="action-button-label"><span className="material-icons-outlined">add</span>Add row</span></button>
-                                    <button type="button" className="btn btn-light btn-sm" disabled={(this.state.invoice_server_status==="finalised") ? true : false} onClick={()=>{this.setState({predefinedList: true})}}><span className="action-button-label"><span className="material-icons-outlined">apps</span>Add a predefined product</span></button>
+                                    <button type="button" className="btn btn-light btn-sm" disabled={(this.state.invoice_server_status==="finalised") ? true : false} style={{marginRight:'5px'}} onClick={this.addNewRow}><span className="action-button-label"><span className="material-icons-outlined">add</span>Rand nou</span></button>
+                                    <button type="button" className="btn btn-light btn-sm" disabled={(this.state.invoice_server_status==="finalised") ? true : false} onClick={()=>{this.setState({predefinedList: true})}}><span className="action-button-label"><span className="material-icons-outlined">apps</span>Predefinite</span></button>
                                 </div>
-                            </div>                            
+                            </div>  
+                            <button className="btn btn-sm btn-success actions-button" disabled={(this.state.invoice_server_status==="finalised") ? true : false} form="invoice-form" id="submit-invoice-button"><span className="action-button-label"><span className="material-icons-outlined">save</span>SAVE</span></button>                                                          
                     </form>
                     {this.state.predefinedList&&
                         <div> 
                             <div className="blur-overlap"></div>     
+                            <button type="button" className="action-close-window" onClick={()=>{this.setState({predefinedList: false})}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
                             <div className="overlapping-component-inner">
-                                <div className="overlapping-component-actions">
-                                    <span className="bd-lead">Predefined products:</span>
-                                    <button type="button" className="action-close-window" onClick={()=>{this.setState({predefinedList: false})}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
-                                </div>
                                 <PredefinedProducts addElement={this.addPredefinedElement} insertable={true}/> 
                             </div>              
                         </div>

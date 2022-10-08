@@ -10,19 +10,16 @@ let Invoices = () =>{
 
     let submenu=[
         {id:"invoices-overview-button", name:"overview", icon:'home', disabled:false, displayName:"Overview"},
-        {id:"recurrent-overview-button", name:"recurrent", icon:'timer', disabled:true, displayName:"Recurrencies"},
-        {id:"new-invoice-button", name:"new-invoice", icon:'add_circle', disabled:false, displayName:"Add invoice"},
+        {id:"new-invoice-button", name:"new-invoice", icon:'add_circle', disabled:false, displayName:"Factura noua"},
     ]
 
     return(
         <div>
-            <div className="app-submenu-selector">
-                    {
-                        submenu.map((element,index)=>(
-                            <button id={element.id} key={index} disabled={((currentElement===element.name) ? true :false)||(element.disabled===true)} onClick={()=>{setCurrentElement(element.name)}}><span className="button-label"><span className="material-icons-outlined">{element.icon}</span>{element.displayName}</span></button>
-                        ))
-                    }                
+            <div className="app-title-container">
+                <h4>Facturi</h4>
+                <div className="app-submenu-selector">{submenu.map((element,index)=>(<button id={element.id} key={index} disabled={((currentElement===element.name) ? true :false)||(element.disabled===true)} onClick={()=>{setCurrentElement(element.name)}}><span className="button-label"><span className="material-icons-outlined">{element.icon}</span>{element.displayName}</span></button>))}</div>
             </div>
+            <hr/>
             <div className="invoice-component-container">
                 {currentElement==="new-invoice" && <Invoice/>}
                 {currentElement==="overview" && <Overview/>}

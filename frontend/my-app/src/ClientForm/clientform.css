@@ -23,9 +23,9 @@
 }
 
 .form-group{
-    padding:10px
+    padding-left:5px;
+    padding-right:5px
 }
-
 
 .form-group .form-subsection-label{
     padding:0!important;

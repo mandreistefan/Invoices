@@ -6,7 +6,7 @@ let EditInvoice=(props)=>{
     let [passedData, setPassedData] = React.useState(null)
 
     React.useEffect(()=>{
-        getData(props.invoiceID)
+        //getData(props.invoiceID)
     },[])
 
     let getData=(invoice)=>{
@@ -16,7 +16,7 @@ let EditInvoice=(props)=>{
     }
 
     return(
-        passedData&&<Invoice predefined={{tableElements:passedData.invoiceProducts, userData:passedData.invoiceProperty, invoiceID:props.invoiceID}}/>
+        <Invoice predefined={{invoiceID:props.invoiceID}}/>
     )
 
 }

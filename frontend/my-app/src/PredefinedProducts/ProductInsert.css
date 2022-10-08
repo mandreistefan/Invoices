@@ -14,9 +14,10 @@
     padding-bottom: 3px;
 }
 
-.new-product-form{
-    width: 100%;
-    display:flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+#new-product-form{
+    background-color: #D9D9D9;
+    padding: 10px;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
 }

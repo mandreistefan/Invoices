@@ -54,11 +54,6 @@ let ProductForm = (props) =>{
             setSnackBarText("You need a product tax")
             return false
         }else{
-            if(!(parseInt(arrayData.pp_tax.value))){
-                setSnackBarText("The tax format is invalid")
-                return false
-            }
-
             if(parseInt(arrayData.pp_tax.value)>=100) {
                 setSnackBarText("Tax cannot be equal to, or larger than, 100")
                 return false
@@ -76,7 +71,6 @@ let ProductForm = (props) =>{
             sendData.pp_tax = arrayData.pp_tax.value
             sendData.pp_description = arrayData.pp_description.value
         }else{
-            console.log("here")
             //edit, so send just the relevant data
             if(arrayData.pp_name.modified) sendData.pp_name = arrayData.pp_name.value
             if(arrayData.pp_um.modified) sendData.pp_um = arrayData.pp_um.value
@@ -95,9 +89,9 @@ let ProductForm = (props) =>{
         .then(response=>response.json())
         .then(data=>{
             if(data.status==="OK"){
-                setSnackBarText("Product has been registered")
+                setSnackBarText("Success")
             }else{
-                setSnackBarText("Product has NOT been registered")
+                setSnackBarText("An error ocurred")
             }
         })
 
@@ -129,27 +123,27 @@ let ProductForm = (props) =>{
         <div id="new-product-form">
         <div className='form-row' ref={carlig}>
             <div className="form-group col-2">            
-                <label className="form-subsection-label" htmlFor="pp_name">Product name:</label><br/>
+                <label className="form-subsection-label" htmlFor="pp_name">Nume</label><br/>
                 <input type="text" id="pp_name" name="pp_name" className="form-control shadow-none" onChange={changeFormData} value={arrayData.pp_name.value}/>
             </div>
             <div className="form-group col-2">   
-                <label className="form-subsection-label" htmlFor="pp_um">UM:</label><br/>
+                <label className="form-subsection-label" htmlFor="pp_um">UM</label><br/>
                 <input type="text" id="pp_um" name="pp_um"  className="form-control shadow-none" onChange={changeFormData} value={arrayData.pp_um.value}/>
             </div>
             <div className="form-group col-2">  
-                <label className="form-subsection-label" htmlFor="pp_price_per_item">Price per unit:</label><br/>
+                <label className="form-subsection-label" htmlFor="pp_price_per_item">Pret per unitate</label><br/>
                 <input type="text" id="pp_price_per_item" name="pp_price_per_item"  className="form-control shadow-none"onChange={changeFormData} value={arrayData.pp_price_per_item.value}/>
             </div>
             <div className="form-group col-2">   
-                <label className="form-subsection-label" htmlFor="pp_tax">Tax:</label><br/>
-                <input type="email" id="pp_tax" name="pp_tax"  className="form-control shadow-none"onChange={changeFormData} value={arrayData.pp_tax.value}/>
+                <label className="form-subsection-label" htmlFor="pp_tax">Taxa</label><br/>
+                <input type="text" id="pp_tax" name="pp_tax"  className="form-control shadow-none"onChange={changeFormData} value={arrayData.pp_tax.value}/>
             </div>
             <div className="form-group col-4">   
-                <label className="form-subsection-label" htmlFor="pp_description">Description:</label><br/>
-                <input type="email" id="pp_description" name="pp_description"  className="form-control shadow-none" onChange={changeFormData} value={arrayData.pp_description.value}/>
+                <label className="form-subsection-label" htmlFor="pp_description">Descriere</label><br/>
+                <input type="text" id="pp_description" name="pp_description"  className="form-control shadow-none" onChange={changeFormData} value={arrayData.pp_description.value}/>
             </div>
         </div>
-        <button className='actions-button' onClick={()=>{submitData()}}><span className="action-button-label"><span class="material-icons-outlined">save</span> SAVE</span></button>
+        <button className='btn btn-sm btn-success actions-button' onClick={()=>{submitData()}}><span className="action-button-label"><span class="material-icons-outlined">save</span> SAVE</span></button>
         <Snackbar text={snackBarText} closeSnack={()=>{setSnackBarText(null)}}/>
     </div>
     )

@@ -15,11 +15,11 @@ let SideNavigation = (props) =>{
 
     let navigationElements = 
     [
-        {id:0, name: "clients", displayName:'Clients', icon:'account_circle'},
-        {id:1, name: "invoices", displayName:'Invoices', icon:'receipt_long'},
-        {id:2, name: "products", displayName:'Products', icon:'sell'},
-        {id:3, name: "financial", displayName:'Financial', icon:'attach_money'},
-        {id:4, name: "database", displayName:'Database', icon:'cloud'}
+        {id:0, name: "clients", displayName:'CLIENTI', icon:'account_circle'},
+        {id:1, name: "invoices", displayName:'FACTURI', icon:'receipt_long'},
+        {id:2, name: "products", displayName:'PRODUSE', icon:'sell'},
+        {id:3, name: "financial", displayName:'FINANTE', icon:'attach_money'},
+        {id:4, name: "database", displayName:'BAZA DATE', icon:'cloud'}
     ]
 
     //initial setup can be saved in localstorage
@@ -35,6 +35,7 @@ let SideNavigation = (props) =>{
 
     return(
         <div className="side-navigation">
+            <h6>Invoice App</h6><hr/>
             <ul className="side-nav-elements">
                 {
                     navigationElements.map(element=>(

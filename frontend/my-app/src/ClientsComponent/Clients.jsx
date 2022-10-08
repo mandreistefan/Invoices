@@ -68,8 +68,8 @@ let Clients = (props) =>{
     }
 
     //shows the invoices linked to a client
-    let enableClientInvoices = (userID) =>{
-        (userID) ? setShowClientInvoices(userID) : setShowClientInvoices(null)
+    let enableClientInvoices = (userID, userName) =>{
+        (userID) ? setShowClientInvoices({userID:userID, name:userName}) : setShowClientInvoices(null)
     }
 
     let changePage=(pageNumber)=>{
@@ -78,18 +78,7 @@ let Clients = (props) =>{
 
     return(
             <div className='app-data-container'>
-                {showInfo&&
-                    <div>
-                        <div className="info-text">
-                            <h1 className="info-text-header">Clients</h1>
-                            <div className="info-text-box">                                
-                                <p className="lead">Provides an overview of all clients.</p>
-                            </div>
-                        </div> 
-                    </div>
-                }     
-
-                <table className='table table-hover' style={{marginTop:'20px'}}>
+                <table className='table table-hover'>
                         <thead className='table-active'>
                             <tr>  
                                 <th>#</th>
@@ -108,9 +97,7 @@ let Clients = (props) =>{
                                         <td>{index+1}</td>         
                                         <td> 
                                             <div style={{display:'flex', flexDirection:'row', alignItems:'center'}}>
-                                                <div className="name-badge">{element.client_first_name.substring(0,1)}{element.client_last_name.substring(0,1)}</div>
-                                                {element.client_first_name} {element.client_last_name}     
-                                            </div>
+                                                <div className="name-badge" style={{backgroundColor:element.client_gui_color}}>{element.client_first_name.substring(0,1)}{element.client_last_name.substring(0,1)}</div>{element.client_first_name} {element.client_last_name}</div>
                                         </td>               
                                         <td>{element.client_county}, {element.client_city}, {element.client_street}, {element.client_adress_number}, {element.client_zip}</td>                            
                                         <td>{element.client_phone}</td>
@@ -119,10 +106,10 @@ let Clients = (props) =>{
                                         <td>
                                             <div className='actions-container'>                                    
                                                 <SmallMenu items={[
-                                                    {name:"Bill", icon:"receipt_long", clickAction:()=>{props.enableInvoiceApp(true, element.id)}}, 
-                                                    {name:"Invoices", icon:"file_open", clickAction:()=>{enableClientInvoices(element.id)}}, 
-                                                    {name:"Edit", icon:"edit", clickAction:()=>{enableClientEditing(element.id)}},
-                                                    {name:"Delete", icon:"delete", clickAction:()=>{deleteClient(element.id)}}
+                                                    {name:"Factureaza", icon:"receipt_long", clickAction:()=>{props.enableInvoiceApp(element.client_first_name, element.id)}}, 
+                                                    {name:"Facturi", icon:"file_open", clickAction:()=>{enableClientInvoices(element.id, element.client_first_name)}}, 
+                                                    {name:"Editare", icon:"edit", clickAction:()=>{enableClientEditing(element.id)}},
+                                                    {name:"Stergere", icon:"delete", clickAction:()=>{deleteClient(element.id)}}
                                                 ]}/>
                                             </div> 
                                         </td>
@@ -134,27 +121,23 @@ let Clients = (props) =>{
                 <PageNavigation numberOfItems={numberOfElements} changePage={changePage}/>
                 {(editableClient!=null) &&
                     <div> 
-                        <div className="blur-overlap"></div>     
+                        <div className="blur-overlap"></div>   
+                        <button type="button" className="action-close-window" onClick={()=>{setEditableClient(null)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>  
                         <div className="overlapping-component-inner">
                             <div className="overlapping-component-actions">
-                                <h4><span className="material-icons-outlined" style={{marginRight:'5px'}}>edit</span>Edit</h4>
-                                <button type="button" className="action-close-window" onClick={()=>{setEditableClient(null)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
+                                <span><b>Editare client</b></span>                              
                             </div>
-                            <div class="app-content" style={{height:'fit-content'}}>
-                                <ClientForm editable={editableClient} isSubmitable={true} clientID={editableClient}/>
-                            </div>
+                            <ClientForm editable={editableClient} isSubmitable={true} clientID={editableClient}/>
                         </div>              
                     </div>
                 }  
                 {(showClientInvoices!=null) &&
                     <div> 
-                        <div className="blur-overlap"></div>     
+                        <div className="blur-overlap"></div>   
+                        <button type="button" className="action-close-window" onClick={()=>{setShowClientInvoices(null)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>  
                         <div className="overlapping-component-inner">
-                            <div className="overlapping-component-actions">
-                                <span className="bd-lead"></span>
-                                <button type="button" className="action-close-window" onClick={()=>{setShowClientInvoices(null)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
-                            </div>
-                            <Invoices queryFilterBy="clientID" queryFilterData={showClientInvoices}/>
+                            <span>Facturile lui <b>{showClientInvoices.name}</b></span>
+                            <Invoices queryFilterBy="clientID" queryFilterData={showClientInvoices.userID}/>
                         </div>              
                     </div>
                 } 

@@ -21,11 +21,11 @@ let PredefinedProductsManager = (props) =>{
 
     return(
         (predefinedProducts===null) ? <div><h4>Loading...</h4></div>:        
-        <div> 
+        <div className="app-data-container"> 
             <table className='table table-hover'>
                 <thead className='table-active'>
                     <tr className='app-data-table-row'>
-                        <th>#</th>
+                        <th></th>
                         <th>NUME</th>
                         <th>UM</th>
                         <th>PRET</th>
@@ -39,7 +39,7 @@ let PredefinedProductsManager = (props) =>{
                     predefinedProducts.length>0 ? 
                     predefinedProducts.map((element, index)=>(
                         <tr key={index} className='clients-table-row app-data-table-row'>
-                            <td>{index+1}</td>
+                            <td className="centered-text-in-td">{index+1}</td>
                             <td>{element.pp_name}</td>
                             <td>{element.pp_um}</td>
                             <td>{element.pp_price_per_item} RON</td>
@@ -76,15 +76,10 @@ let PredefinedProductsManager = (props) =>{
             {predefinedProducts.length==0 ? <div style={{textAlign:"center", width:"100%"}}><h4 >No data</h4></div> : ""}
             {productProps!=null &&
                 <div> 
-                    <div className="blur-overlap"></div>     
+                    <div className="blur-overlap"></div>    
+                    <button type="button" className="action-close-window " onClick={()=>{setProductProps(null)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button> 
                     <div className="overlapping-component-inner">
-                        <div className="overlapping-component-actions">
-                            <span className="bd-lead">Edit product</span>
-                            <button type="button" className="action-close-window " onClick={()=>{setProductProps(null)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
-                        </div>
-                        <div class="col-lg-6">
-                            <p class="lead">Change the properties of existing products by modifying the desired field and clicking Submit<br/></p>
-                        </div>
+                        <span><b>Editare produs</b></span>
                         <ProductForm data={productProps}/> 
                     </div>              
                 </div>
