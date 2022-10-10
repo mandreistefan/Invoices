@@ -248,11 +248,12 @@ function archiveInvoice(invoiceID, callback){
 
 async function fetchInvoiceData(querryObject){
     let dataArray={
-        invoiceProperty:({number:"", date:"", client_first_name:"", client_last_name:"", client_billing_adress:{county:"", city:"", street:"", number:"", zip:"", phone:"", email:""}, date:"", total:({price:0, tax:0, items:0})}),
+        invoiceProperty:({number:"", date:"", client_type:"", client_fiscal_1:"", client_fiscal_2:"", client_first_name:"", client_last_name:"", client_billing_adress:{county:"", city:"", street:"", number:"", zip:"", phone:"", email:""}, date:"", total:({price:0, tax:0, items:0})}),
         invoiceProducts:{}
     }
 
     let invoiceData = await databaseOperations.getInvoices(querryObject)
+    console.log(querryObject)
     //if we don't have data, probably the invoice number is not okay
     if(invoiceData.status!=="OK") return ({status:"INVALID_REQUEST"})
 
@@ -261,6 +262,9 @@ async function fetchInvoiceData(querryObject){
     dataArray.invoiceProperty.date=utile.simpleDate(invoiceData.data[0].invoice_date)
     dataArray.invoiceProperty.client_first_name=invoiceData.data[0].client_first_name
     dataArray.invoiceProperty.client_last_name=invoiceData.data[0].client_last_name
+    dataArray.invoiceProperty.client_fiscal_1=invoiceData.data[0].client_fiscal_1
+    dataArray.invoiceProperty.client_fiscal_2=invoiceData.data[0].client_fiscal_2
+    dataArray.invoiceProperty.client_type=invoiceData.data[0].client_type
     dataArray.invoiceProperty.client_billing_adress.county=invoiceData.data[0].client_county
     dataArray.invoiceProperty.client_billing_adress.city=invoiceData.data[0].client_city
     dataArray.invoiceProperty.client_billing_adress.street=invoiceData.data[0].client_street

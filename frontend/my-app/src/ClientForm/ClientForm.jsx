@@ -5,6 +5,9 @@ import Snackbar from '../Snackbar/Snackbar.jsx'
 let TheClientForm = (props)=>{
 
     let [data, setTheData]=React.useState({
+        client_fiscal_1_input: (props.userData) ? props.userData.client_fiscal_1 : "", 
+        client_fiscal_2_input: (props.userData) ? props.userData.client_fiscal_2 : "", 
+        client_type_input: (props.userData) ? props.userData.client_type : "pers", 
         client_first_name_input: (props.userData) ? props.userData.client_first_name : "", 
         client_last_name_input:  (props.userData) ? props.userData.client_last_name : "", 
         client_phone_input: (props.userData) ? props.userData.client_phone : "", 
@@ -36,6 +39,9 @@ let TheClientForm = (props)=>{
         //preset data
         if(props.userData){
             setTheData({
+                client_fiscal_1_input: (props.userData) ? props.userData.client_fiscal_1 : "", 
+                client_fiscal_2_input: (props.userData) ? props.userData.client_fiscal_2 : "", 
+                client_type_input: (props.userData) ? props.userData.client_type : "", 
                 client_first_name_input: (props.userData) ? props.userData.client_first_name : "", 
                 client_last_name_input:  (props.userData) ? props.userData.client_last_name : "", 
                 client_phone_input: (props.userData) ? props.userData.client_phone : "", 
@@ -63,6 +69,9 @@ let TheClientForm = (props)=>{
         .then(data=>{
             let clientData = data.data[0];
             let prettyData = {
+                client_fiscal_1_input: (clientData) ? clientData.client_fiscal_1 : "", 
+                client_fiscal_2_input: (clientData) ? clientData.client_fiscal_2 : "", 
+                client_type_input: (clientData) ? clientData.client_type : "", 
                 client_first_name_input: (clientData) ?  clientData.client_first_name: "",
                 client_last_name_input: (clientData) ?  clientData.client_last_name: "", 
                 client_phone_input: (clientData) ?  clientData.client_phone: "", 
@@ -87,13 +96,6 @@ let TheClientForm = (props)=>{
         if(validatingThis.length==0){
             console.log("Invalid data for first name")
             invalidDataArray.push("client_first_name")
-        }
-        //last name
-        validatingThis=document.getElementById("client_last_name").value
-        //must have data
-        if(validatingThis.length==0){
-            invalidDataArray.push("client_last_name")
-            console.log("Invalid data for last name")
         }
         //phone name
         validatingThis=document.getElementById("client_phone").value
@@ -171,10 +173,14 @@ let TheClientForm = (props)=>{
     //register a new client
     let submitNewClient = () =>{
             if(newClientDataValid()){
+                console.log("dfqwefw")
                 fetch(`/clients`, {
                     method:"POST",
                     headers: { 'Content-Type': 'application/json' },
                     body:JSON.stringify({
+                        client_fiscal_1: document.getElementById("client_fiscal_1").value,
+                        client_fiscal_2: document.getElementById("client_fiscal_2").value, 
+                        client_type: document.getElementById("client_type").value, 
                         client_first_name: document.getElementById("client_first_name").value,
                         client_last_name: document.getElementById("client_last_name").value,
                         client_phone: document.getElementById("client_phone").value,
@@ -208,6 +214,9 @@ let TheClientForm = (props)=>{
     //edit the data for a registered client
     let updateExistingClient = () =>{
         let dataToBeSent ={}
+        if(document.getElementById("client_fiscal_1").attributes.getNamedItem('modified').value==="true") dataToBeSent.client_fiscal_1=document.getElementById("client_fiscal_1").value;
+        if(document.getElementById("client_fiscal_2").attributes.getNamedItem('modified').value==="true") dataToBeSent.client_fiscal_2=document.getElementById("client_fiscal_2").value;
+        if(document.getElementById("client_type").attributes.getNamedItem('modified').value==="true") dataToBeSent.client_type=document.getElementById("client_type").value;
         if(document.getElementById("client_first_name").attributes.getNamedItem('modified').value==="true") dataToBeSent.client_first_name=document.getElementById("client_first_name").value;
         if(document.getElementById("client_last_name").attributes.getNamedItem('modified').value==="true") dataToBeSent.client_last_name=document.getElementById("client_last_name").value;
         if(document.getElementById("client_phone").attributes.getNamedItem('modified').value==="true") dataToBeSent.client_phone=document.getElementById("client_phone").value;
@@ -251,13 +260,34 @@ let TheClientForm = (props)=>{
     return(            
         <div className={(props.isSubmitable===true) ? "form-container" : ""}> 
             <h6>Date client</h6>
+
+            <div className='form-row'>
+                <div className="col-md-3">
+                    <span className="form-subsection-label">Tip client</span>                  
+                    <div className="form-group">  
+                        <select className="form-control form-control-sm" id="client_type" name="client_type"disabled={(fieldsDisabled===false) ?  true: false} modified="false" autoComplete="off" onChange={changeFormData} value={data.client_type_input}>
+                            <option value="pers">Persoana fizica</option>
+                            <option value="comp">Companie</option>
+                        </select>
+                    </div>    
+                </div>
+                <div className="form-group col-md-3">            
+                    <label className="form-subsection-label" htmlFor="client_fiscal_1">Nr. Reg. Com</label><br/>
+                    <input type="text" id="client_fiscal_1" name="client_fiscal_1" disabled={(fieldsDisabled===false ? true: false || data.client_type_input=="pers")} className={invalidDataItems.includes("client_fiscal_1") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" autoComplete="off" onChange={changeFormData} value={data.client_fiscal_1_input}/>
+                </div>
+                <div className="form-group col-md-3">   
+                    <label className="form-subsection-label" htmlFor="client_fiscal_2">CIF</label><br/>
+                    <input type="text" id="client_fiscal_2" name="client_fiscal_2" disabled={(fieldsDisabled===false ?  true: false || data.client_type_input=="pers")} className={invalidDataItems.includes("client_fiscal_2") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.client_fiscal_2_input}/>
+                </div>
+            </div>
+
             <div className='form-row'>
                 <div className="form-group col-md-3">            
-                    <label className="form-subsection-label" htmlFor="client_first_name">Nume*</label><br/>
+                    <label className="form-subsection-label" htmlFor="client_first_name">Nume/ Nume companie</label><br/>
                     <input type="text" id="client_first_name" name="client_first_name" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("client_first_name") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" autoComplete="off" onChange={changeFormData} value={data.client_first_name_input}/>
                 </div>
                 <div className="form-group col-md-3">   
-                    <label className="form-subsection-label" htmlFor="client_last_name">Prenume*</label><br/>
+                    <label className="form-subsection-label" htmlFor="client_last_name">Prenume (persoane fizice)</label><br/>
                     <input type="text" id="client_last_name" name="client_last_name" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("client_last_name") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.client_last_name_input}/>
                 </div>
                 <div className="form-group col-md-3">  

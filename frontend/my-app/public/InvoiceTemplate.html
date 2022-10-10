@@ -26,7 +26,9 @@
                     </div>
                     <hr>
                     <p style="margin:0">Client:</p>
-                    <span class="invoice-name" id="client-name"></span>
+                    <span class="invoice-name" id="client-name"></span><span class="invoice-name" id="client-surname"></span>                    
+                    <span class="" id="client_fiscal_1"></span>
+                    <span class="" id="client_fiscal_2"></span>
                     <span id="client-adress"></span>
                     <span id="client-email"></span>
                 </div>
@@ -86,12 +88,20 @@
             document.getElementById("invoice-number").innerHTML=invoiceData.invoiceProperty.number
             document.getElementById("invoice-date").innerHTML=invoiceData.invoiceProperty.date
             document.getElementById("invoice-info-total").innerHTML=`${invoiceData.invoiceProperty.total.price} RON`
-            document.getElementById("client-name").innerHTML=`${invoiceData.invoiceProperty.client_first_name} ${invoiceData.invoiceProperty.client_last_name}`
+            document.getElementById("client-name").innerHTML=`${invoiceData.invoiceProperty.client_first_name}`
+            document.getElementById("client-surname").innerHTML=`${invoiceData.invoiceProperty.client_last_name}`
             document.getElementById("client-adress").innerHTML=`Adresa: ${invoiceData.invoiceProperty.client_billing_adress.county}, ${invoiceData.invoiceProperty.client_billing_adress.city}, ${invoiceData.invoiceProperty.client_billing_adress.street}, ${invoiceData.invoiceProperty.client_billing_adress.number}`
             document.getElementById("client-email").innerHTML=`Email: ${invoiceData.invoiceProperty.client_billing_adress.email}`
             document.getElementById("billed-products-table-body").innerHTML = generateTable(invoiceData.invoiceProducts)
             document.getElementById("invoice-total").innerHTML = `<b>${invoiceData.invoiceProperty.total.price} RON</b>`
             document.getElementById("invoice-total-tax").innerHTML = `<b>${invoiceData.invoiceProperty.total.tax} RON</b>`
+            if(invoiceData.invoiceProperty.client_type==="comp"){
+                document.getElementById("client_fiscal_1").innerHTML = `Nr. Reg. Com: ${invoiceData.invoiceProperty.client_fiscal_1}`
+                document.getElementById("client_fiscal_2").innerHTML = `CIF: ${invoiceData.invoiceProperty.client_fiscal_2}`
+            }else{
+                document.getElementById("client_fiscal_1").style.display="none"
+                document.getElementById("client_fiscal_2").style.display="none"
+            }
         }
 
         //fetch data from the DB

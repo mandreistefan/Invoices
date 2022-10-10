@@ -82,6 +82,7 @@ let Clients = (props) =>{
                         <thead className='table-active'>
                             <tr>  
                                 <th>#</th>
+                                <th>TIP</th>
                                 <th>NUME</th> 
                                 <th>ADRESA</th>
                                 <th>TELEFON</th>                                
@@ -94,7 +95,8 @@ let Clients = (props) =>{
                             {allClients.length>0 ? 
                                 allClients.map((element, index)=>(
                                     <tr key={element.invoice_number} className='clients-table-row'>  
-                                        <td>{index+1}</td>         
+                                        <td>{index+1}</td>       
+                                        <td>{element.client_type}</td>     
                                         <td> 
                                             <div style={{display:'flex', flexDirection:'row', alignItems:'center'}}>
                                                 <div className="name-badge" style={{backgroundColor:element.client_gui_color}}>{element.client_first_name.substring(0,1)}{element.client_last_name.substring(0,1)}</div>{element.client_first_name} {element.client_last_name}</div>
