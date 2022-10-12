@@ -17,21 +17,22 @@ async function fetchClients(querryObject){
 
 //add or edit client data
 function handleClientData(data, callback){
-    if(data.clientID!=null){
-        databaseOperations.editElement(data).then(result=>{
-            callback(result)
-        })
-        .catch(err=>{
-            callback(utile.returnal("ERROR", null))
-        })
-    }else{
-        databaseOperations.addElement(data).then(result=>{
-            callback(result)
-        })
-        .catch(err=>{
-            callback(utile.returnal("ERROR", null))
-        })
-    }
+    databaseOperations.addElement(data).then(result=>{
+        callback(result)
+    })
+    .catch(err=>{
+        callback(utile.returnal("ERROR", null))
+    })    
+}
+
+function updateClientData(data, callback){
+    if(data.clientID===null) callback("ERROR", "Invalid clientID")
+    databaseOperations.editElement(data).then(result=>{
+        callback(result)
+    })
+    .catch(err=>{
+        callback("ERROR", "An error occured")
+    })
 }
 
 function addInvoice(data, callback){
@@ -136,10 +137,7 @@ function addInvoice(data, callback){
 async function fetchInvoices(querryObject){
     let totalNumberOfRecords = 0;
     let invoicesObj = await databaseOperations.getInvoices(querryObject)
-    //if we have 10 records, let's check the total number of records for the desired filtering
-    if(invoicesObj.data.length===10){
-        totalNumberOfRecords = await databaseOperations.getRecordsNumber(querryObject.target, querryObject.filter, querryObject.filterBy)
-    }
+    totalNumberOfRecords = await databaseOperations.getRecordsNumber(querryObject.target, querryObject.filter, querryObject.filterBy)
     if(invoicesObj.status==="OK"){
         return({
             status:"OK", 
@@ -488,5 +486,6 @@ module.exports={
     removeProduct:removeProduct,
     createExportableData:createExportableData,
     getDatabaseInfo:getDatabaseInfo,
-    changeDatabaseInfo:changeDatabaseInfo
+    changeDatabaseInfo:changeDatabaseInfo,
+    updateClientData:updateClientData
 }

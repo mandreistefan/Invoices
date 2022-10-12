@@ -83,6 +83,10 @@ table tbody{
   color: #6c757d
 }
 
+.active-row{
+  background-color: #f7f7f7
+}
+
 .centered-text-in-td{
   text-align: center;
 }
@@ -129,6 +133,10 @@ table tbody{
   color: white;
   font-weight: 400!important;
   z-index: 5;
+}
+
+.material-icons-outlined{
+  font-size: 24px;
 }
 
 .action-close-window .material-icons-outlined{
@@ -259,6 +267,10 @@ background-color:#D1D1D1
 .app-data-table td{
   padding: 5px;
   border-bottom: 1px solid #9EA6AA;
+}
+
+.clients-table-row:hover{
+  cursor: pointer;
 }
 
 .clients-table-row td{
@@ -401,10 +413,11 @@ background-color:#D1D1D1
 
 .form-container{
   padding: 10px;
-  background-color:#D9D9D9;
-  max-width:1000px;
+  background-color:white;
+  width: 100%;
   margin-left: auto;
   margin-right: auto;
+  height: fit-content;
 }
 
 .page-item{
@@ -413,4 +426,26 @@ background-color:#D1D1D1
 
 .page-item.disabled{
   font-weight:400
+}
+
+.action-buttons-container{
+  display: flex;
+  align-items: center;
+  background-color: white;
+  margin-bottom: 5px;
+  padding: 5px;
+}
+
+.action-buttons-container button{
+  background-color: transparent;
+  border: none;
+  border-radius: 5px;
+}
+
+.action-buttons-container button:hover{
+  background-color: #f7f7f7;
+}
+
+.overview-container{
+  max-height: 800px;
 }

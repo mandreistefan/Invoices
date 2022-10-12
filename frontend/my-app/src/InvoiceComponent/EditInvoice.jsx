@@ -9,14 +9,8 @@ let EditInvoice=(props)=>{
         //getData(props.invoiceID)
     },[])
 
-    let getData=(invoice)=>{
-        fetch(`./invoice/?filter=invoiceID&filterBy=${invoice}`).then(response=>response.json()).then(data=>{
-            setPassedData(data.data)
-        })
-    }
-
     return(
-        <Invoice predefined={{invoiceID:props.invoiceID}}/>
+        <Invoice ley={props.invoiceID} predefined={{invoiceID:props.invoiceID}}/>
     )
 
 }

@@ -10,6 +10,11 @@ const clientsHandler = require('./Routes/Clients.js')
 const invoicesHandler = require('./Routes/Invoices.js')
 const productsHandler = require('./Routes/Products.js')
 const financialsHandler = require('./Routes/Financials.js')
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./Routes/swagger.json');
+
+//swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(express.static(path.join(__dirname, '..', 'frontend', 'my-app', 'public')))
 app.use(express.json());

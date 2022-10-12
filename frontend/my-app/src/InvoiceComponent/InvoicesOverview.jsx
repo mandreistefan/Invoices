@@ -1,21 +1,17 @@
 import React from "react";
-import PrettyInvoice from '../PrettyInvoice/PrettyInvoice.jsx'
 import RecurrentOverview from '../RecurrentInvoiceOverview/RecurrentOverview.jsx'
-import EditInvoice from './EditInvoice.jsx'
 import './InvoiceAdd.css'
 import './Invoices.css'
 import Snackbar from '../Snackbar/Snackbar.jsx'
-import SmallMenu from '../SmallMenu/SmallMenu.jsx'
 import PageNavigation from '../PageNavigation.jsx'
+import Invoice from './Invoice'
 
 let InvoicesOverview = (props) =>{
 
     let [invoicesData, invoicesDataSet] = React.useState(null)
     let [activeInvoice, setActiveInvoice] = React.useState(null)
     let [activeRec, setActiveRecInvoice] = React.useState(null)
-    let [editInvoice, setEditInvoice] = React.useState({enabled:false, invoiceID:null})
     let [alertUser, setAlertUser] = React.useState({text: null})
-    let [showInfo, setInfoShower] = React.useState( props.hideInfoText ? false: true)
     let [currentPage, setPage] = React.useState(1)
     let [numberOfElements, setNOE] = React.useState(null)
 
@@ -24,12 +20,12 @@ let InvoicesOverview = (props) =>{
     },[currentPage])
 
     //archive an invoice
-    let deleteInvoice = (invoiceID) =>{
+    let deleteInvoice = () =>{
         fetch("/invoices",
         {
             method:"DELETE",
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({invoiceID:invoiceID})
+            body: JSON.stringify({invoiceID:activeInvoice})
         })
         .then(response=>response.json())
         .then(data=>{
@@ -49,11 +45,11 @@ let InvoicesOverview = (props) =>{
 
     let setStatus = (status) =>{
         if(status==="draft"){
-            return (<span style={{display:'flex', alignItems:'center', width:'fit-content',color:'#f0ad4e', fontWeight:'500'}}><span style={{marginRight:"3px"}} className="material-icons-outlined">info</span>Draft</span>)
+            return (<span style={{display:'flex', alignItems:'center', width:'fit-content',color:'#f0ad4e', fontWeight:'500'}}><span style={{marginRight:"3px", fontSize:'24px'}} className="material-icons-outlined">info</span></span>)
         }else if(status==="finalised"){
-            return (<span style={{display:'flex', alignItems:'center', width:'fit-content', color:'#5cb85c', fontWeight:'500'}}><span style={{marginRight:"3px"}} className="material-icons-outlined">task_alt</span>Finalised</span>)
+            return (<span style={{display:'flex', alignItems:'center', width:'fit-content', color:'#5cb85c', fontWeight:'500'}}><span style={{marginRight:"3px", fontSize:'24px'}} className="material-icons-outlined">task_alt</span></span>)
         }else{
-            return (<span style={{display:'flex', alignItems:'center', width:'fit-content', fontWeight:'500'}}><span style={{marginRight:"3px"}} className="material-icons-outlined">error</span>NA</span>)
+            return (<span style={{display:'flex', alignItems:'center', width:'fit-content', fontWeight:'500'}}><span style={{marginRight:"3px", fontSize:'24px'}} className="material-icons-outlined">error</span></span>)
         }
     }
 
@@ -71,12 +67,23 @@ let InvoicesOverview = (props) =>{
             headers: { 'Content-Type': 'application/json' },
         })
         .then(response=>response.json()).then(data=>{
-            if(data.data!=null){
-                invoicesDataSet(data.data)
-                if(numberOfElements===null) setNOE(data.recordsNumber)
-            }else{
+            if(data===null){
                 setAlertUser({text:"An error occured"})
+                return false
             }
+            if(data.status!="OK"){
+                setAlertUser({text:"An error occured"})
+                return false
+            }    
+            if(data.recordsNumber===0){
+                setAlertUser({text:"No records!"})
+                return false  
+            }        
+
+            invoicesDataSet(data.data)
+            setNOE(data.recordsNumber)
+            setActiveInvoice(data.data[0].invoice_number)
+            
         })
     }
 
@@ -84,93 +91,54 @@ let InvoicesOverview = (props) =>{
         setPage(pageNumber)
     }
 
-    let openInvoice=(invoiceID)=>{
-        window.open(`http://localhost:3001/generateInvoice/${invoiceID}`).focus();
+    let openInvoice=()=>{
+        window.open(`http://localhost:3001/generateInvoice/${activeInvoice}`).focus();
     }
 
     return(
-        <div className="app-data-container">       
-            {invoicesData ?
-                <div className='clients-container'>
-                    <table className='table table-hover'>
-                        <thead className='table-active'>
-                            <tr>  
-                                <th></th> 
-                                <th>NUMAR</th>                                
-                                <th>NUME CLIENT</th>
-                                <th>ADRESA CLIENT</th>
-                                <th>STATUT</th>
-                                <th>DATA</th>
-                                <th>TOTAL</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody className='clients-table-body'>              
-                            {invoicesData.length>0 ? 
-                                invoicesData.map((element, index)=>(
-                                    <tr key={element.invoice_number} className='clients-table-row'>  
-                                        <td className="centered-text-in-td">{index+1}</td>        
-                                        <td><b>{element.invoice_number}</b></td>
-                                        <td className='clients-table-td'><span className="invoices-summary-table-span">{element.client_first_name} {element.client_last_name}</span></td>
-                                        <td>{element.client_county}, {element.client_city}, {element.client_street}, {element.client_adress_number}</td>
-                                        <td>{setStatus(element.invoice_status)}</td>
-                                        <td>{simpleDate(element.invoice_date)}</td>
-                                        <td>{element.invoice_total_sum} RON<br/></td>                            
+        <div className="app-data-container">   
+            <div className="action-buttons-container">
+                <button class="small-menu-button" onClick={()=>{openInvoice()}}><div class="inner-button-content"><span class="material-icons-outlined" style={{color:'#0275d8'}}>open_in_new</span>Genereaza</div></button>
+                <button class="small-menu-button" onClick={()=>{deleteInvoice()}}><div class="inner-button-content"><span class="material-icons-outlined" style={{color:'#d9534f'}}>delete</span>Stergere</div></button>
+            </div> 
+            {invoicesData ?           
+                <div style={{display:'flex', flexDirection:'row'}}>                 
+                    <div className='clients-container' style={{marginRight:'5px'}}>
+                        <table className='table table-hover' style={{width:'300px'}}>
+                            <tbody className='clients-table-body'>              
+                                {invoicesData.length>0 && invoicesData.map((element, index)=>(
+                                    <tr key={element.invoice_number} className={activeInvoice===element.invoice_number ? "clients-table-row active-row": "clients-table-row"} onClick={()=>setActiveInvoice(element.invoice_number)}>         
+                                        <td style={{width:'10%'}}>{setStatus(element.invoice_status)}</td>
                                         <td>
-                                            <div className='actions-container'>                                    
-                                                <SmallMenu items={[
-                                                    {name:"Genereaza", icon:"open_in_new", disabled: false, clickAction:()=>{openInvoice(element.invoice_number)}}, 
-                                                    {name:"Editare", icon:"edit", disabled: element.invoice_status==="finalised" ? true :  false, clickAction:()=>{setEditInvoice({enabled:true, invoiceID:element.invoice_number})}}, 
-                                                    {name:"Stergere", icon:"delete", disabled:false, clickAction:()=>{deleteInvoice(element.invoice_number)}}
-                                                ]}/>
-                                            </div> 
-                                        </td>
-                                    </tr>
-                            )):""}
-                        </tbody>  
-                    </table>
-                    {invoicesData.length==0 && <div style={{textAlign:"center", width:"100%"}}><h4 >Nu exista inregistrari</h4></div>}
-                    <PageNavigation numberOfItems={numberOfElements} changePage={changePage}/>
-                </div>  
-                : "Se incarca facturile"              
+                                            <div style={{fontSize:"14px",lineHeight:"normal"}}>
+                                                {element.invoice_number}<br/>
+                                                {element.client_first_name} {element.client_last_name}<br/>
+                                                {simpleDate(element.invoice_date)}
+                                            </div>    
+                                        </td>             
+                                    </tr>))}
+                            </tbody>  
+                        </table>
+                        <PageNavigation numberOfItems={numberOfElements} changePage={changePage}/>
+                    </div>                 
+                    <div className="overview-container"><Invoice key={activeInvoice} invoiceID={activeInvoice}/></div>
+                </div> : <h4 style={{textAlign:"center"}}>Nothing</h4>
             }
-            {activeInvoice!=null &&
-                <div> 
-                    <div className="blur-overlap"></div>    
-                    <button type="button" className="action-close-window" onClick={()=>setActiveInvoice(null)}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button> 
-                    <div className="overlapping-component-inner">
-                        <div className="overlapping-component-actions">
-                            <span className="bd-lead">Invoice overview</span>                            
-                        </div>
-                        <PrettyInvoice invoiceNumber={activeInvoice}/>
-                    </div>              
-                </div>
-            }
+            
             {activeRec!=null &&
-                <div> 
-                    <div className="blur-overlap"></div>  
-                    <button type="button" className="action-close-window" onClick={()=>setActiveRecInvoice(null)}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>   
-                    <div className="overlapping-component-inner">
-                        <div className="overlapping-component-actions">
-                            <span className="bd-lead">Recurrent invoice overview</span>
-                            
-                        </div>
-                        <RecurrentOverview recurrentID={activeRec}/>
-                    </div>              
-                </div>
-            }
-            {editInvoice.enabled &&
-                <div> 
-                    <div className="blur-overlap"></div>     
-                    <button type="button" className="action-close-window " onClick={()=>{setEditInvoice({enabled:false, invoiceID:null});fetchData()}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
-                    <div className="overlapping-component-inner">
-                        <div className="overlapping-component-actions">
-                            <span><b>Editare factura</b></span>                          
-                        </div>
-                        <EditInvoice invoiceID={editInvoice.invoiceID}/>
-                    </div>              
-                </div>
-            }
+                    <div> 
+                        <div className="blur-overlap"></div>  
+                        <button type="button" className="action-close-window" onClick={()=>setActiveRecInvoice(null)}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>   
+                        <div className="overlapping-component-inner">
+                            <div className="overlapping-component-actions">
+                                <span className="bd-lead">Recurrent invoice overview</span>
+                                
+                            </div>
+                            <RecurrentOverview recurrentID={activeRec}/>
+                        </div>              
+                    </div>
+                }
+
             <Snackbar text={alertUser.text} closeSnack={()=>{setAlertUser({text:null})}}/>  
         </div>
 

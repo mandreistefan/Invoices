@@ -227,25 +227,33 @@ function getInvoices(querryObject){
 
 function archiveClientData(clientID){
     return new Promise((resolve, reject)=>{
-        connection.query(`INSERT INTO clients_archived(id, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_billing_adress, client_phone, client_email, client_notes) select * from clients where id='${clientID}'`, function(err, result){
-            if(err){
-                reject({
-                    status:"ERROR",
-                    data:"ERROR archiving client"
-                })
-            }
-            if(result.insertId>0){
-                resolve({
-                    status:"OK",
-                    data:null
-                })
-            }else{
-                resolve({
-                    status: "FAILED",
-                    data: null
-                })
-            }
-        })
+        try{
+            connection.query(`INSERT INTO clients_archived(id, client_type, client_fiscal_1, client_fiscal_2, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_billing_adress, client_phone, client_email, client_notes, client_gui_color) select * from clients where id='${clientID}'`, function(err, result){
+                if(err){
+                    reject({
+                        status:"ERROR",
+                        data:"ERROR archiving client"
+                    })
+                }
+                if(result.insertId>0){
+                    resolve({
+                        status:"OK",
+                        data:null
+                    })
+                }else{
+                    resolve({
+                        status: "FAILED",
+                        data: null
+                    })
+                }
+            })
+        }catch(err){
+            console.log(err)
+            resolve({
+                status: "FAILED",
+                data: null
+            })
+        }
     })
 }
 

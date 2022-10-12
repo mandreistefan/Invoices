@@ -12,7 +12,7 @@ export default class Invoice extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            invoiceID: (props.predefined) ? props.predefined.invoiceID : null,
+            invoiceID: (props.invoiceID) ? props.invoiceID : null,
             userData: null,
             billingType: "one-time-billing-option",
             billingFrequency: "monthly-billing",

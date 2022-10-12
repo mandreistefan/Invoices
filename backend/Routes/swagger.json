@@ -1,0 +1,532 @@
+
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a simple example NodeJS API project to demonstrate Swagger Documentation",
+        "version": "1.0.0",
+        "title": "Tasks API",
+        "contact": {
+            "email": "abc@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "schemes": ["http"],
+    "host": "localhost:3001",
+    "basePath": "",
+    "paths" : {
+        "/clients/" : {
+            "get" : {
+                "summary" : "Get all clients",
+                "description": "Gets all clients",
+                "produces": ["application/json"],
+                "parameters": [{  
+                    "name":"filter",
+                    "in":"query",
+                    "description":"The field by which we filter the results",
+                    "required":false,
+                    "type":"string",
+                    "default": "all",
+                    "enum": ["all", "id"]
+                 },
+                 {  
+                    "name":"page",
+                    "in":"query",
+                    "description":"The page number",
+                    "required":false,
+                    "type":"integer",
+                    "default": "1"
+                 },
+                 {  
+                    "name":"filterBy",
+                    "in":"query",
+                    "description":"Used only with the <b>filter</b> parameter to filter results",
+                    "required":false
+                }],
+                "responses": {
+                    "200": {
+                        "description": "A response has been received",
+                        "schema":{
+                            "type": "object",
+                            "properties":{
+                                "status":{
+                                    "type": "string",
+                                    "description": "Status of the operation",
+                                    "enum": ["OK", "ERROR"]
+                                },
+                                "totalRecordsNumber":{
+                                    "type": "integer",
+                                    "description": "Number of returned items"
+                                },
+                                "data":{
+                                    "type": "object",
+                                    "description": "The returned data"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/clients" : {
+            "post" : {
+                "summary" : "Create a new client",
+                "description": "Handles the submit of the client form",
+                "produces": ["application/json"],
+                "consumes": ["application/json"],
+                "parameters": [{  
+                    "name":"client_adress_number",
+                    "in":"body",
+                    "description":"Client adress, number",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_city",
+                    "in":"body",
+                    "description":"Client adress, city",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_county",
+                    "in":"body",
+                    "description":"Client adress, county",
+                    "required":true,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_email",
+                    "in":"body",
+                    "description":"Client email adress",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_first_name",
+                    "in":"body",
+                    "description":"Client first name/ company full name",
+                    "required":true,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_fiscal_1",
+                    "in":"body",
+                    "description":"Required for company type clients. Represents 'Nr Reg Com'",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_fiscal_2",
+                    "in":"body",
+                    "description":"Required for company type clients. Represents 'CIF'",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_last_name",
+                    "in":"body",
+                    "description":"Client last name",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_notes",
+                    "in":"body",
+                    "description":"Text notes about the client",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_phone",
+                    "in":"body",
+                    "description":"Client phone number",
+                    "required":true,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_street",
+                    "in":"body",
+                    "description":"Client adress, street name",
+                    "required":true,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_type",
+                    "in":"body",
+                    "description":"Client type",
+                    "required":true,
+                    "type":"string",
+                    "enum":["pers", "comp"]
+                 },
+                 {  
+                    "name":"client_zip",
+                    "in":"body",
+                    "description":"Client ZIP code",
+                    "required":false,
+                    "type":"string"
+                 }],
+                "responses": {
+                    "200": {
+                        "description": "A response has been received",
+                        "schema": {
+                            "type": "object",
+                            "properties":{
+                                "status":{
+                                    "type": "string",
+                                    "description": "Status of the operation",
+                                    "enum": ["OK", "ERROR"]
+                                },
+                                "data":{
+                                    "type": "integer",
+                                    "description": "The ID of the newly created client"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put" : {
+                "summary" : "Update",
+                "description": "Update client data",
+                "produces": ["application/json"],
+                "parameters": [{  
+                    "name":"client_adress_number",
+                    "in":"body",
+                    "description":"Client adress, number",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_city",
+                    "in":"body",
+                    "description":"Client adress, city",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_county",
+                    "in":"body",
+                    "description":"Client adress, county",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_email",
+                    "in":"body",
+                    "description":"Client email adress",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_first_name",
+                    "in":"body",
+                    "description":"Client first name/ company full name",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_fiscal_1",
+                    "in":"body",
+                    "description":"Required for company type clients. Represents 'Nr Reg Com'",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_fiscal_2",
+                    "in":"body",
+                    "description":"Required for company type clients. Represents 'CIF'",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_last_name",
+                    "in":"body",
+                    "description":"Client last name",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_notes",
+                    "in":"body",
+                    "description":"Text notes about the client",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_phone",
+                    "in":"body",
+                    "description":"Client phone number",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_street",
+                    "in":"body",
+                    "description":"Client adress, street name",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_type",
+                    "in":"body",
+                    "description":"Client type",
+                    "required":false,
+                    "type":"string",
+                    "enum":["pers", "comp"]
+                 },
+                 {  
+                    "name":"client_zip",
+                    "in":"body",
+                    "description":"Client ZIP code",
+                    "required":false,
+                    "type":"string"
+                 }],
+                "responses": {
+                    "200": {
+                        "description": "A response has been received",
+                        "schema": {
+                            "type": "object",
+                            "properties":{
+                                "status":{
+                                    "type": "string",
+                                    "description": "Status of the operation",
+                                    "enum": ["OK", "ERROR"]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete":{
+                "summary" : "Archive client",
+                "description": "Moves the client data to a different table and deletes the client from the main DB table",
+                "produces": ["application/json"],
+                "consumes": ["text/plain"],
+                "parameters":[{  
+                    "name":"page",
+                    "in":"body",
+                    "description":"The page number",
+                    "required":true,
+                    "schema":{"type":"integer"}
+                 }],
+                 "responses": {
+                    "200": {
+                        "description": "A response has been received",
+                        "schema": {
+                            "type": "object",
+                            "properties":{
+                                "status":{
+                                    "type": "string",
+                                    "description": "Status of the operation",
+                                    "enum": ["OK", "ERROR", "FAILED"]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/invoices" : {
+            "post" : {
+                "summary" : "Create a new client",
+                "description": "Handles the submit of the client form",
+                "produces": ["application/json"],
+                "consumes": ["application/json"],
+                "parameters": [{  
+                    "name":"client_type",
+                    "in":"body",
+                    "description":"The cliet type",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_city",
+                    "in":"body",
+                    "description":"Client adress, city",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_county",
+                    "in":"body",
+                    "description":"Client adress, county",
+                    "required":true,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_email",
+                    "in":"body",
+                    "description":"Client email adress",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_first_name",
+                    "in":"body",
+                    "description":"Client first name/ company full name",
+                    "required":true,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_fiscal_1",
+                    "in":"body",
+                    "description":"Required for company type clients. Represents 'Nr Reg Com'",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_fiscal_2",
+                    "in":"body",
+                    "description":"Required for company type clients. Represents 'CIF'",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_last_name",
+                    "in":"body",
+                    "description":"Client last name",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_notes",
+                    "in":"body",
+                    "description":"Text notes about the client",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_phone",
+                    "in":"body",
+                    "description":"Client phone number",
+                    "required":true,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_street",
+                    "in":"body",
+                    "description":"Client adress, street name",
+                    "required":true,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"client_type",
+                    "in":"body",
+                    "description":"Client type",
+                    "required":true,
+                    "type":"string",
+                    "enum":["pers", "comp"]
+                 },
+                 {  
+                    "name":"client_zip",
+                    "in":"body",
+                    "description":"Client ZIP code",
+                    "required":false,
+                    "type":"string"
+                 },
+                 {
+                    "name":"billingProducts",
+                    "in":"body",
+                    "description":"An array containing the properties of the billed products",
+                    "required":true,
+                    "schema":{
+                        "type":"array",
+                        "properties":{
+                            "product_name":{
+                                "type": "string",
+                                "description": "Name of the billed product"                                
+                            },
+                            "um":{
+                                "type": "string",
+                                "description": "Measurement unit"                                
+                            },
+                            "quantity":{
+                                "type": "integer",
+                                "description": "Quantity"                                
+                            },
+                            "tax":{
+                                "type": "integer",
+                                "description": "Applied tax value"                                
+                            },
+                            "ppi":{
+                                "type": "float",
+                                "description": "Price per item"                                
+                            },
+                            "total_price":{
+                                "type": "float",
+                                "description": "Total price of the products expressed as quantity times price per item"                                
+                            }
+                        }
+                    }
+                 }],
+                "responses": {
+                    "200": {
+                        "description": "A response has been received",
+                        "schema": {
+                            "type": "object",
+                            "properties":{
+                                "status":{
+                                    "type": "string",
+                                    "description": "Status of the operation",
+                                    "enum": ["OK", "ERROR"]
+                                },
+                                "data":{
+                                    "type": "integer",
+                                    "description": "The ID of the newly created client"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }        
+    }, 
+    "definitions": {
+        "todosResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                     "type": "integer"
+                },
+                "task": {
+                    "type": "string"
+                },
+                "assignee": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "Task": {
+            "type": "object",
+            "properties": {
+                "task": {
+                    "type": "string"
+                },
+                "assignee": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "InvalidResponse": {
+            "type": "object",
+            "properties": {
+                "statusCode": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+
+        }
+    }
+}

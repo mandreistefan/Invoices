@@ -15,8 +15,18 @@ app.get("/clients/*",(req,res)=>{
 
 //create a new client
 app.post("/clients",(req,res)=>{
-    let data=req.body
-    databaseController.handleClientData(data,(callback)=>{
+    databaseController.handleClientData(req.body,(callback)=>{
+        if(callback.status==="OK"){
+            res.send(callback)
+        }else{
+            res.send({status:"ERROR"})
+        }
+    })
+})
+
+//update client
+app.put("/clients", (req,res)=>{
+    databaseController.updateClientData(req.body,(callback)=>{
         if(callback.status==="OK"){
             res.send(callback)
         }else{
@@ -27,6 +37,7 @@ app.post("/clients",(req,res)=>{
 
 //archive a client
 app.delete("/clients", (req, res)=>{
+    console.log(req.body.clientID)
     databaseController.archiveClient(req.body.clientID, (callback)=>{
         res.send({status:callback.status})
     })

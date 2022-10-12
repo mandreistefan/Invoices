@@ -21,7 +21,6 @@ let TheClientForm = (props)=>{
     })
 
     let [alertUser, setAlertUser] = React.useState({text: null})
-    let [clientID, setclientid] = React.useState(null)
     let [fieldsDisabled, setFieldsDisabled] = React.useState(false)
     let [invalidDataItems, setInvalidData] = React.useState([])
 
@@ -33,7 +32,6 @@ let TheClientForm = (props)=>{
             clientID is used to load client data from the database
         */
 
-        if(props.clientID!=null) setclientid(props.clientID)
         if(props.editable) setFieldsDisabled(props.editable)
 
         //preset data
@@ -197,7 +195,6 @@ let TheClientForm = (props)=>{
                 .then(data=>{
                     if(data.status==="OK"){
                         setClientData(data.data)
-                        setclientid(data.data)  
                         setFieldsDisabled(false) 
                         setAlertUser({text:"Client registered"})
                     }else{
@@ -230,7 +227,7 @@ let TheClientForm = (props)=>{
         if(document.getElementById("client_notes").attributes.getNamedItem('modified').value==="true") dataToBeSent.client_notes=document.getElementById("client_notes").value; 
 
         fetch(`/clients`, {
-            method:"POST",
+            method:"PUT",
             headers: { 'Content-Type': 'application/json' },
             body:JSON.stringify({
                 clientID:props.clientID,
@@ -324,7 +321,7 @@ let TheClientForm = (props)=>{
             <div className='form-row'>
                 <div className="form-group col-md-12">   
                     <label className="form-subsection-label" htmlFor="client_notes">Informatii aditionale:</label><br/>
-                    <textarea class="form-control" id="client_notes" name="client_notes" rows="2" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("client_notes") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.client_notes_input}></textarea>
+                    <textarea class="form-control" id="client_notes" name="client_notes" rows="1" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("client_notes") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.client_notes_input}></textarea>
                     
                 </div>
             </div>
