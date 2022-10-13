@@ -58,7 +58,7 @@ let TheClientForm = (props)=>{
 
     //for a client ID, retrieve and set form data
     let setClientData=(ID)=>{
-        fetch(`/clients/?filter=id&filterBy=${ID}`,
+        fetch(`/clients?filter=id&filterBy=${ID}`,
         {
             method:"GET",
             headers: { 'Content-Type': 'application/json' }
@@ -211,8 +211,8 @@ let TheClientForm = (props)=>{
     //edit the data for a registered client
     let updateExistingClient = () =>{
         let dataToBeSent ={}
-        if(document.getElementById("client_fiscal_1").attributes.getNamedItem('modified').value==="true") dataToBeSent.client_fiscal_1=document.getElementById("client_fiscal_1").value;
-        if(document.getElementById("client_fiscal_2").attributes.getNamedItem('modified').value==="true") dataToBeSent.client_fiscal_2=document.getElementById("client_fiscal_2").value;
+        if((document.getElementById("client_fiscal_1").attributes.getNamedItem('modified').value==="true") && (document.getElementById("client_type").value==="comp")) dataToBeSent.client_fiscal_1=document.getElementById("client_fiscal_1").value;
+        if((document.getElementById("client_fiscal_2").attributes.getNamedItem('modified').value==="true") && (document.getElementById("client_type").value==="comp")) dataToBeSent.client_fiscal_2=document.getElementById("client_fiscal_2").value;
         if(document.getElementById("client_type").attributes.getNamedItem('modified').value==="true") dataToBeSent.client_type=document.getElementById("client_type").value;
         if(document.getElementById("client_first_name").attributes.getNamedItem('modified').value==="true") dataToBeSent.client_first_name=document.getElementById("client_first_name").value;
         if(document.getElementById("client_last_name").attributes.getNamedItem('modified').value==="true") dataToBeSent.client_last_name=document.getElementById("client_last_name").value;
@@ -259,23 +259,25 @@ let TheClientForm = (props)=>{
             <h6>Date client</h6>
 
             <div className='form-row'>
-                <div className="col-md-3">
-                    <span className="form-subsection-label">Tip client</span>                  
-                    <div className="form-group">  
-                        <select className="form-control form-control-sm" id="client_type" name="client_type"disabled={(fieldsDisabled===false) ?  true: false} modified="false" autoComplete="off" onChange={changeFormData} value={data.client_type_input}>
-                            <option value="pers">Persoana fizica</option>
-                            <option value="comp">Companie</option>
-                        </select>
-                    </div>    
+                <div className="form-group col-md-3">
+                    <label className="form-subsection-label" htmlFor="client_type">Tip client</label><br/>               
+                    <select className="form-control form-control-sm shadow-none" id="client_type" name="client_type"disabled={(fieldsDisabled===false) ?  true: false} modified="false" autoComplete="off" onChange={changeFormData} value={data.client_type_input}>
+                        <option value="pers">Persoana fizica</option>
+                        <option value="comp">Companie</option>
+                    </select>  
                 </div>
-                <div className="form-group col-md-3">            
-                    <label className="form-subsection-label" htmlFor="client_fiscal_1">Nr. Reg. Com</label><br/>
-                    <input type="text" id="client_fiscal_1" name="client_fiscal_1" disabled={(fieldsDisabled===false ? true: false || data.client_type_input=="pers")} className={invalidDataItems.includes("client_fiscal_1") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" autoComplete="off" onChange={changeFormData} value={data.client_fiscal_1_input}/>
-                </div>
-                <div className="form-group col-md-3">   
-                    <label className="form-subsection-label" htmlFor="client_fiscal_2">CIF</label><br/>
-                    <input type="text" id="client_fiscal_2" name="client_fiscal_2" disabled={(fieldsDisabled===false ?  true: false || data.client_type_input=="pers")} className={invalidDataItems.includes("client_fiscal_2") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.client_fiscal_2_input}/>
-                </div>
+                {data.client_type_input==="comp" && 
+                    <div className="form-group col-md-3">            
+                        <label className="form-subsection-label" htmlFor="client_fiscal_1">Nr. Reg. Com</label><br/>
+                        <input type="text" id="client_fiscal_1" name="client_fiscal_1" disabled={(fieldsDisabled===false ? true: false || data.client_type_input=="pers")} className={invalidDataItems.includes("client_fiscal_1") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" autoComplete="off" onChange={changeFormData} value={data.client_fiscal_1_input}/>
+                    </div>
+                }
+                {data.client_type_input==="comp" && 
+                    <div className="form-group col-md-3">   
+                        <label className="form-subsection-label" htmlFor="client_fiscal_2">CIF</label><br/>
+                        <input type="text" id="client_fiscal_2" name="client_fiscal_2" disabled={(fieldsDisabled===false ?  true: false || data.client_type_input=="pers")} className={invalidDataItems.includes("client_fiscal_2") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.client_fiscal_2_input}/>
+                    </div>
+                }
             </div>
 
             <div className='form-row'>

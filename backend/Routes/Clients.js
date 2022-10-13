@@ -5,9 +5,11 @@ const util = require('../utils/util.js')
 const databaseController = require('../controllers/databaseController.js')
 
 //retrieve all clients
-app.get("/clients/*",(req,res)=>{
-    let url_path_arr = urlmod.parse(req.url, true).path.split("/");    
-    let filterObject=util.qParser(url_path_arr[2])
+app.get("/clients",(req,res)=>{
+    let filterObject = {}
+    if(req.query.filter) filterObject.filter=req.query.filter;
+    if(req.query.filterBy) filterObject.filterBy=req.query.filterBy;
+    if(req.query.page) filterObject.page=req.query.page;
     databaseController.fetchClients(filterObject).then(data=>{
         res.send(data)
     })    

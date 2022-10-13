@@ -110,15 +110,15 @@ function registerBilledProducts(invoiceID, billedProductsArray){
     let total_tax=0
     let arr_copy = [];
 
-    //[0] - product name, [1] - um, [2] - quantity, [3] - tax %, [4] - tax float, [5] - price per item, [6] - productID(null or hasvalue)
+    //[0] - product name, [1] - um, [2] - quantity, [3] - tax %, [4] - tax float, [5] - price per item, [6] - description, [7] - productID(null or hasvalue)
     billedProductsArray.forEach(element => {
         //[0] - product name, [1] - um, [2] - quantity, [3] - tax %, [4] - tax float calculated, [5] - price per item, [6] - invoiceID, [7] - quantity*ppi, [8] - productID
-        arr_copy.push([element[0], element[1], element[2], element[3], parseFloat(((element[2]*element[5])/100)*element[3]), element[5], invoiceID, (element[2]*element[5]), element[6]])
+        arr_copy.push([element[0], element[1], element[2], element[3], parseFloat(((element[2]*element[5])/100)*element[3]), element[5], invoiceID, (element[2]*element[5]), element[6], element[7]])
         total_tax=total_tax+parseFloat(((element[2]*element[5])/100)*element[3]);
     });
 
     return new Promise((resolve, reject)=>{
-        connection.query(`INSERT INTO invoices_billed_products (product_name, product_mu, product_quantity, product_tax_pr, total_tax, product_price, invoiceID, total_price, product_id) VALUES ?`, [arr_copy], function(err, result) {
+        connection.query(`INSERT INTO invoices_billed_products (product_name, product_mu, product_quantity, product_tax_pr, total_tax, product_price, invoiceID, total_price, product_description, product_id) VALUES ?`, [arr_copy], function(err, result) {
             if(err){
                 console.log(err)
                 reject({
@@ -284,7 +284,7 @@ function deleteClient(clientID){
 
 function archiveInvoice(invoiceID){
     return new Promise((resolve, reject)=>{
-        connection.query(`INSERT INTO invoices_archived(invoice_number, invoice_status, invoice_pay_method, invoice_bank_ref, rec_number, customer_id, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_phone, client_email, invoice_date, invoice_tax, invoice_total_sum) SELECT * FROM invoices where invoice_number=${invoiceID}`, function(err, result){
+        connection.query(`INSERT INTO invoices_archived(invoice_number, invoice_status, invoice_pay_method, invoice_bank_ref, rec_number, customer_id, client_type, client_fiscal_1, client_fiscal_2, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_phone, client_email, invoice_date, invoice_tax, invoice_total_sum) SELECT * FROM invoices where invoice_number=${invoiceID}`, function(err, result){
             if(err){
                 console.log(err)
                 reject({                    

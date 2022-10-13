@@ -216,6 +216,7 @@ function procesBilledProductsData(data){
             tax_percentage: billedProductsArray[i].product_tax_pr,
             tax: billedProductsArray[i].total_tax,
             price: billedProductsArray[i].total_price,
+            description:billedProductsArray[i].product_description,
             id: billedProductsArray[i].product_id
         })
         taxTotal=taxTotal+parseFloat(billedProductsArray[i].total_tax);

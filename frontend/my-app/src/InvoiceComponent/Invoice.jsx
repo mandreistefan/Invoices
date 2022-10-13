@@ -19,7 +19,7 @@ export default class Invoice extends React.Component{
             monthlyBillingDate: new Date(),
             yearlyBillingDate: new Date(),
             //id: products can have IDs if the products are added from the predefined products list; preloaded - the product has been preloaded from prop data; valid - i want to use this to validate form data
-            tableElements: [{properties:{preloaded:false, id:null, entry: null, valid:true}, data:["", "", "", "10", "0", ""]}],
+            tableElements: [{properties:{preloaded:false, id:null, entry: null, valid:true}, data:["", "", "", "0", "0", "", ""]}],
             total_prod_quantity: 0,
             total_prod_price: 0,  
             total_tax:0,
@@ -45,7 +45,7 @@ export default class Invoice extends React.Component{
 
     //gets all the data linked to an invoice; sets the state of certain elements based on retrieved data
     fetchInvoiceData=(invoice)=>{
-        fetch(`./invoice/?filter=invoiceID&filterBy=${invoice}`).then(response=>response.json()).then(data=>{
+        fetch(`./invoice?filter=invoiceID&filterBy=${invoice}`).then(response=>response.json()).then(data=>{
             let invoiceData = data.data
             this.setState({
                 userData: {
@@ -78,7 +78,7 @@ export default class Invoice extends React.Component{
     decodeTableElements =(dataAsArray)=>{
         let decodedData=[]
         dataAsArray.forEach(element=>{
-            decodedData.push({properties:{preloaded:true, id:element.id, entry: element.entry, valid:true},data:[element.name, element.um, element.quantity, element.tax_percentage, element.tax, element.ppu]})
+            decodedData.push({properties:{preloaded:true, id:element.id, entry: element.entry, valid:true},data:[element.name, element.um, element.quantity, element.tax_percentage, element.tax, element.ppu, element.description]})
         })
         return decodedData;        
     }
@@ -146,7 +146,7 @@ export default class Invoice extends React.Component{
     }
 
     //the Array containing products data has, for each element, properties and values; based on these, return an Array that can be sent to the server
-    billedProductsServerFormat=(data, bool)=>{
+    billedProductsServerFormat=(data)=>{
         let responseArray=[]
         data.forEach((element, index)=>{
             //only the newly added
@@ -212,8 +212,10 @@ export default class Invoice extends React.Component{
             if(event.target.client_last_name.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_last_name=event.target.client_last_name.value;
             if(event.target.client_phone.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_phone=event.target.client_phone.value;
             if(event.target.client_type.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_type=event.target.client_type.value;
-            if(event.target.client_fiscal_1.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_fiscal_1=event.target.client_fiscal_1.value;
-            if(event.target.client_fiscal_2.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_fiscal_2=event.target.client_fiscal_2.value;
+            if(event.target.client_type.value==="comp"){
+                if(event.target.client_fiscal_1.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_fiscal_1=event.target.client_fiscal_1.value;
+                if(event.target.client_fiscal_2.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_fiscal_2=event.target.client_fiscal_2.value;     
+            }
             if(event.target.client_email.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_email=event.target.client_email.value;
             if(event.target.client_county.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_county=event.target.client_county.value;
             if(event.target.client_city.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_city=event.target.client_city.value;
@@ -279,7 +281,6 @@ export default class Invoice extends React.Component{
         this.state.tableElements.map(element=>{
             //quantity and price should be >0
             if(element.data[2]*element.data[5]>0){
-                console.log(element.data[2], element.data[5])
                 total=total+(element.data[2]*element.data[5])
                 element.data[4]=parseFloat((((element.data[2]*element.data[5])/100)*element.data[3]))
                 tax=tax+element.data[4]
@@ -323,7 +324,8 @@ export default class Invoice extends React.Component{
                     this.calculateTotalandTax()
                 }
                 break   
-            default:                      
+            default:  
+                this.updateTable(position, value, (this.state.invoiceID===null ? false : true))                    
         }        
     }
 
@@ -335,7 +337,7 @@ export default class Invoice extends React.Component{
     }
 
     addNewRow = () =>{
-        this.setState({tableElements:[...this.state.tableElements,{properties:{preloaded:false, id:null, entry:null, valid:true}, data:["", "", "1", "10", "0", ""]}]})
+        this.setState({tableElements:[...this.state.tableElements,{properties:{preloaded:false, id:null, entry:null, valid:true}, data:["", "", "1", "0", "0", ""]}]})
         this.calculateTotalandTax()
     }
 
@@ -487,7 +489,7 @@ export default class Invoice extends React.Component{
                                 <div className="invoice-products-container form-group"> 
                                         <div className="">
                                             <div className="row billing-products-header">
-                                                <div className="col-4">Nume</div>
+                                                <div className="col-3">Nume</div>
                                                 <div className="col-2">UM</div>
                                                 <div className="col-1">Cantitate</div>
                                                 <div className="col-1">Taxa(%)</div>
@@ -499,25 +501,33 @@ export default class Invoice extends React.Component{
                                             <div className="billing-products-body">
                                                 {                                                
                                                     this.state.tableElements.map((element, index)=>(
-                                                        <div className="row" key={index} id={index}>
-                                                            <div className="col-4"><input type="text" className={element.properties.valid ? "product_name billing-products-input" : "product_name billing-products-input invalid-input"} name="product_name" disabled={element.properties.preloaded===true ? true : false} position={[index,0]} autoComplete="off" value={element.data[0]} onChange={this.validateAndUpdate}/></div>
-                                                            <div className="col-2"><input type="text" className={element.properties.valid ? "product_um billing-products-input": "product_um billing-products-input invalid-input"} name="product_um" disabled={element.properties.preloaded===true ? true : false} position={[index,1]} autoComplete="off" value={element.data[1]} onChange={this.validateAndUpdate}/></div>
-                                                            <div className="col-1"><input type="text" className={element.properties.valid ? "product_q billing-products-input" : "product_q billing-products-input invalid-input"}name="product_quantity" disabled={element.properties.preloaded===true ? true : false} position={[index,2]} autoComplete="off" value={element.data[2]} onChange={this.validateAndUpdate}/></div>
-                                                            <div className="col-1"><input type="text" className={element.properties.valid ? "product_tax billing-products-input": "product_tax billing-products-input invalid-input"} name="product_tax"  disabled={element.properties.preloaded===true ? true : false} position={[index,3]} autoComplete="off" value={element.data[3]} onChange={this.validateAndUpdate}/></div>
-                                                            <div className="col-1"><input type="text" className={element.properties.valid ? "product_tax billing-products-input": "product_tax billing-products-input invalid-input"} name="product_tax_value"  position={[index,4]} autoComplete="off" disabled={true} value={parseFloat(element.data[4]).toFixed(2)}/></div>
-                                                            <div className="col-1"><input type="text" className={element.properties.valid ? "product_ppu billing-products-input": "product_ppu billing-products-input invalid-input"} name="product_price" disabled={element.properties.preloaded===true ? true : false} position={[index,5]} autoComplete="off" value={element.data[5]} onChange={this.validateAndUpdate}/></div>
-                                                            <div className="col-1"><input type="text" className="product_ppu billing-products-input" name="product_price" disabled={true} position={[index,6]} autoComplete="off" value={parseFloat(element.data[5]*element.data[2]).toFixed(2)} onChange={this.validateAndUpdate}/></div>
-                                                            <div className="col-1 remove-product-button-container"><button type="button" className="remove-product-button" disabled={((this.state.invoice_status==="finalised") ? true : false)||(this.state.tableElements.length<2)} onClick={()=>{this.removeEntry(index)}}><span className="material-icons-outlined">close</span></button></div>
-                                                        </div>                                                          
+                                                        <div>
+                                                            <div className="row" key={index} id={index}>
+                                                                <div className="col-3"><input type="text" className={element.properties.valid ? "product_name billing-products-input" : "product_name billing-products-input invalid-input"} name="product_name" disabled={element.properties.preloaded===true ? true : false} position={[index,0]} autoComplete="off" value={element.data[0]} onChange={this.validateAndUpdate}/></div>
+                                                                <div className="col-2"><input type="text" className={element.properties.valid ? "product_um billing-products-input": "product_um billing-products-input invalid-input"} name="product_um" disabled={element.properties.preloaded===true ? true : false} position={[index,1]} autoComplete="off" value={element.data[1]} onChange={this.validateAndUpdate}/></div>
+                                                                <div className="col-1"><input type="text" className={element.properties.valid ? "product_q billing-products-input" : "product_q billing-products-input invalid-input"}name="product_quantity" disabled={element.properties.preloaded===true ? true : false} position={[index,2]} autoComplete="off" value={element.data[2]} onChange={this.validateAndUpdate}/></div>
+                                                                <div className="col-1"><input type="text" className={element.properties.valid ? "product_tax billing-products-input": "product_tax billing-products-input invalid-input"} name="product_tax"  disabled={element.properties.preloaded===true ? true : false} position={[index,3]} autoComplete="off" value={element.data[3]} onChange={this.validateAndUpdate}/></div>
+                                                                <div className="col-1"><input type="text" className={element.properties.valid ? "product_tax billing-products-input": "product_tax billing-products-input invalid-input"} name="product_tax_value"  position={[index,4]} autoComplete="off" disabled={true} value={parseFloat(element.data[4]).toFixed(2)}/></div>
+                                                                <div className="col-1"><input type="text" className={element.properties.valid ? "product_ppu billing-products-input": "product_ppu billing-products-input invalid-input"} name="product_price" disabled={element.properties.preloaded===true ? true : false} position={[index,5]} autoComplete="off" value={element.data[5]} onChange={this.validateAndUpdate}/></div>
+                                                                <div className="col-2"><input type="text" rows="1" className="product_ppu billing-products-input" name="product_price" disabled={true} position={[index,6]} autoComplete="off" value={parseFloat(element.data[5]*element.data[2]).toFixed(2)} onChange={this.validateAndUpdate}/></div>
+                                                                <div className="col-1 remove-product-button-container"><button type="button" className="remove-product-button" disabled={((this.state.invoice_status==="finalised") ? true : false)||(this.state.tableElements.length<2)} onClick={()=>{this.removeEntry(index)}}><span className="material-icons-outlined">close</span></button></div>
+                                                            </div> 
+                                                            <div className="row" style={{marginTop:"5px"}}>
+                                                                <div className="col-11">
+                                                                    <input type="text" className={element.properties.valid ? "product_description billing-products-input": "product_description billing-products-input invalid-input"} name="product_description" disabled={element.properties.preloaded===true ? true : false} position={[index,6]} autoComplete="off" value={element.data[6]} onChange={this.validateAndUpdate}/>
+                                                                </div>
+                                                            </div>
+                                                        </div>                                                             
                                                     ))                                                
                                                 }
                                             </div>
                                             <div className="row billing-products-footer">
-                                                <div className="col-4" style={{visibility:'hidden'}}><input type="text" className="product_name_total billing-products-footer-input" disabled={true} /></div>
+                                                <div className="col-3" style={{visibility:'hidden'}}><input type="text" className="product_name_total billing-products-footer-input" disabled={true} /></div>
                                                 <div className="col-2" style={{visibility:'hidden'}}><input type="text" className="product_um_total billing-products-footer-input" disabled={true} /></div>
                                                 <div className="col-1" style={{visibility:'hidden'}}><input type="text" className="product_q_total billing-products-footer-input" disabled={true} /></div>
                                                 <div className="col-1" style={{visibility:'hidden'}}><input type="text" className="product_tax billing-products-footer-input" disabled={true} /></div>
-                                                <div className="col-1"><input type="text" className="product_tax_total billing-products-footer-input" disabled={true} value={`${this.state.total_tax}`}/></div>
+                                                <div className="col-1" style={{visibility:'hidden'}}><input type="text" className="product_tax billing-products-footer-input" disabled={true} /></div>
+                                                <div className="col-1" style={{visibility:'hidden'}}><input type="text" className="product_tax_total billing-products-footer-input" disabled={true} value={`${this.state.total_tax}`}/></div>
                                                 <div className="col-2"><input type="text" className="product_price_total billing-products-footer-input" id="product_price_total" disabled={true} value={`${this.state.total_prod_price} RON`}/></div>
                                                 <div className="col-1" style={{visibility:'hidden'}}><input type="text" className="product_tax billing-products-footer-input" disabled={true} /></div>
                                             </div>

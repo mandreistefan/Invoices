@@ -21,7 +21,7 @@ let Clients = (props) =>{
     //the fetcher
     let fetchClients=()=>{
         //fetches all clients
-        fetch(`/clients/?page=${currentPage}&filter=all&filterBy=`,
+        fetch(`/clients?page=${currentPage}&filter=all&filterBy=`,
         {
             method:"GET",
             headers: { 'Content-Type': 'application/json' }
@@ -78,7 +78,7 @@ let Clients = (props) =>{
             <div className='app-data-container'>
                 <div className="action-buttons-container">
                     <button class="small-menu-button" onClick={()=>{props.enableInvoiceApp(activeClient.name, activeClient.id)}}><div class="inner-button-content"><span class="material-icons-outlined" style={{color:'#0275d8'}}>receipt_long</span>Factureaza</div></button>
-                    <button class="small-menu-button" onClick={()=>{setShowClientInvoices(true)}}><div class="inner-button-content"><span class="material-icons-outlined" style={{color:'#d9534f'}}>file_open</span>Facturi</div></button>
+                    <button class="small-menu-button" onClick={()=>{setShowClientInvoices(true)}}><div class="inner-button-content"><span class="material-icons-outlined" style={{color:'#5bc0de'}}>file_open</span>Facturi</div></button>
                     <button class="small-menu-button" onClick={()=>{deleteClient()}}><div class="inner-button-content"><span class="material-icons-outlined" style={{color:'#d9534f'}}>delete</span>Stergere</div></button>
                 </div>  
                 {allClients ? 
@@ -92,7 +92,7 @@ let Clients = (props) =>{
                                                     <td>
                                                         <div style={{fontSize:"14px",lineHeight:"normal"}}>
                                                             {element.client_first_name} {element.client_last_name}<br/>
-                                                            {element.client_type}<br/>
+                                                            {element.client_type ? element.client_type==="pers" ? "Persoana fizica" : "Firma" : "NA"}<br/>
                                                             {element.client_county}, {element.client_city}, {element.client_street}, {element.client_adress_number}, {element.client_zip}
                                                         </div>    
                                                     </td>                      

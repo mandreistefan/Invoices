@@ -11,9 +11,13 @@ app.get("/generateInvoice/*",(req,res)=>{
 })
 
 //get the data of a single invoice
-app.get("/invoice/*",(req,res)=>{
-    let url_path_arr = urlmod.parse(req.url, true).path.split("/");
-    let filterObject=util.qParser(url_path_arr[2])
+app.get("/invoice",(req,res)=>{
+    //let url_path_arr = urlmod.parse(req.url, true).path.split("/");
+    //let filterObject=util.qParser(url_path_arr[2])
+    let filterObject = {}
+    if(req.query.filter) filterObject.filter=req.query.filter;
+    if(req.query.filterBy) filterObject.filterBy=req.query.filterBy;
+    if(req.query.page) filterObject.page=req.query.page;
     filterObject.target="invoices"
     console.log(filterObject)
     databaseController.fetchInvoiceData(filterObject).then(response=>{

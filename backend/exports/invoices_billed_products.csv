@@ -1,1 +1,1 @@
-"id","invoiceID","product_id","product_name","product_mu","product_quantity","product_tax_pr","total_tax","product_price","total_price"
+"id","invoiceID","product_id","product_name","product_mu","product_quantity","product_tax_pr","total_tax","product_price","total_price","product_description"

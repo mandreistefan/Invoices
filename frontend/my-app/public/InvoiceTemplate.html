@@ -15,7 +15,8 @@
                     <span>Adresa: <b>Bacau, Targu Ocna, Str. Galean, Nr. 104</b></span>                    
                     <span>Telefon: <b>0729578894</b></span>
                     <span>Email: <b>doriflorando@gmail.com</b></span>
-                    <span>IBAN: <b>RO1234BTRL5567889</b></span>
+                    <span>IBAN: <b>RO11BTRLRONCRT0660141301</b></span>
+                    <span>Banca: <b>Banca Transilvania</b></span>
                 </div>
                 <div class="customer-info">
                     <div class="invoice-info-container">
@@ -25,8 +26,7 @@
                         <span>Total: <span id="invoice-info-total"></span></span><br/>
                     </div>
                     <hr>
-                    <p style="margin:0">Client:</p>
-                    <span class="invoice-name" id="client-name"></span><span class="invoice-name" id="client-surname"></span>                    
+                    <span class="invoice-name" id="client-name"></span>                   
                     <span class="" id="client_fiscal_1"></span>
                     <span class="" id="client_fiscal_2"></span>
                     <span id="client-adress"></span>
@@ -43,8 +43,8 @@
                             <th>Cantitate</th>                            
                             <th>Pret per unitate</th>
                             <th>TVA(%)</th>
-                            <th>Valoare totala</th>
                             <th>Valoare TVA</th>
+                            <th>Valoare totala</th>                            
                         </tr>
                     </thead>
                     <tbody id="billed-products-table-body"></tbody>                    
@@ -55,8 +55,8 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td id="invoice-total"><b>{invoiceData.invoiceProperty.total.price} RON</b></td>
                         <td id="invoice-total-tax"><b>{invoiceData.invoiceProperty.total.tax} RON</b></td>
+                        <td id="invoice-total"><b>{invoiceData.invoiceProperty.total.price} RON</b></td>                        
                     </tfoot>
                 </table>           
             </div>
@@ -68,17 +68,25 @@
         function generateTable(productsArray){
             let tableContent=""
             productsArray.forEach((element, index)=>{
-                tableContent=tableContent+`
-                <tr>
+                tableContent=tableContent+
+                `<tr>
                     <td>${index+1}</td>
                     <td>${element.name}</td>
                     <td>${element.um}</td>
                     <td>${element.quantity}</td>
-                    <td>${element.ppu}</td>
-                    <td>${element.tax_percentage}</td>
-                    <td>${element.price}</td>
-                    <td>${element.tax}</td>
+                    <td>${element.ppu} RON</td>
+                    <td>${element.tax_percentage}%</td>
+                    <td>${element.tax} RON</td>
+                    <td>${element.price} RON</td>                    
                 </tr>`
+                //if the field of billed product description exists, not null, add it to the table
+                if(element.description!=null){
+                    tableContent=tableContent+
+                        `<tr style="border-bottom:1px solid lightgray">
+                            <td colspan="1"></td>      
+                            <td colspan="8" style=""><i>${element.description}</i></td>      
+                        </tr>`
+                }
             })
             return tableContent
         }
@@ -88,8 +96,7 @@
             document.getElementById("invoice-number").innerHTML=invoiceData.invoiceProperty.number
             document.getElementById("invoice-date").innerHTML=invoiceData.invoiceProperty.date
             document.getElementById("invoice-info-total").innerHTML=`${invoiceData.invoiceProperty.total.price} RON`
-            document.getElementById("client-name").innerHTML=`${invoiceData.invoiceProperty.client_first_name}`
-            document.getElementById("client-surname").innerHTML=`${invoiceData.invoiceProperty.client_last_name}`
+            document.getElementById("client-name").innerHTML=`${invoiceData.invoiceProperty.client_first_name} ${invoiceData.invoiceProperty.client_last_name}`
             document.getElementById("client-adress").innerHTML=`Adresa: ${invoiceData.invoiceProperty.client_billing_adress.county}, ${invoiceData.invoiceProperty.client_billing_adress.city}, ${invoiceData.invoiceProperty.client_billing_adress.street}, ${invoiceData.invoiceProperty.client_billing_adress.number}`
             document.getElementById("client-email").innerHTML=`Email: ${invoiceData.invoiceProperty.client_billing_adress.email}`
             document.getElementById("billed-products-table-body").innerHTML = generateTable(invoiceData.invoiceProducts)
