@@ -22,7 +22,7 @@ let PredefinedProductsManager = (props) =>{
     return(
         (predefinedProducts===null) ? <div><h4>Loading...</h4></div>:        
         <div className="app-data-container"> 
-            <table className='table table-hover'>
+            <table className='table table-hover app-data-table'>
                 <thead className='table-active'>
                     <tr className='app-data-table-row'>
                         <th></th>

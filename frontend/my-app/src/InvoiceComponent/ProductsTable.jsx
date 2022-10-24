@@ -48,7 +48,7 @@ export default class ProductsTable extends React.Component{
     {
         return(
             <div className="invoices-add-form-products-container">
-                <table className="table" id="invoice-products-table">
+                <table className="table app-data-table" id="invoice-products-table">
                     <thead>
                         <tr>
                             <th>Name</th>

@@ -13,13 +13,15 @@ const connection=mysql.createConnection({
     database:"invoicemanager"
 })
 
-connection.connect(function(err){
-    if(err){
-        console.log(`Error in connectiong to the database: ${err.stack}`)
-        return;
-    }
-    console.log("Connected to the database")
-})
+try{
+    connection.connect(function(err){
+        if(err) console.log(`Error in connecting to the database: ${err.stack}`)
+        console.log("Connected to the database")
+    })
+}catch(error){
+    console.log(`${error}`)
+}
+
 
 function getAllClients(querryObject){
     return new Promise((resolve,reject)=>{
@@ -593,7 +595,6 @@ function getRecInfo(queryFilter, queryFilterData,){
 
 function getFinancialData(filterObject){
     return new Promise((resolve, reject)=>{  
-        console.log(`SELECT invoice_number, invoiceID, invoice_status, invoice_pay_method, invoice_date, product_id, product_quantity, product_tax_pr, total_tax, product_price, total_price FROM invoices join invoices_billed_products productsTable on productsTable.invoiceID=invoice_number WHERE invoice_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND invoice_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" AND invoice_status='finalised' order by invoice_number;`)      
         connection.query(`SELECT invoice_number, invoiceID, invoice_status, invoice_pay_method, invoice_date, product_id, product_quantity, product_tax_pr, total_tax, product_price, total_price FROM invoices join invoices_billed_products productsTable on productsTable.invoiceID=invoice_number WHERE invoice_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND invoice_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" AND invoice_status='finalised' order by invoice_number;`, function(error, result){
             if(error){
                 console.log(error)
@@ -832,6 +833,7 @@ function getRecordsNumber(queryDB, queryFilter, queryFilterData){
 
 async function exportData(){
 
+    //create the directory if not existing
     if (!fs.existsSync('./exports')){
         fs.mkdirSync('./exports');
     }
@@ -892,7 +894,23 @@ async function exportData(){
         });
     })
 
-    Promise.all([exportInvoices, exportBilledProjects, predefinedProducts, clients]).then((values) => {
+    let expenses = new Promise((resolve, reject)=>{
+        connection.query("SELECT * FROM expenses", function(error, data, fields) {
+            if (error) throw error;
+            const jsonData = JSON.parse(JSON.stringify(data));
+            const json2csvParser = new Json2csvParser({ header: true});
+            const csv = json2csvParser.parse(jsonData);
+            fs.writeFile("./exports/expenses.csv", csv, function(error) {
+              if (error) throw error;
+              console.log("expenses.csv generated");
+              resolve("OK")
+            });
+        });
+    })
+
+    //chain data
+    Promise.all([exportInvoices, exportBilledProjects, predefinedProducts, clients, expenses]).then((values) => {
+        console.log(values)
         return(values)
     });
 
@@ -924,6 +942,52 @@ function changeDBinfo(){
         }
     })
 
+}
+
+function getExpenses(filterObject, getAll){
+    let querryToBeExec = `SELECT * FROM expenses WHERE exp_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND exp_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" order by id`
+    if(!getAll) querryToBeExec = `SELECT * FROM expenses WHERE exp_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND exp_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" AND exp_deduct='1' order by id`
+    return new Promise((resolve, reject)=>{  
+        connection.query(querryToBeExec, function(error, result){
+            if(error){
+                console.log(error)
+                reject({status:"ERROR"})
+            }
+            resolve({status:"OK", data: result})
+        })
+    })
+}
+
+function addExpense(object){
+    return new Promise((resolve, reject)=>{  
+        connection.query(`INSERT INTO expenses(exp_name, exp_sum, exp_description, exp_date, exp_deduct) VALUES ('${object.exp_name}', '${object.exp_sum}', '${object.exp_description}','${object.exp_date}','${object.exp_deduct}')`, function(error, result){
+            if(error){
+                console.log(error)
+                reject({status:"ERROR"})
+            }
+            if(result.insertId>0){
+                resolve({status:"OK", data: result.insertId})
+            }else{
+                resolve({status:"FAIL", data: null})  
+            }            
+        })
+    })    
+}
+
+function deleteExpense(id){
+    return new Promise((resolve, reject)=>{  
+        connection.query(`DELETE FROM expenses WHERE id=${id}`, function(error, result){
+            if(error){
+                console.log(error)
+                reject({status:"ERROR"})
+            }
+            if(result.affectedRows>0){
+                resolve("OK")
+            }else{
+                resolve("FAIL")  
+            }            
+        })
+    })
 }
 
 module.exports ={
@@ -958,5 +1022,8 @@ module.exports ={
     getRecordsNumber:getRecordsNumber,
     exportData:exportData,
     getDBinfo:getDBinfo,
-    changeDBinfo:changeDBinfo
+    changeDBinfo:changeDBinfo,
+    getExpenses,
+    addExpense,
+    deleteExpense
 }

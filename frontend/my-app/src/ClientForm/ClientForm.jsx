@@ -211,8 +211,10 @@ let TheClientForm = (props)=>{
     //edit the data for a registered client
     let updateExistingClient = () =>{
         let dataToBeSent ={}
-        if((document.getElementById("client_fiscal_1").attributes.getNamedItem('modified').value==="true") && (document.getElementById("client_type").value==="comp")) dataToBeSent.client_fiscal_1=document.getElementById("client_fiscal_1").value;
-        if((document.getElementById("client_fiscal_2").attributes.getNamedItem('modified').value==="true") && (document.getElementById("client_type").value==="comp")) dataToBeSent.client_fiscal_2=document.getElementById("client_fiscal_2").value;
+        if(document.getElementById("client_type").value=="comp"){
+            if((document.getElementById("client_fiscal_1").attributes.getNamedItem('modified').value==="true") && (document.getElementById("client_type").value==="comp")) dataToBeSent.client_fiscal_1=document.getElementById("client_fiscal_1").value;
+            if((document.getElementById("client_fiscal_2").attributes.getNamedItem('modified').value==="true") && (document.getElementById("client_type").value==="comp")) dataToBeSent.client_fiscal_2=document.getElementById("client_fiscal_2").value;
+        }      
         if(document.getElementById("client_type").attributes.getNamedItem('modified').value==="true") dataToBeSent.client_type=document.getElementById("client_type").value;
         if(document.getElementById("client_first_name").attributes.getNamedItem('modified').value==="true") dataToBeSent.client_first_name=document.getElementById("client_first_name").value;
         if(document.getElementById("client_last_name").attributes.getNamedItem('modified').value==="true") dataToBeSent.client_last_name=document.getElementById("client_last_name").value;

@@ -307,8 +307,27 @@ function assignCustomDates(filterBy, object){
     return true
 }
 
-async function getFinancials(querryObject){
+function translateInterval(interval){
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
 
+    let transaltedInterval={startDay:"", startMonth:"", startYear:"", endDay:"", endMonth:"", endYear:""}
+
+    let firstSplit = interval.split("-")
+    transaltedInterval={
+        startDay:`${firstSplit[0][0]}${firstSplit[0][1]}`,
+        startMonth:`${firstSplit[0][2]}${firstSplit[0][3]}`,
+        startYear:`${firstSplit[0][4]}${firstSplit[0][5]}`,
+        endDay:`${firstSplit[1][0]}${firstSplit[1][1]}`,
+        endMonth:`${firstSplit[1][2]}${firstSplit[1][3]}`,
+        endYear:`${firstSplit[1][4]}${firstSplit[1][5]}`,
+    }
+    
+    return transaltedInterval
+
+}
+
+async function getFinancials(querryObject){
     //some initial checks of the request
     if(querryObject.filter!="interval"){
         return({status:"INVALID_REQUEST", data: "filter"})
@@ -320,32 +339,16 @@ async function getFinancials(querryObject){
         return({status:"INVALID_REQUEST", data: "filterBy"})
     }
 
-    const currentDate = new Date();
-    const currentYear = currentDate.getFullYear();
+    let interval=translateInterval(querryObject.filterBy)
 
-    let interval={startDay:"", startMonth:"", startYear:"", endDay:"", endMonth:"", endYear:""}
-
-    if(querryObject.filter==="interval"){
-        let firstSplit = querryObject.filterBy.split("-")
-        interval={
-            startDay:`${firstSplit[0][0]}${firstSplit[0][1]}`,
-            startMonth:`${firstSplit[0][2]}${firstSplit[0][3]}`,
-            startYear:`${firstSplit[0][4]}${firstSplit[0][5]}`,
-            endDay:`${firstSplit[1][0]}${firstSplit[1][1]}`,
-            endMonth:`${firstSplit[1][2]}${firstSplit[1][3]}`,
-            endYear:`${firstSplit[1][4]}${firstSplit[1][5]}`,
-        }
-    }else{
-        //not applicable for now
-    }
-
+    //financials
     let data = await databaseOperations.getFinancialData(interval)
-    if(data.status==="OK"){
-        return({status:data.data.length===0 ? "NO_DATA" : "OK", data: utile.processFinancial(data.data, interval)})        
-    }else{
-        return({status:"ERROR", data: null})       
-    }   
-    
+    if(data.status!="OK")  return({status:"ERROR", data: null}) 
+    //expenses
+    let expenses = await databaseOperations.getExpenses(interval, false)
+    if(expenses.status!="OK")  return({status:"ERROR", data: null})     
+    //mathematics
+    return({status:data.data.length===0 ? "NO_DATA" : "OK", data: utile.processFinancial(data.data, expenses.data, interval)})    
 }
 
 async function updateInvoice(data){
@@ -365,6 +368,10 @@ async function updateInvoice(data){
             } 
             //invoice data to be updated
             if(Object.keys(data).length>0){
+                if(data.invoice_status==="finalised"){
+                    //update invoice date when finalised
+                    data.invoice_date = new Date()
+                }
                 let updateStatus = await databaseOperations.updateInvoice(invoice_number, data)
                 //an error occured
                 if(updateStatus===0){
@@ -452,7 +459,13 @@ async function removeProduct(entry){
 }
 
 async function createExportableData(){
+    let noOfOKs = 0
     let status= await databaseOperations.exportData()
+    /*status.forEach(element, index=>{
+        if(element==="OK") noOfOKs=noOfOKs+1
+    })*/
+    console.log(status)
+    return noOfOKs
 }
 
 function getDatabaseInfo(){
@@ -467,6 +480,34 @@ function changeDatabaseInfo(callback){
     .catch(data=>{
         callback(data)
     })
+}
+
+async function getExpenses(querryObject){
+    //some initial checks of the request
+    if(querryObject.filter!="interval"){
+        return({status:"INVALID_REQUEST", data: "filter"})
+    }
+    if(querryObject.filterBy.length!=13){
+        return({status:"INVALID_REQUEST", data: "filterBy"})
+    }
+    if(querryObject.filterBy.indexOf("-")<0){
+        return({status:"INVALID_REQUEST", data: "filterBy"})
+    }
+
+    let data = await databaseOperations.getExpenses(translateInterval(querryObject.filterBy), true)
+    
+    return data
+
+}
+
+async function addExpense(data){
+    let response = await databaseOperations.addExpense(data)
+    return response
+}
+
+async function deleteExpense(id){
+    let response = await databaseOperations.deleteExpense(id)
+    return response
 }
 
 module.exports={
@@ -487,5 +528,8 @@ module.exports={
     createExportableData:createExportableData,
     getDatabaseInfo:getDatabaseInfo,
     changeDatabaseInfo:changeDatabaseInfo,
-    updateClientData:updateClientData
+    updateClientData:updateClientData,
+    getExpenses:getExpenses,
+    addExpense:addExpense,
+    deleteExpense
 }

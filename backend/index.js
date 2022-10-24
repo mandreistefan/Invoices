@@ -10,6 +10,7 @@ const clientsHandler = require('./Routes/Clients.js')
 const invoicesHandler = require('./Routes/Invoices.js')
 const productsHandler = require('./Routes/Products.js')
 const financialsHandler = require('./Routes/Financials.js')
+const expensesHandler = require('./Routes/Expenses.js')
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./Routes/swagger.json');
 
@@ -23,6 +24,7 @@ app.use('/', clientsHandler)
 app.use('/', invoicesHandler)
 app.use('/', productsHandler)
 app.use('/', financialsHandler)
+app.use('/', expensesHandler)
 
 cron.schedule('* 00 13 * *', () => {
     console.log('Runnig scheduled task');
@@ -73,7 +75,12 @@ app.get('/recurrent/*',(req,res)=>{
 
 //exports a DB in a CSV file format
 app.get("/export", (req, res)=>{
-    databaseController.createExportableData()
+    databaseController.createExportableData().then(data=>{
+        res.send({
+            status:"OK",
+            data: data
+        })
+    })
 })
 
 //get some info on the DB

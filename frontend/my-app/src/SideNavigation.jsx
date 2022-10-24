@@ -18,6 +18,7 @@ let SideNavigation = (props) =>{
         {id:0, name: "clients", displayName:'CLIENTI', icon:'account_circle'},
         {id:1, name: "invoices", displayName:'FACTURI', icon:'receipt_long'},
         {id:2, name: "products", displayName:'PRODUSE', icon:'sell'},
+        {id:5, name: "expenses", displayName:'CHELTUIELI', icon:'account_balance_wallet'},
         {id:3, name: "financial", displayName:'FINANTE', icon:'attach_money'},
         {id:4, name: "settings", displayName:'SETARI', icon:'settings'}
     ]

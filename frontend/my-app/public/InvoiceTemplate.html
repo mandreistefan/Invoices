@@ -10,9 +10,9 @@
             <div class="company-customer-info-container">
                 <div class="company-info">
                     <span class="invoice-name">DoriFlor Ando SRL</span>
-                    <span>CIF: <b>RO1234567</b></span>
-                    <span>Reg.com: <b>SER13/123FFR/56AS</b></span>
-                    <span>Adresa: <b>Bacau, Targu Ocna, Str. Galean, Nr. 104</b></span>                    
+                    <span>CUI: <b>46785831</b></span>
+                    <span>Reg.com: <b>J04/1589/2022</b></span>
+                    <span>Adresa: <b>Bacau, Targu Ocna, Str. Galean, Nr. 104B</b></span>                    
                     <span>Telefon: <b>0729578894</b></span>
                     <span>Email: <b>doriflorando@gmail.com</b></span>
                     <span>IBAN: <b>RO11BTRLRONCRT0660141301</b></span>
@@ -20,12 +20,13 @@
                 </div>
                 <div class="customer-info">
                     <div class="invoice-info-container">
-                        <h2>Factura</h2>
+                        <h4>Factura</h4>
                         <span>Numar: <span id="invoice-number"></span></span><br/>
                         <span>Data emiterii: <span id="invoice-date"></span></span><br/>
                         <span>Total: <span id="invoice-info-total"></span></span><br/>
                     </div>
-                    <hr>
+                    <hr style="margin-top:4px;margin-bottom:4px">
+                    <span>Client:</span>
                     <span class="invoice-name" id="client-name"></span>                   
                     <span class="" id="client_fiscal_1"></span>
                     <span class="" id="client_fiscal_2"></span>
@@ -55,7 +56,7 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td id="invoice-total-tax"><b>{invoiceData.invoiceProperty.total.tax} RON</b></td>
+                        <td></td>
                         <td id="invoice-total"><b>{invoiceData.invoiceProperty.total.price} RON</b></td>                        
                     </tfoot>
                 </table>           
@@ -84,7 +85,7 @@
                     tableContent=tableContent+
                         `<tr style="border-bottom:1px solid lightgray">
                             <td colspan="1"></td>      
-                            <td colspan="8" style=""><i>${element.description}</i></td>      
+                            <td colspan="7" style=""><i>${element.description}</i></td>      
                         </tr>`
                 }
             })

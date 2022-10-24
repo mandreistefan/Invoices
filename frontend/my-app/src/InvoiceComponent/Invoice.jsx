@@ -389,7 +389,8 @@ export default class Invoice extends React.Component{
         fetch(`/products/${entry}`,{
             method:"DELETE",
             headers: { 'Content-Type': 'application/json' }
-        }).then(response=>response.json())
+        })
+        .then(response=>response.json())
         .then(data=>{
             //succesfull in removing the element from the DB
             if(data.status==="OK"){

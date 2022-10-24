@@ -2,44 +2,31 @@ import React from "react";
 import './FinancialComponent.css'
 import Snackbar from '../Snackbar/Snackbar.jsx'
 import FinancialChart from './FinancialChart.jsx'
-import DatePicker from "react-datepicker";
 
 let Financial = (props) =>{
 
     let [financialData, setFinancialData] = React.useState(null)
     let [alertUser, setUserAlert] =React.useState({text: null})
     //use for the horizontal scale of the chart
-    let [chartInterval, setChartInterval] = React.useState(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
-    let [chartValues, setChartValues] = React.useState([0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     let [chartTitle, setChartTile] = React.useState("Current year")
     let [chartData, setChartData] = React.useState([{month:8, year:2022, total:0}, {month:9, year:2022, total:0}])
-
     let currentDate = new Date()
-    let initialStartDate = new Date()
-    initialStartDate.setFullYear(currentDate.getFullYear()-1)
-    let year = currentDate.getFullYear();    
-    let [dateInterval, setInterval] = React.useState({start: initialStartDate, end: currentDate})
+    let [dateInterval, setInterval] = React.useState({
+        start: `${currentDate.getFullYear()}-01-01`,
+        end: `${currentDate.getFullYear()}-12-31`
+    }) 
     
-    const ExampleCustomInput = React.forwardRef(({ value, onClick }, ref) => (
-        <button className="date-picker-button" onClick={onClick} ref={ref}>{value}</button>
-    ));
+    let [taxes, setTaxes]= React.useState({profitTaxPercentage: 3, profitTax: 0, profit: 0})
 
     React.useEffect(()=>{
         fetchData()
-    }, [])
+    }, [dateInterval])
 
     let fetchData=()=>{
         
-        let interval={
-            startDay:dateInterval.start.getDate().toString().length===1 ? `0${dateInterval.start.getDate().toString()}`:`${dateInterval.start.getDate().toString()}`,
-            endDay: dateInterval.end.getDate().toString().length===1 ? `0${dateInterval.end.getDate().toString()}`:`${dateInterval.end.getDate().toString()}`,
-            startMonth: parseInt(dateInterval.start.getMonth())+1<10 ? `0${(dateInterval.start.getMonth()+1).toString()}`:`${(dateInterval.start.getMonth()+1).toString()}`,
-            endMonth: parseInt(dateInterval.start.getMonth())+1<10 ? `0${(dateInterval.end.getMonth()+1).toString()}`:`${(dateInterval.end.getMonth()+1).toString()}`,
-            startYear: dateInterval.start.getFullYear().toString().substring(2,4),
-            endYear: dateInterval.end.getFullYear().toString().substring(2,4)
-        }
-
-        let filterBy=`${interval.startDay}${interval.startMonth}${interval.startYear}-${interval.endDay}${interval.endMonth}${interval.endYear}`
+        let startDateArray = dateInterval.start.split("-")
+        let endDayArray = dateInterval.end.split("-")
+        let filterBy=`${startDateArray[2]}${startDateArray[1]}${startDateArray[0].substring(2,4)}-${endDayArray[2]}${endDayArray[1]}${endDayArray[0].substring(2,4)}`
 
         let querry = `/financial/?filter=interval&filterBy=${filterBy}`
         fetch(querry).then(response=>response.json()).then(data=>{
@@ -50,13 +37,24 @@ let Financial = (props) =>{
                 //contains totals and statistics
                 setFinancialData(data.data)
                 //contains data for plotting a chart
-                setChartTile(`${interval.startDay}/${interval.startMonth}/${interval.startYear} - ${interval.endDay}/${interval.endMonth}/${interval.endYear}`)
+                setChartTile(`${dateInterval.start} - ${dateInterval.end}`)
+                //calcualtes taxes
+                setTaxes({...taxes, profitTax: parseFloat(((data.data.total-data.data.total_exp)/100)*taxes.profitTaxPercentage).toFixed(2), profit:parseFloat(data.data.total-taxes.profitTax)})
             }else if(data.status==="NO_DATA"){
 
             }else{
                 setUserAlert({text: "There has been an error"})
             }
         })
+    }
+
+    let someFunction=(event)=>{
+        event.target.name==="trip-start" ? setInterval({...dateInterval, start:event.target.value}) : setInterval({...dateInterval, end:event.target.value})
+    }
+
+    let recalculateTaxes=(event)=>{
+        let profitTax = parseFloat(((financialData.total-financialData.total_exp)/100)*event.target.value).toFixed(2)
+        setTaxes({profitTaxPercentage:event.target.value, profitTax:profitTax, profit:parseFloat(financialData.total-profitTax).toFixed(2)})
     }
 
     return(
@@ -69,19 +67,19 @@ let Financial = (props) =>{
             </div>
             <hr/>
             <div className="app-data-container financial-container">
-                <div className="alert alert-secondary">
-                    <div style={{display:'flex', flexDirection:'row', alignItems:'center', marginBottom:'5px'}}>                
-                        <h5 style={{margin:'0',marginLeft:'5px'}}>Interval</h5>
+                <div className="alert alert-secondary interval-setter">
+                    <div style={{display:'flex', flexDirection:'row', alignItems:'center'}}>
+                        <label style={{marginRight:'5px'}}>Interval:</label>
+                        <div className="intervals-container">
+                            <input type="date" id="start" name="trip-start" value={dateInterval.start} onChange={someFunction}></input>
+                            <input type="date" id="end" name="trip-end" value={dateInterval.end} onChange={someFunction}></input>
+                            <button style={{height:'26px', fontSize:'14px', border:'none', borderRadius:'6px'}} onClick={()=>{fetchData()}}><span className="action-button-label">Apply</span></button>
+                        </div> 
                     </div>
-                    <div className="row financial-container-body">
-                        <div className="col-2" style={{display:'flex', flexDirection:'row', justifyContent:"flex-start"}}>
-                            <DatePicker style={{width:'fit-content'}} dateFormat="dd/MM/yyyy" id="billing-date-yearly" customInput={<ExampleCustomInput />} selected={dateInterval.start} disabled={false} onChange={(date:Date) => setInterval({start: date, end: dateInterval.end})}/>
 
-                            <DatePicker style={{width:'fit-content'}} dateFormat="dd/MM/yyyy" id="billing-date-yearly" customInput={<ExampleCustomInput />} selected={dateInterval.end} disabled={false} onChange={(date:Date) => setInterval({start: dateInterval.start, end: date})}/>
-                        </div>
-                        <div className="col-1">
-                            <button className="btn btn-secondary btn-sm" onClick={()=>{fetchData()}}><span className="action-button-label">Apply</span></button>
-                        </div>
+                    <div style={{display:'flex', flexDirection:'row', alignItems:'center', marginTop:'5px'}}>
+                        <label style={{marginRight:'5px'}}>Taxa profit:</label>
+                        <input type="text" style={{width:"30px", borderRadius:'6px', border:'1px solid black'}} value={taxes.profitTaxPercentage} onChange={recalculateTaxes}></input>
                     </div>
                 </div> 
         
@@ -94,19 +92,22 @@ let Financial = (props) =>{
                         <table style={{width:'100%'}}>
                             <tbody>
                                 <tr style={{fontWeight:'600'}}>
-                                    <td className="col-4">Incasari</td>
-                                    <td className="col-4">Taxe</td>
-                                    <td className="col-4">Net</td>
+                                    <td className="col-3">Venituri</td>
+                                    <td className="col-3">TVA</td>
+                                    <td className="col-3">Cheltuieli</td>
+                                    <td className="col-3">Taxa profit</td>
                                 </tr>
                                 <tr style={{fontSize:'1.35rem'}}>
                                     <td><span className="card-head-text black-text">{parseFloat(financialData.total).toFixed(2)} RON</span></td>
                                     <td><span className="card-head-text black-text">{parseFloat(financialData.total_tax).toFixed(2)} RON</span></td>
-                                    <td><span className="card-head-text black-text">{parseFloat(financialData.total_net).toFixed(2)} RON</span></td>
+                                    <td><span className="card-head-text black-text">{parseFloat(financialData.total_exp).toFixed(2)} RON</span></td>
+                                    <td><span className="card-head-text black-text">{taxes.profitTax}</span></td>
                                 </tr>
                                 <tr style={{color:'gray',borderTop:'1px solid gray'}}>
                                     <td>Total incasari, facturi finalizare</td>
-                                    <td>Totalul taxelor</td>
-                                    <td>Net, calculat ca total incasari - total taxe</td>
+                                    <td>Total TVA</td>
+                                    <td>Deduceri/ cheltuieli</td>
+                                    <td>Taxa profit * (venituri - cheltuieli deductibile)</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -135,8 +136,8 @@ let Financial = (props) =>{
                                 </tr>
                                 <tr style={{color:'gray',borderTop:'1px solid gray'}}>
                                     <td>Numarul total de facturi in perioada selectata</td>
-                                    <td>Valoarea medie a unei facturi, calculata ca total / numar facturi</td>
-                                    <td>Valoarea medie lunara a unei facturi, calculata ca total / numar luni</td>
+                                    <td>Total incasat / numar facturi</td>
+                                    <td>Total incasat / numar luni</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -147,9 +148,11 @@ let Financial = (props) =>{
                         <span className="material-icons-outlined">timeline</span>
                         <h5 style={{margin:'0',marginLeft:'5px'}}>Grafic</h5>
                     </div>
-                    <div id="financial-chart">
-                        <FinancialChart data={chartData} plottedFor={chartTitle}/>             
-                    </div>    
+                    <div>
+                        <div id="financial-chart" style={{width:"50%"}}>
+                            <FinancialChart data={chartData} plottedFor={chartTitle}/>             
+                        </div>  
+                    </div>  
                 </div>        
                 <Snackbar text={alertUser.text} closeSnack={()=>{setUserAlert({text:null})}}/>  
             </div>

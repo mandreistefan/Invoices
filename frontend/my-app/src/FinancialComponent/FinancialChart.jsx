@@ -60,7 +60,7 @@ let FinanchialChart=(props)=>{
 
     return(
         <div className='px-4 py-2 my-2 text-center alert alert-light'>
-            <h4 className='my-1'>{props.plottedFor}</h4>
+            <h6 className='my-1'>{props.plottedFor}</h6>
             <Line key={props.plottedFor} options={options} data={data}/>
         </div>
     )

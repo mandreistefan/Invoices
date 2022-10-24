@@ -338,7 +338,7 @@
                 "parameters": [{  
                     "name":"client_type",
                     "in":"body",
-                    "description":"The cliet type",
+                    "description":"The client type",
                     "required":false,
                     "type":"string"
                  },
@@ -476,6 +476,125 @@
                                 "data":{
                                     "type": "integer",
                                     "description": "The ID of the newly created client"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/expenses" : {
+            "get" : {
+                "summary" : "Get expenses",
+                "description": "Gets all expenses",
+                "produces": ["application/json"],
+                "parameters": [{  
+                    "name":"filter",
+                    "in":"query",
+                    "description":"The field by which we filter the results",
+                    "required":true,
+                    "type":"string",
+                    "default": "interval",
+                    "enum": ["interval"]
+                 },
+                 {  
+                    "name":"filterBy",
+                    "in":"query",
+                    "description":"The time interval that is requested. Format is ddmmyy-ddmmyy",
+                    "default": "010121-010122",
+                    "required":true
+                }],
+                "responses": {
+                    "200": {
+                        "description": "A response has been received",
+                        "schema":{
+                            "type": "object",
+                            "properties":{
+                                "status":{
+                                    "type": "string",
+                                    "description": "Status of the operation",
+                                    "enum": ["OK", "ERROR", "INVALID_REQUEST"]
+                                },
+                                "data":{
+                                    "type": "object",
+                                    "description": "The returned data"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post" : {
+                "summary" : "Add",
+                "description": "Add a new expense",
+                "produces": ["application/json"],
+                "consumes": ["application/json"],
+                "parameters": [{  
+                    "name":"exp_name",
+                    "in":"body",
+                    "description":"Name of the expense",
+                    "required":true,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"exp_sum",
+                    "in":"body",
+                    "description":"The ammount of the expense",
+                    "required":true,
+                    "type":"integer"
+                 },
+                 {  
+                    "name":"exp_description",
+                    "in":"body",
+                    "description":"A description",
+                    "required":true,
+                    "type":"string"
+                 },
+                 {  
+                    "name":"exp_date",
+                    "in":"body",
+                    "description":"The register date of the expense",
+                    "required":true,
+                    "type":"string"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "A response has been received",
+                        "schema": {
+                            "type": "object",
+                            "properties":{
+                                "status":{
+                                    "type": "string",
+                                    "description": "Status of the operation",
+                                    "enum": ["OK", "ERROR"]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete":{
+                "summary" : "Delete expenses",
+                "description": "Delete an expense from the DB",
+                "produces": ["application/json"],
+                "consumes": ["application/json"],
+                "parameters":[{  
+                    "name":"id",
+                    "in":"body",
+                    "description":"ID of the entry",
+                    "required":true,
+                    "type":"integer"
+                 }],
+                 "responses": {
+                    "200": {
+                        "description": "A response has been received",
+                        "schema": {
+                            "type": "object",
+                            "properties":{
+                                "status":{
+                                    "type": "string",
+                                    "description": "Status of the operation",
+                                    "enum": ["OK", "ERROR", "FAILED"]
                                 }
                             }
                         }

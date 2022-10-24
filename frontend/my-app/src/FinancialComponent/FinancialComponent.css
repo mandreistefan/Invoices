@@ -57,7 +57,7 @@
 }
 
 .card-head-text{
-    font-size: 2.3rem;
+    font-size: 1.75rem;
     font-weight: 500;
     height: 60px;
 }
@@ -104,8 +104,4 @@
     text-align: center;
 }
 
-.date-picker-button{
-    border:0;
-    
-}
 
