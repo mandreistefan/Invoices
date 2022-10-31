@@ -76,9 +76,10 @@ app.get('/recurrent/*',(req,res)=>{
 //exports a DB in a CSV file format
 app.get("/export", (req, res)=>{
     databaseController.createExportableData().then(data=>{
+        console.log(data)
         res.send({
             status:"OK",
-            data: data
+            data: {success:data[0], attempts:data[1]}
         })
     })
 })
@@ -86,7 +87,10 @@ app.get("/export", (req, res)=>{
 //get some info on the DB
 app.get("/database", (req, res)=>{
     let data = databaseController.getDatabaseInfo()
-    res.send(data)
+    res.send({
+        status:"OK",
+        data:data
+    })
 })
 
 //exports a DB in a CSV file format

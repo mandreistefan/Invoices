@@ -65,23 +65,29 @@ let TheClientForm = (props)=>{
         })
         .then(response=>response.json())
         .then(data=>{
-            let clientData = data.data[0];
-            let prettyData = {
-                client_fiscal_1_input: (clientData) ? clientData.client_fiscal_1 : "", 
-                client_fiscal_2_input: (clientData) ? clientData.client_fiscal_2 : "", 
-                client_type_input: (clientData) ? clientData.client_type : "", 
-                client_first_name_input: (clientData) ?  clientData.client_first_name: "",
-                client_last_name_input: (clientData) ?  clientData.client_last_name: "", 
-                client_phone_input: (clientData) ?  clientData.client_phone: "", 
-                client_email_input: (clientData) ?  clientData.client_email: "", 
-                client_county_input: (clientData) ?  clientData.client_county: "", 
-                client_city_input: (clientData) ?  clientData.client_city: "", 
-                client_street_input: (clientData) ?  clientData.client_street: "", 
-                client_adress_number_input: (clientData) ?  clientData.client_adress_number: "", 
-                client_zip_input: (clientData) ?  clientData.client_zip: "",
-                client_notes_input: (clientData) ?  clientData.client_notes: ""
-            } 
-            setTheData(prettyData)
+            if(data.status==="OK"){
+                let clientData = data.data[0];
+                let prettyData = {
+                    client_fiscal_1_input: (clientData) ? clientData.client_fiscal_1 : "", 
+                    client_fiscal_2_input: (clientData) ? clientData.client_fiscal_2 : "", 
+                    client_type_input: (clientData) ? clientData.client_type : "", 
+                    client_first_name_input: (clientData) ?  clientData.client_first_name: "",
+                    client_last_name_input: (clientData) ?  clientData.client_last_name: "", 
+                    client_phone_input: (clientData) ?  clientData.client_phone: "", 
+                    client_email_input: (clientData) ?  clientData.client_email: "", 
+                    client_county_input: (clientData) ?  clientData.client_county: "", 
+                    client_city_input: (clientData) ?  clientData.client_city: "", 
+                    client_street_input: (clientData) ?  clientData.client_street: "", 
+                    client_adress_number_input: (clientData) ?  clientData.client_adress_number: "", 
+                    client_zip_input: (clientData) ?  clientData.client_zip: "",
+                    client_notes_input: (clientData) ?  clientData.client_notes: ""
+                } 
+                setTheData(prettyData)
+            }else if(data.status==="SERVER_ERROR"){
+                setAlertUser({text:"Baza de date nu poate fi accesata"})
+            }else{
+                setAlertUser({text:"Eroare"})
+            }
         })
     }
 
@@ -176,8 +182,8 @@ let TheClientForm = (props)=>{
                     method:"POST",
                     headers: { 'Content-Type': 'application/json' },
                     body:JSON.stringify({
-                        client_fiscal_1: document.getElementById("client_fiscal_1").value,
-                        client_fiscal_2: document.getElementById("client_fiscal_2").value, 
+                        client_fiscal_1: document.getElementById("client_type").value=="comp" ? document.getElementById("client_fiscal_1").value : null,
+                        client_fiscal_2: document.getElementById("client_type").value=="comp" ? document.getElementById("client_fiscal_2").value : null,
                         client_type: document.getElementById("client_type").value, 
                         client_first_name: document.getElementById("client_first_name").value,
                         client_last_name: document.getElementById("client_last_name").value,
@@ -197,12 +203,13 @@ let TheClientForm = (props)=>{
                         setClientData(data.data)
                         setFieldsDisabled(false) 
                         setAlertUser({text:"Client registered"})
+                    }else if(data.status==="SERVER_ERROR"){
+                        setAlertUser({text:"Baza de date nu poate fi accesata"})
                     }else{
                         setAlertUser({text:"Something went wrong"})
                     }
                 })
-            }
-        else{
+        }else{
             setAlertUser({text:"Invalid client data"})
         }
 
@@ -240,6 +247,8 @@ let TheClientForm = (props)=>{
         .then(data=>{
             if(data.status==="OK"){
                 setAlertUser({text:"Client updated"})
+            }else if(data.status==="SERVER_ERROR"){
+                setAlertUser({text:"Baza de date nu poate fi accesata"})
             }else{
                 setAlertUser({text:"Something went wrong"})
             }

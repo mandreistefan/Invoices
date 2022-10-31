@@ -252,6 +252,8 @@ export default class Invoice extends React.Component{
                 }
                 //all is good, reload data; use a local because the state-update can be too slow and the state.invoiceID will be kept null when fetchInvoiceData is called
                 this.fetchInvoiceData(invoiceID)
+            }else if(data.status==="SERVER_ERROR"){
+                this.setState({alertUser:"Baza de date nu poate fi accesata"})
             }else{
                 this.setState({alertUser:"An error occured"})
             }
@@ -395,6 +397,10 @@ export default class Invoice extends React.Component{
             //succesfull in removing the element from the DB
             if(data.status==="OK"){
                 this.removeTableElement(rowIndex)
+            }else if(data.status==="SERVER_ERROR"){
+                this.setState({alertUser:"Baza de date nu poate fi accesata"})
+            }else{
+                this.setState({alertUser:"Eroare"})
             }
         })
     }

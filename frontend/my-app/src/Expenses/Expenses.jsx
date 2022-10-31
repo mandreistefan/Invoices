@@ -26,7 +26,13 @@ let Expenses=()=>{
         let filterBy=`${startDateArray[2]}${startDateArray[1]}${startDateArray[0].substring(2,4)}-${endDayArray[2]}${endDayArray[1]}${endDayArray[0].substring(2,4)}`
 
         fetch(`./expenses?filter=interval&filterBy=${filterBy}`).then(response=>response.json()).then(data=>{
-            setExpenses(data.data)
+            if(data.status==="OK"){
+                setExpenses(data.data)
+            }else if(data.status==="SERVER_ERROR"){
+                setAlertUser({text: "Baza de date nu poate fi accesata"}) 
+            }else{
+                setAlertUser({text: "Eroare"}) 
+            }
         })
     }
 
@@ -43,8 +49,9 @@ let Expenses=()=>{
             if(data.status==="OK"){
                 setAlertUser({text: "Cheltuiala stearsa"})
                 fetchData()
-            }
-            else{
+            }else if(data.status==="SERVER_ERROR"){
+                setAlertUser({text: "Baza de date nu poate fi accesata"}) 
+            }else{
                 setAlertUser({text: "Eroare"})
             }
         })
@@ -64,7 +71,6 @@ let Expenses=()=>{
     return(
         <div>
             <div className="app-title-container"><h4>Cheltuieli</h4></div><hr/>
-
             <ExpenseForm reFetch={fetchData}/>
             {expenses&&       
                 <div className="app-data-container" style={{maxWidth:"1000px", marginLeft:"auto", marginRight:"auto"}}> 

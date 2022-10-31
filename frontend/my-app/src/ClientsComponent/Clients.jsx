@@ -28,22 +28,19 @@ let Clients = (props) =>{
         })
         .then(response=>response.json())
         .then(data=>{
-            if(data==null){
-                setAlertUser({text:"Something went wrong"})
-                return false
+            if(data.status==="OK"){
+                setAllClients(data.data)
+                setNOE(data.totalRecordsNumber)
+                setActiveClient({id: data.data[0].id, name:data.data[0].client_first_name})
+            }else if(data.status==="SERVER_ERROR"){
+                setAlertUser({text:"Baza de date nu poate fi accesata"})
+            }else{
+                if(data==null||data.totalRecordsNumber===0){
+                    setAlertUser({text:"Nu exista date"})
+                    return false
+                }
+                setAlertUser({text:"Eroare"})
             }
-            if(data.status!="OK"){
-                setAlertUser({text:"Something went wrong"})
-                return false  
-            }
-            if(data.totalRecordsNumber===0){
-                setAlertUser({text:"No records!"})
-                return false  
-            }
-            setAllClients(data.data)
-            setNOE(data.totalRecordsNumber)
-            setActiveClient({id: data.data[0].id, name:data.data[0].client_first_name})
-
         })
     }
 
@@ -56,17 +53,14 @@ let Clients = (props) =>{
             body:JSON.stringify({clientID:activeClient.id})
         })
         .then(response=>response.json()).then(data=>{
-            if(data==null){
-                setAlertUser({text:"Something went wrong"})
-                return false
-            }
-            if(data.status!="OK"){
-                setAlertUser({text:"Something went wrong"})
-                return false  
-            }
-            setAlertUser({text:"Client archived"})
-            //refresh clients list
-            fetchClients()
+            if(data.status==="OK"){
+                setAlertUser({text:"Client archived"})
+                fetchClients()
+            }else if(data.status==="SERVER_ERROR"){
+                setAlertUser({text:"Baza de date nu poate fi accesata"})
+            }else{
+                setAlertUser({text:"Eroare"})
+            }            
         })
     }
 

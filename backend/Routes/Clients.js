@@ -1,8 +1,6 @@
 const express = require('express')
 let app = express.Router()
-const urlmod=require('url')
-const util = require('../utils/util.js')
-const databaseController = require('../controllers/databaseController.js')
+const {fetchClients, handleClientData, updateClientData, archiveClient} = require('../controllers/databaseController.js')
 
 //retrieve all clients
 app.get("/clients",(req,res)=>{
@@ -10,37 +8,43 @@ app.get("/clients",(req,res)=>{
     if(req.query.filter) filterObject.filter=req.query.filter;
     if(req.query.filterBy) filterObject.filterBy=req.query.filterBy;
     if(req.query.page) filterObject.page=req.query.page;
-    databaseController.fetchClients(filterObject).then(data=>{
+    fetchClients(filterObject).then(data=>{
         res.send(data)
+    }).catch(error=>{
+        res.send({status:"SERVER_ERROR", data:null})
+        console.log(error)
     })    
 })
 
 //create a new client
 app.post("/clients",(req,res)=>{
-    databaseController.handleClientData(req.body,(callback)=>{
-        if(callback.status==="OK"){
-            res.send(callback)
-        }else{
-            res.send({status:"ERROR"})
-        }
+    handleClientData(req.body).then(data=>{
+        res.send(data)
+    })
+    .catch(error=>{
+        res.send({status:"SERVER_ERROR", data:null})
+        console.log(error) 
     })
 })
 
 //update client
 app.put("/clients", (req,res)=>{
-    databaseController.updateClientData(req.body,(callback)=>{
-        if(callback.status==="OK"){
-            res.send(callback)
-        }else{
-            res.send({status:"ERROR"})
-        }
+    updateClientData(req.body).then(data=>{
+        res.send({
+            status:data.status,
+            data:data.data
+        })
+    }).catch(error=>{
+        res.send({
+            status:"ERROR",
+            data:null
+        })   
     })
 })
 
 //archive a client
 app.delete("/clients", (req, res)=>{
-    console.log(req.body.clientID)
-    databaseController.archiveClient(req.body.clientID, (callback)=>{
+    archiveClient(req.body.clientID, (callback)=>{
         res.send({status:callback.status})
     })
 })

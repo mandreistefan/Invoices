@@ -90,6 +90,8 @@ let ProductForm = (props) =>{
         .then(data=>{
             if(data.status==="OK"){
                 setSnackBarText("Success")
+            }else if(data.status==="SERVER_ERROR"){
+                setSnackBarText("Baza de date nu poate fi accesata")
             }else{
                 setSnackBarText("An error ocurred")
             }

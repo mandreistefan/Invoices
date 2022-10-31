@@ -28,7 +28,7 @@ let Financial = (props) =>{
         let endDayArray = dateInterval.end.split("-")
         let filterBy=`${startDateArray[2]}${startDateArray[1]}${startDateArray[0].substring(2,4)}-${endDayArray[2]}${endDayArray[1]}${endDayArray[0].substring(2,4)}`
 
-        let querry = `/financial/?filter=interval&filterBy=${filterBy}`
+        let querry = `/financial?filter=interval&filterBy=${filterBy}`
         fetch(querry).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 //periodicalData has a different use
@@ -41,9 +41,11 @@ let Financial = (props) =>{
                 //calcualtes taxes
                 setTaxes({...taxes, profitTax: parseFloat(((data.data.total-data.data.total_exp)/100)*taxes.profitTaxPercentage).toFixed(2), profit:parseFloat(data.data.total-taxes.profitTax)})
             }else if(data.status==="NO_DATA"){
-
+                setUserAlert({text: "Nu exista date"})
+            }else if(data.status==="SERVER_ERROR"){
+                setUserAlert({text: "Baza de date nu poate fi accesata"})    
             }else{
-                setUserAlert({text: "There has been an error"})
+                setUserAlert({text: "Baza de date nu poate fi accesata"})
             }
         })
     }
@@ -58,14 +60,14 @@ let Financial = (props) =>{
     }
 
     return(
-        financialData &&
+        
         <div>
             <div className="app-title-container">
                 <h4>Finante</h4>
-                <div className="app-submenu-selector">
-                </div>
+                <div className="app-submenu-selector"></div>
             </div>
             <hr/>
+            {financialData ?
             <div className="app-data-container financial-container">
                 <div className="alert alert-secondary interval-setter">
                     <div style={{display:'flex', flexDirection:'row', alignItems:'center'}}>
@@ -153,9 +155,9 @@ let Financial = (props) =>{
                             <FinancialChart data={chartData} plottedFor={chartTitle}/>             
                         </div>  
                     </div>  
-                </div>        
-                <Snackbar text={alertUser.text} closeSnack={()=>{setUserAlert({text:null})}}/>  
-            </div>
+                </div>                  
+            </div>:"Nu exista date"}
+            <Snackbar text={alertUser.text} closeSnack={()=>{setUserAlert({text:null})}}/> 
         </div>
     )
 

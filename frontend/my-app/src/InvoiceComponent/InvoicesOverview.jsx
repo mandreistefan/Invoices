@@ -31,8 +31,9 @@ let InvoicesOverview = (props) =>{
         .then(data=>{
             if(data.status==="OK"){
                 setAlertUser({text: "Invoice archived"})
-            }
-            else{
+            }else if(data.status==="SERVER_ERROR"){
+                setAlertUser({text: "Baza de date nu poate fi accesata"})
+            }else{
                 setAlertUser({text: "An error ocurred"})
             }
         })
@@ -59,7 +60,7 @@ let InvoicesOverview = (props) =>{
         let queryFilterBy = (props.queryFilterBy) ? props.queryFilterBy : null;
         let queryFilterData = (props.queryFilterData) ? props.queryFilterData : null;
 
-        (queryFilterBy) ? fetcher = `/invoices/?target=invoices&filter=${queryFilterBy}&filterBy=${queryFilterData}&page=${currentPage}` : fetcher = `/invoices/?target=invoices&filter=all&page=${currentPage}`
+        (queryFilterBy) ? fetcher = `/invoices?target=invoices&filter=${queryFilterBy}&filterBy=${queryFilterData}&page=${currentPage}` : fetcher = `/invoices?target=invoices&filter=all&page=${currentPage}`
         
         fetch(fetcher,
         {
@@ -67,22 +68,19 @@ let InvoicesOverview = (props) =>{
             headers: { 'Content-Type': 'application/json' },
         })
         .then(response=>response.json()).then(data=>{
-            if(data===null){
-                setAlertUser({text:"An error occured"})
-                return false
+      
+            if(data.status==="OK"){
+                invoicesDataSet(data.data)
+                setNOE(data.recordsNumber)
+                setActiveInvoice(data.data[0].invoice_number)
+            }else if(data.status==="SERVER_ERROR"){
+                setAlertUser({text: "Baza de date nu poate fi accesata"})
+            }else{
+                if(data===null||data.recordsNumber===0){
+                    setAlertUser({text:"Nu exista date"})
+                    return false
+                } 
             }
-            if(data.status!="OK"){
-                setAlertUser({text:"An error occured"})
-                return false
-            }    
-            if(data.recordsNumber===0){
-                setAlertUser({text:"No records!"})
-                return false  
-            }        
-
-            invoicesDataSet(data.data)
-            setNOE(data.recordsNumber)
-            setActiveInvoice(data.data[0].invoice_number)
             
         })
     }

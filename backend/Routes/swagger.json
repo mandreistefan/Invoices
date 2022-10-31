@@ -76,98 +76,17 @@
                 "description": "Handles the submit of the client form",
                 "produces": ["application/json"],
                 "consumes": ["application/json"],
-                "parameters": [{  
-                    "name":"client_adress_number",
-                    "in":"body",
-                    "description":"Client adress, number",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_city",
-                    "in":"body",
-                    "description":"Client adress, city",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_county",
-                    "in":"body",
-                    "description":"Client adress, county",
-                    "required":true,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_email",
-                    "in":"body",
-                    "description":"Client email adress",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_first_name",
-                    "in":"body",
-                    "description":"Client first name/ company full name",
-                    "required":true,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_fiscal_1",
-                    "in":"body",
-                    "description":"Required for company type clients. Represents 'Nr Reg Com'",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_fiscal_2",
-                    "in":"body",
-                    "description":"Required for company type clients. Represents 'CIF'",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_last_name",
-                    "in":"body",
-                    "description":"Client last name",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_notes",
-                    "in":"body",
-                    "description":"Text notes about the client",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_phone",
-                    "in":"body",
-                    "description":"Client phone number",
-                    "required":true,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_street",
-                    "in":"body",
-                    "description":"Client adress, street name",
-                    "required":true,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_type",
-                    "in":"body",
-                    "description":"Client type",
-                    "required":true,
-                    "type":"string",
-                    "enum":["pers", "comp"]
-                 },
-                 {  
-                    "name":"client_zip",
-                    "in":"body",
-                    "description":"Client ZIP code",
-                    "required":false,
-                    "type":"string"
-                 }],
+                "parameters":[
+                    {
+                      "in": "body",
+                      "name": "body",
+                      "description": "Client object",
+                      "required": false,
+                      "schema": {
+                        "$ref": "#/definitions/post_clients"
+                      }
+                    }
+                ],                
                 "responses": {
                     "200": {
                         "description": "A response has been received",
@@ -189,101 +108,18 @@
                 }
             },
             "put" : {
-                "summary" : "Update",
+                "summary" : "Update a client",
                 "description": "Update client data",
                 "produces": ["application/json"],
                 "parameters": [{  
-                    "name":"client_adress_number",
-                    "in":"body",
-                    "description":"Client adress, number",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_city",
-                    "in":"body",
-                    "description":"Client adress, city",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_county",
-                    "in":"body",
-                    "description":"Client adress, county",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_email",
-                    "in":"body",
-                    "description":"Client email adress",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_first_name",
-                    "in":"body",
-                    "description":"Client first name/ company full name",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_fiscal_1",
-                    "in":"body",
-                    "description":"Required for company type clients. Represents 'Nr Reg Com'",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_fiscal_2",
-                    "in":"body",
-                    "description":"Required for company type clients. Represents 'CIF'",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_last_name",
-                    "in":"body",
-                    "description":"Client last name",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_notes",
-                    "in":"body",
-                    "description":"Text notes about the client",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_phone",
-                    "in":"body",
-                    "description":"Client phone number",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_street",
-                    "in":"body",
-                    "description":"Client adress, street name",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_type",
-                    "in":"body",
-                    "description":"Client type",
-                    "required":false,
-                    "type":"string",
-                    "enum":["pers", "comp"]
-                 },
-                 {  
-                    "name":"client_zip",
-                    "in":"body",
-                    "description":"Client ZIP code",
-                    "required":false,
-                    "type":"string"
-                 }],
+                    "in": "body",
+                    "name": "body",
+                    "description": "Client object",
+                    "required": false,
+                    "schema": {
+                      "$ref": "#/definitions/put_clients"
+                    }
+                }],
                 "responses": {
                     "200": {
                         "description": "A response has been received",
@@ -331,137 +167,20 @@
         },
         "/invoices" : {
             "post" : {
-                "summary" : "Create a new client",
-                "description": "Handles the submit of the client form",
+                "summary" : "Create a new invoice",
+                "description": "Creates a new invoice",
                 "produces": ["application/json"],
                 "consumes": ["application/json"],
-                "parameters": [{  
-                    "name":"client_type",
-                    "in":"body",
-                    "description":"The client type",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_city",
-                    "in":"body",
-                    "description":"Client adress, city",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_county",
-                    "in":"body",
-                    "description":"Client adress, county",
-                    "required":true,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_email",
-                    "in":"body",
-                    "description":"Client email adress",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_first_name",
-                    "in":"body",
-                    "description":"Client first name/ company full name",
-                    "required":true,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_fiscal_1",
-                    "in":"body",
-                    "description":"Required for company type clients. Represents 'Nr Reg Com'",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_fiscal_2",
-                    "in":"body",
-                    "description":"Required for company type clients. Represents 'CIF'",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_last_name",
-                    "in":"body",
-                    "description":"Client last name",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_notes",
-                    "in":"body",
-                    "description":"Text notes about the client",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_phone",
-                    "in":"body",
-                    "description":"Client phone number",
-                    "required":true,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_street",
-                    "in":"body",
-                    "description":"Client adress, street name",
-                    "required":true,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"client_type",
-                    "in":"body",
-                    "description":"Client type",
-                    "required":true,
-                    "type":"string",
-                    "enum":["pers", "comp"]
-                 },
-                 {  
-                    "name":"client_zip",
-                    "in":"body",
-                    "description":"Client ZIP code",
-                    "required":false,
-                    "type":"string"
-                 },
-                 {
-                    "name":"billingProducts",
-                    "in":"body",
-                    "description":"An array containing the properties of the billed products",
-                    "required":true,
-                    "schema":{
-                        "type":"array",
-                        "properties":{
-                            "product_name":{
-                                "type": "string",
-                                "description": "Name of the billed product"                                
-                            },
-                            "um":{
-                                "type": "string",
-                                "description": "Measurement unit"                                
-                            },
-                            "quantity":{
-                                "type": "integer",
-                                "description": "Quantity"                                
-                            },
-                            "tax":{
-                                "type": "integer",
-                                "description": "Applied tax value"                                
-                            },
-                            "ppi":{
-                                "type": "float",
-                                "description": "Price per item"                                
-                            },
-                            "total_price":{
-                                "type": "float",
-                                "description": "Total price of the products expressed as quantity times price per item"                                
-                            }
-                        }
+                "parameters":[
+                    {
+                      "in": "body",
+                      "name": "Invoice object",
+                      "required": true,
+                      "schema": {
+                        "$ref": "#/definitions/post_invoice"
+                      }
                     }
-                 }],
+                ],               
                 "responses": {
                     "200": {
                         "description": "A response has been received",
@@ -525,37 +244,17 @@
                 }
             },
             "post" : {
-                "summary" : "Add",
+                "summary" : "Add expense",
                 "description": "Add a new expense",
                 "produces": ["application/json"],
                 "consumes": ["application/json"],
-                "parameters": [{  
-                    "name":"exp_name",
-                    "in":"body",
-                    "description":"Name of the expense",
-                    "required":true,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"exp_sum",
-                    "in":"body",
-                    "description":"The ammount of the expense",
-                    "required":true,
-                    "type":"integer"
-                 },
-                 {  
-                    "name":"exp_description",
-                    "in":"body",
-                    "description":"A description",
-                    "required":true,
-                    "type":"string"
-                 },
-                 {  
-                    "name":"exp_date",
-                    "in":"body",
-                    "description":"The register date of the expense",
-                    "required":true,
-                    "type":"string"
+                "parameters": [{
+                    "in": "body",
+                    "name": "Expense object",
+                    "required": true,
+                    "schema": {
+                      "$ref": "#/definitions/post_expense"
+                    }
                 }],
                 "responses": {
                     "200": {
@@ -645,7 +344,275 @@
                     "type": "string"
                 }
             }
-
+        },
+        "post_clients":{
+            "properties": {
+                "client_first_name":{
+                    "type":"string",
+                    "example":"Popescu",
+                    "required":true      
+                },
+                "client_last_name":{
+                    "type":"string",
+                    "example":"Popescu",
+                    "required":true       
+                },
+                "client_city":{
+                    "type":"string",
+                    "example":"Bacau",
+                    "required":true 
+                },
+                "client_county":{
+                    "type":"string",
+                    "example":"Bacau",
+                    "required":true       
+                },
+                "client_email":{
+                    "type":"string",
+                    "example":"mail@mail.com"      
+                },
+                "client_fiscal_1":{
+                    "type":"string",
+                    "example":"RO/1234/BCX"      
+                },
+                "client_fiscal_2":{
+                    "type":"string",
+                    "example":"JUI8888"      
+                },
+                "client_notes":{
+                    "type":"string",
+                    "example":"Niste informatii"      
+                },
+                "client_phone":{
+                    "type":"string",
+                    "example":"0712341212",
+                    "required":true      
+                },
+                "client_street":{
+                    "type":"string",
+                    "example":"Strada Strazilor"      
+                },
+                "client_adress_number":{
+                    "type":"string",
+                    "example":"14B"
+                },
+                "client_type":{
+                    "type":"string",
+                    "example":"pers",
+                    "enum":["pers", "comp"],
+                    "description":"Use pers for normal clients and comp for companies"    
+                },
+                "client_zip":{
+                    "type":"string",
+                    "example":"606060"      
+                }         
+            }
+        },
+        "put_clients":{
+            "required": [
+                "name",
+                "photoUrls"
+            ],
+            "properties": {
+                "clientID":{
+                    "type":"integer",
+                    "example":"1"    
+                },
+                "dataToBeUpdated":{
+                    "type":"object",
+                    "properties": {
+                        "client_first_name":{
+                            "type":"string",
+                            "example":"Popescu",
+                            "required":false      
+                        },
+                        "client_last_name":{
+                            "type":"string",
+                            "example":"Popescu",
+                            "required":false    
+                        },
+                        "client_city":{
+                            "type":"string",
+                            "example":"Bacau",
+                            "required":false 
+                        },
+                        "client_county":{
+                            "type":"string",
+                            "example":"Bacau",
+                            "required":false 
+                        },
+                        "client_email":{
+                            "type":"string",
+                            "example":"mail@mail.com",
+                            "required":false       
+                        },
+                        "client_fiscal_1":{
+                            "type":"string",
+                            "example":"RO/1234/BCX",
+                            "required":false       
+                        },
+                        "client_fiscal_2":{
+                            "type":"string",
+                            "example":"JUI8888",
+                            "required":false       
+                        },
+                        "client_notes":{
+                            "type":"string",
+                            "example":"Niste informatii",
+                            "required":false       
+                        },
+                        "client_phone":{
+                            "type":"string",
+                            "example":"0712341212",
+                            "required":false     
+                        },
+                        "client_street":{
+                            "type":"string",
+                            "example":"Strada Strazilor",
+                            "required":false       
+                        },
+                        "client_adress_number":{
+                            "type":"string",
+                            "example":"14B",
+                            "required":false 
+                        },
+                        "client_type":{
+                            "type":"string",
+                            "example":"pers",
+                            "enum":["pers", "comp"],
+                            "description":"Use pers for normal clients and comp for companies",
+                            "required":false     
+                        },
+                        "client_zip":{
+                            "type":"string",
+                            "example":"606060",
+                            "required":false       
+                        }         
+                    }
+                }                
+            }
+        },
+        "post_invoice":{
+            "properties": {
+                "client_first_name":{
+                    "type":"string",
+                    "example":"Popescu",
+                    "required":true      
+                },
+                "client_last_name":{
+                    "type":"string",
+                    "example":"Popescu",
+                    "required":true       
+                },
+                "client_city":{
+                    "type":"string",
+                    "example":"Bacau",
+                    "required":true 
+                },
+                "client_county":{
+                    "type":"string",
+                    "example":"Bacau",
+                    "required":true       
+                },
+                "client_email":{
+                    "type":"string",
+                    "example":"mail@mail.com"      
+                },
+                "client_fiscal_1":{
+                    "type":"string",
+                    "example":"RO/1234/BCX"      
+                },
+                "client_fiscal_2":{
+                    "type":"string",
+                    "example":"JUI8888"      
+                },
+                "client_notes":{
+                    "type":"string",
+                    "example":"Niste informatii"      
+                },
+                "client_phone":{
+                    "type":"string",
+                    "example":"0712341212",
+                    "required":true      
+                },
+                "client_street":{
+                    "type":"string",
+                    "example":"Strada Strazilor"      
+                },
+                "client_adress_number":{
+                    "type":"string",
+                    "example":"14B"
+                },
+                "client_type":{
+                    "type":"string",
+                    "example":"pers",
+                    "enum":["pers", "comp"],
+                    "description":"Use pers for normal clients and comp for companies"    
+                },
+                "client_zip":{
+                    "type":"string",
+                    "example":"606060"      
+                },
+                "billingProducts":{
+                    "description":"An array containing the information of the billed products",
+                    "properties":{
+                        "product_name":{
+                            "type": "string",
+                            "description": "Name of the billed product"                                
+                        },
+                        "um":{
+                            "type": "string",
+                            "description": "Measurement unit"                                
+                        },
+                        "quantity":{
+                            "type": "integer",
+                            "description": "Quantity"                                
+                        },
+                        "tax":{
+                            "type": "integer",
+                            "description": "Applied tax value"                                
+                        },
+                        "ppi":{
+                            "type": "float",
+                            "description": "Price per item"                                
+                        },
+                        "total_price":{
+                            "type": "float",
+                            "description": "Total price of the products expressed as quantity times price per item"                                
+                        }
+                    }
+                }
+            }
+        },
+        "post_expense":{
+            "properties": {
+                "exp_name":{
+                    "type":"string",
+                    "example":"Cheltuiala",
+                    "required":true      
+                },
+                "exp_sum":{
+                    "type":"float",
+                    "example":"54.5",
+                    "required":true       
+                },
+                "exp_description":{
+                    "type":"string",
+                    "example":"Descriere cheltuiala",
+                    "required":true 
+                },
+                "exp_date":{
+                    "type":"date",
+                    "example":"2021-01-01",
+                    "required":true       
+                },
+                "exp_deduct":{
+                    "type":"boolean",
+                    "example":"true",
+                    "description":"Is this expense deductible?",
+                    "required":true       
+                }
+            }
         }
     }
 }

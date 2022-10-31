@@ -13,13 +13,23 @@ const connection=mysql.createConnection({
     database:"invoicemanager"
 })
 
+connection.on('error', function (err) {
+    console.log(err.code) 
+    connection.destroy()
+    return false
+});
+
 try{
     connection.connect(function(err){
-        if(err) console.log(`Error in connecting to the database: ${err.stack}`)
+        if(err) {
+            console.log(`Error in connecting to the database: ${err.stack}`)
+            return false
+        }
         console.log("Connected to the database")
     })
 }catch(error){
     console.log(`${error}`)
+    return false
 }
 
 
@@ -60,7 +70,7 @@ function getAllClients(querryObject){
     })
 }
 
-function addElement(data){
+function addClient(data){
     return new Promise((resolve, reject)=>{
         connection.query('INSERT INTO clients SET ?',data, function(error, result){
             if(error){
@@ -383,7 +393,7 @@ function fetchBilledProducts(invoiceNumber){
     })
 }
 
-function editElement(data){
+function editClient(data){
     return new Promise((resolve, reject)=>{
         let clientID = data.clientID;
         let updateThis = data.dataToBeUpdated
@@ -840,12 +850,12 @@ async function exportData(){
 
     let exportInvoices = new Promise((resolve, reject)=>{
         connection.query("SELECT * FROM invoices", function(error, data, fields) {
-            if (error) throw error;
+            if (error) reject("ERROR")
             const jsonData = JSON.parse(JSON.stringify(data));
             const json2csvParser = new Json2csvParser({ header: true});
             const csv = json2csvParser.parse(jsonData);
             fs.writeFile("./exports/invoices.csv", csv, function(error) {
-              if (error) throw error;
+              if (error) reject("ERROR")
               console.log("invoices.csv generated");
               resolve("OK")
             });
@@ -854,12 +864,12 @@ async function exportData(){
 
     let exportBilledProjects = new Promise((resolve, reject)=>{
         connection.query("SELECT * FROM invoices_billed_products", function(error, data, fields) {
-            if (error) throw error;
+            if (error) reject("ERROR")
             const jsonData = JSON.parse(JSON.stringify(data));
             const json2csvParser = new Json2csvParser({ header: true});
             const csv = json2csvParser.parse(jsonData);
             fs.writeFile("./exports/invoices_billed_products.csv", csv, function(error) {
-              if (error) throw error;
+              if (error) reject("ERROR")
               console.log("invoices_billed_products.csv generated");
               resolve("OK")
             });
@@ -868,12 +878,12 @@ async function exportData(){
 
     let predefinedProducts = new Promise((resolve, reject)=>{
         connection.query("SELECT * FROM predefined_products", function(error, data, fields) {
-            if (error) throw error;
+            if (error) reject("ERROR")
             const jsonData = JSON.parse(JSON.stringify(data));
             const json2csvParser = new Json2csvParser({ header: true});
             const csv = json2csvParser.parse(jsonData);
             fs.writeFile("./exports/predefined_products.csv", csv, function(error) {
-              if (error) throw error;
+                if (error) reject("ERROR")
               console.log("predefined_products.csv generated");
               resolve("OK")
             });
@@ -882,12 +892,12 @@ async function exportData(){
 
     let clients = new Promise((resolve, reject)=>{
         connection.query("SELECT * FROM clients", function(error, data, fields) {
-            if (error) throw error;
+            if (error) reject("ERROR")
             const jsonData = JSON.parse(JSON.stringify(data));
             const json2csvParser = new Json2csvParser({ header: true});
             const csv = json2csvParser.parse(jsonData);
             fs.writeFile("./exports/clients.csv", csv, function(error) {
-              if (error) throw error;
+                if (error) reject("ERROR")
               console.log("clients.csv generated");
               resolve("OK")
             });
@@ -896,12 +906,12 @@ async function exportData(){
 
     let expenses = new Promise((resolve, reject)=>{
         connection.query("SELECT * FROM expenses", function(error, data, fields) {
-            if (error) throw error;
+            if (error) reject("ERROR")
             const jsonData = JSON.parse(JSON.stringify(data));
             const json2csvParser = new Json2csvParser({ header: true});
             const csv = json2csvParser.parse(jsonData);
             fs.writeFile("./exports/expenses.csv", csv, function(error) {
-              if (error) throw error;
+              if (error) reject("ERROR")
               console.log("expenses.csv generated");
               resolve("OK")
             });
@@ -909,11 +919,9 @@ async function exportData(){
     })
 
     //chain data
-    Promise.all([exportInvoices, exportBilledProjects, predefinedProducts, clients, expenses]).then((values) => {
-        console.log(values)
-        return(values)
-    });
-
+    let data = await Promise.all([exportInvoices, exportBilledProjects, predefinedProducts, clients, expenses])
+    return data
+    
 }
 
 function getDBinfo(){
@@ -953,7 +961,10 @@ function getExpenses(filterObject, getAll){
                 console.log(error)
                 reject({status:"ERROR"})
             }
-            resolve({status:"OK", data: result})
+            resolve({
+                status:"OK",
+                data: result
+            })
         })
     })
 }
@@ -992,7 +1003,7 @@ function deleteExpense(id){
 
 module.exports ={
     getAllClients:getAllClients,
-    addElement:addElement,
+    addClient:addClient,
     addInvoice:addInvoice,
     getInvoices:getInvoices,
     deleteClient: deleteClient,
@@ -1001,7 +1012,7 @@ module.exports ={
     deleteInvoice: deleteInvoice ,
     fetchInvoiceSummary: fetchInvoiceSummary,
     fetchBilledProducts: fetchBilledProducts,
-    editElement:editElement,
+    editClient:editClient,
     createRecurrentBillSchema: createRecurrentBillSchema,
     linkInvoiceToRecSchema: linkInvoiceToRecSchema,
     getRecInfo:getRecInfo,

@@ -79,6 +79,8 @@ let ExpenseForm = (props) =>{
             if(data.status==="OK"){
                 setSnackBarText("Success")
                 props.reFetch()
+            }else if(data.status==="SERVER_ERROR"){
+                setSnackBarText("Baza de date nu poate fi accesata") 
             }else{
                 setSnackBarText("An error ocurred")
             }

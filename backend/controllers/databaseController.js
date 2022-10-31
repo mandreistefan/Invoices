@@ -2,6 +2,12 @@
 const databaseOperations = require('./databaseOperations.js') 
 const utile = require('../utils/util.js')
 
+/**
+ * Get the clients
+ * @param {*} querryObject object that filters data 
+ * @returns {object} object containing the status of the OP, number of found records and the data
+ */
+
 async function fetchClients(querryObject){
     //client data
     let clientData = await databaseOperations.getAllClients(querryObject)
@@ -15,24 +21,24 @@ async function fetchClients(querryObject){
     })
 }
 
-//add or edit client data
-function handleClientData(data, callback){
-    databaseOperations.addElement(data).then(result=>{
-        callback(result)
-    })
-    .catch(err=>{
-        callback(utile.returnal("ERROR", null))
-    })    
+/**
+ * Registers a new client
+ * @param {*} data Data to be inserted in the DB
+ * @returns {Object} Object containing status of the OP 
+ */
+async function handleClientData(data){
+    return await databaseOperations.addClient(data) 
 }
 
-function updateClientData(data, callback){
+/**
+ * 
+ * @param {Object} data Contains clientID and dataToBeUpdated
+ * @returns {Object} Object containing status of the OP 
+ */
+
+async function updateClientData(data){
     if(data.clientID===null) callback("ERROR", "Invalid clientID")
-    databaseOperations.editElement(data).then(result=>{
-        callback(result)
-    })
-    .catch(err=>{
-        callback("ERROR", "An error occured")
-    })
+    return await databaseOperations.editClient(data)
 }
 
 function addInvoice(data, callback){
@@ -251,7 +257,6 @@ async function fetchInvoiceData(querryObject){
     }
 
     let invoiceData = await databaseOperations.getInvoices(querryObject)
-    console.log(querryObject)
     //if we don't have data, probably the invoice number is not okay
     if(invoiceData.status!=="OK") return ({status:"INVALID_REQUEST"})
 
@@ -290,23 +295,6 @@ async function fetchInvoiceData(querryObject){
 
 }
 
-//processes the data in filterBy and populates the object
-function assignCustomDates(filterBy, object){
-    //format should be ddmmyy-ddmmyy, to 13 characters
-    if(filterBy.length!=13) return false
-    //format is start-end
-    if(filterBy.indexOf("-")!=6) return false
-    let dataArray = filterBy.split("-")
-    object.dayStart=dataArray[0][0]+dataArray[0][1]
-    object.monthStart=dataArray[0][2]+dataArray[0][3]
-    object.yearStart=dataArray[0][4]+dataArray[0][5]
-    object.dayEnd=dataArray[1][0]+dataArray[1][1]
-    object.monthEnd=dataArray[1][2]+dataArray[1][3]
-    object.yearEnd=dataArray[1][4]+dataArray[1][5]
-
-    return true
-}
-
 function translateInterval(interval){
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
@@ -327,6 +315,11 @@ function translateInterval(interval){
 
 }
 
+/**
+ * 
+ * @param {Object} querryObject object that filters data  
+ * @returns {Object} containing the status of the OP and processed data
+ */
 async function getFinancials(querryObject){
     //some initial checks of the request
     if(querryObject.filter!="interval"){
@@ -459,13 +452,14 @@ async function removeProduct(entry){
 }
 
 async function createExportableData(){
-    let noOfOKs = 0
-    let status= await databaseOperations.exportData()
-    /*status.forEach(element, index=>{
-        if(element==="OK") noOfOKs=noOfOKs+1
-    })*/
-    console.log(status)
-    return noOfOKs
+    let count=0
+    let statuses = await  databaseOperations.exportData()
+
+    statuses.forEach(element=>{
+        if(element==="OK") count=count+1
+    })
+
+    return [count, statuses.length]
 }
 
 function getDatabaseInfo(){
@@ -482,6 +476,12 @@ function changeDatabaseInfo(callback){
     })
 }
 
+/**
+ * Get all expenses from the DB
+ * @param {Object} querryObject object that filters data 
+ * @returns {Object} Object containing the status of the OP and the data
+ */
+
 async function getExpenses(querryObject){
     //some initial checks of the request
     if(querryObject.filter!="interval"){
@@ -494,20 +494,26 @@ async function getExpenses(querryObject){
         return({status:"INVALID_REQUEST", data: "filterBy"})
     }
 
-    let data = await databaseOperations.getExpenses(translateInterval(querryObject.filterBy), true)
-    
-    return data
-
+    return await databaseOperations.getExpenses(translateInterval(querryObject.filterBy), true)    
 }
+
+/**
+ * 
+ * @param {Object} data Data to be inserted in the DB 
+ * @returns {Object} Object containing the status of the OP and the ID of the new element, if applicable
+ */
 
 async function addExpense(data){
-    let response = await databaseOperations.addExpense(data)
-    return response
+    return await databaseOperations.addExpense(data)
 }
 
+/**
+ * 
+ * @param {integer} id The id of the expense to be deleted
+ * @returns {Object} Object with only one key-value, the status of the OP
+ */
 async function deleteExpense(id){
-    let response = await databaseOperations.deleteExpense(id)
-    return response
+    return await databaseOperations.deleteExpense(id)
 }
 
 module.exports={

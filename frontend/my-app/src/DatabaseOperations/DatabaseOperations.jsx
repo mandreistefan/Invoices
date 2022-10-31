@@ -9,7 +9,13 @@ let DatabaseOperations=()=>{
     React.useEffect(()=>{
         if(activeDB===null){
             fetch('./database').then(response=>response.json()).then(data=>{
-                setActiveDB(data.database)
+                if(data.status==="OK"){
+                    setActiveDB(data.data.database)
+                }else if(data.status==="SERVER_ERROR"){
+                    setUserAlert({text:"Baza de date nu poate fi accesata"})
+                }else{
+                    setUserAlert({text:"Eroare"})
+                }                
             })
         }
     },[])
@@ -17,8 +23,13 @@ let DatabaseOperations=()=>{
 
     let exportDatabase=()=>{
         fetch('./export').then(response=>response.json()).then(data=>{
-            console.log(data)
-            setUserAlert({text:"Export done"})
+            if(data.status==="OK"){
+                setUserAlert({text:`Export done. ${data.data.success}/${data.data.attempts} files exported`})
+            }else if(data.status==="SERVER_ERROR"){
+                setUserAlert({text:"Baza de date nu poate fi accesata"})
+            }else{
+                setUserAlert({text:"Eroare"})
+            }
         })
     }
 
@@ -31,6 +42,8 @@ let DatabaseOperations=()=>{
             if(data.status==="OK"){
                 setActiveDB(data.database)
                 setUserAlert({text:"Active database changed"})
+            }else if(data.status==="SERVER_ERROR"){
+                setUserAlert({text:"Baza de date nu poate fi accesata"})
             }else{
                 setUserAlert({text:"An error occured"})
             }            

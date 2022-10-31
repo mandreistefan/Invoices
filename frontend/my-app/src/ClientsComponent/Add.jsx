@@ -26,6 +26,8 @@ let Add = (props) =>{
         .then(data=>{
             if(data.status==="OK"){
                 alert("Client registered")
+            }else if(data.status==="SERVER_ERROR"){
+                alert("Baza de date nu poate fi accesata")
             }else{
                 alert("Failed to register client")
             }

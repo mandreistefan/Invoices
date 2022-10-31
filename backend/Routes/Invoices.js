@@ -4,6 +4,7 @@ const urlmod=require('url')
 const util = require('../utils/util.js')
 const databaseController = require('../controllers/databaseController.js')
 const path=require('path');
+let filterObject = {}
 
 //serves a HTML file to the front-end; the HTML files acts as a template for the invoice; used to print
 app.get("/generateInvoice/*",(req,res)=>{
@@ -11,25 +12,25 @@ app.get("/generateInvoice/*",(req,res)=>{
 })
 
 //get the data of a single invoice
-app.get("/invoice",(req,res)=>{
-    //let url_path_arr = urlmod.parse(req.url, true).path.split("/");
-    //let filterObject=util.qParser(url_path_arr[2])
-    let filterObject = {}
+app.get("/invoice",(req,res)=>{    
     if(req.query.filter) filterObject.filter=req.query.filter;
     if(req.query.filterBy) filterObject.filterBy=req.query.filterBy;
     if(req.query.page) filterObject.page=req.query.page;
     filterObject.target="invoices"
-    console.log(filterObject)
     databaseController.fetchInvoiceData(filterObject).then(response=>{
        res.send({status:"OK", data:response})
+    }).catch(error=>{
+        res.send({status:"SERVER_ERROR", data:null})
+        console.log(error)
     })
 })
 
 //retrieve all invoices
-app.get('/invoices/*',(req,res)=>{
-    let url_path_arr = urlmod.parse(req.url, true).path.split("/");
-    //parse the request
-    let filterObject=util.qParser(url_path_arr[2])
+app.get('/invoices',(req,res)=>{
+    if(req.query.filter) filterObject.filter=req.query.filter;
+    if(req.query.filterBy) filterObject.filterBy=req.query.filterBy;
+    if(req.query.page) filterObject.page=req.query.page;
+    filterObject.target="invoices"
     //fetch data
     databaseController.fetchInvoices(filterObject).then(results=>{
         if(results.status==="OK"){
@@ -44,13 +45,18 @@ app.get('/invoices/*',(req,res)=>{
                 data:null
             })
         }
+    }).catch(error=>{
+        console.log(error)
+        res.send({
+            status:"SERVER_ERROR",
+            data:null
+        })
     })
 })
 
 //creates an invoice
 app.post("/invoices", (req,res)=>{
     databaseController.addInvoice(req.body, (callback)=>{
-        console.log(callback)
         if(callback===null){
             res.send({
                 status: "ERROR",
@@ -76,7 +82,14 @@ app.delete("/invoices",(req,res)=>{
 app.put("/invoices",(req, res)=>{
     databaseController.updateInvoice(req.body).then(response=>{
         res.send({status:response})
-    })    
+    }) 
+    .catch(error=>{
+        console.log(error)
+        res.send({
+            status:"SERVER_ERROR",
+            data:null
+        })
+    })   
 })
 
 module.exports = app
