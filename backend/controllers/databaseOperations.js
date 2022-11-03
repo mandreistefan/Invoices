@@ -79,6 +79,12 @@ function getAllClients(querryObject){
     })
 }
 
+/**
+ * 
+ * @param {Object} data the client info, as object
+ * @returns {Promise} Object with two keys, status and data, which contains the ID of the newly inserted client
+ */
+
 function addClient(data){
     return new Promise((resolve, reject)=>{
         connection.query('INSERT INTO clients SET ?',data, function(error, result){
@@ -100,6 +106,12 @@ function addClient(data){
         })
     })
 }
+
+/**
+ * 
+ * @param {Object} data the invoice data, as object
+ * @returns {Promise} the id of the invoice
+ */
 
 function createNewInvoice(data)
 {
@@ -125,6 +137,13 @@ function createNewInvoice(data)
         })
     })
 }
+
+/**
+ * 
+ * @param {integer} invoiceID The ID of the invoice that will be linked with the products
+ * @param {Array} billedProductsArray An array containing the billed product data
+ * @returns {Promise} Object with two keys, status and data
+ */
 
 function registerBilledProducts(invoiceID, billedProductsArray){
     //update the products table by adding the invoiceID to each element
@@ -173,6 +192,12 @@ function updateInvoiceTax(invoiceID, tax){
     })
 }
 
+/**
+ * Adds an invoice
+ * @param {Object} data An object, containing the data of the invoice and the billed products
+ * @returns {Promise<{status: string; data: integer}>} Status of the OP and the invoice ID
+ */
+
 async function addInvoice(data){
     //register the invoice in the DB; returns null if no deal or the invoiceID if all good
     let invoiceID = await createNewInvoice(data)
@@ -186,12 +211,13 @@ async function addInvoice(data){
                     data:invoiceID
                 })
             }})
-            .catch(data=>{
+            .catch(error=>{
+                console.log(error)
                 return({
                     status:"PRODUCTS_NOT_REGISTERED",
                     data:invoiceID
                 })
-        })
+            })
     }
     return({status:"OK", data:invoiceID})
 }
@@ -255,6 +281,12 @@ async function getInvoices(querryObject){
     })
 }
 
+/**
+ * Inserts the data of a user in the "archived" table
+ * @param {integer} clientID The ID of the client
+ * @returns {Promise<{status: string; data: integer}>} Status of the OP and, in case of an error, an explanation
+ */
+
 function archiveClientData(clientID){
     return new Promise((resolve, reject)=>{
         try{
@@ -287,6 +319,12 @@ function archiveClientData(clientID){
     })
 }
 
+/**
+ * Removes a client from the DB
+ * @param {integer} clientID The ID of the client
+ * @returns {Promise<{status: string; data: integer}>} Status of the OP and, in case of an error, an explanation
+ */
+
 function deleteClient(clientID){
     return new Promise((resolve, reject)=>{
         connection.query(`DELETE FROM clients WHERE id=${clientID}`, function(err, result){
@@ -311,6 +349,11 @@ function deleteClient(clientID){
     })
 }
 
+/**
+ * Moves the invoide data to the "archived" table
+ * @param {integer} invoiceID The ID of the invoice
+ * @returns {Promise<{status: string; data: integer}>} Status of the OP and, in case of an error, an explanation
+ */
 
 function archiveInvoice(invoiceID){
     return new Promise((resolve, reject)=>{
@@ -336,6 +379,12 @@ function archiveInvoice(invoiceID){
         })
     })
 }
+
+/**
+ * Removes an invoice from the DB
+ * @param {integer} clientID The ID of the invoice
+ * @returns {Promise<{status: string; data: integer}>} Status of the OP and, in case of an error, an explanation
+ */
 
 function deleteInvoice(invoiceID){
     return new Promise((resolve, reject)=>{
@@ -386,6 +435,12 @@ function fetchInvoiceSummary(invoiceNumber){
     })
 }
 
+/**
+ * Retrieves products linked with an invoice
+ * @param {integer} invoiceNumber The ID of the invoice
+ * @returns {Promise<{status: string, data:Array|null}>} An object with two keys, the status of the OP and an array containing the data
+ */
+
 function fetchBilledProducts(invoiceNumber){
     return new Promise((resolve, reject)=>{
         connection.query(`SELECT * FROM invoices_billed_products WHERE invoiceID='${invoiceNumber}'`, function(err, result){
@@ -393,7 +448,7 @@ function fetchBilledProducts(invoiceNumber){
                 console.log(err)
                 reject({
                     status:"ERROR",
-                    data:"ERROR deleting invoice"
+                    data:null
                 })
             }
             if(result){
@@ -410,6 +465,12 @@ function fetchBilledProducts(invoiceNumber){
         })
     })
 }
+
+/**
+ * Updates a client
+ * @param {{clientID: integer, dataToBeUpdated: object}} data Object containing keys and pairs representing data to be updated
+ * @returns {Promise<{status:string, data:string}>} An object with the status of the OP and some info in case of an error
+ */
 
 function editClient(data){
     return new Promise((resolve, reject)=>{
@@ -577,7 +638,6 @@ function createRecurrentBillSchema(clientID, recurrencyType, recurrencyDate, pro
 }
 
 function linkInvoiceToRecSchema(rec, inv){
-    console.log(rec, inv)
     connection.query(`UPDATE invoices SET rec_number=${rec} WHERE invoice_number=${inv}`, function(error, result){
         if(error){
             console.log("ERROR when linking recurrentSchema with Invoice")
@@ -621,6 +681,12 @@ function getRecInfo(queryFilter, queryFilterData,){
     })
 }
 
+/**
+ * 
+ * @param {{startYear:string, startMonth:string, startDay:string, endYear:string, endMonth:string, endDay:string}} filterObject Object containing the interval to filter the data (ex: 2022, 10, 10, 2021, 10, 12)
+ * @returns {Promise<{status:string, data:object}>} Status of the OP and an object containing the data from the DB
+ */
+
 function getFinancialData(filterObject){
     return new Promise((resolve, reject)=>{  
         connection.query(`SELECT invoice_number, invoiceID, invoice_status, invoice_pay_method, invoice_date, product_id, product_quantity, product_tax_pr, total_tax, product_price, total_price FROM invoices join invoices_billed_products productsTable on productsTable.invoiceID=invoice_number WHERE invoice_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND invoice_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" AND invoice_status='finalised' order by invoice_number;`, function(error, result){
@@ -632,6 +698,12 @@ function getFinancialData(filterObject){
         })
     })
 }
+
+/**
+ * 
+ * @param {integer} invoiceID The id of the invoice 
+ * @returns {string} The status of the invoice(draft/ finalised)
+ */
 
 function checkInvoiceStatus(invoiceID){
     return new Promise((resolve, reject)=>{
@@ -646,12 +718,18 @@ function checkInvoiceStatus(invoiceID){
             if(result){                
                 resolve(result[0].invoice_status)
             }else{
-                resolve(null) 
-                
+                resolve(null)                 
             }
         })
     })
 }
+
+/**
+ * Updates data in a invoice
+ * @param {integer} invoice_number Invoice ID
+ * @param {Object} data Object containing key:value pairs representing the data to be updated
+ * @returns {integer} 0 - error, 1 - no affected rows, 2 - all ok
+ */
 
 function updateInvoice(invoice_number, data){
     return new Promise((resolve, reject)=>{
@@ -723,6 +801,11 @@ function getRecurrentInvoiceProducts(invoiceID){
     })
 }
 
+/**
+ * Retrieves predefined products
+ * @returns {Promise<{status:string, data:object}>} Status of the OP and the data as object
+ */
+
 function getPredefinedProducts(){
     return new Promise((resolve, reject)=>{
         connection.query(`SELECT * FROM predefined_products`, function(error, result){
@@ -730,7 +813,7 @@ function getPredefinedProducts(){
                 console.log(error)
                 reject({
                     status:"ERROR",
-                    data:"ERROR"
+                    data:null
                 })
            }
            resolve({
@@ -741,6 +824,12 @@ function getPredefinedProducts(){
     })
 }
 
+/**
+ * Registers a predefined product
+ * @param {Object} data Object containing the data to be inserted
+ * @returns {Promise<{status:string, data:null}>} Status of the OP
+ */
+
 async function registerProduct(data){
     return new Promise((resolve, reject)=>{
         connection.query(`INSERT INTO predefined_products(pp_name, pp_um, pp_tax, pp_price_per_item, pp_description) VALUES ('${data.pp_name}', '${data.pp_um}', ${data.pp_tax}, '${data.pp_price_per_item}', '${data.pp_description}')`, function(error, result){
@@ -748,7 +837,7 @@ async function registerProduct(data){
                 console.log(error)
                 reject({
                     status:"ERROR",
-                    data:"ERROR"
+                    data:null
                 })
             }
             resolve({
@@ -758,6 +847,12 @@ async function registerProduct(data){
         })
     })
 }
+
+/**
+ * 
+ * @param {Object} data Object containing data to be updated; the ID of the product is the key "product_id"
+ * @returns {Promise<{status:string, data:null}>} Status of the OP
+ */
 
 async function editPredefinedProduct(data){
     let productID = data.product_id;
@@ -768,7 +863,7 @@ async function editPredefinedProduct(data){
                 console.log(error)
                 reject({
                     status:"ERROR",
-                    data:"ERROR"
+                    data:null
                 })
             }
             resolve({
@@ -779,14 +874,20 @@ async function editPredefinedProduct(data){
     })
 }
 
-function removeProduct(entry){
+/**
+ * Deletes a product from the DB
+ * @param {integer} id The id of the product 
+ * @returns {Promise<{status:string, data:null}>} Status of the OP
+ */
+
+function removeProduct(id){
     return new Promise((resolve, reject)=>{
-        connection.query(`DELETE FROM invoices_billed_products WHERE id=${entry}`, function(error, result){
+        connection.query(`DELETE FROM invoices_billed_products WHERE id=${id}`, function(error, result){
             if(error){
                 console.log(error)
                 reject({
                     status:"ERROR",
-                    data:"ERROR"
+                    data:null
                 })
             }
             resolve({
@@ -797,9 +898,15 @@ function removeProduct(entry){
     })
 }
 
-function getProductInvoice(entry){
+/**
+ * Retrieves the invoice ID of the invoice linked with a billed product
+ * @param {integer} id The ID of the product
+ * @returns {integer} The ID of the invoice
+ */
+
+function getProductInvoice(id){
     return new Promise((resolve, reject)=>{
-        connection.query(`SELECT invoiceID FROM invoices_billed_products WHERE id=${entry}`, function(error, result){
+        connection.query(`SELECT invoiceID FROM invoices_billed_products WHERE id=${id}`, function(error, result){
             if(error){
                 console.log(error)
             }
@@ -808,7 +915,12 @@ function getProductInvoice(entry){
     })
 }
 
-//get all the products linked to the invoice from the DB; calculate the totals; update the DB totals
+/**
+ * Get all the products linked to an invoice, calculate the totals and update the invoice
+ * @param {integer} invoiceID The ID of the invoice 
+ * @returns {string} OK or ERROR
+ */
+
 async function updateInvoiceTotals(invoiceID){
 
     //get all products from db
@@ -821,11 +933,20 @@ async function updateInvoiceTotals(invoiceID){
         connection.query(`UPDATE invoices SET invoice_tax='${totals.totalTax}', invoice_total_sum='${totals.totalSum}' WHERE invoice_number='${invoiceID}'`, function(error, result){
             if(error){
                 console.log(error)
+                reject("ERROR")
             }
             resolve("OK")
         })
     }) 
 }
+
+/**
+ * Retrieves the total number of DB entries
+ * @param {string} queryDB The database
+ * @param {string} queryFilter all|clientID|invoiceID|recID|active used to prepare the query
+ * @param {string} queryFilterData used in the WHERE clause
+ * @returns {Promise<integer>} Number of entries
+ */
 
 function getRecordsNumber(queryDB, queryFilter, queryFilterData){
     let querry=``
@@ -853,11 +974,17 @@ function getRecordsNumber(queryDB, queryFilter, queryFilterData){
         connection.query(querry, function(error, result){
             if(error){
                 console.log(error)
+                reject(null)
             }
             resolve(result[0].recordsNumber)
         })
     }) 
 }
+
+/**
+ * Exports the DB as multiple CSV files
+ * @returns {Promise<Array>} An array containing an OK for each succesfull export
+ */
 
 async function exportData(){
 
@@ -937,9 +1064,7 @@ async function exportData(){
     })
 
     //chain data
-    let data = await Promise.all([exportInvoices, exportBilledProjects, predefinedProducts, clients, expenses])
-    return data
-    
+    return await Promise.all([exportInvoices, exportBilledProjects, predefinedProducts, clients, expenses])    
 }
 
 function getDBinfo(){
@@ -970,6 +1095,13 @@ function changeDBinfo(){
 
 }
 
+/**
+ * 
+ * @param {{startYear:string, startMonth:string, startDay:string, endYear:string, endMonth:string, endDay:string}} filterObject Object containing the interval to filter the data (ex: 2022, 10, 10, 2021, 10, 12)
+ * @param {boolean} getAll True to retrieve all expenses, False to retrieve only deductible expenses
+ * @returns {Promise<{status:string, data:object}>} An object containing the status of the OP and the retrieved data, as object
+ */
+
 function getExpenses(filterObject, getAll){
     let querryToBeExec = `SELECT * FROM expenses WHERE exp_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND exp_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" order by id`
     if(!getAll) querryToBeExec = `SELECT * FROM expenses WHERE exp_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND exp_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" AND exp_deduct='1' order by id`
@@ -987,6 +1119,12 @@ function getExpenses(filterObject, getAll){
     })
 }
 
+/**
+ * Register a new expense
+ * @param {object} object Object containing the data of the expense
+ * @returns {Promise<{status:string, data:integer}>} An object containing the status of the OP and the ID of the new element
+ */
+
 function addExpense(object){
     return new Promise((resolve, reject)=>{  
         connection.query(`INSERT INTO expenses(exp_name, exp_sum, exp_description, exp_date, exp_deduct) VALUES ('${object.exp_name}', '${object.exp_sum}', '${object.exp_description}','${object.exp_date}','${object.exp_deduct}')`, function(error, result){
@@ -1002,6 +1140,12 @@ function addExpense(object){
         })
     })    
 }
+
+/**
+ * Removes an expense
+ * @param {integer} id ID of the expense 
+ * @returns {string} ERROR, OK or FAIL(no error but no rows affected)
+ */
 
 function deleteExpense(id){
     return new Promise((resolve, reject)=>{  
@@ -1022,7 +1166,7 @@ function deleteExpense(id){
 
 /**
  * Looks for a text in the database and returns the matching IDs
- * @param {*} queryObject searchTerm is the text to be searched for, target is the target of the search; for now, invoices and clients are the only options
+ * @param {{searchTerm:string, target:invoices|clients}} queryObject searchTerm is the text to be searched for, target is the target of the search; for now, invoices and clients are the only options
  * @returns {Array} An array containing id's that can be used to filter a DB or an empty array if nothing is found. The array can contain arrays!
  */
 
