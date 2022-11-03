@@ -33,25 +33,17 @@ cron.schedule('* 00 13 * *', () => {
 //recurrentController.handleRecurrencies()
 
 //search - not implemented
-app.get("/search/*",(req,res)=>{
-    let queryFilter = null;
-    let queryFilterData = null;
-    let url_path_arr = urlmod.parse(req.url, true).path.split("/");
-    if(url_path_arr[2].length>0) {
-        let requestString = url_path_arr[2].split("=");
-        queryFilter = requestString[0];
-        queryFilterData = requestString[1];
-    }
-    databaseController.fetchClients(queryFilter, queryFilterData, (data)=>{
-        if(data.status==="OK"){
-            res.send(data)
-        }else{
-            res.send({
-                status:"ERROR",
-                data:null
-            })
-        }
+app.get("/search",(req,res)=>{
+    let queryFilter = {}
+    if(req.query.filter) queryFilter.filter=req.query.filter
+    if(req.query.filterBy) queryFilter.filterBy=req.query.filterBy
+    databaseController.performSearch(queryFilter).then(data=>{
+        res.send(data)
+    }).catch(error=>{
+        console.log(error)
+        console.log("ups")
     })
+
 })
 
 //recurrency

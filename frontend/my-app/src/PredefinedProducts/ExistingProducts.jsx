@@ -28,12 +28,13 @@ let PredefinedProductsManager = (props) =>{
     }
 
     return(
-        <div>
+        <div className="products-container">            
             {predefinedProducts===null ? <div><span>Loading...</span></div>:        
                 <div className="app-data-container"> 
-                    <table className='table table-hover app-data-table'>
+                    <h6>Produse</h6>
+                    <table className='table table-hover table-sm app-data-table'>
                         <thead className='table-active'>
-                            <tr className='app-data-table-row'>
+                            <tr className='app-data-table-row table-active'>
                                 <th></th>
                                 <th>NUME</th>
                                 <th>UM</th>
@@ -44,8 +45,7 @@ let PredefinedProductsManager = (props) =>{
                             </tr>    
                         </thead>               
                         <tbody className='clients-table-body app-data-table-body'>
-                        {
-                            predefinedProducts.length>0 ? 
+                        {predefinedProducts.length>0 ? 
                             predefinedProducts.map((element, index)=>(
                                 <tr key={index} className='clients-table-row app-data-table-row'>
                                     <td className="centered-text-in-td">{index+1}</td>

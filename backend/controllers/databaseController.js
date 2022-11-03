@@ -9,16 +9,34 @@ const utile = require('../utils/util.js')
  */
 
 async function fetchClients(querryObject){
-    //client data
-    let clientData = await databaseOperations.getAllClients(querryObject)
-    if(clientData.status!=="OK") return({status: "ERROR"})
-    //total number of clients
-    let totalRecordsNumber = await databaseOperations.getRecordsNumber("clients", querryObject.filter, querryObject.filterBy)
-    return({
-        status:"OK",
-        totalRecordsNumber: totalRecordsNumber,
-        data:clientData.data
-    })
+    let clientsObj={}
+    let totalRecordsNumber=0
+
+    if(querryObject.filter!="search"){
+        //client data
+        clientsObj = await databaseOperations.getAllClients(querryObject)
+        if(clientsObj.status!=="OK") return({status: "ERROR"})
+        totalRecordsNumber = await databaseOperations.getRecordsNumber("clients", querryObject.filter, querryObject.filterBy)
+    }else{
+        //can use + to replace the space in the search text
+        let stringedFilterBy=querryObject.filterBy.replace("+"," ")
+        let matchingClients = await databaseOperations.searchDatabase({target:"clients", searchTerm:stringedFilterBy})
+        if(matchingClients.length==0) return({status:"NO_DATA", data:null})
+        clientsObj = await databaseOperations.getAllClients({filter:"search", filterBy:matchingClients, page:1})
+    }
+
+    if(clientsObj.status==="OK"){
+        return({
+            status:"OK",
+            totalRecordsNumber: totalRecordsNumber,
+            data:clientsObj.data
+        })
+    }else{
+        return({
+            status:"ERROR"
+        })
+    }
+
 }
 
 /**
@@ -142,8 +160,22 @@ function addInvoice(data, callback){
 
 async function fetchInvoices(querryObject){
     let totalNumberOfRecords = 0;
-    let invoicesObj = await databaseOperations.getInvoices(querryObject)
-    totalNumberOfRecords = await databaseOperations.getRecordsNumber(querryObject.target, querryObject.filter, querryObject.filterBy)
+    let invoicesObj
+
+    if(querryObject.filter!="search"){
+        //simply pass the filtering object
+        invoicesObj = await databaseOperations.getInvoices(querryObject)
+        totalNumberOfRecords = await databaseOperations.getRecordsNumber(querryObject.target, querryObject.filter, querryObject.filterBy)
+    }else{
+        //can use + to replace the space in the search text
+        let stringedFilterBy=querryObject.filterBy.replace("+"," ")
+        let matchingInvoicesArrays = await databaseOperations.searchDatabase({target:"invoices", searchTerm:stringedFilterBy})
+        console.log(matchingInvoicesArrays)
+        let matchingInvoices = matchingInvoicesArrays[0].concat(matchingInvoicesArrays[1])
+        if(matchingInvoices.length==0) return({status:"NO_DATA", data:null})
+        invoicesObj = await databaseOperations.getInvoices({filter:"search", filterBy:matchingInvoices, page:1})
+    }
+
     if(invoicesObj.status==="OK"){
         return({
             status:"OK", 
@@ -516,6 +548,28 @@ async function deleteExpense(id){
     return await databaseOperations.deleteExpense(id)
 }
 
+/**
+ * 
+ * @param {Object} querryObject filter is the searched text and filterBy is the category
+ */
+
+async function performSearch(queryObject){
+    //small validation
+    if(!queryObject.filterBy) return ({status:"INVALID_REQUEST", data:"category"})
+    if(queryObject.filter.length===0) return ({status:"INVALID_REQUEST", data:"search text"})
+    const aMap = new Map([['invoice_date','Nume'], ['client_first_name','Nume'], ['client_last_name','Prenume'], ['client_city','Oras'], ['client_street','Strada'], ['client_adress_number','Numar'], ['client_zip','Cod postal'], ['client_phone','Numar telefon'], ['client_email','Email'], ['client_notes','Note'], ['client_county','Judet'],['invoice_bank_ref','Nume'], ['client_fiscal_1','Fiscal1'], ['client_fiscal_2','Fiscal2']])
+    let searchResults = await databaseOperations.searchDatabase(queryObject)
+    let anArray=[]
+    searchResults.forEach(element=>{
+        anArray.push(element.invoice_number)
+    })
+
+    console.log(anArray)
+
+    let filteredData = await databaseOperations.filterDatabase(anArray)
+    console.log(filteredData)
+}
+
 module.exports={
     fetchClients:fetchClients,
     addInvoice:addInvoice,
@@ -537,5 +591,6 @@ module.exports={
     updateClientData:updateClientData,
     getExpenses:getExpenses,
     addExpense:addExpense,
-    deleteExpense
+    deleteExpense,
+    performSearch
 }

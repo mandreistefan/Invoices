@@ -2,6 +2,7 @@ const mysql = require('mysql2');
 const utile = require('../utils/util.js')
 const Json2csvParser = require("json2csv").Parser;
 const fs = require("fs");
+const { resolve } = require('path');
 
 const testDB = "invoicemanager"
 const liveDB = "baza_date_facturi"
@@ -32,6 +33,11 @@ try{
     return false
 }
 
+/**
+ * 
+ * @param {{filter: string, filterBy: string, page:int, target:string}} querryObject filter is the case, filterBy is the value, page is the page(offset), target can be used to specify the table
+ * @returns {{status: string, data: array}} status of the OP as string and the data as array containing key:pair values
+ */
 
 function getAllClients(querryObject){
     return new Promise((resolve,reject)=>{
@@ -46,6 +52,9 @@ function getAllClients(querryObject){
             case "all":
                 queryStatement=`SELECT * FROM clients LIMIT ${offSet}, ${step}`;
                 break;
+            case "search":
+                queryStatement=`SELECT * FROM clients WHERE id IN (${querryObject.filterBy}) LIMIT ${offSet}, ${step}`
+                break
             default:
                 queryStatement=`SELECT * FROM clients LIMIT ${offSet}, ${step}`;
         }        
@@ -187,7 +196,13 @@ async function addInvoice(data){
     return({status:"OK", data:invoiceID})
 }
 
-function getInvoices(querryObject){
+/**
+ * 
+ * @param {{filter: string, filterBy: string, page:BigInteger, target:string}} querryObject filter is the case, filterBy is the value, page is the page(offset), target can be used to specify the table
+ * @returns {{status: string, data: array}} status of the OP as string and the data as array containing key:pair values
+ */
+
+async function getInvoices(querryObject){
     let offSet = 0
     let step=10
     if(querryObject.page>1) offSet = (querryObject.page-1) * 10
@@ -208,6 +223,9 @@ function getInvoices(querryObject){
         case "active":
             querry=`SELECT * FROM ${querryObject.target} WHERE invoice_active=${querryObject.filterBy} LIMIT ${offSet}, ${step}`
             break;
+        case "search":
+            querry=`SELECT * FROM invoices WHERE invoice_number in (${querryObject.filterBy}) order by invoice_number DESC LIMIT ${offSet}, ${step}`
+            break
         default:
             querry=`SELECT * FROM ${querryObject.target} LIMIT ${offSet}, ${step}`
             break
@@ -1001,6 +1019,80 @@ function deleteExpense(id){
     })
 }
 
+
+/**
+ * Looks for a text in the database and returns the matching IDs
+ * @param {*} queryObject searchTerm is the text to be searched for, target is the target of the search; for now, invoices and clients are the only options
+ * @returns {Array} An array containing id's that can be used to filter a DB or an empty array if nothing is found. The array can contain arrays!
+ */
+
+ async function searchDatabase(queryObject){
+    switch(queryObject.target){
+        case "invoices":
+            let invoices = new Promise((resolve, reject)=>{
+                connection.query(`select invoice_number from invoices where client_county LIKE '%${queryObject.searchTerm}%' OR invoice_bank_ref LIKE '${queryObject.searchTerm}' OR client_fiscal_1 LIKE '%${queryObject.searchTerm}%' OR client_fiscal_2 LIKE '%${queryObject.searchTerm}%' OR client_first_name LIKE '%${queryObject.searchTerm}%' OR client_last_name LIKE '%${queryObject.searchTerm}%' OR client_city LIKE '%${queryObject.searchTerm}%' OR client_street LIKE '%${queryObject.searchTerm}%' OR client_adress_number LIKE '%${queryObject.searchTerm}%' OR client_zip LIKE '%${queryObject.searchTerm}%' OR client_phone LIKE '%${queryObject.searchTerm}%' OR client_email LIKE '%${queryObject.searchTerm}%' OR invoice_total_sum LIKE '%${queryObject.searchTerm}%' order by invoice_number desc `, function(error, result){
+                    if(error){
+                        console.log(error)
+                        reject({status:"ERROR", data:null})
+                    }
+                    let anArray=[]
+                    if(result.length>0){
+                        result.forEach(element=>{
+                            anArray.push(element.invoice_number)
+                        })
+                    }
+                    resolve(anArray)
+                })
+            })
+            let products = new Promise((resolve, reject)=>{
+                connection.query(`SELECT invoiceID FROM invoices_billed_products WHERE product_name like '%${queryObject.searchTerm}%' or product_description like '%${queryObject.searchTerm}%' order by invoiceID desc `, function(error, result){
+                    if(error){
+                        console.log(error)
+                        reject({status:"ERROR", data:null})
+                    }
+                    let anArray=[]
+                    if(result.length>0){
+                        result.forEach(element=>{
+                            anArray.push(element.invoiceID)
+                        })
+                    }
+                    resolve(anArray)
+                })
+            })
+            return await Promise.all([invoices, products])
+        case "clients":
+            return new Promise((resolve, reject)=>{
+                connection.query(`select id from clients where client_fiscal_1 LIKE '${queryObject.searchTerm}' OR client_fiscal_2 LIKE '${queryObject.searchTerm}' OR client_first_name LIKE '${queryObject.searchTerm}' OR client_last_name LIKE '${queryObject.searchTerm}' OR client_city LIKE '${queryObject.searchTerm}' OR client_street LIKE '${queryObject.searchTerm}' OR client_adress_number LIKE '${queryObject.searchTerm}' OR client_zip LIKE '${queryObject.searchTerm}' OR client_phone LIKE '${queryObject.searchTerm}' OR client_email LIKE '${queryObject.searchTerm}' OR client_notes LIKE '${queryObject.searchTerm}' order by id desc;`, function(error, result){
+                    if(error){
+                        console.log(error)
+                        reject({status:"ERROR"})
+                    }
+                    let anArray=[]
+                    if(result.length>0){
+                        result.forEach(element=>{
+                            anArray.push(element.id)
+                        })
+                    }
+                    resolve(anArray)
+                })
+            })
+        default:
+            resolve(null)
+    }
+}
+
+function filterDatabase(array){
+    return new Promise((resolve, reject)=>{
+        connection.query(`select * from invoices where invoice_number in (?)`, [array], function(error, result){
+            if(error){
+                console.log(error)
+                reject({status:"ERROR", data:null})
+            }
+            resolve(result)
+        })
+    })
+}
+
 module.exports ={
     getAllClients:getAllClients,
     addClient:addClient,
@@ -1036,5 +1128,7 @@ module.exports ={
     changeDBinfo:changeDBinfo,
     getExpenses,
     addExpense,
-    deleteExpense
+    deleteExpense,
+    searchDatabase,
+    filterDatabase
 }

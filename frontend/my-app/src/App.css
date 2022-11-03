@@ -50,24 +50,28 @@
 }
 
 .table{
-  font-size:18px;
+  font-size:15px;
   --font-family-sans-serif: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
   --font-family-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
   font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
   background-color: #F7F7F8;
   padding:10px;
+  border-radius: 6px;
 }
 
 table tbody{
-  background-color: white;
+  background-color: white;  
+}
+
+table tr:hover{
+  cursor: default !important;
 }
 
 .table thead{
-  border-bottom: 1px solid #353535;
+  border-bottom: 1px solid lightgray;
   font-size:15px;
   font-weight: 300 !important;
-  background-color: #353535;
-  color:#FFFFFF;
+  color:black;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
 }
@@ -223,6 +227,9 @@ table tbody{
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  background-color: white;
+  padding: 6px;
+  border-radius: 6px;
 }
 
 .app-title-container h4{
@@ -260,13 +267,13 @@ background-color:#D1D1D1
 .app-data-table th{
   font-weight: 500;
   padding: 4px;
-  color: white;
-  border-bottom: 1px solid #9EA6AA;
+  color: black;
+  border-bottom: 1px solid lightgray;
 }
 
 .app-data-table td{
   padding: 5px;
-  border-bottom: 1px solid #9EA6AA;
+  border-bottom: 1px solid lightgray;
 }
 
 .clients-table-row{
@@ -429,6 +436,7 @@ background-color:#D1D1D1
   margin-left: auto;
   margin-right: auto;
   height: fit-content;
+  border-radius: 6px;
 }
 
 .page-item{
@@ -444,7 +452,8 @@ background-color:#D1D1D1
   align-items: center;
   background-color: white;
   margin-bottom: 5px;
-  padding: 5px;
+  padding: 6px;
+  border-radius:6px;
 }
 
 .action-buttons-container button{
@@ -474,4 +483,115 @@ input[type=date]{
   margin-right: 5px;
   border:1px solid black;
   border-radius: 6px;
+}
+
+.clients-container{
+  border-radius: 6px;
+}
+
+.expenses-container .app-data-container, .products-container .app-data-container{
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 16px;
+  background-color: white;
+  border-radius: 6px;
+}
+
+.interval-setter{
+  background-color: transparent;
+  height: fit-content;
+  padding: 8px;
+}
+
+.productPropertyHeader{
+  display:flex;
+  flex-direction: row;
+  font-weight: 600;
+}
+
+.productRow{
+  display:flex;
+  flex-direction: row;
+  width: 100%;
+  margin-bottom: 5px;
+  border-bottom: 1px solid gray;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+#new-product-form{
+  background-color: white;
+  padding: 16px;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  -webkit-border-radius: 10px;
+  border-radius: 2px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 10px;
+  border-radius: 2px;
+  background: lightgray;
+}
+
+.search-input-container{
+  border:1px solid lightgray;
+  border-radius: 6px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+}
+
+.search-input-container button{
+  display: inherit;
+  align-items: center;
+  background-color: transparent;
+  height: 28px;
+}
+
+.search-input-container button:hover{
+  background-color: transparent;
+}
+
+.search-input:focus{
+  border: none!important;
+}
+
+.search-icon{
+  display:flex;
+  align-items:center;
+  justify-content:'center';
+  color:black;
+}
+
+.search-input{
+  height: 24px;
+  border: none;
+}
+
+.search-form-container{
+  display: flex;
+  flex-direction: row;
+  height: 28px;
+  margin-left: 10px;
+}
+
+.search-reset-button{
+  color:lightgray
+}
+
+.search-reset-button:hover{
+  color:black
 }

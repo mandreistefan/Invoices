@@ -64,11 +64,9 @@ export default class ClientsComponent extends React.Component{
                         <button id="add-client" disabled={this.state.currentElement==="addnew" ? true:false} onClick={()=>{this.setState({currentElement: "addnew"})}}><span className="button-label"><span className="material-icons-outlined">person_add</span>Client nou</span></button>
                     </div>
                 </div>
-                <hr/>
 
                 {this.state.currentElement==="overview"&&<Clients enableInvoiceApp={this.enableInvoiceApp}/>}
                 {this.state.currentElement==="addnew"&&<ClientForm editable={true} isSubmitable={true} clientID={null}/>}
-
                 {this.state.activeClient!=null && 
                     <div> 
                         <div className="blur-overlap"></div>     

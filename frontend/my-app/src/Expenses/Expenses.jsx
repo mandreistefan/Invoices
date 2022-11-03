@@ -69,13 +69,16 @@ let Expenses=()=>{
     }
 
     return(
-        <div>
+        <div className="expenses-container">
             <div className="app-title-container"><h4>Cheltuieli</h4></div><hr/>
             <ExpenseForm reFetch={fetchData}/>
+            <br/>
             {expenses&&       
-                <div className="app-data-container" style={{maxWidth:"1000px", marginLeft:"auto", marginRight:"auto"}}> 
+                <div className="app-data-container">
+                    <h6>Cheltuieli inregistrate</h6> 
                     <div className="alert alert-secondary interval-setter">
                         <div className="row">
+                            <span><b>Interval</b></span>
                             <div>
                                 <input type="date" id="start" name="trip-start" value={dateInterval.start} onChange={someFunction}></input>
                                 <input type="date" id="end" name="trip-end" value={dateInterval.end} onChange={someFunction}></input>
@@ -83,7 +86,7 @@ let Expenses=()=>{
                             </div>
                         </div>
                     </div>
-                    {expenses.length>0 ? 
+                    {expenses.length>0 ?                         
                         <table className='table table-hover app-data-table'>
                             <thead className='table-active'>
                                 <tr className='app-data-table-row'>
@@ -91,8 +94,8 @@ let Expenses=()=>{
                                     <th className="col-3">NUME</th>
                                     <th className="col-1">SUMA</th>
                                     <th className="col-4">DESCRIERE</th>
-                                    <th className="col-2">DATA</th>
-                                    <th className="col-1">DEDUCT</th>
+                                    <th className="col-2"></th>
+                                    <th className="col-1"></th>
                                     <th></th>
                                 </tr>    
                             </thead>               
@@ -118,7 +121,7 @@ let Expenses=()=>{
                                 }
                             </tbody>
                         </table>
-                        :"Nu exista cheltuieli inregistrate"
+                        :"Nu exista cheltuieli inregistrate"                        
                     }
                 </div>           
             }

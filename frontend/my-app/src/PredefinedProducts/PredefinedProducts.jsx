@@ -19,9 +19,10 @@ let Products=()=>{
                 </div>
             </div>
             <hr/>
-
-            {activeElement==="overview"&&<ExistingProducts insertable={false} actions={true}/>}
-            {activeElement==="add"&&<ProductForm/>}
+            
+            {<ProductForm/>}
+            <br/>
+            {<ExistingProducts insertable={false} actions={true}/>}
 
         </div>
 

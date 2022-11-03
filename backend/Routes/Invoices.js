@@ -39,7 +39,13 @@ app.get('/invoices',(req,res)=>{
                 recordsNumber: results.totalRecordsNumber,
                 data:results.data
             })
-        }else{
+        }else if(results.status==="NO_DATA"){
+            res.send({
+                status:"NO_DATA",
+                recordsNumber: 0,
+                data:null
+            })
+        }else{    
             res.send({
                 status:"ERROR",
                 data:null

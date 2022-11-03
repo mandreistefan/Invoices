@@ -36,14 +36,13 @@ let SideNavigation = (props) =>{
 
     return(
         <div className="side-navigation">
-            <h6>Invoice App</h6><hr/>
             <ul className="side-nav-elements">
                 {
                     navigationElements.map(element=>(
                         <li className="side-nav-element" id={element.name} name={element.name} key={element.id}>
                             <button className={checkIfSelected(element.id, selectedItem)} onClick={()=>setSelectedItem(element.id)}>
                                 <div>
-                                    <span className="material-icons-outlined">{element.icon}</span>{element.displayName}
+                                    <span className="material-icons-outlined">{element.icon}</span><span className="side-nav-button-label">{element.displayName}</span>
                                 </div>                                
                             </button>                      
                         </li>

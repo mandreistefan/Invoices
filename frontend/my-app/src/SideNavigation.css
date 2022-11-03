@@ -19,6 +19,7 @@
 .side-nav-element{
     background-color: transparent;
     margin: 10px;
+
 }
 
 .side-nav-element button{
@@ -26,16 +27,21 @@
 }
 
 .side-nav-button{
-    width:125px;
-    height: 40px;
+    height: 60px;
+    width: 60px;
     color:#9dafc1;
     border:0;
 }
 
 .side-nav-button div{
     display: flex;
-    flex-direction: row;
-    font-weight: 600;
+    flex-direction: column;
+    align-items: center;
+    font-weight: 400;
+}
+
+.side-nav-button-label{
+    font-size: 12px;
 }
 
 .side-nav-button .material-icons-outlined{
