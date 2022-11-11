@@ -5,6 +5,7 @@ let DatabaseOperations=()=>{
 
     let [alertUser, setUserAlert] =React.useState({text: null})
     let [activeDB, setActiveDB] = React.useState(null)
+    let curentDate = new Date()
 
     React.useEffect(()=>{
         if(activeDB===null){
@@ -33,10 +34,6 @@ let DatabaseOperations=()=>{
         })
     }
 
-    let importDatabase=()=>{
-
-    }
-
     let switchDB=()=>{
         fetch('./switchDatabase').then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
@@ -59,9 +56,8 @@ let DatabaseOperations=()=>{
                 <div class="action-buttons-container">
                     <button class="small-menu-button" onClick={()=>{switchDB()}}><div className="inner-button-content"><span className="material-icons-outlined" style={{color: "rgb(2, 117, 216)"}}>refresh</span>Switch</div></button>
                     <button class="small-menu-button" onClick={()=>{exportDatabase()}}><div className="inner-button-content"><span className="material-icons-outlined" style={{color: "rgb(2, 117, 216)"}}>file_download</span>Export</div></button>
-                    <button class="small-menu-button" onClick={()=>{importDatabase()}}><div className="inner-button-content"><span className="material-icons-outlined" style={{color: "rgb(217, 83, 79)"}}>file_upload</span>Import</div></button>
+                    <button class="small-menu-button" onClick={()=>{}}><div className="inner-button-content"><span className="material-icons-outlined" style={{color: "rgb(217, 83, 79)"}}>file_upload</span>Import</div></button>
                 </div>
-
             </div>
             <Snackbar text={alertUser.text} closeSnack={()=>{setUserAlert({text:null})}}/>  
         </div>

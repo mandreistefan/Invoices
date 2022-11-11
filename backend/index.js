@@ -11,6 +11,7 @@ const invoicesHandler = require('./Routes/Invoices.js')
 const productsHandler = require('./Routes/Products.js')
 const financialsHandler = require('./Routes/Financials.js')
 const expensesHandler = require('./Routes/Expenses.js')
+const employeesHandler = require('./Routes/Employees.js')
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./Routes/swagger.json');
 
@@ -25,6 +26,8 @@ app.use('/', invoicesHandler)
 app.use('/', productsHandler)
 app.use('/', financialsHandler)
 app.use('/', expensesHandler)
+app.use('/', employeesHandler)
+
 
 cron.schedule('* 00 13 * *', () => {
     console.log('Runnig scheduled task');

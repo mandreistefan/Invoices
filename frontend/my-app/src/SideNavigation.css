@@ -1,53 +1,11 @@
-.side-navigation{
-    height: 100vh;
-    background-color: #004643;
-}
-
-.side-navigation h6{
-    margin-top:8px;
-    text-align: center;
-    font-size:600;
-    color:white
-}
-
-.side-nav-elements{
-    list-style: none;
-    padding:0;
-    background-color: #004643;
-}
-
-.side-nav-element{
-    background-color: transparent;
-    margin: 10px;
-
-}
-
-.side-nav-element button{
-    background-color: transparent;
-}
-
-.side-nav-button{
-    height: 60px;
-    width: 60px;
-    color:#9dafc1;
-    border:0;
-}
-
-.side-nav-button div{
+.nav-link{
     display: flex;
-    flex-direction: column;
     align-items: center;
+}
+
+.nav-link .material-icons-outlined{
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
     font-weight: 400;
-}
-
-.side-nav-button-label{
-    font-size: 12px;
-}
-
-.side-nav-button .material-icons-outlined{
-    margin-right: 5px;
-}
-
-.selected-nav-element{
-    color:#fffffe
 }

@@ -43,6 +43,7 @@ let PageNavigation=(props)=>{
     },[props.numberOfItems, pagination.currentPage])
 
     return(
+        pagination.numberOfPages>1&&
         <nav key={props.numberOfItems} aria-label="Page navigation example">
             <ul className="pagination">
                 {pages}

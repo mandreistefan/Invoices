@@ -36,7 +36,7 @@ try{
 /**
  * 
  * @param {{filter: string, filterBy: string, page:int, target:string}} querryObject filter is the case, filterBy is the value, page is the page(offset), target can be used to specify the table
- * @returns {{status: string, data: array}} status of the OP as string and the data as array containing key:pair values
+ * @returns {Promise<{status: string, data: array}>} status of the OP as string and the data as array containing key:pair values
  */
 
 function getAllClients(querryObject){
@@ -802,13 +802,25 @@ function getRecurrentInvoiceProducts(invoiceID){
 }
 
 /**
- * Retrieves predefined products
- * @returns {Promise<{status:string, data:object}>} Status of the OP and the data as object
+ * Gets all predefined products
+ * @param {{filter: string, filterBy: string, page:integer}} queryObject filter is the case, filterBy is the value, page is the page(offset)
+ * @returns {Promise<status:string, data:Object>}
  */
 
-function getPredefinedProducts(){
+function getPredefinedProducts(queryObject){
+
+    let querry;
+    switch(queryObject.filter){
+        case "search":
+            querry = `SELECT * FROM predefined_products WHERE id in (${queryObject.filterBy})`;
+            break
+        default:
+            querry = `SELECT * FROM predefined_products`;
+            break
+    }
+
     return new Promise((resolve, reject)=>{
-        connection.query(`SELECT * FROM predefined_products`, function(error, result){
+        connection.query(querry, function(error, result){
             if(error){
                 console.log(error)
                 reject({
@@ -1167,7 +1179,7 @@ function deleteExpense(id){
 /**
  * Looks for a text in the database and returns the matching IDs
  * @param {{searchTerm:string, target:invoices|clients}} queryObject searchTerm is the text to be searched for, target is the target of the search; for now, invoices and clients are the only options
- * @returns {Array} An array containing id's that can be used to filter a DB or an empty array if nothing is found. The array can contain arrays!
+ * @returns {Promise<Array>} An array containing id's that can be used to filter a DB or an empty array if nothing is found. The array can contain arrays!
  */
 
  async function searchDatabase(queryObject){
@@ -1206,33 +1218,381 @@ function deleteExpense(id){
             return await Promise.all([invoices, products])
         case "clients":
             return new Promise((resolve, reject)=>{
-                connection.query(`select id from clients where client_fiscal_1 LIKE '${queryObject.searchTerm}' OR client_fiscal_2 LIKE '${queryObject.searchTerm}' OR client_first_name LIKE '${queryObject.searchTerm}' OR client_last_name LIKE '${queryObject.searchTerm}' OR client_city LIKE '${queryObject.searchTerm}' OR client_street LIKE '${queryObject.searchTerm}' OR client_adress_number LIKE '${queryObject.searchTerm}' OR client_zip LIKE '${queryObject.searchTerm}' OR client_phone LIKE '${queryObject.searchTerm}' OR client_email LIKE '${queryObject.searchTerm}' OR client_notes LIKE '${queryObject.searchTerm}' order by id desc;`, function(error, result){
+                connection.query(`select id from clients where client_fiscal_1 LIKE '%${queryObject.searchTerm}%' OR client_fiscal_2 LIKE '%${queryObject.searchTerm}%' OR client_first_name LIKE '%${queryObject.searchTerm}%' OR client_last_name LIKE '%${queryObject.searchTerm}%' OR client_city LIKE '%${queryObject.searchTerm}%' OR client_street LIKE '%${queryObject.searchTerm}%' OR client_adress_number LIKE '%${queryObject.searchTerm}%' OR client_zip LIKE '%${queryObject.searchTerm}%' OR client_phone LIKE '%${queryObject.searchTerm}%' OR client_email LIKE '%${queryObject.searchTerm}%' OR client_notes LIKE '%${queryObject.searchTerm}%' order by id desc;`, function(error, result){
                     if(error){
                         console.log(error)
                         reject({status:"ERROR"})
                     }
                     let anArray=[]
-                    if(result.length>0){
-                        result.forEach(element=>{
-                            anArray.push(element.id)
-                        })
+                    if(result){
+                        if(result.length>0){
+                            result.forEach(element=>{
+                                anArray.push(element.id)
+                            })
+                        }
                     }
                     resolve(anArray)
                 })
             })
+            case "employees":
+                return new Promise((resolve, reject)=>{
+                    connection.query(`select id from employees where emp_first_name LIKE '%${queryObject.searchTerm}%' OR emp_last_name LIKE '%${queryObject.searchTerm}%' OR emp_adress LIKE '%${queryObject.searchTerm}%' OR emp_ident_no LIKE '%${queryObject.searchTerm}%' OR emp_date LIKE '%${queryObject.searchTerm}%' or emp_job_name LIKE '%${queryObject.searchTerm}%' OR emp_cur_salary_gross LIKE '%${queryObject.searchTerm}%' OR emp_tax LIKE '%${queryObject.searchTerm}%'  order by id desc;`, function(error, result){
+                        if(error){
+                            console.log(error)
+                            reject({status:"ERROR"})
+                        }
+                        let anArray=[]
+                        if(result.length>0){
+                            result.forEach(element=>{
+                                anArray.push(element.id)
+                            })
+                        }
+                        resolve(anArray)
+                    })
+                })
+            case "predefined-products":
+                return new Promise((resolve, reject)=>{
+                    connection.query(`select id from predefined_products where pp_name LIKE '%${queryObject.searchTerm}%' OR pp_um LIKE '%${queryObject.searchTerm}%' OR  pp_tax LIKE '%${queryObject.searchTerm}%' OR pp_price_per_item LIKE '%${queryObject.searchTerm}%' OR pp_description LIKE '%${queryObject.searchTerm}%' order by id desc;`, function(error, result){
+                        if(error){
+                            console.log(error)
+                            reject({status:"ERROR"})
+                        }
+                        let anArray=[]
+                        if(result.length>0){
+                            result.forEach(element=>{
+                                anArray.push(element.id)
+                            })
+                        }
+                        resolve(anArray)
+                    })
+                })
         default:
             resolve(null)
     }
 }
 
-function filterDatabase(array){
+/**
+ * 
+ * @param {{filter: string, filterBy: string, page:integer, target:string}} querryObject filter is the case, filterBy is the value, page is the page(offset), target can be used to specify the table
+ * @returns {Promise<{status: string, data: array}>} status of the OP as string and the data as array containing key:pair values
+ */
+
+function getEmployees(queryObject){
+    let offSet = 0
+    let step=10
+    if(queryObject.page>1) offSet = (queryObject.page-1) * 10
+    let querry;    
+    switch(queryObject.filter){
+        case "all":
+            querry=`SELECT * FROM employees ORDER BY id DESC LIMIT ${offSet}, ${step}`
+            break
+        case "id":
+            querry=`SELECT * FROM employees WHERE id=${queryObject.filterBy}`
+            break
+        case "search":
+            querry=`SELECT * FROM employees WHERE id IN (${queryObject.filterBy})`
+            break
+        default:
+            querry=`SELECT * FROM employees LIMIT ${offSet}, ${step}`
+            break
+    }
+
     return new Promise((resolve, reject)=>{
-        connection.query(`select * from invoices where invoice_number in (?)`, [array], function(error, result){
+        connection.query(querry, function(err, result){
+            if(err){
+                console.log(err)
+                reject({
+                    status:"ERROR",
+                    data:"ERROR fetching employees"
+                })
+            }
+            if(result){
+                if(result.length>0){
+                    resolve({
+                        status:"OK",
+                        data:result
+                    })
+                }else{
+                    resolve({
+                        status:"NO_DATA",
+                        data:null
+                    })
+                }
+            }else{
+                resolve({
+                    status: "FAILED",
+                    data: null
+                })
+            }
+        })
+    })
+}
+
+/**
+ * 
+ * @param {object} data Object containing employee data
+ * @returns {Promise<{status: string, data:int|null}>} Object containing status and insertID
+ */
+
+function addEmployee(data){
+    return new Promise((resolve, reject)=>{
+        connection.query(`INSERT INTO employees(emp_first_name, emp_last_name, emp_adress, emp_ident_no, emp_job_name, emp_cur_salary_gross, emp_cur_salary_net, emp_tax) VALUES ('${data.emp_first_name}', '${data.emp_last_name}', '${data.emp_adress}', '${data.emp_ident_no}', '${data.emp_job_name}', '${data.emp_cur_salary_gross}', '${data.emp_cur_salary_net}', '${data.emp_tax}')`, function(error, result){
             if(error){
                 console.log(error)
-                reject({status:"ERROR", data:null})
+                reject({status:"ERROR"})
             }
-            resolve(result)
+            if(result.insertId){
+                resolve({status:"OK", data: result.insertId})
+            }else{
+                resolve({status:"FAIL", data:null})
+            }
+        })
+    })
+}
+
+/**
+ * 
+ * @param {object} data Object containing data to be updated 
+ * @returns {Promise<{status:string, data:null}>} Status of the OP
+ */
+
+function editEmployee(data){
+    //get ID and remove it from the object
+    let employeeID=data.employeeID
+    delete data.employeeID
+    return new Promise((resolve, reject)=>{
+        connection.query(`UPDATE employees SET ? WHERE id=${employeeID}`, data, function(error, result){
+            if(error){
+                console.log(error)
+                reject({status:"ERROR"})
+            }
+            if(result.affectedRows){
+                resolve({status:"OK", data:null})
+            }else{
+                resolve({status:"FAIL", data:null})
+            }
+        })  
+    })
+}
+
+/**
+ * Check if there is a salary registered for a certain employee on a specific month
+ * @param {int} employeeID ID of the employee
+ * @param {int} month month, as integer from 1 to 12
+ * @returns {Promise<boolean>} true if there is already a payment
+ */
+
+function hasSalaryOnDate(employeeID, month){
+    return new Promise((resolve, reject)=>{
+        connection.query(`SELECT id FROM employees_salaries WHERE salary_month='${month}' AND paid_to='${employeeID}'`, function(error, result){
+            if(error){
+                console.log(error)
+                reject({status:"ERROR"})
+            }
+            if(result.length!=0){
+                resolve(true)
+            }else{
+                resolve(false)
+            }
+        })  
+    })
+}
+
+/**
+ * Registers a new salary in the DB. Calculates net and taxes based on the DB data for the employee with ID paid_to
+ * @param {int} paid_to The ID of the employee
+ * @param {int} salary_month The month expressed as a integer, where 1 is January
+ * @returns {Promise<{status:string, data:integer|string|null}>} Status can be
+ * FAIL - data property contains an explanation
+ * ERROR - data is null
+ * OK - data is the insertID
+ */
+
+async function addSalary(paid_to, salary_month){
+
+    //get gross salary
+    let grossSalary = await new Promise((resolve, reject)=>{
+        connection.query(`SELECT emp_cur_salary_gross FROM employees WHERE id='${paid_to}'`, function(error, result){
+            if(error){
+                console.log(error)
+                reject(null)
+            }
+            if(result.length!=0){                
+                resolve(result[0].emp_cur_salary_gross)
+            }else{
+                resolve(null)
+            }
+        })  
+    })
+
+    //no gross
+    if(grossSalary===null) return ({status:"FAIL", data:"FAILED_GETTING_SALARY"})
+    if(grossSalary==0) return ({status:"FAIL", data:"INVALID_SALARY"})
+
+    //calculate all taxes
+    let salaryTaxes = utile.calculateSalary(grossSalary)
+    //insert data
+    return await new Promise((resolve, reject)=>{
+        connection.query(`INSERT INTO employees_salaries(sum_gross, sum_net, paid_to, salary_month, tax_cas, tax_cass, tax_income, tax_cm) VALUES ('${salaryTaxes.gross}', '${salaryTaxes.salary}', '${paid_to}', '${salary_month}', '${salaryTaxes.cas}', '${salaryTaxes.cass}', '${salaryTaxes.tax}', '${salaryTaxes.cam}')`, function(error, result){
+            if(error){
+                console.log(error)
+                reject({status:"ERROR"})
+            }
+            if(result){
+                resolve({
+                    status:"OK",
+                    data:result.insertId
+                })
+            }else{
+                resolve({
+                    status:"FAIL",
+                    data:null
+                })
+            }
+        })  
+    })    
+}
+
+/**
+ * 
+ * @param {{filter: string, filterBy: string, page:integer, target:string}} querryObject filter is the case, filterBy is the value, page is the page(offset), target can be used to specify the table
+ * @returns {Promise<{status: string, data: array}>} status of the OP as string and the data as array containing key:pair values
+ */
+
+ function getSalaries(queryObject){
+    let returnArr =[]
+    let offSet = 0
+    let step=10
+    if(queryObject.page>1) offSet = (queryObject.page-1) * 10
+    let querry;    
+    switch(queryObject.filter){
+        case "all":
+            querry=`SELECT * FROM employees_salaries ORDER BY id DESC LIMIT ${offSet}, ${step}`
+            break
+        case "paid_to":
+            querry=`SELECT * FROM employees_salaries WHERE paid_to=${queryObject.filterBy}`
+            break
+        default:
+            querry=`SELECT * FROM employee_salaries LIMIT ${offSet}, ${step}`
+            break
+    }
+
+    return new Promise((resolve, reject)=>{
+        connection.query(querry, function(err, result){
+            if(err){
+                console.log(err)
+                reject({
+                    status:"ERROR",
+                    data:"ERROR fetching salaries"
+                })
+            }
+            if(result){
+                if(result.length>0){
+                    result.forEach(element=>{
+                        returnArr.push({
+                            gross:element.sum_gross, 
+                            net:element.sum_net, 
+                            cas:element.tax_cas, 
+                            cass:element.tax_cass, 
+                            income: element.tax_income, 
+                            cm:element.tax_cm, 
+                            month:element.salary_month
+                        })
+                    })                    
+                    resolve({
+                        status:"OK",
+                        data:result
+                    })
+                }else{
+                    resolve({
+                        status:"OK",
+                        data:null
+                    })
+                }
+            }else{
+                resolve({
+                    status: "FAILED",
+                    data: null
+                })
+            }
+        })
+    })
+}
+
+/**
+ * Adds vacation days
+ * @param {int} employee The id of the employee
+ * @param {Array} days An array containing the dates in the format yyyy-mm-dd
+ * @returns {Promise<{status:string, data:null}>} Status of the OP
+ */
+
+function addVacationDays(employee, daysObject){
+    console.log(daysObject)
+    const requestedDaysNumber = daysObject.length
+
+    return new Promise((resolve, reject)=>{
+        let insertThing = `('${employee}', '${daysObject[0].date}', '${daysObject[0].type}')`
+        if(daysObject.length>1){
+            daysObject.shift()
+            //build insert query
+            daysObject.forEach((element, index)=>{
+                insertThing = insertThing + `,('${employee}', '${element.date}', '${element.type}')`
+            })
+        }
+
+        connection.query(`INSERT INTO employees_vacation(employee_id, vacation_date, vacation_type) VALUES ${insertThing}`, function(error, result){
+            if(error){
+                console.log(error)
+                reject ({status:"FAIL", data:null})
+            }
+            if(requestedDaysNumber==result.affectedRows){
+                resolve({status:"OK", data:null})
+            }else{
+                resolve({status:"FAIL", data:null})
+            }
+           
+        })
+    })
+}
+
+/**
+ * Retrieves vacation days for a certain employee
+ * @param {integer} employee ID of the employee
+ * @returns {Promise<{status:string, data:array}>} Status of the OP and data
+ */
+
+function getVacationDays(employee){
+    let returnArr = []
+    return new Promise((resolve, reject)=>{
+        connection.query(`SELECT vacation_date, vacation_type, date FROM employees_vacation WHERE employee_id='${employee}'`, function(error, result){
+            if(error){
+                console.log(error)
+                reject ({status:"ERROR", data:null})
+            }
+            if(result.length>0){
+                result.forEach(element=>{
+                    returnArr.push({date:element.vacation_date, type:element.vacation_type, registerDate: element.date})
+                })
+                resolve({status:"OK", data:returnArr})
+            }else{
+                resolve({status:"OK", data:null})
+            }            
+        })
+    })
+}
+
+function getEmployeeInfo(employeeID){
+    return new Promise((resolve, reject)=>{
+        connection.query(`SELECT * FROM employees WHERE id=${employeeID}`, function(error, result){
+            if(error){
+                console.log(error)
+                reject ({status:"ERROR", data:null})
+            }
+            if(result.length>0){
+                resolve({status:"OK", data:result})
+            }else{
+                resolve({status:"OK", data:null})
+            } 
         })
     })
 }
@@ -1274,5 +1634,5 @@ module.exports ={
     addExpense,
     deleteExpense,
     searchDatabase,
-    filterDatabase
+    getEmployees, addEmployee, editEmployee, hasSalaryOnDate, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeInfo
 }

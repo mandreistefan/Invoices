@@ -1,33 +1,43 @@
 import React from "react";
 import './SideNavigation.css';
 
-function checkIfSelected(elementID, selectedItem){    
-    if(parseInt(elementID)===parseInt(selectedItem)){
-        return "side-nav-button selected-nav-element"
-    }else{
-        return "side-nav-button"
-    }
-}
 
 //paints the side-navigation and updates the current active page
 //when the page changes, an App.js function has to be called, since App.js renders the components
 let SideNavigation = (props) =>{
 
+    let getDatabaseName=()=>{
+        fetch('./database').then(response=>response.json()).then(data=>{
+            if(data.status==="OK"){
+                setActiveDBname(data.data.database)
+            }else{
+                setActiveDBname("UNKNOWN")
+            }
+        }).catch(error=>{
+            console.log(error)
+            setActiveDBname("UNKNOWN")
+        })
+    }
+
     let navigationElements = 
     [
-        {id:0, name: "clients", displayName:'CLIENTI', icon:'account_circle'},
-        {id:1, name: "invoices", displayName:'FACTURI', icon:'receipt_long'},
-        {id:2, name: "products", displayName:'PRODUSE', icon:'sell'},
-        {id:5, name: "expenses", displayName:'CHELTUIELI', icon:'account_balance_wallet'},
-        {id:3, name: "financial", displayName:'FINANTE', icon:'attach_money'},
-        {id:4, name: "settings", displayName:'SETARI', icon:'settings'}
+        {id:0, name: "clients", displayName:'Clienti', icon:'account_circle'},
+        {id:6, name: "employees", displayName:'Angajati', icon:'group'},
+        {id:1, name: "invoices", displayName:'Facturi', icon:'receipt_long'},
+        {id:2, name: "products", displayName:'Produse', icon:'sell'},
+        {id:5, name: "expenses", displayName:'Cheltuieli', icon:'account_balance_wallet'},
+        {id:3, name: "financial", displayName:'Finante', icon:'attach_money'},
+        {id:4, name: "settings", displayName:'Setari', icon:'settings'}
     ]
 
     //initial setup can be saved in localstorage
     let savedNavigationOption = localStorage.getItem('selectedNavigationOption')
     let [selectedItem, setSelectedItem] = React.useState(savedNavigationOption ? savedNavigationOption : 0);
+    let [activeDB, setActiveDBname] = React.useState("")
 
     React.useEffect(()=>{
+        //at startup
+        getDatabaseName()
         //save in local storage
         localStorage.setItem('selectedNavigationOption', selectedItem)
         //call the App.js function; App.js controls the components that are rendered
@@ -35,20 +45,21 @@ let SideNavigation = (props) =>{
     },[selectedItem])
 
     return(
-        <div className="side-navigation">
-            <ul className="side-nav-elements">
-                {
-                    navigationElements.map(element=>(
-                        <li className="side-nav-element" id={element.name} name={element.name} key={element.id}>
-                            <button className={checkIfSelected(element.id, selectedItem)} onClick={()=>setSelectedItem(element.id)}>
-                                <div>
-                                    <span className="material-icons-outlined">{element.icon}</span><span className="side-nav-button-label">{element.displayName}</span>
-                                </div>                                
-                            </button>                      
-                        </li>
-                    ))
-                }
+        <div className="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style={{width: '200px'}}>
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                <span class="fs-4">Sidebar</span>
+            </a>
+            <hr></hr>
+            <ul className="nav nav-pills flex-column mb-auto">
+                {navigationElements.map(element=>(
+                    <li className="nav-item">
+                        <a href="#" className={parseInt(selectedItem)===parseInt(element.id) ? "nav-link active" : "nav-link text-white"} onClick={()=>setSelectedItem(element.id)}  aria-current="page">
+                            <span className="bi pe-none material-icons-outlined">{element.icon}</span>{element.displayName}
+                        </a>
+                    </li>))}
             </ul>
+            <hr></hr>
+            <strong style={{textAlign:"center"}}>{activeDB}</strong>
         </div>
     )
 }

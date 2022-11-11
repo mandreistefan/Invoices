@@ -6,8 +6,8 @@ import SmallMenu from '../SmallMenu/SmallMenu.jsx'
 let Expenses=()=>{
 
     let [alertUser, setAlertUser] = React.useState({text: null})
-    let noReRenders = 0
     let [expenses, setExpenses] = React.useState([])
+    let [addexpensesWindow, setaddexpensesWindow] = React.useState(false)
     //time interval 
     let currentDate = new Date()
     let [dateInterval, setInterval] = React.useState({
@@ -70,9 +70,24 @@ let Expenses=()=>{
 
     return(
         <div className="expenses-container">
-            <div className="app-title-container"><h4>Cheltuieli</h4></div><hr/>
-            <ExpenseForm reFetch={fetchData}/>
-            <br/>
+            <header class="p-3">
+                <div class="container nav-head-container">
+                    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                        <span class="material-icons-outlined add-new-nav-button" onClick={()=>{setaddexpensesWindow(true)}} style={{fontSize:'35px', marginRight:'5px'}}>account_balance_wallet</span>
+                        <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">                         
+                        </div>
+                    </div>
+                </div>
+            </header>  
+            {addexpensesWindow&&
+                <div>
+                    <div className="blur-overlap"></div>     
+                    <button type="button" className="action-close-window" onClick={()=>{setaddexpensesWindow(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
+                    <div className="overlapping-component-inner">
+                        <ExpenseForm reFetch={fetchData}/>
+                    </div>
+                </div>
+            }
             {expenses&&       
                 <div className="app-data-container">
                     <h6>Cheltuieli inregistrate</h6> 

@@ -4,15 +4,24 @@ const urlmod=require('url')
 const util = require('../utils/util.js')
 const databaseController = require('../controllers/databaseController.js')
 
+let filterObject={filter:"all", filterBy:"", page:1}
+
 //products
 app.get('/products', (req, res)=>{
-    databaseController.getPredefinedProducts().then(data=>{
+    if(req.query.filter) filterObject.filter=req.query.filter
+    if(req.query.filterBy) filterObject.filterBy=req.query.filterBy
+    if(req.query.page) filterObject.page=req.query.page
+    databaseController.getPredefinedProducts(filterObject).then(data=>{
         res.send({
-            status:"OK",
-            data:data
+            status:data.status,
+            data:data.data
         })
     })
     .catch(data=>{
+        res.send({
+            status:"ERROR",
+            data:null
+        })
         console.log("ERROR")
     })
 })

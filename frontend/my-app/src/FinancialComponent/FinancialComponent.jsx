@@ -59,14 +59,17 @@ let Financial = (props) =>{
         setTaxes({profitTaxPercentage:event.target.value, profitTax:profitTax, profit:parseFloat(financialData.total-profitTax).toFixed(2)})
     }
 
-    return(
-        
+    return(        
         <div>
-            <div className="app-title-container">
-                <h4>Finante</h4>
-                <div className="app-submenu-selector"></div>
-            </div>
-            <hr/>
+            <header class="p-3">
+                <div class="container nav-head-container">
+                    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                        <span class="material-icons-outlined" style={{fontSize:'35px', marginRight:'5px'}}>attach_money</span>
+                        <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">                         
+                        </div>
+                    </div>
+                </div>
+            </header> 
             {financialData ?
             <div className="app-data-container financial-container">
                 <div className="alert alert-secondary interval-setter">

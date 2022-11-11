@@ -398,29 +398,33 @@ function calculateTotalSum(data){
     return {totalSum: totalSum, totalTax: totalTax};
 }
 
-//takes a string as parameter; looks for predefined keys, fetches the data from the string and returns an object
-//string should be invoices?page=1&filter=something
-//target should be optional, is "invoices"
-//keys are page and filter, data is 1 and something
-function qParser(dataString){
-    //the filterObject
-    let filterObject={
-        target: null,
-        page: 1,
-        filter:null,
-        filterBy:null
-    }
-    //split it based on the ampersand
-    let query_parameters = dataString.substring(dataString.indexOf("?")+1, (dataString.length)).split("&")
-    //populate the object
-    query_parameters.forEach(element=>{
-        if(element.indexOf("page=")>-1) filterObject.page=element.substring(element.indexOf("=")+1, element.length)
-        if(element.indexOf("filter=")>-1) filterObject.filter=element.substring(element.indexOf("=")+1, element.length)
-        if(element.indexOf("filterBy=")>-1) filterObject.filterBy=element.substring(element.indexOf("=")+1, element.length)
-        if(element.indexOf("target=")>-1) filterObject.target=element.substring(element.indexOf("=")+1, element.length)
-    })
+/**
+ * 
+ * @param {float} grossSalary Gross income
+ * @param {bool} isTaxable TRUE - salary is taxable, FALSE it is not
+ * @returns {{gross:float, cas:float, cass:float, tax:float, cam:float, salary:float}} An object, containing all contributions and the end salary
+ */
 
-    return filterObject
+function calculateSalary(grossSalary, isTaxable){
+    //no calcs for no salary
+    if(grossSalary<1) return null
+    //taxes
+    const CAS = 0.25;
+    const CASS = 0.1;
+    const TAX = 0.1;
+    const CAM = 0.0225;
+    //taxes calc
+    let netSalaryObject={ 
+        gross: parseFloat(grossSalary),
+        cas : parseFloat(grossSalary*CAS), 
+        cass : parseFloat(grossSalary*CASS), 
+        tax: isTaxable ? parseFloat(grossSalary*TAX) : 0,
+        cam : parseFloat(grossSalary*CAM) 
+    }
+    //net income
+    netSalaryObject.salary = parseFloat(grossSalary-netSalaryObject.cas-netSalaryObject.cass-netSalaryObject.tax)
+
+    return netSalaryObject
 }
 
 module.exports = {
@@ -433,5 +437,5 @@ module.exports = {
     toCreateInvoice: toCreateInvoice,
     calculateNextInvoiceDate:calculateNextInvoiceDate,
     calculateTotalSum:calculateTotalSum,
-    qParser: qParser
+    calculateSalary
 }

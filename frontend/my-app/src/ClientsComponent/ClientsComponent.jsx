@@ -14,8 +14,7 @@ export default class ClientsComponent extends React.Component{
           searchResult: null,
           searchActionStatus: false,
           activeClient:null,
-          activeClientName: null,
-          currentElement: "overview"
+          activeClientName: null
         };
       }
 
@@ -34,39 +33,10 @@ export default class ClientsComponent extends React.Component{
         })
     }
 
-    //search - not implemented
-    searchInDatabase = () =>{
-        fetch("/search", {
-            method:"POST",
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({searchTerm:this.state.searchField})
-        })
-        .then(response=>response.json())
-        .then(data=>{
-            if(data.status==="OK"){
-                this.setState({
-                    searchResult:data.data,
-                    searchActionStatus: false
-                })
-            }else{
-
-            }
-        })
-    }
-
     render(){
         return(
             <div>
-                <div className="app-title-container">
-                    <h4>Clienti</h4>
-                    <div className="app-submenu-selector">
-                        <button id="overview" disabled={this.state.currentElement==="overview" ? true:false} onClick={()=>{this.setState({currentElement: "overview"})}}><span className="button-label"><span className="material-icons-outlined">home</span>Overview</span></button>
-                        <button id="add-client" disabled={this.state.currentElement==="addnew" ? true:false} onClick={()=>{this.setState({currentElement: "addnew"})}}><span className="button-label"><span className="material-icons-outlined">person_add</span>Client nou</span></button>
-                    </div>
-                </div>
-
-                {this.state.currentElement==="overview"&&<Clients enableInvoiceApp={this.enableInvoiceApp}/>}
-                {this.state.currentElement==="addnew"&&<ClientForm editable={true} isSubmitable={true} clientID={null}/>}
+                <Clients enableInvoiceApp={this.enableInvoiceApp}/>
                 {this.state.activeClient!=null && 
                     <div> 
                         <div className="blur-overlap"></div>     

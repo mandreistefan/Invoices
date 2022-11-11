@@ -300,7 +300,269 @@
                     }
                 }
             }
-        }        
+        },
+        "/employees":{
+            "get":{
+                "summary" : "Get all employees",
+                "description": "Gets all employees",
+                "produces": ["application/json"],
+                "parameters": [{  
+                    "name":"filter",
+                    "in":"query",
+                    "description":"The field by which we filter the results",
+                    "required":false,
+                    "type":"string",
+                    "default": "all",
+                    "enum": ["all", "id"]
+                 },
+                 {  
+                    "name":"page",
+                    "in":"query",
+                    "description":"The page number",
+                    "required":false,
+                    "type":"integer",
+                    "default": "1"
+                 },
+                 {  
+                    "name":"filterBy",
+                    "in":"query",
+                    "description":"Used only with the <b>filter</b> parameter to filter results",
+                    "required":false
+                }],
+                "responses": {
+                    "200": {
+                        "description": "A response has been received",
+                        "schema":{
+                            "type": "object",
+                            "properties":{
+                                "status":{
+                                    "type": "string",
+                                    "description": "Status of the operation",
+                                    "enum": ["OK", "ERROR"]
+                                },
+                                "totalRecordsNumber":{
+                                    "type": "integer",
+                                    "description": "Number of returned items"
+                                },
+                                "data":{
+                                    "type": "object",
+                                    "description": "The returned data"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post" : {
+                "summary" : "Add employee",
+                "description": "Add a new employee",
+                "produces": ["application/json"],
+                "consumes": ["application/json"],
+                "parameters": [{
+                    "in": "body",
+                    "name": "Employee object",
+                    "required": true,
+                    "schema": {
+                      "$ref": "#/definitions/post_employee"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "A response has been received",
+                        "schema": {
+                            "type": "object",
+                            "properties":{
+                                "status":{
+                                    "type": "string",
+                                    "description": "Status of the operation",
+                                    "enum": ["OK", "ERROR"]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put" : {
+                "summary" : "Update an employee",
+                "description": "Update employee data",
+                "produces": ["application/json"],
+                "parameters": [{  
+                    "in": "body",
+                    "name": "body",
+                    "description": "Client object",
+                    "required": true,
+                    "schema": {
+                      "$ref": "#/definitions/put_employee"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "A response has been received",
+                        "schema": {
+                            "type": "object",
+                            "properties":{
+                                "status":{
+                                    "type": "string",
+                                    "description": "Status of the operation",
+                                    "enum": ["OK", "ERROR"]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/employee_salary":{
+            "post":{
+                "summary" : "Add a salary",
+                "description": "Registers a new salary for a employee. Needs the ID of the client and the month of the salary",
+                "produces": ["application/json"],
+                "consumes": ["application/json"],
+                "parameters": [{
+                    "in": "body",
+                    "name": "Employee object",
+                    "required": true,
+                    "schema": {
+                      "$ref": "#/definitions/post_salary"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "A response has been received",
+                        "schema": {
+                            "type": "object",
+                            "properties":{
+                                "status":{
+                                    "type": "string",
+                                    "description": "Status of the operation",
+                                    "enum": ["OK", "ERROR"]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get":{
+                "summary" : "Get all salaries",
+                "description": "Gets all salaries",
+                "produces": ["application/json"],
+                "parameters": [{  
+                    "name":"filter",
+                    "in":"query",
+                    "description":"The field by which we filter the results",
+                    "required":false,
+                    "type":"string",
+                    "default": "all",
+                    "enum": ["all", "paid_to"]
+                 },
+                 {  
+                    "name":"page",
+                    "in":"query",
+                    "description":"The page number",
+                    "required":false,
+                    "type":"integer",
+                    "default": "1"
+                 },
+                 {  
+                    "name":"filterBy",
+                    "in":"query",
+                    "description":"Used only with the <b>filter</b> parameter to filter results",
+                    "required":false
+                }],
+                "responses": {
+                    "200": {
+                        "description": "A response has been received",
+                        "schema":{
+                            "type": "object",
+                            "properties":{
+                                "status":{
+                                    "type": "string",
+                                    "description": "Status of the operation",
+                                    "enum": ["OK", "ERROR"]
+                                },
+                                "totalRecordsNumber":{
+                                    "type": "integer",
+                                    "description": "Number of returned items"
+                                },
+                                "data":{
+                                    "type": "object",
+                                    "description": "The returned data"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/employee_vacation":{
+            "post":{
+                "summary" : "Add vacation days",
+                "description": "Registers a vacation interval",
+                "produces": ["application/json"],
+                "consumes": ["application/json"],
+                "parameters": [{
+                    "in": "body",
+                    "name": "Employee object",
+                    "required": true,
+                    "schema": {
+                      "$ref": "#/definitions/post_vacation"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "A response has been received",
+                        "schema": {
+                            "type": "object",
+                            "properties":{
+                                "status":{
+                                    "type": "string",
+                                    "description": "Status of the operation",
+                                    "enum": ["OK", "ERROR"]
+                                }
+                            }
+                        }
+                    }
+                }
+            }            
+        }  ,
+        "/employee/{id}":{
+            "get":{
+                "summary" : "Provides an onverview of an employee",
+                "description": "Gets data associated with the employee(salaries, vacation days, etc.)",
+                "produces": ["application/json"],
+                "parameters": [{  
+                    "name":"id",
+                    "in":"path",
+                    "description":"The field by which we filter the results",
+                    "required":true,
+                    "type":"integer",
+                    "default": "1"
+                 }],
+                "responses": {
+                    "200": {
+                        "description": "A response has been received",
+                        "schema":{
+                            "type": "object",
+                            "properties":{
+                                "status":{
+                                    "type": "string",
+                                    "description": "Status of the operation",
+                                    "enum": ["OK", "ERROR"]
+                                },
+                                "totalRecordsNumber":{
+                                    "type": "integer",
+                                    "description": "Number of returned items"
+                                },
+                                "data":{
+                                    "type": "object",
+                                    "description": "The returned data"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }       
     }, 
     "definitions": {
         "todosResponse": {
@@ -611,6 +873,153 @@
                     "example":"true",
                     "description":"Is this expense deductible?",
                     "required":true       
+                }
+            }
+        },
+        "post_employee":{
+            "properties": {
+                "emp_first_name":{
+                    "type":"string",
+                    "example":"Popescu",
+                    "required":true      
+                },
+                "emp_last_name":{
+                    "type":"string",
+                    "example":"Ion",
+                    "required":true       
+                },
+                "emp_adress":{
+                    "type":"string",
+                    "description":"Adresa angajat",
+                    "example":"Judet Bacau, Ors. Bacau, Str. Bacaului, nr.67",
+                    "required":true 
+                },
+                "emp_ident_no":{
+                    "type":"string",
+                    "example":"1929292929292",
+                    "description":"Cod identificare(CNP)",
+                    "required":true       
+                },
+                "emp_job_name":{
+                    "type":"string",
+                    "example":"Muncitor",
+                    "description":"Numele ocupatiei",
+                    "required":true       
+                },
+                "emp_cur_salary_gross":{
+                    "type":"float",
+                    "description":"Salariu brut",
+                    "example":"5000",
+                    "required":true 
+                },
+                "emp_tax":{
+                    "type":"boolean",
+                    "description":"TRUE daca salariatul e scutit de taxe",
+                    "example":"false",
+                    "enum":[true, false],
+                    "required":true 
+                }
+            }
+        },
+        "put_employee":{
+            "properties": {
+                "employeeID":{
+                    "type":"int",
+                    "example":"1",
+                    "description":"ID of the employee to be updated",
+                    "required":true      
+                },
+                "emp_first_name":{
+                    "type":"string",
+                    "example":"Popescu",
+                    "required":false      
+                },
+                "emp_last_name":{
+                    "type":"string",
+                    "example":"Ion",
+                    "required":false       
+                },
+                "emp_adress":{
+                    "type":"string",
+                    "description":"Adresa angajat",
+                    "example":"Judet Bacau, Ors. Bacau, Str. Bacaului, nr.67",
+                    "required":false 
+                },
+                "emp_ident_no":{
+                    "type":"string",
+                    "example":"1929292929292",
+                    "description":"Cod identificare(CNP)",
+                    "required":false       
+                },
+                "emp_job_name":{
+                    "type":"string",
+                    "example":"Muncitor",
+                    "description":"Numele ocupatiei",
+                    "required":false       
+                },
+                "emp_cur_salary_gross":{
+                    "type":"float",
+                    "description":"Salariu brut",
+                    "example":"5000",
+                    "required":false 
+                },
+                "emp_tax":{
+                    "type":"boolean",
+                    "description":"true if we apply the income tax",
+                    "example":"false",
+                    "enum":[true, false],
+                    "required":false 
+                },
+                "emp_active":{
+                    "type":"boolean",
+                    "description":"false if the employee is inactive",
+                    "example":"true",
+                    "enum":[true, false],
+                    "required":false 
+                }
+            }
+        },
+        "post_salary":{
+            "properties": {
+                "paid_to":{
+                    "type":"int",
+                    "example":"1",
+                    "description":"ID of the employee",
+                    "required":true      
+                },
+                "salary_month":{
+                    "type":"integer",
+                    "description":"Month, expressed as an integer, where January is 1",
+                    "example":"1",
+                    "required":true      
+                }                    
+            }
+        },
+        "post_vacation":{
+            "properties":{
+                "employeeID":{
+                    "type":"int",
+                    "example":"1",
+                    "description":"ID of the employee",
+                    "required":true  
+                },
+                "dates":{
+                    "description":"An array containing, for each element, a date and a type",
+                    "required":true,
+                    "properties":{
+                        "date":{
+                            "type":"string",
+                            "example":"2022-10-10",
+                            "description":"date",
+                            "required":true 
+                        },
+                        "type":{
+                            "type":"string",
+                            "example":"vacation",
+                            "description":"date",
+                            "required":true 
+                        }
+                    }
                 }
             }
         }

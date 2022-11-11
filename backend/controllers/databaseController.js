@@ -49,13 +49,13 @@ async function handleClientData(data){
 }
 
 /**
- * 
+ * Edits a client
  * @param {Object} data Contains clientID and dataToBeUpdated
  * @returns {Object} Object containing status of the OP 
  */
 
 async function updateClientData(data){
-    if(data.clientID===null) callback("ERROR", "Invalid clientID")
+    if(data.clientID===null) return({status:"ERROR", data:"Invalid clientID"})
     return await databaseOperations.editClient(data)
 }
 
@@ -449,11 +449,34 @@ async function getRecurrentInvoiceProducts(invoiceID){
     }
 }
 
-async function getPredefinedProducts(){
-    let products=await databaseOperations.getPredefinedProducts()
-    if(products.status==="OK") return products.data
-    console.log("ERROR in retrieving predefined products")  
-    return null
+async function getPredefinedProducts(filterObject){
+
+    let productsObject, totalRecordsNumber
+    if(filterObject.filter!="search"){
+        //client data
+        productsObject = await databaseOperations.getPredefinedProducts({filter:"all", filterBy:"", page:1})
+        if(productsObject.status!=="OK") return({status: "ERROR"})
+        totalRecordsNumber = await databaseOperations.getRecordsNumber("predefined_products", "all", "")
+    }else{
+        //can use + to replace the space in the search text
+        let stringedFilterBy=filterObject.filterBy.replace("+"," ")
+        let matchingProducts = await databaseOperations.searchDatabase({target:"predefined-products", searchTerm:stringedFilterBy})
+        if(matchingProducts.length==0) return({status:"NO_DATA", data:null})
+        productsObject = await databaseOperations.getPredefinedProducts({filter:"search", filterBy:matchingProducts, page:1})
+    }
+
+    if(productsObject.status==="OK"){
+        return({
+            status:"OK",
+            totalRecordsNumber: totalRecordsNumber,
+            data:productsObject.data
+        })
+    }else{
+        return({
+            status:"ERROR",
+            data:null
+        })
+    }
 }
 
 async function handleProduct(data){
@@ -564,13 +587,133 @@ async function performSearch(queryObject){
         anArray.push(element.invoice_number)
     })
 
-    console.log(anArray)
-
     let filteredData = await databaseOperations.filterDatabase(anArray)
     console.log(filteredData)
 }
 
-module.exports={
+/**
+ * 
+ * @param {object} filterObject Object that filters data 
+ */
+
+async function getEmployees(filterObject){
+    let employeesObject, totalRecordsNumber
+    if(filterObject.filter!="search"){
+        //client data
+        employeesObject = await databaseOperations.getEmployees(filterObject)
+        if(employeesObject.status!=="OK") return({status: "ERROR"})
+        totalRecordsNumber = await databaseOperations.getRecordsNumber("employees", filterObject.filter, filterObject.filterBy)
+    }else{
+        //can use + to replace the space in the search text
+        let stringedFilterBy=filterObject.filterBy.replace("+"," ")
+        let matchingEmployees = await databaseOperations.searchDatabase({target:"employees", searchTerm:stringedFilterBy})
+        if(matchingEmployees.length==0) return({status:"NO_DATA", data:null})
+        employeesObject = await databaseOperations.getEmployees({filter:"search", filterBy:matchingEmployees, page:1})
+    }
+
+    if(employeesObject.status==="OK"){
+        return({
+            status:"OK",
+            totalRecordsNumber: totalRecordsNumber,
+            data:employeesObject.data
+        })
+    }else{
+        return({
+            status:"ERROR",
+            data:null
+        })
+    }
+}
+
+/**
+ * 
+ * @param {object} data Object containing employee data 
+ * @returns {Promise<{status: string, data: int}>} Object containing status of OP and the ID of the employee
+ */
+
+async function addEmployee(data){
+    //no salary no function
+    if(data.emp_cur_salary_gross<1) return ({status:"FAIL", data:"INVALID_DATA"})
+    //add the net salaray to the mix
+    let netSalary = utile.calculateSalary(data.emp_cur_salary_gross, data.emp_tax)
+    data.emp_cur_salary_net=netSalary.salary
+
+    return await databaseOperations.addEmployee(data)
+}
+
+/**
+ * Edits an employee
+ * @param {{employeeID: string, data:any}} data Object, containing the employeeID and data to be updated
+ * @returns {Promise<{status:string, data:null}>} Status of the OP
+ */
+
+async function editEmployee(data){
+    if(data.employeeID===null) return({status:"ERROR", data:"Invalid employeeID"})
+    return await databaseOperations.editEmployee(data)
+}
+
+/**
+ * Registers a new salary. Needs the ID of the employee and the month for which the salary is paid. Salary values and taxes are calculated based on DB data
+ * @param {{paid_to:int, salary_month:int}} data 
+ * @returns 
+ */
+
+async function addSalary(data){
+    let employeeID=data.paid_to
+    let month = data.salary_month
+    //some checks on data. Month is in the interval 1..12
+    if((!month)||(month>12)||(month<1)) return ({status:"ERROR", data:"INVALID_SALARY_MONTH"})
+    if(!employeeID) return ({status:"ERROR", data:"INVALID_EMPLOYEE"})
+
+    //check if the employee has a salary for the provided salary_month
+    let checkExistingSalary = await databaseOperations.hasSalaryOnDate(employeeID, month)
+    if(checkExistingSalary) return ({status:"FAIL", data:"SALARY_EXISTS"})
+    //add the salary
+    return await databaseOperations.addSalary(employeeID, month)
+}
+
+/**
+ * 
+ * @param {object} filterObject Object that filters data 
+ */
+
+ async function getSalaries(filterObject){
+    return await databaseOperations.getSalaries(filterObject)
+}
+
+async function addVacationDays(object){
+    if(object.employeeID===null) return({status:"ERROR", data:"INVALID_EMPLOYEE"})
+
+    let employeeID = object.employeeID
+    let datesObject = object.dates
+    
+    return databaseOperations.addVacationDays(employeeID, datesObject)
+}
+
+async function getVacationDays(employee){
+    return databaseOperations.getVacationDays(employee)
+}
+
+/**
+ * Gets info associated with a employee
+ * @param {int} employeeID ID of the employee
+ * @returns {Promise<{status:string, data:{salaries:array, vacationDays:array}}>} Object containing the status of the OP, salaries and vacation days
+ */
+
+async function getEmployeeOverview(employeeID){
+    let employeeInfo = databaseOperations.getEmployeeInfo(employeeID)
+    let salaries = databaseOperations.getSalaries({filter:"paid_to", filterBy:employeeID, page:1})
+    let vacationDays = databaseOperations.getVacationDays(employeeID)
+
+    let result = await Promise.all([employeeInfo, salaries, vacationDays])
+    if(result[0].status==="OK" && result[1].status==="OK" && result[2].status==="OK"){
+        return({status:"OK", data:{info:result[0].data, salaries:result[1].data, vacationDays:result[2].data}})
+    }else{
+        return({status:"FAIL", data:null})
+    }
+}
+
+module.exports={ 
     fetchClients:fetchClients,
     addInvoice:addInvoice,
     fetchInvoices:fetchInvoices,
@@ -592,5 +735,6 @@ module.exports={
     getExpenses:getExpenses,
     addExpense:addExpense,
     deleteExpense,
-    performSearch
+    getEmployees, addEmployee, editEmployee, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeOverview
+
 }
