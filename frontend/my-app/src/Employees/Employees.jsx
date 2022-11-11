@@ -60,7 +60,7 @@ let Employees=(props)=>{
             <header class="p-3">
                 <div class="container nav-head-container">
                     <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                        <span class="material-icons-outlined add-new-nav-button" style={{fontSize:'35px', marginRight:'5px'}}>group</span>
+                        <span title="Adauga" class="material-icons-outlined add-new-nav-button" style={{fontSize:'35px', marginRight:'5px'}}>group</span>
                         <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                             <button class="btn btn-danger btn-sm no-shadow navigation-button" onClick={()=>{}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span>Stergere</div></button>
                         </div>

@@ -112,15 +112,15 @@ let InvoicesOverview = (props) =>{
             <header class="p-3">
                 <div class="container nav-head-container">
                     <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                        <span class="material-icons-outlined add-new-nav-button" onClick={()=>{setnewInvoiceWindow(true)}} style={{fontSize:'35px', marginRight:'5px', color:"black"}}>sell</span>
+                        <span title="Adauga" class="material-icons-outlined add-new-nav-button" onClick={()=>{setnewInvoiceWindow(true)}} style={{fontSize:'35px', marginRight:'5px', color:"black"}}>receipt_long</span>
                         <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">                         
-                            <button class="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{openInvoice()}}><div class="inner-button-content"><span class="material-icons-outlined" >file_open</span>Genereaza</div></button>
-                            <button class="btn btn-danger btn-sm no-shadow navigation-button" onClick={()=>{deleteInvoice()}}><div class="inner-button-content"><span class="material-icons-outlined" >delete</span>Stergere</div></button>
+                            <button disabled={newInvoiceWindow ? true : false} class="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{openInvoice()}}><div class="inner-button-content"><span class="material-icons-outlined" >file_open</span>Genereaza</div></button>
+                            <button disabled={newInvoiceWindow ? true : false} class="btn btn-danger btn-sm no-shadow navigation-button" onClick={()=>{deleteInvoice()}}><div class="inner-button-content"><span class="material-icons-outlined" >delete</span>Stergere</div></button>
                         </div>
                         <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
                             <div className="search-form-container">
                                 <div className="search-input-container">
-                                    <input type="searcg" className="search-input form-control shadow-none" placeholder="Cauta.." id="filterData"></input>
+                                    <input disabled={newInvoiceWindow ? true : false} type="searcg" className="search-input form-control shadow-none" placeholder="Cauta.." id="filterData"></input>
                                     <button type="button" className="search-reset-button" onClick={()=>{resetSearch()}}><span class="material-icons-outlined">close</span></button>
                                 </div>                 
                             </div>
@@ -128,7 +128,15 @@ let InvoicesOverview = (props) =>{
                     </div>
                 </div>
             </header>  
-            {invoicesData ?           
+            {newInvoiceWindow ? 
+                <div className="p-2" style={{backgroundColor:'white'}}>  
+                    <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between'}}>
+                        <h5>Factura noua</h5>
+                        <button type="button" style={{border:'none'}} onClick={()=>{setnewInvoiceWindow(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button> 
+                    </div>                    
+                    <Invoice/>
+                </div> 
+            :invoicesData ?           
                 <div style={{display:'flex', flexDirection:'row'}}>    
                     <div style={{display:'flex', flexDirection:'column'}}>  
                         <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white" style={{width: '250px'}}> 
@@ -151,31 +159,11 @@ let InvoicesOverview = (props) =>{
                         </div>
                         <PageNavigation numberOfItems={numberOfElements} changePage={changePage}/>
                     </div>
-                    <div className="overview-container"><Invoice key={activeInvoice} invoiceID={activeInvoice}/></div>
+                    <div className="overview-container">
+                        <Invoice key={activeInvoice} invoiceID={activeInvoice}/>
+                    </div>
                 </div> : <h4 style={{textAlign:"center"}}>Nothing</h4>
             }
-            {newInvoiceWindow&&
-                <div> 
-                    <div className="blur-overlap"></div>    
-                    <button type="button" className="action-close-window " onClick={()=>{setnewInvoiceWindow(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button> 
-                    <div className="overlapping-component-inner"> 
-                        <Invoice/>
-                    </div>
-                </div> 
-            }
-            {activeRec!=null &&
-                <div> 
-                    <div className="blur-overlap"></div>  
-                    <button type="button" className="action-close-window" onClick={()=>setActiveRecInvoice(null)}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>   
-                    <div className="overlapping-component-inner">
-                        <div className="overlapping-component-actions">
-                            <span className="bd-lead">Recurrent invoice overview</span>                                
-                        </div>
-                        <RecurrentOverview recurrentID={activeRec}/>
-                    </div>              
-                </div>
-            }
-
             <Snackbar text={alertUser.text} closeSnack={()=>{setAlertUser({text:null})}}/>  
         </div>
 

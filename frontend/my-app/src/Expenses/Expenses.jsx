@@ -73,7 +73,7 @@ let Expenses=()=>{
             <header class="p-3">
                 <div class="container nav-head-container">
                     <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                        <span class="material-icons-outlined add-new-nav-button" onClick={()=>{setaddexpensesWindow(true)}} style={{fontSize:'35px', marginRight:'5px'}}>account_balance_wallet</span>
+                        <span title="Adauga" class="material-icons-outlined add-new-nav-button" onClick={()=>{setaddexpensesWindow(true)}} style={{fontSize:'35px', marginRight:'5px'}}>account_balance_wallet</span>
                         <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">                         
                         </div>
                     </div>

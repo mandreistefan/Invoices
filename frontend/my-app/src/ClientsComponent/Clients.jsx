@@ -91,10 +91,9 @@ let Clients = (props) =>{
                 <header class="p-3">
                     <div class="container nav-head-container">
                         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                            <span onClick={()=>{showonewClientWindow(true)}} class="material-icons-outlined add-new-nav-button" style={{fontSize:'35px', marginRight:'5px'}}>account_circle</span>
+                            <span title="Adauga" onClick={()=>{showonewClientWindow(true)}} class="material-icons-outlined add-new-nav-button" style={{fontSize:'35px', marginRight:'5px'}}>account_circle</span>
                             <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">                                
                                 <button className="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{props.enableInvoiceApp(activeClient.name, activeClient.id)}}><div class="inner-button-content"><span class="material-icons-outlined">library_add</span>Factureaza</div></button>
-                                <button className="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{setShowClientInvoices(true)}}><div class="inner-button-content"><span class="material-icons-outlined">folder</span>Facturi</div></button>
                                 <button className="btn btn-outline-danger btn-sm no-shadow navigation-button" onClick={()=>{deleteClient()}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span>Stergere</div></button>
                             </div>
                             <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
@@ -111,7 +110,7 @@ let Clients = (props) =>{
                 {allClients ? 
                     <div style={{display:'flex', flexDirection:'row'}}>     
                         <div style={{display:'flex', flexDirection:'column'}}>
-                            <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white" style={{width: '250px'}}> 
+                            <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white list-cards-container" style={{width: '250px'}}> 
                                 {allClients.length>0 && allClients.map((element, index)=>(
                                     <div>            
                                         <div class="list-group list-group-flush border-bottom scrollarea">
@@ -140,16 +139,6 @@ let Clients = (props) =>{
                         <ClientForm key={activeClient.id} editable={true} isSubmitable={true} clientID={activeClient.id}/>
                     </div> : <h4 style={{textAlign:"center"}}>Nothing</h4>
                 }
-                {showClientInvoices &&
-                    <div> 
-                        <div className="blur-overlap"></div>   
-                        <button type="button" className="action-close-window" onClick={()=>{setShowClientInvoices(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>  
-                        <div className="overlapping-component-inner">
-                            <span>Facturile lui <b>{activeClient.name}</b></span>
-                            <Invoices queryFilterBy="clientID" queryFilterData={activeClient.id}/>
-                        </div>              
-                    </div>
-                } 
                 {newClientWindow&&
                     <div>
                         <div className="blur-overlap"></div>     

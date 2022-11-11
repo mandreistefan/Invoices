@@ -51,7 +51,7 @@ let Products=()=>{
             <header class="p-3">
                 <div class="container nav-head-container">
                     <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                        <span class="material-icons-outlined add-new-nav-button"  onClick={()=>{setaddproductWindow(true)}} style={{fontSize:'35px', marginRight:'5px', color:"black"}}>sell</span>
+                        <span title="Adauga" class="material-icons-outlined add-new-nav-button"  onClick={()=>{setaddproductWindow(true)}} style={{fontSize:'35px', marginRight:'5px', color:"black"}}>sell</span>
                         <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">                         
                         </div>
                         <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">

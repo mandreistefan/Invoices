@@ -5,8 +5,8 @@ import Snackbar from '../Snackbar/Snackbar.jsx'
 let TheClientForm = (props)=>{
 
     let [data, setTheData]=React.useState({
-        client_fiscal_1_input: (props.userData) ? props.userData.client_fiscal_1 : "", 
-        client_fiscal_2_input: (props.userData) ? props.userData.client_fiscal_2 : "", 
+        client_fiscal_1_input: (props.userData) ? props.userData.client_fiscal_1 : "-", 
+        client_fiscal_2_input: (props.userData) ? props.userData.client_fiscal_2 : "-", 
         client_type_input: (props.userData) ? props.userData.client_type : "pers", 
         client_first_name_input: (props.userData) ? props.userData.client_first_name : "", 
         client_last_name_input:  (props.userData) ? props.userData.client_last_name : "", 
@@ -181,19 +181,19 @@ let TheClientForm = (props)=>{
                     method:"POST",
                     headers: { 'Content-Type': 'application/json' },
                     body:JSON.stringify({
-                        client_fiscal_1: document.getElementById("client_type").value=="comp" ? document.getElementById("client_fiscal_1").value : null,
-                        client_fiscal_2: document.getElementById("client_type").value=="comp" ? document.getElementById("client_fiscal_2").value : null,
-                        client_type: document.getElementById("client_type").value, 
-                        client_first_name: document.getElementById("client_first_name").value,
-                        client_last_name: document.getElementById("client_last_name").value,
-                        client_phone: document.getElementById("client_phone").value,
-                        client_email: document.getElementById("client_email").value,
-                        client_county: document.getElementById("client_county").value, 
-                        client_city: document.getElementById("client_city").value, 
-                        client_street: document.getElementById("client_street").value, 
-                        client_adress_number: document.getElementById("client_adress_number").value, 
-                        client_zip: document.getElementById("client_zip").value,
-                        client_notes: document.getElementById("client_notes").value
+                        client_fiscal_1: data.client_type_input=="comp" ? data.client_fiscal_1_input: null,
+                        client_fiscal_2: data.client_type_input=="comp" ? data.client_fiscal_2_input: null,
+                        client_type: data.client_type_input, 
+                        client_first_name: data.client_first_name_input,
+                        client_last_name: data.client_last_name_input,
+                        client_phone: data.client_phone_input,
+                        client_email: data.client_email_input,
+                        client_county: data.client_county_input, 
+                        client_city: data.client_city_input, 
+                        client_street: data.client_street_input, 
+                        client_adress_number: data.client_adress_number_input, 
+                        client_zip: data.client_zip_input,
+                        client_notes: data.client_notes_input
                     })
                 })
                 .then(response=>response.json())

@@ -45,18 +45,19 @@ function getAllClients(querryObject){
         let step=10
         if(querryObject.page>1) offSet = (querryObject.page-1) * 10
         let queryStatement;
+
         switch(querryObject.filter){
             case "id":
-                queryStatement=`SELECT * FROM clients WHERE id='${querryObject.filterBy}'`;
+                queryStatement=`SELECT * FROM clients WHERE id='${querryObject.filterBy}' ORDER by id desc`;
                 break;
             case "all":
-                queryStatement=`SELECT * FROM clients LIMIT ${offSet}, ${step}`;
+                queryStatement=`SELECT * FROM clients  ORDER by id desc LIMIT ${offSet}, ${step}`;
                 break;
             case "search":
-                queryStatement=`SELECT * FROM clients WHERE id IN (${querryObject.filterBy}) LIMIT ${offSet}, ${step}`
+                queryStatement=`SELECT * FROM clients WHERE id IN (${querryObject.filterBy})  ORDER by id desc LIMIT ${offSet}, ${step}`
                 break
             default:
-                queryStatement=`SELECT * FROM clients LIMIT ${offSet}, ${step}`;
+                queryStatement=`SELECT * FROM clients LIMIT ${offSet}, ${step} ORDER by id desc`;
         }        
 
         connection.query(queryStatement, function(error,result){
