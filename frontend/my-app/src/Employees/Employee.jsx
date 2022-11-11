@@ -151,7 +151,11 @@ export default class Employee extends React.Component{
                     dates: this.state.vacationDaysRequested
                 })
             }).then(response=>response.json()).then(data=>{
-                console.log(data)
+                if(data.status=="OK"){
+                    this.setState({alertUser:"Cerere inregistrata"})
+                }else{
+                    this.setState({alertUser:"Ceva nu a functionat"})
+                }                
             })
         }else{
             this.setState({alertUser:"O data este repetata"})
@@ -396,7 +400,7 @@ export default class Employee extends React.Component{
                             <div>
                                 <h6>Cerere zile libere</h6>                               
                             </div>
-                            <form onSubmit={this.handleVacationForm} style={{minWidth:'600px'}}>
+                            <form onSubmit={this.handleVacationForm} id="vacationDaysForm" style={{minWidth:'600px'}}>
                                 <div className="list-group w-auto">
                                     {
                                         this.state.vacationDaysRequested.map((element, index)=>(

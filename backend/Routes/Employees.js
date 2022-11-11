@@ -1,6 +1,6 @@
 const express = require('express')
 let app = express.Router()
-let {getEmployees, addEmployee, editEmployee, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeOverview} = require('../controllers/databaseController.js')
+let {getEmployees, addEmployee, editEmployee, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeOverview, archiveEmployee} = require('../controllers/databaseController.js')
 
 let filterObject={filter:"all", filterBy:"", page:1}
 
@@ -47,8 +47,16 @@ app.put('/employees', (req, res)=>{
 })
 
 //get employee overview
+app.delete("/employee/:employeeID", (req, res)=>{
+    archiveEmployee(req.params.employeeID).then(data=>{
+        res.send({status:data.status, data: data.data})
+    }).catch(error=>{
+        res.send({status:"ERROR", data: null})
+    })
+})
+
+//get employee overview
 app.get("/employee/:employeeID", (req, res)=>{
-    console.log(req.params.employeeID)
     getEmployeeOverview(req.params.employeeID).then(data=>{
         res.send({status:data.status, data: data.data})
     }).catch(error=>{

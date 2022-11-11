@@ -2,6 +2,7 @@ import React from "react";
 import Snackbar from '../Snackbar/Snackbar.jsx'
 import PageNavigation from '../PageNavigation.jsx'
 import Employee from './Employee.jsx'
+import EmployeeForm from './EmployeeForm.jsx'
 
 let Employees=(props)=>{
 
@@ -11,13 +12,14 @@ let Employees=(props)=>{
     let [query, setFilter] = React.useState({filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
     let [activeEmployee, setActive] = React.useState(null)
     let [alertUser, setAlertUser] = React.useState(null)
+    let [addEmployeeWindow, showaddEmployeeWindow] = React.useState(false)
+    let [editEmployeeWindow, setEditableEmployee] = React.useState(false)
 
     React.useEffect(()=>{
         fetchData()        
     },[query])
 
     function fetchData(){
-        console.log("trigger")
         fetch(`./employees?filter=${query.filter}&filterBy=${query.filterBy}&page=${query.page}`).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 setEmployees(data.data)
@@ -55,14 +57,30 @@ let Employees=(props)=>{
         setFilter({...query, filter:"search", filterBy:searchTermStringified})
     }
 
+    function deleteEmployee(){
+        fetch(`/employee/${activeEmployee}`, {
+            method:"DELETE",
+            headers: { 'Content-Type': 'application/json' }
+        }).then(response=>response.json()).then(data=>{
+            if(data.status==="OK"){
+                fetchData()
+            }else{
+                setAlertUser("Something went wrong")
+            }            
+        }).catch(error=>{
+            setAlertUser("Something went wrong")
+        }) 
+    }
+
     return(
         <div className="app-data-container">
             <header class="p-3">
                 <div class="container nav-head-container">
                     <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                        <span title="Adauga" class="material-icons-outlined add-new-nav-button" style={{fontSize:'35px', marginRight:'5px'}}>group</span>
+                        <span title="Adauga" onClick={()=>{showaddEmployeeWindow(true)}} class="material-icons-outlined add-new-nav-button" style={{fontSize:'35px', marginRight:'5px'}}>group</span>
                         <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                            <button class="btn btn-danger btn-sm no-shadow navigation-button" onClick={()=>{}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span>Stergere</div></button>
+                            <button class="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{setEditableEmployee(true)}}><div class="inner-button-content"><span class="material-icons-outlined">edit</span>Editare</div></button>
+                            <button class="btn btn-danger btn-sm no-shadow navigation-button" onClick={()=>{deleteEmployee()}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span>Stergere</div></button>
                         </div>
                         <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
                             <div className="search-form-container">
@@ -103,7 +121,24 @@ let Employees=(props)=>{
                     </div>
                 </div> : <h4 style={{textAlign:"center"}}>Nu exista date</h4> : <h4 style={{textAlign:"center"}}>Nu exista date</h4>
             }
-            
+            {addEmployeeWindow && 
+                <div>
+                    <div className="blur-overlap"></div>     
+                    <button type="button" className="action-close-window" onClick={()=>{showaddEmployeeWindow(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
+                    <div className="overlapping-component-inner">
+                        <EmployeeForm/>
+                    </div>
+                </div>
+            }
+            {editEmployeeWindow && 
+                <div>
+                    <div className="blur-overlap"></div>     
+                    <button type="button" className="action-close-window" onClick={()=>{setEditableEmployee(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
+                    <div className="overlapping-component-inner">
+                        <EmployeeForm employeeID={activeEmployee}/>
+                    </div>
+                </div>
+            }
             <Snackbar text={alertUser} closeSnack={()=>{setAlertUser(null)}}/>  
         </div>
     )

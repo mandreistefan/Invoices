@@ -649,7 +649,22 @@ async function addEmployee(data){
 
 async function editEmployee(data){
     if(data.employeeID===null) return({status:"ERROR", data:"Invalid employeeID"})
-    return await databaseOperations.editEmployee(data)
+    return await databaseOperations.editEmployee(data.employeeID, data.dataToBeUpdated)
+}
+
+/**
+ * Archives an employee
+ * @param {integer} employeeID The employee ID
+ * @returns {Promise<status:string, data:null>} The status of the OP
+ */
+
+async function archiveEmployee(employeeID){
+
+    let moveDataStatus = await databaseOperations.archiveEmployee(employeeID)
+    if(moveDataStatus=="OK"){
+        return await databaseOperations.deleteEmployee(employeeID)
+    }
+    return({status:"ERROR", data:null})
 }
 
 /**
@@ -735,6 +750,6 @@ module.exports={
     getExpenses:getExpenses,
     addExpense:addExpense,
     deleteExpense,
-    getEmployees, addEmployee, editEmployee, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeOverview
+    getEmployees, addEmployee, editEmployee, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeOverview, archiveEmployee
 
 }

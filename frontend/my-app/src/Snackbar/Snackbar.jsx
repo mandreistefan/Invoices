@@ -18,10 +18,10 @@ let Snackbar = (props) =>{
 
     return(
         snackBar.text!=null&&
-        <div className="snackbar-container alert alert-warning">
+        <div className="snackbar-container">
             {snackBar.text}
             <button type="button" className="close" aria-label="Close" onClick={()=>{closeSnack()}}>
-                <span aria-hidden="true">&times;</span>
+                <span aria-hidden="true" style={{color:'white'}}>&times;</span>
             </button>
         </div>
     )

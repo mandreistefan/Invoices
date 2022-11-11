@@ -1337,7 +1337,7 @@ function getEmployees(queryObject){
 
 function addEmployee(data){
     return new Promise((resolve, reject)=>{
-        connection.query(`INSERT INTO employees(emp_first_name, emp_last_name, emp_adress, emp_ident_no, emp_job_name, emp_cur_salary_gross, emp_cur_salary_net, emp_tax) VALUES ('${data.emp_first_name}', '${data.emp_last_name}', '${data.emp_adress}', '${data.emp_ident_no}', '${data.emp_job_name}', '${data.emp_cur_salary_gross}', '${data.emp_cur_salary_net}', '${data.emp_tax}')`, function(error, result){
+        connection.query(`INSERT INTO employees(emp_first_name, emp_last_name, emp_adress, emp_ident_no, emp_job_name, emp_cur_salary_gross, emp_cur_salary_net, emp_tax, emp_notes, emp_phone) VALUES ('${data.emp_first_name}', '${data.emp_last_name}', '${data.emp_adress}', '${data.emp_ident_no}', '${data.emp_job_name}', '${data.emp_cur_salary_gross}', '${data.emp_cur_salary_net}', '${data.emp_tax}', '${emp_notes}', '${emp_phone}')`, function(error, result){
             if(error){
                 console.log(error)
                 reject({status:"ERROR"})
@@ -1353,14 +1353,12 @@ function addEmployee(data){
 
 /**
  * 
- * @param {object} data Object containing data to be updated 
+ * @param {*} employeeID The ID of the employee
+ * @param {*} data the data to be updated, as a key:value object
  * @returns {Promise<{status:string, data:null}>} Status of the OP
  */
 
-function editEmployee(data){
-    //get ID and remove it from the object
-    let employeeID=data.employeeID
-    delete data.employeeID
+function editEmployee(employeeID, data){
     return new Promise((resolve, reject)=>{
         connection.query(`UPDATE employees SET ? WHERE id=${employeeID}`, data, function(error, result){
             if(error){
@@ -1598,6 +1596,57 @@ function getEmployeeInfo(employeeID){
     })
 }
 
+/**
+ * Moves data from the employee table to the archive table
+ * @param {integer} employeeID ID of the employee
+ * @returns {Promise<string>} Status of the OP
+ */
+
+function archiveEmployee(employeeID){
+    return new Promise((resolve, reject)=>{
+        connection.query(`INSERT INTO employees_archived(id, emp_first_name, emp_last_name, emp_adress, emp_ident_no, emp_date, emp_active, emp_job_name, emp_cur_salary_gross, emp_tax, emp_cur_salary_net, emp_notes) SELECT * FROM employees where id=${employeeID}`, function(error, result){
+            if(error){
+                console.log(error)
+                reject ({status:"ERROR", data:null})
+            }
+            if(result){
+                if(result.insertId>0){
+                    resolve("OK")
+                }else{
+                    resolve("FAIL")
+                } 
+            }
+            resolve("FAIL")
+        })
+    })
+}
+
+/**
+ * Delete an employee
+ * @param {integer} employeeID Employee ID
+ * @returns {Promise<status:string, data:null>} Status of the OP
+ */
+
+function deleteEmployee(employeeID){
+    return new Promise((resolve, reject)=>{
+        console.log(`DELETE FROM employees WHERE id='${employeeID}'`)
+        connection.query(`DELETE FROM employees WHERE id='${employeeID}'`, function(error, result){
+            if(error){
+                console.log(error)
+                reject ({status:"ERROR", data:null})
+            }
+            if(result){
+                if(result.affectedRows>0){
+                    resolve({status:"OK", data:null})
+                }else{
+                    resolve({status:"FAIL", data:null})
+                } 
+            }
+            resolve({status:"FAIL", data:null})
+        })
+    })  
+}
+
 module.exports ={
     getAllClients:getAllClients,
     addClient:addClient,
@@ -1635,5 +1684,5 @@ module.exports ={
     addExpense,
     deleteExpense,
     searchDatabase,
-    getEmployees, addEmployee, editEmployee, hasSalaryOnDate, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeInfo
+    getEmployees, addEmployee, editEmployee, hasSalaryOnDate, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeInfo, archiveEmployee, deleteEmployee
 }
