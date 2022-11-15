@@ -25,7 +25,7 @@ let InvoicesOverview = (props) =>{
 
     //archive an invoice
     let deleteInvoice = () =>{
-        fetch("/invoices",
+        fetch("http://localhost:3000/invoices",
         {
             method:"DELETE",
             headers: { 'Content-Type': 'application/json' },
@@ -61,7 +61,7 @@ let InvoicesOverview = (props) =>{
     let fetchData=()=>{
         //fetches all data
         let fetcher;
-        fetcher = `/invoices?target=invoices&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page}`
+        fetcher = `http://localhost:3000/invoices?target=invoices&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page}`
         
         fetch(fetcher,
         {
@@ -109,11 +109,11 @@ let InvoicesOverview = (props) =>{
 
     return(
         <div className="app-data-container">  
-            <header class="p-3">
+            <header class="p-3 navbar-header">
                 <div class="container nav-head-container">
                     <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                        <span title="Adauga" class="material-icons-outlined add-new-nav-button" onClick={()=>{setnewInvoiceWindow(true)}} style={{fontSize:'35px', marginRight:'5px', color:"black"}}>receipt_long</span>
                         <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">                         
+                            <button disabled={newInvoiceWindow ? true : false} class="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{setnewInvoiceWindow(true)}}><div class="inner-button-content"><span class="material-icons-outlined" >receipt_long</span>Adauga</div></button>
                             <button disabled={newInvoiceWindow ? true : false} class="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{openInvoice()}}><div class="inner-button-content"><span class="material-icons-outlined" >file_open</span>Genereaza</div></button>
                             <button disabled={newInvoiceWindow ? true : false} class="btn btn-danger btn-sm no-shadow navigation-button" onClick={()=>{deleteInvoice()}}><div class="inner-button-content"><span class="material-icons-outlined" >delete</span>Stergere</div></button>
                         </div>
@@ -129,15 +129,15 @@ let InvoicesOverview = (props) =>{
                 </div>
             </header>  
             {newInvoiceWindow ? 
-                <div className="p-2" style={{backgroundColor:'white'}}>  
+                <div style={{backgroundColor:'white', overflowY:'auto', padding:'10px'}} id="new-invoice-container">  
                     <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between'}}>
                         <h5>Factura noua</h5>
-                        <button type="button" style={{border:'none'}} onClick={()=>{setnewInvoiceWindow(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button> 
+                        <button type="button" title="Inchide" style={{border:'none'}} onClick={()=>{setnewInvoiceWindow(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button> 
                     </div>                    
                     <Invoice/>
                 </div> 
             :invoicesData ?           
-                <div style={{display:'flex', flexDirection:'row'}}>    
+                <div style={{display:'flex', flexDirection:'row', overflowY:'auto'}} id="invoices-overview-container">    
                     <div style={{display:'flex', flexDirection:'column'}}>  
                         <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white" style={{width: '250px'}}> 
                             {invoicesData.length>0 && invoicesData.map((element, index)=>(

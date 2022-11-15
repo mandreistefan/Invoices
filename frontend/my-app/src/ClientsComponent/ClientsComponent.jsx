@@ -2,7 +2,6 @@ import React from "react";
 import Clients from './Clients.jsx'
 import './ClientsComponent.css'
 import Invoice from '../InvoiceComponent/Invoice.jsx';
-import ClientForm from '../ClientForm/ClientForm.jsx';
 
 export default class ClientsComponent extends React.Component{
 

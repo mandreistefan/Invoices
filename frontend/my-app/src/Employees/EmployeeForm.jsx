@@ -18,6 +18,7 @@ let EmployeeForm = (props)=>{
     let [alertUser, setAlertUser] = React.useState({text: null})
     let [fieldsDisabled, setFieldsDisabled] = React.useState(true)
     let [invalidDataItems, setInvalidData] = React.useState([])
+    let [dataModified, setdataModified] = React.useState(false)
 
     React.useEffect(()=>{
         if(props.employeeID) setEmployeeData(props.employeeID)
@@ -25,7 +26,7 @@ let EmployeeForm = (props)=>{
 
     //for a client ID, retrieve and set form data
     let setEmployeeData=(ID)=>{
-        fetch(`/employee/${ID}`,
+        fetch(`http://localhost:3000/employee/${ID}`,
         {
             method:"GET",
             headers: { 'Content-Type': 'application/json' }
@@ -92,12 +93,13 @@ let EmployeeForm = (props)=>{
         if(validateInput(elementTrigger, event.target.value, happenedIn)){ 
             event.target.attributes.getNamedItem('modified').value=true;
         }
+        setdataModified(true)
     }
 
     //register a new employee
     let submitNewEmployee = () =>{
             if(newemployeeDataValid()){
-                fetch(`/employees`, {
+                fetch(`http://localhost:3000/employees`, {
                     method:"POST",
                     headers: { 'Content-Type': 'application/json' },
                     body:JSON.stringify({
@@ -118,6 +120,7 @@ let EmployeeForm = (props)=>{
                         setEmployeeData(data.data)
                         setFieldsDisabled(false) 
                         setAlertUser({text:"Employee registered"})
+                        setdataModified(false)
                     }else if(data.status==="SERVER_ERROR"){
                         setAlertUser({text:"Baza de date nu poate fi accesata"})
                     }else{
@@ -127,7 +130,6 @@ let EmployeeForm = (props)=>{
         }else{
             setAlertUser({text:"Invalid client data"})
         }
-
     }
 
     //edit the data for a registered client
@@ -144,7 +146,7 @@ let EmployeeForm = (props)=>{
         if(document.getElementById("emp_notes").attributes.getNamedItem('modified').value==="true") dataToBeSent.emp_notes=document.getElementById("emp_notes").value; 
         if(document.getElementById("emp_tax").attributes.getNamedItem('modified').value==="true") dataToBeSent.emp_notes=document.getElementById("emp_tax").value;          
 
-        fetch(`/employees`, {
+        fetch(`http://localhost:3000/employees`, {
             method:"PUT",
             headers: { 'Content-Type': 'application/json' },
             body:JSON.stringify({
@@ -155,12 +157,15 @@ let EmployeeForm = (props)=>{
         .then(response=>response.json())
         .then(data=>{
             if(data.status==="OK"){
-                setAlertUser({text:"Client updated"})
+                setAlertUser({text:"Angajat actualizat"})
+                setdataModified(false)
             }else if(data.status==="SERVER_ERROR"){
                 setAlertUser({text:"Baza de date nu poate fi accesata"})
             }else{
-                setAlertUser({text:"Something went wrong"})
+                setAlertUser({text:"Eroare"})
             }
+        }).catch(error=>{
+            setAlertUser({text:"Eroare"})
         })
     }
 
@@ -223,7 +228,7 @@ let EmployeeForm = (props)=>{
                     <textarea class="form-control" id="emp_notes" name="emp_notes" rows="4" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("emp_notes") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.emp_notes_input}></textarea>
                 </div>
             </div>
-            <button id="edit-client-data" className="btn btn-sm btn-success actions-button"><span className="action-button-label" onClick={()=>{submitemployeeData()}}><span class="material-icons-outlined">save</span> SAVE</span></button>
+            <button id="edit-client-data" className="w-100 btn btn-primary btn-lg" disabled={dataModified ? false:true}><span className="action-button-label" onClick={()=>{submitemployeeData()}}><span class="material-icons-outlined">save</span> SAVE</span></button>
             <Snackbar text={alertUser.text} closeSnack={()=>{setAlertUser({text:null})}}/>   
         </div>
     )       

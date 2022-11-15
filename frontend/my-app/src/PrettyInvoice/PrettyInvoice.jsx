@@ -6,7 +6,7 @@ let PrettyInvoice = (props) =>{
     let [invoiceData, invoiceDataSetter] = React.useState(null)
 
     React.useEffect(()=>{
-        fetch(`/invoiceGenerator/?filter=invoiceID&filterBy=${props.invoiceNumber}`,
+        fetch(`http://localhost:3000/invoiceGenerator/?filter=invoiceID&filterBy=${props.invoiceNumber}`,
         {
             method: "GET",
             headers: { 'Content-Type': 'application/json' }

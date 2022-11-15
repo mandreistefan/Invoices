@@ -8,13 +8,13 @@ let Products=()=>{
 
     const defaultFilter={filter:"all", filterBy:"", page:1}
     let [query, setFilter] = React.useState({filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
-    let [predefinedProducts, ppSet] = React.useState(null)
+    let [predefinedProducts, ppSet] = React.useState([])
     let [productProps, setProductProps] = React.useState(null)
     let [snackBarText, setSnackBarText] = React.useState(null)
     let [addproductWindow, setaddproductWindow] = React.useState(false)
 
     React.useEffect(()=>{
-        fetch(`./products?filter=${query.filter}&filterBy=${query.filterBy}&page=${query.page}`).then(response=>response.json()).then(data=>{
+        fetch(`http://localhost:3000/products?filter=${query.filter}&filterBy=${query.filterBy}&page=${query.page}`).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 ppSet(data.data)
             }else if(data.status==="SERVER_ERROR"){
@@ -22,6 +22,8 @@ let Products=()=>{
             }else{
                 setSnackBarText("Eroare")
             }
+        }).catch(error=>{
+            setSnackBarText("Eroare")
         })
     },[query])
 
@@ -48,11 +50,11 @@ let Products=()=>{
 
     return(
         <div>
-            <header class="p-3">
+            <header class="p-3 navbar-header">
                 <div class="container nav-head-container">
                     <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                        <span title="Adauga" class="material-icons-outlined add-new-nav-button"  onClick={()=>{setaddproductWindow(true)}} style={{fontSize:'35px', marginRight:'5px', color:"black"}}>sell</span>
-                        <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">                         
+                        <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">      
+                            <button className="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{setaddproductWindow(true)}}><div class="inner-button-content"><span class="material-icons-outlined">sell</span>Adauga</div></button>                                                   
                         </div>
                         <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
                             <div className="search-form-container">
@@ -74,8 +76,8 @@ let Products=()=>{
                     </div>
                 </div>
             }
-            <div className="products-container">            
-                {predefinedProducts===null ? <div><span>Loading...</span></div>:        
+            <div className="products-container" style={{marginTop:'25px'}}>            
+                {predefinedProducts &&       
                     <div className="app-data-container"> 
                         <h6>Produse</h6>
                         <table className='table table-hover table-sm app-data-table'>
@@ -111,11 +113,10 @@ let Products=()=>{
                                             } 
                                         </td>
                                     </tr>
-                                )):""
+                                )):"Nu exista produse"
                             }
                             </tbody>
                         </table>
-                        {predefinedProducts.length==0 ? <div style={{textAlign:"center", width:"100%"}}><h4 >No data</h4></div> : ""}
                         {productProps!=null &&
                             <div> 
                                 <div className="blur-overlap"></div>    

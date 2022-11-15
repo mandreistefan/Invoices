@@ -22,8 +22,8 @@ let SideNavigation = (props) =>{
     let navigationElements = 
     [
         {id:0, name: "clients", displayName:'Clienti', icon:'account_circle'},
-        {id:6, name: "employees", displayName:'Angajati', icon:'group'},
         {id:1, name: "invoices", displayName:'Facturi', icon:'receipt_long'},
+        {id:6, name: "employees", displayName:'Angajati', icon:'group'},
         {id:2, name: "products", displayName:'Produse', icon:'sell'},
         {id:5, name: "expenses", displayName:'Cheltuieli', icon:'account_balance_wallet'},
         {id:3, name: "financial", displayName:'Finante', icon:'attach_money'},
@@ -46,10 +46,6 @@ let SideNavigation = (props) =>{
 
     return(
         <div className="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style={{width: '200px'}}>
-            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                <span class="fs-4">Sidebar</span>
-            </a>
-            <hr></hr>
             <ul className="nav nav-pills flex-column mb-auto">
                 {navigationElements.map(element=>(
                     <li className="nav-item">

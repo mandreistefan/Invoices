@@ -23,6 +23,7 @@ let TheClientForm = (props)=>{
     let [alertUser, setAlertUser] = React.useState({text: null})
     let [fieldsDisabled, setFieldsDisabled] = React.useState(false)
     let [invalidDataItems, setInvalidData] = React.useState([])
+    let [dataModified, setdataModified] = React.useState(false)
 
     React.useEffect(()=>{
 
@@ -58,7 +59,7 @@ let TheClientForm = (props)=>{
 
     //for a client ID, retrieve and set form data
     let setClientData=(ID)=>{
-        fetch(`/clients?filter=id&filterBy=${ID}`,
+        fetch(`http://localhost:3000/clients?filter=id&filterBy=${ID}`,
         {
             method:"GET",
             headers: { 'Content-Type': 'application/json' }
@@ -96,40 +97,41 @@ let TheClientForm = (props)=>{
         let validatingThis, invalidDataArray=[];
         //first name
         validatingThis=document.getElementById("client_first_name").value
+        console.log(document.getElementById("client_first_name").value)
         //must have data
-        if(validatingThis.length==0){
+        if(validatingThis.length===0){
             console.log("Invalid data for first name")
             invalidDataArray.push("client_first_name")
         }
         //phone name
         validatingThis=document.getElementById("client_phone").value
         //must have data
-        if(validatingThis.length!=10){
+        if(validatingThis.length!==10){
             console.log("Invalid data for phone")
             invalidDataArray.push("client_phone")
         }
         //email - only if filled
         validatingThis=document.getElementById("client_email").value        
         if(validatingThis.length>0){
-            if((validatingThis.indexOf("@")==-1)||(validatingThis.indexOf(".")==-1)){
+            if((validatingThis.indexOf("@")===-1)||(validatingThis.indexOf(".")==-1)){
                 console.log("Invalid data for email")
             }
         }
         //county
         validatingThis=document.getElementById("client_county").value
-        if(validatingThis.length==0){
+        if(validatingThis.length===0){
             console.log("Invalid data for county")
             invalidDataArray.push("client_county")
         }
         //city
         validatingThis=document.getElementById("client_city").value
-        if(validatingThis.length==0){
+        if(validatingThis.length===0){
             console.log("Invalid data for city")
             invalidDataArray.push("client_city")
         }
         //street
         validatingThis=document.getElementById("client_street").value
-        if(validatingThis.length==0){
+        if(validatingThis.length===0){
             console.log("Invalid data for street")
             invalidDataArray.push("client_street")
         }
@@ -172,17 +174,18 @@ let TheClientForm = (props)=>{
         if(validateInput(elementTrigger, event.target.value, happenedIn)){ 
             event.target.attributes.getNamedItem('modified').value=true;
         }
+        setdataModified(true)
     }
 
     //register a new client
     let submitNewClient = () =>{
             if(newClientDataValid()){
-                fetch(`/clients`, {
+                fetch(`http://localhost:3000/clients`, {
                     method:"POST",
                     headers: { 'Content-Type': 'application/json' },
                     body:JSON.stringify({
-                        client_fiscal_1: data.client_type_input=="comp" ? data.client_fiscal_1_input: null,
-                        client_fiscal_2: data.client_type_input=="comp" ? data.client_fiscal_2_input: null,
+                        client_fiscal_1: data.client_type_input==="comp" ? data.client_fiscal_1_input: null,
+                        client_fiscal_2: data.client_type_input==="comp" ? data.client_fiscal_2_input: null,
                         client_type: data.client_type_input, 
                         client_first_name: data.client_first_name_input,
                         client_last_name: data.client_last_name_input,
@@ -201,23 +204,26 @@ let TheClientForm = (props)=>{
                     if(data.status==="OK"){
                         setClientData(data.data)
                         setFieldsDisabled(false) 
-                        setAlertUser({text:"Client registered"})
+                        setAlertUser({text:"Client inregistrat"})
+                        setdataModified(false)
                     }else if(data.status==="SERVER_ERROR"){
                         setAlertUser({text:"Baza de date nu poate fi accesata"})
                     }else{
-                        setAlertUser({text:"Something went wrong"})
+                        setAlertUser({text:"Eroare"})
                     }
                 })
+                .catch(error=>{
+                    setAlertUser({text:"Eroare"})
+                })
         }else{
-            setAlertUser({text:"Invalid client data"})
+            setAlertUser({text:"Datele sunt invalide"})
         }
-
     }
 
     //edit the data for a registered client
     let updateExistingClient = () =>{
         let dataToBeSent ={}
-        if(document.getElementById("client_type").value=="comp"){
+        if(document.getElementById("client_type").value==="comp"){
             if((document.getElementById("client_fiscal_1").attributes.getNamedItem('modified').value==="true") && (document.getElementById("client_type").value==="comp")) dataToBeSent.client_fiscal_1=document.getElementById("client_fiscal_1").value;
             if((document.getElementById("client_fiscal_2").attributes.getNamedItem('modified').value==="true") && (document.getElementById("client_type").value==="comp")) dataToBeSent.client_fiscal_2=document.getElementById("client_fiscal_2").value;
         }      
@@ -234,7 +240,7 @@ let TheClientForm = (props)=>{
         if(document.getElementById("client_phone").attributes.getNamedItem('modified').value==="true") dataToBeSent.client_phone=document.getElementById("client_phone").value;          
         if(document.getElementById("client_notes").attributes.getNamedItem('modified').value==="true") dataToBeSent.client_notes=document.getElementById("client_notes").value; 
 
-        fetch(`/clients`, {
+        fetch(`http://localhost:3000/clients`, {
             method:"PUT",
             headers: { 'Content-Type': 'application/json' },
             body:JSON.stringify({
@@ -246,11 +252,14 @@ let TheClientForm = (props)=>{
         .then(data=>{
             if(data.status==="OK"){
                 setAlertUser({text:"Client updated"})
+                setdataModified(false)
             }else if(data.status==="SERVER_ERROR"){
                 setAlertUser({text:"Baza de date nu poate fi accesata"})
             }else{
-                setAlertUser({text:"Something went wrong"})
+                setAlertUser({text:"Eroare"})
             }
+        }).catch(error=>{
+            setAlertUser({text:"Eroare"})
         })
     }
 
@@ -271,7 +280,7 @@ let TheClientForm = (props)=>{
             <div className='form-row'>
                 <div className="form-group col-md-3">
                     <label className="form-subsection-label" htmlFor="client_type">Tip client</label><br/>               
-                    <select className="form-control form-control-sm shadow-none" id="client_type" name="client_type"disabled={(fieldsDisabled===false) ?  true: false} modified="false" autoComplete="off" onChange={changeFormData} value={data.client_type_input}>
+                    <select className="form-control form-control shadow-none" id="client_type" name="client_type"disabled={(fieldsDisabled===false) ?  true: false} modified="false" autoComplete="off" onChange={changeFormData} value={data.client_type_input}>
                         <option value="pers">Persoana fizica</option>
                         <option value="comp">Companie</option>
                     </select>  
@@ -279,13 +288,13 @@ let TheClientForm = (props)=>{
                 {data.client_type_input==="comp" && 
                     <div className="form-group col-md-3">            
                         <label className="form-subsection-label" htmlFor="client_fiscal_1">Nr. Reg. Com</label><br/>
-                        <input type="text" id="client_fiscal_1" name="client_fiscal_1" disabled={(fieldsDisabled===false ? true: false || data.client_type_input=="pers")} className={invalidDataItems.includes("client_fiscal_1") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" autoComplete="off" onChange={changeFormData} value={data.client_fiscal_1_input}/>
+                        <input type="text" id="client_fiscal_1" name="client_fiscal_1" disabled={(fieldsDisabled===false ? true: false || data.client_type_input==="pers")} className={invalidDataItems.includes("client_fiscal_1") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" autoComplete="off" onChange={changeFormData} value={data.client_fiscal_1_input}/>
                     </div>
                 }
                 {data.client_type_input==="comp" && 
                     <div className="form-group col-md-3">   
                         <label className="form-subsection-label" htmlFor="client_fiscal_2">CIF</label><br/>
-                        <input type="text" id="client_fiscal_2" name="client_fiscal_2" disabled={(fieldsDisabled===false ?  true: false || data.client_type_input=="pers")} className={invalidDataItems.includes("client_fiscal_2") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.client_fiscal_2_input}/>
+                        <input type="text" id="client_fiscal_2" name="client_fiscal_2" disabled={(fieldsDisabled===false ?  true: false || data.client_type_input==="pers")} className={invalidDataItems.includes("client_fiscal_2") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.client_fiscal_2_input}/>
                     </div>
                 }
             </div>
@@ -334,10 +343,9 @@ let TheClientForm = (props)=>{
                 <div className="form-group col-md-12">   
                     <label className="form-subsection-label" htmlFor="client_notes">Informatii aditionale:</label><br/>
                     <textarea class="form-control" id="client_notes" name="client_notes" rows="4" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("client_notes") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.client_notes_input}></textarea>
-                    
                 </div>
             </div>
-            {(props.isSubmitable===true) && <button id="edit-client-data" className="btn btn-sm btn-success actions-button"><span className="action-button-label" onClick={()=>{submitClientData()}}><span class="material-icons-outlined">save</span> SAVE</span></button>}
+            {(props.isSubmitable===true) && <button id="edit-client-data" className="w-100 btn btn-primary btn-lg" disabled={dataModified ? false:true}><span className="action-button-label" onClick={()=>{submitClientData()}}>SALVARE</span></button>}
             <Snackbar text={alertUser.text} closeSnack={()=>{setAlertUser({text:null})}}/>   
         </div>
     )       

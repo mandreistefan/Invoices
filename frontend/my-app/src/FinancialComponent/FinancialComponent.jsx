@@ -28,7 +28,7 @@ let Financial = (props) =>{
         let endDayArray = dateInterval.end.split("-")
         let filterBy=`${startDateArray[2]}${startDateArray[1]}${startDateArray[0].substring(2,4)}-${endDayArray[2]}${endDayArray[1]}${endDayArray[0].substring(2,4)}`
 
-        let querry = `/financial?filter=interval&filterBy=${filterBy}`
+        let querry = `http://localhost:3000/financial?filter=interval&filterBy=${filterBy}`
         fetch(querry).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 //periodicalData has a different use
@@ -61,33 +61,23 @@ let Financial = (props) =>{
 
     return(        
         <div>
-            <header class="p-3">
+            <header class="p-3 navbar-header">
                 <div class="container nav-head-container">
                     <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                        <span class="material-icons-outlined" style={{fontSize:'35px', marginRight:'5px'}}>attach_money</span>
-                        <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">                         
+                        <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0"> 
+                            <div style={{display:'flex', flexDirection:'row', alignItems:'center', float:'right'}}>
+                                <span title="Interval" style={{marginRight:'5px'}} className="material-icons-outlined">date_range</span>
+                                <div className="intervals-container">
+                                    <input type="date" id="start" name="trip-start" value={dateInterval.start} onChange={someFunction}></input>
+                                    <input type="date" id="end" name="trip-end" value={dateInterval.end} onChange={someFunction}></input>
+                                </div> 
+                            </div>                        
                         </div>
                     </div>
                 </div>
             </header> 
             {financialData ?
-            <div className="app-data-container financial-container">
-                <div className="alert alert-secondary interval-setter">
-                    <div style={{display:'flex', flexDirection:'row', alignItems:'center'}}>
-                        <label style={{marginRight:'5px'}}>Interval:</label>
-                        <div className="intervals-container">
-                            <input type="date" id="start" name="trip-start" value={dateInterval.start} onChange={someFunction}></input>
-                            <input type="date" id="end" name="trip-end" value={dateInterval.end} onChange={someFunction}></input>
-                            <button style={{height:'26px', fontSize:'14px', border:'none', borderRadius:'6px'}} onClick={()=>{fetchData()}}><span className="action-button-label">Apply</span></button>
-                        </div> 
-                    </div>
-
-                    <div style={{display:'flex', flexDirection:'row', alignItems:'center', marginTop:'5px'}}>
-                        <label style={{marginRight:'5px'}}>Taxa profit:</label>
-                        <input type="text" style={{width:"30px", borderRadius:'6px', border:'1px solid black'}} value={taxes.profitTaxPercentage} onChange={recalculateTaxes}></input>
-                    </div>
-                </div> 
-        
+            <div className="app-data-container">
                 <div className="list-group w-auto">
                     <div style={{backgroundColor:"white", borderRadius:'6px', padding:'16px', marginBottom:'16px'}}>
                         <div style={{display:'flex', flexDirection:'row', alignItems:'center', marginBottom:'5px'}}>                

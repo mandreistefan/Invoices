@@ -6,7 +6,7 @@ let Add = (props) =>{
 
     let submitNewClient = (event) =>{
         event.preventDefault()
-        fetch("/clients", {
+        fetch("http://localhost:3000/clients", {
             method:"POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

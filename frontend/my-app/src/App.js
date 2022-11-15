@@ -2,7 +2,7 @@ import './App.css';
 import React from 'react';
 import SideNavigation from './SideNavigation'
 import ClientsComponent from './ClientsComponent/ClientsComponent.jsx'
-import InvoicesComponent from './InvoiceComponent/InvoicesComponent.jsx'
+import InvoicesComponent from './InvoiceComponent/InvoicesOverview'
 import FinancialComponent from './FinancialComponent/FinancialComponent.jsx'
 import Products from './PredefinedProducts/PredefinedProducts.jsx'
 import DatabaseOperations from './DatabaseOperations/DatabaseOperations.jsx'

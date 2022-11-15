@@ -110,7 +110,8 @@ table tr:hover{
 .app-data-container{
   box-sizing: border-box;
   max-height: 100vh;
-  padding-bottom:10px;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .page-link{
@@ -201,10 +202,11 @@ table tr:hover{
   margin-top:auto;
   margin-bottom: auto;
   max-height: 90vh;
-  overflow-y: scroll;
+  overflow-y: auto;
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
 
 .overlapping-component-inner::-webkit-scrollbar {
   display: none;
@@ -472,15 +474,14 @@ background-color:#D1D1D1
 }
 
 .overview-container{
-  max-height: 800px;
   border-radius: 5px;
   border: 1px solid #F6F2F5;
   padding: 10px;
   background-color: white;
-  max-height: 85vh;
   overflow-y: scroll;
   overflow-x: hidden;
   width: 100%;
+  max-height: calc(100vh - 65px);
 }
 
 .date-picker-button{
@@ -643,8 +644,8 @@ input[type=date]{
 }
 
 .list-cards-container{
-  max-height: 85vh;
-  overflow-y: scroll;
+  overflow-y: auto;
+  max-height: calc(100vh - 65px)
 }
 
 /* Tooltip container */
@@ -706,4 +707,18 @@ input[type=date]{
 @keyframes fadeout {
   from {bottom: 30px; opacity: 1;}
   to {bottom: 0; opacity: 0;}
+}
+
+.navbar-header{
+  border-bottom: 1px solid lightgray;
+  height: 65px;
+}
+
+#employee-info, #employee-title{
+  padding: 0;
+  list-style-type: none;
+}
+
+#invoice-overview-container, #new-invoice-container, .clients-overview-container{
+  height: calc(100% - 65px);
 }

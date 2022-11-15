@@ -25,7 +25,7 @@ let Expenses=()=>{
         let endDayArray = dateInterval.end.split("-")
         let filterBy=`${startDateArray[2]}${startDateArray[1]}${startDateArray[0].substring(2,4)}-${endDayArray[2]}${endDayArray[1]}${endDayArray[0].substring(2,4)}`
 
-        fetch(`./expenses?filter=interval&filterBy=${filterBy}`).then(response=>response.json()).then(data=>{
+        fetch(`http://localhost:3000/expenses?filter=interval&filterBy=${filterBy}`).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 setExpenses(data.data)
             }else if(data.status==="SERVER_ERROR"){
@@ -33,12 +33,14 @@ let Expenses=()=>{
             }else{
                 setAlertUser({text: "Eroare"}) 
             }
+        }).catch(error=>{
+            setAlertUser({text: "Eroare"}) 
         })
     }
 
     //deletes a expense
     let deleteExpense=(id)=>{
-        fetch("/expenses",
+        fetch("http://localhost:3000/expenses",
         {
             method:"DELETE",
             headers: { 'Content-Type': 'application/json' },
@@ -66,15 +68,16 @@ let Expenses=()=>{
     //handles the date inputs
     let someFunction=(event)=>{
         event.target.name==="trip-start" ? setInterval({...dateInterval, start:event.target.value}) : setInterval({...dateInterval, end:event.target.value})
+        fetchData()
     }
 
     return(
         <div className="expenses-container">
-            <header class="p-3">
+            <header class="p-3 navbar-header">
                 <div class="container nav-head-container">
                     <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                        <span title="Adauga" class="material-icons-outlined add-new-nav-button" onClick={()=>{setaddexpensesWindow(true)}} style={{fontSize:'35px', marginRight:'5px'}}>account_balance_wallet</span>
                         <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">                         
+                            <button className="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{setaddexpensesWindow(true)}}><div class="inner-button-content"><span class="material-icons-outlined">account_balance_wallet</span>Adauga</div></button>                                                   
                         </div>
                     </div>
                 </div>
@@ -89,15 +92,14 @@ let Expenses=()=>{
                 </div>
             }
             {expenses&&       
-                <div className="app-data-container">
+                <div className="app-data-container" style={{marginTop:'25px'}}>
                     <h6>Cheltuieli inregistrate</h6> 
                     <div className="alert alert-secondary interval-setter">
                         <div className="row">
-                            <span><b>Interval</b></span>
-                            <div>
+                            <div style={{display:'flex', alignItems:'center'}}>
+                                <span title="Interval" style={{marginRight:'5px'}} className="material-icons-outlined">date_range</span>
                                 <input type="date" id="start" name="trip-start" value={dateInterval.start} onChange={someFunction}></input>
                                 <input type="date" id="end" name="trip-end" value={dateInterval.end} onChange={someFunction}></input>
-                                <button style={{height:'26px', fontSize:'14px', border:'none', borderRadius:'6px'}} onClick={()=>{fetchData()}}><span className="action-button-label">Apply</span></button>
                             </div>
                         </div>
                     </div>
@@ -123,7 +125,7 @@ let Expenses=()=>{
                                             <td>{element.exp_sum}</td>
                                             <td>{element.exp_description}</td>
                                             <td>{prettyDate(element.exp_date)}</td>
-                                            <td>{element.exp_deduct ? <span className="material-icons-outlined">check_circle</span> : <span className="material-icons-outlined">cancel</span>}</td>
+                                            <td>{element.exp_deduct ? <span title="Deductibil" className="material-icons-outlined">check_circle</span> : <span title="Non-deductibil" className="material-icons-outlined">cancel</span>}</td>
                                             <td>  
                                                 <div className='actions-container'>                                    
                                                     <SmallMenu items={[

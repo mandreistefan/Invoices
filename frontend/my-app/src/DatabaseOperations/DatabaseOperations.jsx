@@ -9,7 +9,7 @@ let DatabaseOperations=()=>{
 
     React.useEffect(()=>{
         if(activeDB===null){
-            fetch('./database').then(response=>response.json()).then(data=>{
+            fetch('http://localhost:3000/database').then(response=>response.json()).then(data=>{
                 if(data.status==="OK"){
                     setActiveDB(data.data.database)
                 }else if(data.status==="SERVER_ERROR"){
@@ -23,7 +23,7 @@ let DatabaseOperations=()=>{
 
 
     let exportDatabase=()=>{
-        fetch('./export').then(response=>response.json()).then(data=>{
+        fetch('http://localhost:3000/export').then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 setUserAlert({text:`Export done. ${data.data.success}/${data.data.attempts} files exported`})
             }else if(data.status==="SERVER_ERROR"){
@@ -35,7 +35,7 @@ let DatabaseOperations=()=>{
     }
 
     let switchDB=()=>{
-        fetch('./switchDatabase').then(response=>response.json()).then(data=>{
+        fetch('http://localhost:3000/switchDatabase').then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 setActiveDB(data.database)
                 setUserAlert({text:"Active database changed"})

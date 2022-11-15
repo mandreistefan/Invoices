@@ -12,7 +12,7 @@ let PredefinedProductsManager = (props) =>{
     let actionsEnabled = props.actions;
 
     React.useEffect(()=>{
-        fetch('./products').then(response=>response.json()).then(data=>{
+        fetch('http://localhost:3000/products').then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 ppSet(data.data)
             }else if(data.status==="SERVER_ERROR"){

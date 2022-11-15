@@ -8,9 +8,12 @@ let Employees=(props)=>{
 
     const defaultFilter={filter:"all", filterBy:"", page:1}
 
+    //local storage
+    if(!localStorage.getItem('activeEmployee')) localStorage.setItem('activeEmployee', "")
+
     let [employees, setEmployees] = React.useState([])
     let [query, setFilter] = React.useState({filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
-    let [activeEmployee, setActive] = React.useState(null)
+    let [activeEmployee, setActive] = React.useState(localStorage.getItem('activeEmployee').length>0 ? localStorage.getItem('activeEmployee') : "")
     let [alertUser, setAlertUser] = React.useState(null)
     let [addEmployeeWindow, showaddEmployeeWindow] = React.useState(false)
     let [editEmployeeWindow, setEditableEmployee] = React.useState(false)
@@ -20,10 +23,10 @@ let Employees=(props)=>{
     },[query])
 
     function fetchData(){
-        fetch(`./employees?filter=${query.filter}&filterBy=${query.filterBy}&page=${query.page}`).then(response=>response.json()).then(data=>{
+        fetch(`http://localhost:3000/employees?filter=${query.filter}&filterBy=${query.filterBy}&page=${query.page}`).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 setEmployees(data.data)
-                setActive(data.data[0].id)
+                if(localStorage.getItem('activeEmployee').length===0) setActiveEmployee(data.data[0].id)
             }else if(data.status==="NO_DATA"){
                 setAlertUser("Nu sunt date")
             }            
@@ -49,6 +52,11 @@ let Employees=(props)=>{
         setFilter({...query, page:pageNumber})
     }
 
+    let setActiveEmployee=(id)=>{
+        setActive(id)
+        localStorage.setItem('activeEmployee', id)
+    }
+
     function handleSearchSubmit(event){
         event.preventDefault()
         let searchTerm = event.target.filterData.value
@@ -58,27 +66,38 @@ let Employees=(props)=>{
     }
 
     function deleteEmployee(){
-        fetch(`/employee/${activeEmployee}`, {
+        fetch(`http://localhost:3000/employee/${activeEmployee}`, {
             method:"DELETE",
             headers: { 'Content-Type': 'application/json' }
         }).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
+                setAlertUser("Angajat arhivat")
+                localStorage.setItem('activeEmployee', null)
                 fetchData()
             }else{
-                setAlertUser("Something went wrong")
+                setAlertUser("Eroare")
             }            
         }).catch(error=>{
-            setAlertUser("Something went wrong")
+            setAlertUser("Eroare")
         }) 
+    }
+
+    let closeAndRefresh=()=>{
+        if(addEmployeeWindow){
+            showaddEmployeeWindow(false)
+        }else if(editEmployeeWindow){
+            setEditableEmployee(false)
+        }
+        fetchData()
     }
 
     return(
         <div className="app-data-container">
-            <header class="p-3">
+            <header class="p-3 navbar-header">
                 <div class="container nav-head-container">
-                    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                        <span title="Adauga" onClick={()=>{showaddEmployeeWindow(true)}} class="material-icons-outlined add-new-nav-button" style={{fontSize:'35px', marginRight:'5px'}}>group</span>
+                    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">                        
                         <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                            <button class="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{showaddEmployeeWindow(true)}}><div class="inner-button-content"><span class="material-icons-outlined">group</span>Adauga</div></button>
                             <button class="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{setEditableEmployee(true)}}><div class="inner-button-content"><span class="material-icons-outlined">edit</span>Editare</div></button>
                             <button class="btn btn-danger btn-sm no-shadow navigation-button" onClick={()=>{deleteEmployee()}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span>Stergere</div></button>
                         </div>
@@ -98,11 +117,11 @@ let Employees=(props)=>{
                 employees.length>0 ?        
                 <div style={{display:'flex', flexDirection:'row'}}>  
                     <div style={{display:'flex', flexDirection:'column'}}>
-                        <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white" style={{width: '200px'}}> 
+                        <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white" style={{width: '250px'}}> 
                             {employees.length>0 && employees.map((element, index)=>(
                                 <div>            
                                     <div class="list-group list-group-flush border-bottom scrollarea">
-                                        <a href="#" class={parseInt(activeEmployee)===parseInt(element.id) ? "list-group-item list-group-item-action py-3 lh-sm active" : "list-group-item list-group-item-action py-3 lh-sm"} onClick={()=>{setActive(element.id)}} aria-current="true">
+                                        <a href="#" class={parseInt(activeEmployee)===parseInt(element.id) ? "list-group-item list-group-item-action py-3 lh-sm active" : "list-group-item list-group-item-action py-3 lh-sm"} onClick={()=>{setActiveEmployee(element.id)}} aria-current="true">
                                             <div class="d-flex w-100 align-items-center justify-content-between">
                                                 <strong class="mb-1">{element.emp_first_name} {element.emp_last_name}</strong>                                            
                                             </div>
@@ -124,7 +143,7 @@ let Employees=(props)=>{
             {addEmployeeWindow && 
                 <div>
                     <div className="blur-overlap"></div>     
-                    <button type="button" className="action-close-window" onClick={()=>{showaddEmployeeWindow(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
+                    <button type="button" className="action-close-window" onClick={()=>{closeAndRefresh()}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
                     <div className="overlapping-component-inner">
                         <EmployeeForm/>
                     </div>
@@ -133,7 +152,7 @@ let Employees=(props)=>{
             {editEmployeeWindow && 
                 <div>
                     <div className="blur-overlap"></div>     
-                    <button type="button" className="action-close-window" onClick={()=>{setEditableEmployee(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
+                    <button type="button" className="action-close-window" onClick={()=>{closeAndRefresh()}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
                     <div className="overlapping-component-inner">
                         <EmployeeForm employeeID={activeEmployee}/>
                     </div>

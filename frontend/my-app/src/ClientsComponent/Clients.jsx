@@ -1,6 +1,5 @@
 import React from 'react';
 import ClientForm from '../ClientForm/ClientForm.jsx';
-import Invoices from '../InvoiceComponent/InvoicesOverview.jsx'
 import Snackbar from '../Snackbar/Snackbar.jsx'
 import PageNavigation from '../PageNavigation.jsx'
 
@@ -8,9 +7,12 @@ let Clients = (props) =>{
 
     let defaultFilter = {filter:"all", filterBy:"", page:1}
 
+    //local storage
+    if(!localStorage.getItem('activeClient')) localStorage.setItem('activeClient', "")
+    if(!localStorage.getItem('activeClientName')) localStorage.setItem('activeClientName', "")
+
     const [allClients, setAllClients] = React.useState(null)
-    const [activeClient, setActiveClient] = React.useState({id:null, name:""})
-    const [showClientInvoices, setShowClientInvoices] = React.useState(false)
+    const [activeClient, setActive] = React.useState({id:localStorage.getItem('activeClient') ? localStorage.getItem('activeClient') : null, name:localStorage.getItem('activeClientName') ? localStorage.getItem('activeClientName'): ""})
     let [numberOfElements, setNOE] = React.useState(null)
     let [alertUser, setAlertUser] = React.useState({text: null})
     let [newClientWindow, showonewClientWindow] = React.useState(false)
@@ -24,7 +26,7 @@ let Clients = (props) =>{
     //the fetcher
     let fetchClients=()=>{
         //fetches all clients
-        fetch(`/clients?&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page}`,
+        fetch(`http://localhost:3000/clients?&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page}`,
         {
             method:"GET",
             headers: { 'Content-Type': 'application/json' }
@@ -34,7 +36,7 @@ let Clients = (props) =>{
             if(data.status==="OK"){
                 setAllClients(data.data)
                 setNOE(data.totalRecordsNumber)
-                setActiveClient({id: data.data[0].id, name:data.data[0].client_first_name})
+                if(localStorage.getItem('activeClient').length===0) setActiveClient(data.data[0].id, data.data[0].client_first_name)
             }else if(data.status==="SERVER_ERROR"){
                 setAlertUser({text:"Baza de date nu poate fi accesata"})
             }else if(data.status==="NO_DATA"){
@@ -51,7 +53,7 @@ let Clients = (props) =>{
 
     let deleteClient=()=>{
         //fetches all clients
-        fetch(`/clients`,
+        fetch(`http://localhost:3000/clients`,
         {
             method:"DELETE",
             headers: { 'Content-Type': 'application/json' },
@@ -59,7 +61,9 @@ let Clients = (props) =>{
         })
         .then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
-                setAlertUser({text:"Client archived"})
+                setAlertUser({text:"Client arhivat"})
+                localStorage.setItem('activeClient', "")
+                localStorage.setItem('activeClientName', "")
                 fetchClients()
             }else if(data.status==="SERVER_ERROR"){
                 setAlertUser({text:"Baza de date nu poate fi accesata"})
@@ -86,15 +90,21 @@ let Clients = (props) =>{
         setFilter({...queryFilter, filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
     }
 
+    let setActiveClient=(id, name)=>{
+        setActive({id, name})
+        localStorage.setItem('activeClient', id)
+        localStorage.setItem('activeClientName', name)
+    }
+
     return(
             <div className='app-data-container'>
-                <header class="p-3">
+                <header class="p-3 navbar-header">
                     <div class="container nav-head-container">
                         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                            <span title="Adauga" onClick={()=>{showonewClientWindow(true)}} class="material-icons-outlined add-new-nav-button" style={{fontSize:'35px', marginRight:'5px'}}>account_circle</span>
-                            <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">                                
+                            <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                                <button className="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{showonewClientWindow(true)}}><div class="inner-button-content"><span class="material-icons-outlined">account_circle</span>Adauga</div></button>                                
                                 <button className="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{props.enableInvoiceApp(activeClient.name, activeClient.id)}}><div class="inner-button-content"><span class="material-icons-outlined">library_add</span>Factureaza</div></button>
-                                <button className="btn btn-outline-danger btn-sm no-shadow navigation-button" onClick={()=>{deleteClient()}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span>Stergere</div></button>
+                                <button className="btn btn-danger btn-sm no-shadow navigation-button" onClick={()=>{deleteClient()}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span>Stergere</div></button>
                             </div>
                             <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
                                 <div className="search-form-container">
@@ -108,13 +118,13 @@ let Clients = (props) =>{
                     </div>
                 </header>
                 {allClients ? 
-                    <div style={{display:'flex', flexDirection:'row'}}>     
+                    <div style={{display:'flex', flexDirection:'row'}} className="clients-overview-container">     
                         <div style={{display:'flex', flexDirection:'column'}}>
                             <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white list-cards-container" style={{width: '250px'}}> 
                                 {allClients.length>0 && allClients.map((element, index)=>(
                                     <div>            
                                         <div class="list-group list-group-flush border-bottom scrollarea">
-                                            <a href="#" class={parseInt(activeClient.id)===parseInt(element.id) ? "list-group-item list-group-item-action py-3 lh-sm active" : "list-group-item list-group-item-action py-3 lh-sm"} onClick={()=>{setActiveClient({id: element.id, name:element.client_first_name})}} aria-current="true">
+                                            <a href="#" class={parseInt(activeClient.id)===parseInt(element.id) ? "list-group-item list-group-item-action py-3 lh-sm active" : "list-group-item list-group-item-action py-3 lh-sm"} onClick={()=>{setActiveClient(element.id, element.client_first_name)}} aria-current="true">
                                                 <div style={{display:'flex', flexDirection:'row'}}>     
                                                     <div style={{display:'flex', flexDirection:'row'}}>
                                                         <div className="name-badge" style={{backgroundColor:element.client_gui_color}}>{element.client_first_name.substring(0,1)}{element.client_last_name.substring(0,1)}</div>

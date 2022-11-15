@@ -1,5 +1,4 @@
 import React from "react";
-import './Employee.css'
 import Snackbar from '../Snackbar/Snackbar.jsx'
 
 const taxesPercentages={
@@ -15,7 +14,6 @@ let dateString = {
     month: currentDate.getMonth()+1,
     year: currentDate.getFullYear()
 }
-console.log(dateString)
 export default class Employee extends React.Component{
     
     constructor(props){
@@ -37,7 +35,8 @@ export default class Employee extends React.Component{
             newSalaryMonth:1,
             alertUser:null, 
             vacationDaysWindow:false,
-            vacationDaysRequested:[{date: `${dateString.year}-${dateString.month}-${dateString.day}`, type:"vacation"}]
+            vacationDaysRequested:[{date: `${dateString.year}-${dateString.month}-${dateString.day}`, type:"vacation"}], 
+            emp_notes: ""
         }
 
         this.handleMonthChange = this.handleMonthChange.bind(this);
@@ -88,7 +87,7 @@ export default class Employee extends React.Component{
         }
 
         if(this.state.id){
-            fetch(`./employee/${this.state.id}`).then(response=>response.json()).then(data=>{
+            fetch(`http://localhost:3000/employee/${this.state.id}`).then(response=>response.json()).then(data=>{
                 if(data.status=="OK"){
                     this.setState({
                         first_name:data.data.info[0].emp_first_name, 
@@ -101,11 +100,14 @@ export default class Employee extends React.Component{
                         salary_gross:data.data.info[0].emp_cur_salary_gross,
                         salaries:setSalaries(data.data.salaries),
                         vacationDays:setVacations(data.data.vacationDays),
-                        isTaxable: data.data.info[0].emp_tax ? true : false
+                        isTaxable: data.data.info[0].emp_tax ? true : false,
+                        emp_notes: data.data.info[0].emp_notes ? data.data.info[0].emp_notes : ""
                     })
                 }else{
-                    console.log("UPS")
+                    this.setState({alertUser:"Eroare"})
                 }
+            }).catch(error=>{
+                this.setState({alertUser:"Eroare"})
             })
         }
     }
@@ -113,7 +115,7 @@ export default class Employee extends React.Component{
 
     handleSubmit=(event)=>{
         event.preventDefault();
-        fetch(`/employee_salary`, {
+        fetch(`http://localhost:3000/employee_salary`, {
             method:"POST",
             headers: { 'Content-Type': 'application/json' },
             body:JSON.stringify({paid_to:this.state.id, salary_month:this.state.newSalaryMonth})
@@ -143,7 +145,7 @@ export default class Employee extends React.Component{
             })
         })
         if(allGood){
-            fetch('./employee_vacation', {
+            fetch('http://localhost:3000/employee_vacation', {
                 method:"POST",
                 headers: { 'Content-Type': 'application/json' },
                 body:JSON.stringify({
@@ -210,45 +212,35 @@ export default class Employee extends React.Component{
         return(
             <div>
                 <div style={{display:'flex', alignItems:'center'}}>
-                    <div style={{width:"50%"}}>
-                        <h5>{this.state.active ? <span className="material-icons-outlined">check_circle</span> : <span className="material-icons-outlined">highlight_off</span>}{this.state.first_name} {this.state.last_name}</h5>
-                        <h6 id="employee-title">{this.state.job_name}</h6>
-                        <div>
-                            <ul id="employee-info">
-                                <li>Nume: {this.state.first_name}</li>
-                                <li>Prenume: {this.state.last_name}</li>
-                                <li>Adresa: {this.state.adress}</li>
-                                <li>CNP: {this.state.identification_number}</li>
-                                <li>Salariu de baza: {this.state.salary_gross}</li>
-                            </ul>
+                    <div style={{width:"50%", paddingRight:'10px'}}>
+                        <div style={{display:'flex', flexDirection:'row'}}>
+                            {this.state.active ? <span title="Angajat activ" className="material-icons-outlined">check_circle</span> : <span title="Angajat inactiv" className="material-icons-outlined">highlight_off</span>}
+                            <div style={{paddingLeft:'16px'}}>
+                                <h5>{this.state.first_name} {this.state.last_name}</h5>
+                                <h6 id="employee-title">{this.state.job_name}</h6>
+                                <div>
+                                    <ul id="employee-info">
+                                        <li>Nume: {this.state.first_name}</li>
+                                        <li>Prenume: {this.state.last_name}</li>
+                                        <li>Adresa: {this.state.adress}</li>
+                                        <li>CNP: {this.state.identification_number}</li>
+                                        <li>Salariu de baza: {this.state.salary_gross} RON</li>
+                                        <li>Data angajarii: {this.state.registration_date}</li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div style={{width:"50%"}}>
-                        <div className="row g-4 py-5 row-cols-1 row-cols-lg-3">
-                            <div className="col d-flex align-items-start">
-                                <div className="icon-square text-bg-light d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
-                                    <span className="material-icons-outlined">calendar_today</span>
-                                </div>
-                                <div>
-                                    <h5 >{this.state.registration_date}</h5>
-                                    <p>Data angajarii</p>
-                                </div>
-                            </div>
-                            <div className="col d-flex align-items-start">
-                                <div className="icon-square text-bg-light d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
-                                    <span className="material-icons-outlined">attach_money</span>
-                                </div>    
-                                <div>
-                                    <h5 >{this.state.salary_gross} RON</h5>
-                                    <p>Salariu brut</p>
-                                </div>
-                            </div>
+                    <div style={{width:"50%", paddingLeft:'10px'}}>
+                        <div>
+                            <label>Note</label>
+                            <textarea style={{height:'100%'}} rows="4" className="form-control" disabled="true" value={this.state.emp_notes}></textarea>
                         </div>
                     </div>
                 </div>
                 <div style={{display:'flex', flexDirection:'row', flexWrap:"wrap"}}>
-                    <div className="p-3" style={{width:'50%', minWidth:'475px'}}>
-                        <h6>Salarii</h6>
+                    <div style={{width:'50%', minWidth:'475px', paddingRight:'10px'}}>
+                        <h6 style={{display:'flex', alignItems:'center'}}><span class="material-icons-outlined">attach_money</span>Salarii</h6>
                         <table className='table table-hover table-sm app-data-table' id="vacation-days-table">
                             <thead className='table-active'>
                                 <tr className='app-data-table-row table-active'>
@@ -279,20 +271,28 @@ export default class Employee extends React.Component{
                         </table>
                         <button type="button" class="btn btn-primary w-100" onClick={()=>{this.setState({salaryWindow:true})}}>INREGISTRARE PLATA NOUA</button>
                     </div>   
-                    <div className="p-3" style={{width:'50%', minWidth:'475px'}}>
-                        <h6>Zile libere</h6>
-                        {this.state.vacationDays.length>0 ? this.state.vacationDays.map(element=>(
-                            <a href="#" class="list-group-item list-group-item-action d-flex gap-3 py-1" aria-current="true">
-                                <span class="material-icons-outlined">event</span>
-                                <div class="d-flex gap-2 w-100 justify-content-between">
-                                <div>
-                                    <h6 class="mb-0">{element.date}</h6>
-                                    <p class="mb-0 opacity-75">{element.type}</p>
-                                </div>
-                                <small class="opacity-50 text-nowrap">{element.registerDate}</small>
-                                </div>
-                            </a>
-                        )):"Nu exista inregistrari"}
+                    <div style={{width:'50%', minWidth:'475px', paddingLeft:'10px'}}>
+                            <h6 style={{display:'flex', alignItems:'center'}}><span class="material-icons-outlined">event</span>Zile libere</h6>
+                            <table className='table table-hover table-sm app-data-table' id="vacation-days-table">
+                                <thead className='table-active'>
+                                    <tr className='app-data-table-row table-active'>
+                                        <th>DATA ZI LIBERA</th>
+                                        <th>DATA INREGISTRARE</th>
+                                        <th>TIP</th>
+                                        <th>STATUS</th>
+                                    </tr>    
+                                </thead>
+                                <tbody>
+                                    {this.state.vacationDays.length>0 ? this.state.vacationDays.map(element=>(
+                                        <tr>
+                                            <td><b>{element.date}</b></td>
+                                            <td><b>{element.registerDate}</b></td>
+                                            <td><b>{element.type}</b></td>
+                                            <td><b>{element.status}</b></td>            
+                                        </tr>
+                                    )):"Nu exista inregistrari"}
+                                </tbody>
+                            </table>
                         <button class="btn btn-primary w-100 my-1" onClick={()=>{this.setState({vacationDaysWindow: true})}}>CERERE NOUA</button>
                     </div>                            
                 </div>
@@ -416,12 +416,9 @@ export default class Employee extends React.Component{
                                                             <option value="vacation">Vacation</option>
                                                             <option value="medical">Medical</option>
                                                         </select>
-                                                        <button type="button" style={{display:'inherit', alignItems:'center', width:'24px', height:'24px', border:'1px solid black', backgroundColor:'transparent', borderRadius:'16px', marginLeft:'5px'}} id={`removeButton-${index}`} onClick={this.handleVacationDaysInput}>X</button>
+                                                        <button type="button" className="btn btn-light" title="Sterge data" style={{display:'inherit', alignItems:'center', marginLeft:'5px'}} id={`removeButton-${index}`} onClick={this.handleVacationDaysInput}>X</button>
                                                     </div>
-                                                </div>
-                                                <div className="col-sm-2">
-                                                    
-                                                </div>
+                                                </div>            
                                             </div>
                                         ))
                                     }                                

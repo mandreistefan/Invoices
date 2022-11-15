@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
   },
   "author": "mandreistefan",
   "license": "ISC",
@@ -20,5 +21,8 @@
     "nodemon": "^2.0.16",
     "swagger-ui-express": "^4.5.0",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "electron": "^21.2.3"
   }
 }

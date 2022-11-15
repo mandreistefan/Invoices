@@ -13,6 +13,7 @@ let ProductForm = (props) =>{
         pp_description:{value: "", modified:false}
     })
     let [snackBarText, setSnackBarText] = React.useState(null)
+    let [dataModified, setdataModified] = React.useState(false)
     let carlig=React.useRef();
 
     //received some data as props
@@ -81,7 +82,7 @@ let ProductForm = (props) =>{
         
         
         //submit data
-        fetch(`/products`, {
+        fetch(`http://localhost:3000/products`, {
             method:"PUT",
             headers: { 'Content-Type': 'application/json' },
             body:JSON.stringify(sendData)
@@ -118,36 +119,38 @@ let ProductForm = (props) =>{
     let changeFormData=(event)=>{
         if(validateData(event.target.id, event.target.value)){
             setData({...arrayData,[event.target.id]:{value: event.target.value, modified: true}}) 
+            setdataModified(true)
         }
     }
 
     return (
         <div id="new-product-form">
-        <div className='form-row' ref={carlig}>
-            <div className="form-group col-2">            
-                <label className="form-subsection-label" htmlFor="pp_name">Nume</label><br/>
-                <input type="text" id="pp_name" name="pp_name" className="form-control shadow-none" onChange={changeFormData} value={arrayData.pp_name.value}/>
+            <h6>Produs nou</h6>
+            <div className='form-row' ref={carlig}>
+                <div className="form-group col-2">            
+                    <label className="form-subsection-label" htmlFor="pp_name">Nume</label><br/>
+                    <input type="text" id="pp_name" name="pp_name" className="form-control shadow-none" onChange={changeFormData} value={arrayData.pp_name.value}/>
+                </div>
+                <div className="form-group col-2">   
+                    <label className="form-subsection-label" htmlFor="pp_um">UM</label><br/>
+                    <input type="text" id="pp_um" name="pp_um"  className="form-control shadow-none" onChange={changeFormData} value={arrayData.pp_um.value}/>
+                </div>
+                <div className="form-group col-2">  
+                    <label className="form-subsection-label" htmlFor="pp_price_per_item">Pret per unitate</label><br/>
+                    <input type="text" id="pp_price_per_item" name="pp_price_per_item"  className="form-control shadow-none"onChange={changeFormData} value={arrayData.pp_price_per_item.value}/>
+                </div>
+                <div className="form-group col-2">   
+                    <label className="form-subsection-label" htmlFor="pp_tax">Taxa</label><br/>
+                    <input type="text" id="pp_tax" name="pp_tax"  className="form-control shadow-none"onChange={changeFormData} value={arrayData.pp_tax.value}/>
+                </div>
+                <div className="form-group col-4">   
+                    <label className="form-subsection-label" htmlFor="pp_description">Descriere</label><br/>
+                    <input type="text" id="pp_description" name="pp_description"  className="form-control shadow-none" onChange={changeFormData} value={arrayData.pp_description.value}/>
+                </div>
             </div>
-            <div className="form-group col-2">   
-                <label className="form-subsection-label" htmlFor="pp_um">UM</label><br/>
-                <input type="text" id="pp_um" name="pp_um"  className="form-control shadow-none" onChange={changeFormData} value={arrayData.pp_um.value}/>
-            </div>
-            <div className="form-group col-2">  
-                <label className="form-subsection-label" htmlFor="pp_price_per_item">Pret per unitate</label><br/>
-                <input type="text" id="pp_price_per_item" name="pp_price_per_item"  className="form-control shadow-none"onChange={changeFormData} value={arrayData.pp_price_per_item.value}/>
-            </div>
-            <div className="form-group col-2">   
-                <label className="form-subsection-label" htmlFor="pp_tax">Taxa</label><br/>
-                <input type="text" id="pp_tax" name="pp_tax"  className="form-control shadow-none"onChange={changeFormData} value={arrayData.pp_tax.value}/>
-            </div>
-            <div className="form-group col-4">   
-                <label className="form-subsection-label" htmlFor="pp_description">Descriere</label><br/>
-                <input type="text" id="pp_description" name="pp_description"  className="form-control shadow-none" onChange={changeFormData} value={arrayData.pp_description.value}/>
-            </div>
+            <button className="w-100 btn btn-primary btn-lg" disabled={dataModified ? false : true}  onClick={()=>{submitData()}}><span className="action-button-label"><span class="material-icons-outlined">save</span> SAVE</span></button>
+            <Snackbar text={snackBarText} closeSnack={()=>{setSnackBarText(null)}}/>
         </div>
-        <button className='btn btn-sm btn-success actions-button' onClick={()=>{submitData()}}><span className="action-button-label"><span class="material-icons-outlined">save</span> SAVE</span></button>
-        <Snackbar text={snackBarText} closeSnack={()=>{setSnackBarText(null)}}/>
-    </div>
     )
 }
 

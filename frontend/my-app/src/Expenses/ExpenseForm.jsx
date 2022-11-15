@@ -14,6 +14,7 @@ let ExpenseForm = (props) =>{
         exp_date: {value: `${currentDate.getFullYear()}-${currentDate.getMonth()+1>9 ? currentDate.getMonth()+1 : "0"(currentDate.getMonth()+1)}-${currentDate.getDate()}`, modified:false}
     })
     let [snackBarText, setSnackBarText] = React.useState(null)
+    let [dataModified, setdataModified] = React.useState(false)
     let carlig=React.useRef();
 
     //received some data as props
@@ -69,7 +70,7 @@ let ExpenseForm = (props) =>{
         }   
     
         //submit data
-        fetch(`/expenses`, {
+        fetch(`http://localhost:3000/expenses`, {
             method:method,
             headers: { 'Content-Type': 'application/json' },
             body:JSON.stringify(sendData)
@@ -102,11 +103,13 @@ let ExpenseForm = (props) =>{
             let validNumber = new RegExp(/^\d*\.?\d*$/);
             if(!(validNumber.test(event.target.value))) return false
         }
-        setData({...arrayData,[event.target.id]:{value: event.target.value, modified: true}})         
+        setData({...arrayData,[event.target.id]:{value: event.target.value, modified: true}})  
+        setdataModified(true)       
     }
 
     let changeDate=(event)=>{
         setData({...arrayData, exp_date:{value:event.target.value, modified:true}})
+        setdataModified(true)    
     }
 
     return (
@@ -127,17 +130,17 @@ let ExpenseForm = (props) =>{
                 </div>
                 <div className="form-group col-1">  
                     <label className="form-subsection-label" htmlFor="exp_deduct">Deductibil</label><br/>                    
-                    <select className="form-control-sm shadow-none" id="exp_deduct" name="exp_deduct" onChange={changeFormData} value={arrayData.exp_deduct.value}>
+                    <select className="form-control shadow-none" id="exp_deduct" name="exp_deduct" onChange={changeFormData} value={arrayData.exp_deduct.value}>
                         <option value="true">Da</option>
                         <option value="false">Nu</option>
                     </select>
                 </div>
                 <div className="form-group col-2">   
                     <label className="form-subsection-label" htmlFor="exp_date">Data</label><br/>
-                    <input type="date" id="end" name="trip-end" value={arrayData.exp_date.value} onChange={changeDate}></input>
+                    <input type="date" className="form-control shadow-none" id="end" name="trip-end" value={arrayData.exp_date.value} onChange={changeDate}></input>
                 </div>
             </div>
-            <button className='btn btn-sm btn-success actions-button' onClick={()=>{submitData()}}><span className="action-button-label"><span class="material-icons-outlined">save</span> SAVE</span></button>
+            <button className="w-100 btn btn-primary btn-lg" disabled={dataModified ? false : true} onClick={()=>{submitData()}}><span className="action-button-label"><span class="material-icons-outlined">save</span> SAVE</span></button>
             <Snackbar text={snackBarText} closeSnack={()=>{setSnackBarText(null)}}/>
         </div>
     )

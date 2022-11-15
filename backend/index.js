@@ -1,5 +1,5 @@
 const express = require('express')
-const app = express();
+const myApp = express();
 const path=require('path');
 const databaseController = require('./controllers/databaseController.js')
 const bodyparser=require('body-parser')
@@ -15,18 +15,46 @@ const employeesHandler = require('./Routes/Employees.js')
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./Routes/swagger.json');
 
-//swagger
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+const inElectron = true
 
-app.use(express.static(path.join(__dirname, '..', 'frontend', 'my-app', 'public')))
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use('/', clientsHandler)
-app.use('/', invoicesHandler)
-app.use('/', productsHandler)
-app.use('/', financialsHandler)
-app.use('/', expensesHandler)
-app.use('/', employeesHandler)
+if(inElectron){
+    const { app, BrowserWindow } = require('electron');
+
+    const createWindow = () => {
+        // Create the browser window.
+        const mainWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+            nodeIntegration: true
+        }
+        });
+
+        // and load the index.html of the app.
+        mainWindow.loadFile(path.join(__dirname, './front_end_build/Aplicatie.html'));
+
+        // Open the DevTools.
+        mainWindow.webContents.openDevTools();
+    }
+
+    // This method will be called when Electron has finished
+    // initialization and is ready to create browser windows.
+    // Some APIs can only be used after this event occurs.
+    app.on('ready', createWindow);
+}
+
+//swagger
+myApp.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+myApp.use(express.static(path.join(__dirname, '..', 'frontend', 'my-myApp', 'public')))
+myApp.use(express.json());
+myApp.use(express.urlencoded({ extended: true }));
+myApp.use('/', clientsHandler)
+myApp.use('/', invoicesHandler)
+myApp.use('/', productsHandler)
+myApp.use('/', financialsHandler)
+myApp.use('/', expensesHandler)
+myApp.use('/', employeesHandler)
 
 
 cron.schedule('* 00 13 * *', () => {
@@ -36,7 +64,7 @@ cron.schedule('* 00 13 * *', () => {
 //recurrentController.handleRecurrencies()
 
 //search - not implemented
-app.get("/search",(req,res)=>{
+myApp.get("/search",(req,res)=>{
     let queryFilter = {}
     if(req.query.filter) queryFilter.filter=req.query.filter
     if(req.query.filterBy) queryFilter.filterBy=req.query.filterBy
@@ -50,7 +78,7 @@ app.get("/search",(req,res)=>{
 })
 
 //recurrency
-app.get('/recurrent/*',(req,res)=>{
+myApp.get('/recurrent/*',(req,res)=>{
     let url_path_arr = urlmod.parse(req.url, true).path.split("/");
     databaseController.fetchRecInvData(url_path_arr[2], url_path_arr[3], (callback)=>{
         if(callback.status==="OK"){
@@ -69,7 +97,7 @@ app.get('/recurrent/*',(req,res)=>{
 
 
 //exports a DB in a CSV file format
-app.get("/export", (req, res)=>{
+myApp.get("/export", (req, res)=>{
     databaseController.createExportableData().then(data=>{
         console.log(data)
         res.send({
@@ -80,7 +108,7 @@ app.get("/export", (req, res)=>{
 })
 
 //get some info on the DB
-app.get("/database", (req, res)=>{
+myApp.get("/database", (req, res)=>{
     let data = databaseController.getDatabaseInfo()
     res.send({
         status:"OK",
@@ -89,7 +117,7 @@ app.get("/database", (req, res)=>{
 })
 
 //exports a DB in a CSV file format
-app.get("/switchDatabase", (req, res)=>{
+myApp.get("/switchDatabase", (req, res)=>{
     databaseController.changeDatabaseInfo(callback=>{
         res.send(callback)
     })
@@ -97,4 +125,4 @@ app.get("/switchDatabase", (req, res)=>{
 })
 
 
-app.listen(3001)
+myApp.listen(3001)
