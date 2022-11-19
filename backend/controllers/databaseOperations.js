@@ -6,6 +6,8 @@ const { resolve } = require('path');
 
 const testDB = "invoicemanager"
 const liveDB = "baza_date_facturi"
+databases = [testDB, liveDB]
+const queryStep = 25
 
 const connection=mysql.createConnection({
     host:"localhost",
@@ -42,8 +44,8 @@ try{
 function getAllClients(querryObject){
     return new Promise((resolve,reject)=>{
         let offSet = 0
-        let step=10
-        if(querryObject.page>1) offSet = (querryObject.page-1) * 10
+        let step=queryStep
+        if(querryObject.page>1) offSet = (querryObject.page-1) * queryStep
         let queryStatement;
 
         switch(querryObject.filter){
@@ -231,8 +233,8 @@ async function addInvoice(data){
 
 async function getInvoices(querryObject){
     let offSet = 0
-    let step=10
-    if(querryObject.page>1) offSet = (querryObject.page-1) * 10
+    let step=queryStep
+    if(querryObject.page>1) offSet = (querryObject.page-1) * queryStep
     let querry;    
     switch(querryObject.filter){
         case "all":
@@ -1084,28 +1086,28 @@ function getDBinfo(){
     return({
         host: connection.config.host,
         user:connection.config.user,
-        database:connection.config.database
+        database:connection.config.database,
+        databases:databases
     })
 }
 
-function changeDBinfo(){
-    return new Promise((resolve, reject)=>{
-        if(connection.config.database===testDB){
-            connection.changeUser({database : liveDB}, function(err) {
-                if (err){
-                    connection.changeUser({database : testDB}, function(err) {})
-                    reject({status:"ERROR", database:null})
-                }
-                resolve({status:"OK", database:liveDB})
-            })
-        }else{
-            connection.changeUser({database : testDB}, function(err) {
-                if (err) reject({status:"ERROR", database:null})
-                resolve({status:"OK", database:testDB})
-            })
-        }
-    })
+/**
+ * Switch to a certain DB
+ * @param {String} database The name of the database
+ * @returns {Promise<{status:string}>} Status of the OP
+ */
 
+function changeDatabase(databaseName){
+    return new Promise((resolve, reject)=>{ 
+        console.log(databaseName)    
+        connection.changeUser({database : databaseName}, function(err) {
+            if (err){
+                console.log(err)
+                reject({status:"ERROR"})
+            }
+            resolve({status:"OK"})
+        })   
+    })
 }
 
 /**
@@ -1280,8 +1282,8 @@ function deleteExpense(id){
 
 function getEmployees(queryObject){
     let offSet = 0
-    let step=10
-    if(queryObject.page>1) offSet = (queryObject.page-1) * 10
+    let step=queryStep
+    if(queryObject.page>1) offSet = (queryObject.page-1) * queryStep
     let querry;    
     switch(queryObject.filter){
         case "all":
@@ -1337,7 +1339,7 @@ function getEmployees(queryObject){
 
 function addEmployee(data){
     return new Promise((resolve, reject)=>{
-        connection.query(`INSERT INTO employees(emp_first_name, emp_last_name, emp_adress, emp_ident_no, emp_job_name, emp_cur_salary_gross, emp_cur_salary_net, emp_tax, emp_notes, emp_phone) VALUES ('${data.emp_first_name}', '${data.emp_last_name}', '${data.emp_adress}', '${data.emp_ident_no}', '${data.emp_job_name}', '${data.emp_cur_salary_gross}', '${data.emp_cur_salary_net}', '${data.emp_tax}', '${emp_notes}', '${emp_phone}')`, function(error, result){
+        connection.query(`INSERT INTO employees(emp_first_name, emp_last_name, emp_adress, emp_ident_no, emp_job_name, emp_cur_salary_gross, emp_cur_salary_net, emp_tax, emp_notes, emp_phone) VALUES ('${data.emp_first_name}', '${data.emp_last_name}', '${data.emp_adress}', '${data.emp_ident_no}', '${data.emp_job_name}', '${data.emp_cur_salary_gross}', '${data.emp_cur_salary_net}', '${data.emp_tax}', '${data.emp_notes}', '${data.emp_phone}')`, function(error, result){
             if(error){
                 console.log(error)
                 reject({status:"ERROR"})
@@ -1461,8 +1463,8 @@ async function addSalary(paid_to, salary_month){
  function getSalaries(queryObject){
     let returnArr =[]
     let offSet = 0
-    let step=10
-    if(queryObject.page>1) offSet = (queryObject.page-1) * 10
+    let step=queryStep
+    if(queryObject.page>1) offSet = (queryObject.page-1) * queryStep
     let querry;    
     switch(queryObject.filter){
         case "all":
@@ -1679,10 +1681,10 @@ module.exports ={
     getRecordsNumber:getRecordsNumber,
     exportData:exportData,
     getDBinfo:getDBinfo,
-    changeDBinfo:changeDBinfo,
+    changeDatabase,
     getExpenses,
     addExpense,
     deleteExpense,
     searchDatabase,
-    getEmployees, addEmployee, editEmployee, hasSalaryOnDate, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeInfo, archiveEmployee, deleteEmployee
+    getEmployees, addEmployee, editEmployee, hasSalaryOnDate, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeInfo, archiveEmployee, deleteEmployee,
 }

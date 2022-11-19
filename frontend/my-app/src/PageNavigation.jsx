@@ -1,6 +1,14 @@
 import React from "react";
 
+/**
+ * Renders pagination
+ * @param {Object<{numberOfItems: integer, changePage:function}>} props numberOfItems is the number of elements to be displayed(to calculate the total number of pages), changePage(page) is a function to be called when the page changes(currently used to modify the page parameter of the query state object)
+ * @returns 
+ */
+
 let PageNavigation=(props)=>{
+
+    const step=25
 
     let [pagination, setPagination] = React.useState({
         currentPage: 1,
@@ -11,7 +19,7 @@ let PageNavigation=(props)=>{
 
     //based on number of total elements, set the pages
     let numberOfPages=(itemsNumber)=>{
-        let numberOfPages = itemsNumber%10>0 ? parseInt(itemsNumber/10+1) : parseInt(itemsNumber/10)
+        let numberOfPages = itemsNumber%step>0 ? parseInt(itemsNumber/step+1) : parseInt(itemsNumber/step)
         buildPagesArray(numberOfPages)
         return numberOfPages
     }
@@ -43,7 +51,6 @@ let PageNavigation=(props)=>{
     },[props.numberOfItems, pagination.currentPage])
 
     return(
-        pagination.numberOfPages>1&&
         <nav key={props.numberOfItems} aria-label="Page navigation example">
             <ul className="pagination">
                 {pages}

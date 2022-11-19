@@ -1,21 +1,24 @@
 import React from "react";
 import Snackbar from '../Snackbar/Snackbar.jsx'
 
+//global taxes
 const taxesPercentages={
     CAS: 0.25,
     CASS: 0.1,
     TAX: 0.1,
     CAM: 0.0225
 }
-
+//the current date
 const currentDate = new Date()
+//component data
 let dateString = {
     day: parseInt(currentDate.getDate())<10 ? `0`+currentDate.getDate() : currentDate.getDate(),
     month: currentDate.getMonth()+1,
     year: currentDate.getFullYear()
 }
+
 export default class Employee extends React.Component{
-    
+
     constructor(props){
         super(props)
         this.state={
@@ -216,8 +219,9 @@ export default class Employee extends React.Component{
                         <div style={{display:'flex', flexDirection:'row'}}>
                             {this.state.active ? <span title="Angajat activ" className="material-icons-outlined">check_circle</span> : <span title="Angajat inactiv" className="material-icons-outlined">highlight_off</span>}
                             <div style={{paddingLeft:'16px'}}>
-                                <h5>{this.state.first_name} {this.state.last_name}</h5>
-                                <h6 id="employee-title">{this.state.job_name}</h6>
+                                <h4>{this.state.first_name} {this.state.last_name}</h4>
+                                <h5 id="employee-title">{this.state.job_name}</h5>
+                                <label>Date angajat</label>
                                 <div>
                                     <ul id="employee-info">
                                         <li>Nume: {this.state.first_name}</li>
@@ -233,164 +237,171 @@ export default class Employee extends React.Component{
                     </div>
                     <div style={{width:"50%", paddingLeft:'10px'}}>
                         <div>
-                            <label>Note</label>
+                            <label>Note angajat</label>
                             <textarea style={{height:'100%'}} rows="4" className="form-control" disabled="true" value={this.state.emp_notes}></textarea>
                         </div>
                     </div>
                 </div>
-                <div style={{display:'flex', flexDirection:'row', flexWrap:"wrap"}}>
-                    <div style={{width:'50%', minWidth:'475px', paddingRight:'10px'}}>
-                        <h6 style={{display:'flex', alignItems:'center'}}><span class="material-icons-outlined">attach_money</span>Salarii</h6>
-                        <table className='table table-hover table-sm app-data-table' id="vacation-days-table">
-                            <thead className='table-active'>
-                                <tr className='app-data-table-row table-active'>
-                                    <th>LUNA</th>
-                                    <th>DATA</th>
-                                    <th>BRUT</th>
-                                    <th>CAS</th>
-                                    <th>CASS</th>
-                                    <th>VENIT</th>
-                                    <th>CM</th>
-                                    <th>NET</th>
-                                </tr>    
-                            </thead>
-                            <tbody>
-                                {this.state.salaries!=[] ? this.state.salaries.map((element, index)=>(
-                                    <tr>
-                                        <td><b>{element.month}</b></td>
-                                        <td><b>{element.date}</b></td>
-                                        <td><b>{element.gross}</b></td>
-                                        <td><b>{element.taxes.cas}</b></td>
-                                        <td><b>{element.taxes.cass}</b></td>
-                                        <td><b>{element.taxes.income}</b></td>
-                                        <td><b>{element.taxes.cm}</b></td>
-                                        <td className="text-success"><b>{element.net}</b></td>
-                                    </tr>
-                                )):"Nu exista inregistrari"}
-                            </tbody>
-                        </table>
-                        <button type="button" class="btn btn-primary w-100" onClick={()=>{this.setState({salaryWindow:true})}}>INREGISTRARE PLATA NOUA</button>
-                    </div>   
-                    <div style={{width:'50%', minWidth:'475px', paddingLeft:'10px'}}>
-                            <h6 style={{display:'flex', alignItems:'center'}}><span class="material-icons-outlined">event</span>Zile libere</h6>
+                <hr></hr>
+                <div id="additional-employee-info-container">
+                    <div style={{width:'100%', marginBottom:'25px', display:'flex', flexDirection:'row'}}>
+                        <span class="material-icons-outlined">attach_money</span>
+                        <div style={{width:'100%', paddingLeft:'16px'}}>
+                            <h5>Salarii</h5>
                             <table className='table table-hover table-sm app-data-table' id="vacation-days-table">
                                 <thead className='table-active'>
                                     <tr className='app-data-table-row table-active'>
-                                        <th>DATA ZI LIBERA</th>
-                                        <th>DATA INREGISTRARE</th>
-                                        <th>TIP</th>
-                                        <th>STATUS</th>
+                                        <th>LUNA</th>
+                                        <th>DATA</th>
+                                        <th>BRUT</th>
+                                        <th>CAS</th>
+                                        <th>CASS</th>
+                                        <th>VENIT</th>
+                                        <th>CM</th>
+                                        <th>NET</th>
                                     </tr>    
                                 </thead>
                                 <tbody>
-                                    {this.state.vacationDays.length>0 ? this.state.vacationDays.map(element=>(
+                                    {this.state.salaries!=[] ? this.state.salaries.map((element, index)=>(
                                         <tr>
+                                            <td><b>{element.month}</b></td>
                                             <td><b>{element.date}</b></td>
-                                            <td><b>{element.registerDate}</b></td>
-                                            <td><b>{element.type}</b></td>
-                                            <td><b>{element.status}</b></td>            
+                                            <td><b>{element.gross}</b></td>
+                                            <td><b>{element.taxes.cas}</b></td>
+                                            <td><b>{element.taxes.cass}</b></td>
+                                            <td><b>{element.taxes.income}</b></td>
+                                            <td><b>{element.taxes.cm}</b></td>
+                                            <td className="text-success"><b>{element.net}</b></td>
                                         </tr>
                                     )):"Nu exista inregistrari"}
                                 </tbody>
                             </table>
-                        <button class="btn btn-primary w-100 my-1" onClick={()=>{this.setState({vacationDaysWindow: true})}}>CERERE NOUA</button>
+                            <button type="button" class="btn btn-primary w-100" onClick={()=>{this.setState({salaryWindow:true})}}>INREGISTRARE PLATA NOUA</button>
+                        </div>
+                    </div>   
+                    <div style={{width:'100%', marginBottom:'25px', display:'flex', flexDirection:'row'}}>                        
+                            <span class="material-icons-outlined">event</span>
+                            <div style={{width:'100%', paddingLeft:'16px'}}>
+                                <h5>Zile libere</h5>
+                                <table className='table table-hover table-sm app-data-table' id="vacation-days-table">
+                                    <thead className='table-active'>
+                                        <tr className='app-data-table-row table-active'>
+                                            <th>DATA ZI LIBERA</th>
+                                            <th>DATA INREGISTRARE</th>
+                                            <th>TIP</th>
+                                            <th>STATUS</th>
+                                        </tr>    
+                                    </thead>
+                                    <tbody>
+                                        {this.state.vacationDays.length>0 ? this.state.vacationDays.map(element=>(
+                                            <tr>
+                                                <td><b>{element.date}</b></td>
+                                                <td><b>{element.registerDate}</b></td>
+                                                <td><b>{element.type}</b></td>
+                                                <td><b>{element.status}</b></td>            
+                                            </tr>
+                                        )):"Nu exista inregistrari"}
+                                    </tbody>
+                                </table>
+                                <button class="btn btn-primary w-100 my-1" onClick={()=>{this.setState({vacationDaysWindow: true})}}>CERERE NOUA</button>
+                            </div>
                     </div>                            
                 </div>
                 {this.state.salaryWindow &&
-                        <div> 
-                            <div className="blur-overlap"></div>     
-                            <button type="button" className="action-close-window" onClick={()=>{this.setState({salaryWindow: false})}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
-                            <div className="overlapping-component-inner">
-                                <div className="row g-5 p-5">
-                                    <div className="col-md-7 col-lg-8">
-                                        <h6>Informatii angajat</h6>
-                                        <form onSubmit={this.handleSubmit}>
-                                            <div className="row g-3">
-                                                <div class="col-sm-6">
-                                                    <label for="firstName" class="form-label">Nume</label>
-                                                    <input type="text" class="form-control" id="firstName" placeholder="" value={this.state.first_name} disabled={true} required=""></input>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <label for="lastName" class="form-label">Prenume</label>
-                                                    <input type="text" class="form-control" id="lastName" placeholder="" value={this.state.last_name} disabled={true} required=""></input>
-                                                </div>
+                    <div> 
+                        <div className="blur-overlap"></div>     
+                        <button type="button" className="action-close-window" onClick={()=>{this.setState({salaryWindow: false})}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
+                        <div className="overlapping-component-inner">
+                            <div className="row g-5 p-5">
+                                <div className="col-md-7 col-lg-8">
+                                    <h6>Informatii angajat</h6>
+                                    <form onSubmit={this.handleSubmit}>
+                                        <div className="row g-3">
+                                            <div class="col-sm-6">
+                                                <label for="firstName" class="form-label">Nume</label>
+                                                <input type="text" class="form-control" id="firstName" placeholder="" value={this.state.first_name} disabled={true} required=""></input>
                                             </div>
-                                            <div className="row g-3">
-                                                <div class="col-sm-12">
-                                                    <label for="cnp" class="form-label">CNP</label>
-                                                    <input type="text" class="form-control" id="cnp" placeholder="" value={this.state.identification_number} disabled={true} required=""></input>
-                                                </div>   
+                                            <div class="col-sm-6">
+                                                <label for="lastName" class="form-label">Prenume</label>
+                                                <input type="text" class="form-control" id="lastName" placeholder="" value={this.state.last_name} disabled={true} required=""></input>
                                             </div>
-                                            <div class="col-md-5">
-                                                <label for="paid_for" class="form-label">Luna</label>
-                                                <select class="form-select" id="paid_for" required="" onChange={this.handleMonthChange}>
-                                                    <option value="1">Ianuarie</option> 
-                                                    <option value="2">Februarie</option>
-                                                    <option value="3">Martie</option>
-                                                    <option value="4">Aprilie</option>
-                                                    <option value="5">Mai</option>
-                                                    <option value="6">Iunie</option>   
-                                                    <option value="7">Iulie</option> 
-                                                    <option value="8">August</option>
-                                                    <option value="9">Septembrie</option>
-                                                    <option value="10">Octombrie</option>
-                                                    <option value="11">Noiembrie</option>
-                                                    <option value="12">Decembrie</option> 
-                                                </select>
-                                            </div>
-                                            <hr></hr>
-                                            <button class="w-100 btn btn-primary btn-lg" type="submit">INREGISTRARE</button>
-                                        </form>
-                                    </div>
-                                    <div class="col-md-5 col-lg-4 order-md-last">
-                                        <ul class="list-group mb-3">
-                                            <li class="list-group-item d-flex justify-content-between lh-sm">
-                                                <div>
-                                                <h6 class="my-0">Brut</h6>
-                                                    <small class="text-muted">Salariu brut aferent angajatului</small>
-                                                </div>
-                                                <span class="text-muted" ><b>{this.state.salary_gross}</b></span>
-                                            </li>
-                                            <li class="list-group-item d-flex justify-content-between lh-sm">
-                                                <div>
-                                                <h6 class="my-0">CAS</h6>
-                                                    <small class="text-muted">Asigurari Sociale</small>
-                                                </div>
-                                                <span class="text-muted" >{parseFloat(this.state.salary_gross*taxesPercentages.CAS)}</span>
-                                            </li>
-                                            <li class="list-group-item d-flex justify-content-between lh-sm">
-                                                <div>
-                                                <h6 class="my-0">CASS</h6>
-                                                    <small class="text-muted">Asigurari Sociale Sanatate</small>
-                                                </div>
-                                                <span class="text-muted" >{parseFloat(this.state.salary_gross*taxesPercentages.CASS)}</span>
-                                            </li>
-                                            {
-                                                this.state.isTaxable &&
-                                                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                                                    <div>
-                                                    <h6 class="my-0">Venit</h6>
-                                                        <small class="text-muted">Impozit venit</small>
-                                                    </div>
-                                                    <span class="text-muted" >{parseFloat(this.state.salary_gross*taxesPercentages.TAX)}</span>
-                                                </li>
-                                            }
-                                            <li class="list-group-item d-flex justify-content-between lh-sm">
-                                                <div>
-                                                <h6 class="my-0">CM</h6>
-                                                    <small class="text-muted">Contributie Asiguratorie<br/>Munca</small>
-                                                </div>
-                                                <span class="text-muted" >{parseFloat(this.state.salary_gross*taxesPercentages.CAM)}</span>
-                                            </li> 
-                                            <li class="list-group-item d-flex justify-content-between">
-                                                <span>Net</span>
-                                                <strong>{parseFloat(this.state.salary_gross - this.state.salary_gross*taxesPercentages.CAS - this.state.salary_gross*taxesPercentages.CASS - ((this.state.salary_gross*taxesPercentages.TAX)*this.state.isTaxable))} RON</strong>
-                                            </li>                               
-                                        </ul>
-                                    </div>
+                                        </div>
+                                        <div className="row g-3">
+                                            <div class="col-sm-12">
+                                                <label for="cnp" class="form-label">CNP</label>
+                                                <input type="text" class="form-control" id="cnp" placeholder="" value={this.state.identification_number} disabled={true} required=""></input>
+                                            </div>   
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label for="paid_for" class="form-label">Luna</label>
+                                            <select class="form-select" id="paid_for" required="" onChange={this.handleMonthChange}>
+                                                <option value="1">Ianuarie</option> 
+                                                <option value="2">Februarie</option>
+                                                <option value="3">Martie</option>
+                                                <option value="4">Aprilie</option>
+                                                <option value="5">Mai</option>
+                                                <option value="6">Iunie</option>   
+                                                <option value="7">Iulie</option> 
+                                                <option value="8">August</option>
+                                                <option value="9">Septembrie</option>
+                                                <option value="10">Octombrie</option>
+                                                <option value="11">Noiembrie</option>
+                                                <option value="12">Decembrie</option> 
+                                            </select>
+                                        </div>
+                                        <hr></hr>
+                                        <button class="w-100 btn btn-primary btn-lg" type="submit">INREGISTRARE</button>
+                                    </form>
                                 </div>
-                            </div>              
-                        </div>                    
+                                <div class="col-md-5 col-lg-4 order-md-last">
+                                    <ul class="list-group mb-3">
+                                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                                            <div>
+                                            <h6 class="my-0">Brut</h6>
+                                                <small class="text-muted">Salariu brut aferent angajatului</small>
+                                            </div>
+                                            <span class="text-muted" ><b>{this.state.salary_gross}</b></span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                                            <div>
+                                            <h6 class="my-0">CAS</h6>
+                                                <small class="text-muted">Asigurari Sociale</small>
+                                            </div>
+                                            <span class="text-muted" >{parseFloat(this.state.salary_gross*taxesPercentages.CAS)}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                                            <div>
+                                            <h6 class="my-0">CASS</h6>
+                                                <small class="text-muted">Asigurari Sociale Sanatate</small>
+                                            </div>
+                                            <span class="text-muted" >{parseFloat(this.state.salary_gross*taxesPercentages.CASS)}</span>
+                                        </li>
+                                        {
+                                            this.state.isTaxable &&
+                                                <li class="list-group-item d-flex justify-content-between lh-sm">
+                                                <div>
+                                                <h6 class="my-0">Venit</h6>
+                                                    <small class="text-muted">Impozit venit</small>
+                                                </div>
+                                                <span class="text-muted" >{parseFloat(this.state.salary_gross*taxesPercentages.TAX)}</span>
+                                            </li>
+                                        }
+                                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                                            <div>
+                                            <h6 class="my-0">CM</h6>
+                                                <small class="text-muted">Contributie Asiguratorie<br/>Munca</small>
+                                            </div>
+                                            <span class="text-muted" >{parseFloat(this.state.salary_gross*taxesPercentages.CAM)}</span>
+                                        </li> 
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span>Net</span>
+                                            <strong>{parseFloat(this.state.salary_gross - this.state.salary_gross*taxesPercentages.CAS - this.state.salary_gross*taxesPercentages.CASS - ((this.state.salary_gross*taxesPercentages.TAX)*this.state.isTaxable))} RON</strong>
+                                        </li>                               
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>              
+                    </div>                    
                 }
                 {this.state.vacationDaysWindow &&
                     <div> 

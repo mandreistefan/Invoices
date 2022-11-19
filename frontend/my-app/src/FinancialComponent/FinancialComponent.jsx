@@ -60,9 +60,9 @@ let Financial = (props) =>{
     }
 
     return(        
-        <div>
-            <header class="p-3 navbar-header">
-                <div class="container nav-head-container">
+        <div className="">
+            <div class="navbar-header" style={{paddingTop:'8px', paddingBottom:'8px'}}>
+                <div class="container nav-head-container" style={{padding:0}}>
                     <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
                         <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0"> 
                             <div style={{display:'flex', flexDirection:'row', alignItems:'center', float:'right'}}>
@@ -75,11 +75,11 @@ let Financial = (props) =>{
                         </div>
                     </div>
                 </div>
-            </header> 
+            </div> 
             {financialData ?
             <div className="app-data-container">
                 <div className="list-group w-auto">
-                    <div style={{backgroundColor:"white", borderRadius:'6px', padding:'16px', marginBottom:'16px'}}>
+                    <div>
                         <div style={{display:'flex', flexDirection:'row', alignItems:'center', marginBottom:'5px'}}>                
                             <span className="material-icons-outlined">payments</span>
                             <h5 style={{margin:'0',marginLeft:'5px'}}>Total</h5>
@@ -107,8 +107,7 @@ let Financial = (props) =>{
                             </tbody>
                         </table>
                     </div>
-
-                    <div style={{backgroundColor:"white", borderRadius:'6px', padding:'16px', marginBottom:'16px'}}>
+                    <div>
                         <div style={{display:'flex', flexDirection:'row', alignItems:'center', marginBottom:'5px'}}>                
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-clipboard2-data" viewBox="0 0 16 16">
                                 <path d="M9.5 0a.5.5 0 0 1 .5.5.5.5 0 0 0 .5.5.5.5 0 0 1 .5.5V2a.5.5 0 0 1-.5.5h-5A.5.5 0 0 1 5 2v-.5a.5.5 0 0 1 .5-.5.5.5 0 0 0 .5-.5.5.5 0 0 1 .5-.5h3Z"/>
@@ -138,7 +137,7 @@ let Financial = (props) =>{
                         </table>
                     </div>
                 </div>
-                <div style={{backgroundColor:"white", borderRadius:'6px', padding:'16px', marginBottom:'16px'}}>
+                <div>
                     <div style={{display:'flex', flexDirection:'row', alignItems:'center'}}>                
                         <span className="material-icons-outlined">timeline</span>
                         <h5 style={{margin:'0',marginLeft:'5px'}}>Grafic</h5>

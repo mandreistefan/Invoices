@@ -1,9 +1,9 @@
-import React from "react";
+import {useState, useEffect} from "react";
 import Snackbar from '../Snackbar/Snackbar.jsx'
 
 let EmployeeForm = (props)=>{
 
-    let [data, setTheData]=React.useState({
+    let [data, setTheData]=useState({
         emp_first_name_input: "", 
         emp_last_name_input:  "", 
         emp_phone_input:  "", 
@@ -12,15 +12,15 @@ let EmployeeForm = (props)=>{
         emp_notes_input:  "",
         emp_job_name_input: "",
         emp_cur_salary_gross_input: "",
-        emp_tax_input: 0,
+        emp_tax_input: 0
     })
 
-    let [alertUser, setAlertUser] = React.useState({text: null})
-    let [fieldsDisabled, setFieldsDisabled] = React.useState(true)
-    let [invalidDataItems, setInvalidData] = React.useState([])
-    let [dataModified, setdataModified] = React.useState(false)
+    let [alertUser, setAlertUser] = useState({text: null})
+    let [fieldsDisabled, setFieldsDisabled] = useState(true)
+    let [invalidDataItems, setInvalidData] = useState([])
+    let [dataModified, setdataModified] = useState(false)
 
-    React.useEffect(()=>{
+    useEffect(()=>{
         if(props.employeeID) setEmployeeData(props.employeeID)
     },[props.clientID, props.userData])
 

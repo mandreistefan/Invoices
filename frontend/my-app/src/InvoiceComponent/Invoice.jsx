@@ -4,7 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import './InvoiceAdd.css';
 import Snackbar from '../Snackbar/Snackbar.jsx'
-import PredefinedProducts from '../PredefinedProducts/ExistingProducts.jsx'
+import PredefinedProducts from '../Admins/ExistingProducts.jsx'
 
 export default class Invoice extends React.Component{
     

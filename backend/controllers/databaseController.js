@@ -522,13 +522,8 @@ function getDatabaseInfo(){
     return data
 }
 
-function changeDatabaseInfo(callback){
-    databaseOperations.changeDBinfo().then(data=>{
-        callback(data)
-    })
-    .catch(data=>{
-        callback(data)
-    })
+async function changeDatabase(databaseName){
+    return await databaseOperations.changeDatabase(databaseName)
 }
 
 /**
@@ -609,12 +604,17 @@ async function getEmployees(filterObject){
         let matchingEmployees = await databaseOperations.searchDatabase({target:"employees", searchTerm:stringedFilterBy})
         if(matchingEmployees.length==0) return({status:"NO_DATA", data:null})
         employeesObject = await databaseOperations.getEmployees({filter:"search", filterBy:matchingEmployees, page:1})
+        console.log("1")
+        totalRecordsNumber = await databaseOperations.getRecordsNumber("employees", "all", "") 
+        console.log("2")       
     }
+
+    console.log(totalRecordsNumber)
 
     if(employeesObject.status==="OK"){
         return({
             status:"OK",
-            totalRecordsNumber: totalRecordsNumber,
+            totalRecordsNumber,
             data:employeesObject.data
         })
     }else{
@@ -745,11 +745,10 @@ module.exports={
     removeProduct:removeProduct,
     createExportableData:createExportableData,
     getDatabaseInfo:getDatabaseInfo,
-    changeDatabaseInfo:changeDatabaseInfo,
+    changeDatabase,
     updateClientData:updateClientData,
     getExpenses:getExpenses,
     addExpense:addExpense,
     deleteExpense,
-    getEmployees, addEmployee, editEmployee, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeOverview, archiveEmployee
-
+    getEmployees, addEmployee, editEmployee, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeOverview, archiveEmployee,
 }

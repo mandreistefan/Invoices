@@ -1,4 +1,4 @@
-import React from "react";
+import {useState, useEffect} from "react";
 import Snackbar from '../Snackbar/Snackbar.jsx'
 import PageNavigation from '../PageNavigation.jsx'
 import Employee from './Employee.jsx'
@@ -11,14 +11,15 @@ let Employees=(props)=>{
     //local storage
     if(!localStorage.getItem('activeEmployee')) localStorage.setItem('activeEmployee', "")
 
-    let [employees, setEmployees] = React.useState([])
-    let [query, setFilter] = React.useState({filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
-    let [activeEmployee, setActive] = React.useState(localStorage.getItem('activeEmployee').length>0 ? localStorage.getItem('activeEmployee') : "")
-    let [alertUser, setAlertUser] = React.useState(null)
-    let [addEmployeeWindow, showaddEmployeeWindow] = React.useState(false)
-    let [editEmployeeWindow, setEditableEmployee] = React.useState(false)
+    let [employees, setEmployees] = useState([])
+    let [query, setFilter] = useState({filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
+    let [activeEmployee, setActive] = useState(localStorage.getItem('activeEmployee').length>0 ? localStorage.getItem('activeEmployee') : "")
+    let [alertUser, setAlertUser] = useState(null)
+    let [numberOfElements, setNumberOfElements] = useState(3)
+    let [addEmployeeWindow, showaddEmployeeWindow] = useState(false)
+    let [editEmployeeWindow, setEditableEmployee] = useState(false)
 
-    React.useEffect(()=>{
+    useEffect(()=>{
         fetchData()        
     },[query])
 
@@ -93,49 +94,44 @@ let Employees=(props)=>{
 
     return(
         <div className="app-data-container">
-            <header class="p-3 navbar-header">
-                <div class="container nav-head-container">
-                    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">                        
-                        <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                            <button class="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{showaddEmployeeWindow(true)}}><div class="inner-button-content"><span class="material-icons-outlined">group</span>Adauga</div></button>
+            {employees ?   
+                employees.length>0 ?        
+                <div style={{display:'flex', flexDirection:'row'}} id="employees-overview-container">
+                    <div className="vertical-list-container">     
+                        <div className="d-flex flex-column align-items-stretch flex-shrink-0 bg-white vertical-list" style={{width: '300px'}}>  
+                            <div class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">
+                                <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
+                                    <div className="search-form-container">
+                                        <button class="btn btn-success btn-sm no-shadow navigation-button add-new-button" onClick={()=>{showaddEmployeeWindow(true)}}><span class="material-icons-outlined">add</span></button>
+                                        <div className="search-input-container">
+                                            <input type="search" className="search-input form-control shadow-none" placeholder="Cauta.." id="filterData"></input>
+                                            <button type="button" className="search-reset-button" onClick={()=>{resetSearch()}}><span class="material-icons-outlined">refresh</span></button>
+                                        </div>                 
+                                    </div>
+                                </form>
+                            </div> 
+                            <div class="list-group list-group-flush border-bottom scrollarea" style={{width: '300px'}}> 
+                                {employees.length>0 && employees.map((element, index)=>(
+                                    <a href="#" class={parseInt(activeEmployee)===parseInt(element.id) ? "list-group-item list-group-item-action py-3 lh-sm active" : "list-group-item list-group-item-action py-3 lh-sm"} onClick={()=>{setActiveEmployee(element.id)}} aria-current="true">
+                                        <div class="d-flex w-100 align-items-center justify-content-between">
+                                            <strong class="mb-1">{element.emp_first_name} {element.emp_last_name}</strong>                                            
+                                        </div>
+                                        <div class="col-10 mb-1 small">
+                                            <small>{element.emp_job_name}</small>
+                                        </div>
+                                    </a> 
+                                ))}
+                            </div>   
+                            <div className="p-2">
+                                <PageNavigation numberOfItems={numberOfElements} changePage={changePage}/>                              
+                            </div>
+                        </div>  
+                    </div>         
+                    <div className="overview-container" key={activeEmployee}>
+                        <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-end mb-md-0">                            
                             <button class="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{setEditableEmployee(true)}}><div class="inner-button-content"><span class="material-icons-outlined">edit</span>Editare</div></button>
                             <button class="btn btn-danger btn-sm no-shadow navigation-button" onClick={()=>{deleteEmployee()}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span>Stergere</div></button>
                         </div>
-                        <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
-                            <div className="search-form-container">
-                                <div className="search-input-container">
-                                    <input type="searcg" className="search-input form-control shadow-none" placeholder="Cauta.." id="filterData"></input>
-                                    <button type="button" className="search-reset-button" onClick={()=>{resetSearch()}}><span class="material-icons-outlined">close</span></button>
-                                </div>                 
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </header>   
-
-            {employees ?   
-                employees.length>0 ?        
-                <div style={{display:'flex', flexDirection:'row'}}>  
-                    <div style={{display:'flex', flexDirection:'column'}}>
-                        <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white" style={{width: '250px'}}> 
-                            {employees.length>0 && employees.map((element, index)=>(
-                                <div>            
-                                    <div class="list-group list-group-flush border-bottom scrollarea">
-                                        <a href="#" class={parseInt(activeEmployee)===parseInt(element.id) ? "list-group-item list-group-item-action py-3 lh-sm active" : "list-group-item list-group-item-action py-3 lh-sm"} onClick={()=>{setActiveEmployee(element.id)}} aria-current="true">
-                                            <div class="d-flex w-100 align-items-center justify-content-between">
-                                                <strong class="mb-1">{element.emp_first_name} {element.emp_last_name}</strong>                                            
-                                            </div>
-                                            <div class="col-10 mb-1 small">
-                                                <small>{element.emp_job_name}</small>
-                                            </div>
-                                        </a>                    
-                                    </div>
-                                </div>
-                            ))}                            
-                        </div>
-                        <PageNavigation numberOfItems={10} changePage={changePage}/> 
-                    </div>                 
-                    <div className="overview-container" key={activeEmployee}>
                         <Employee id={activeEmployee}/>
                     </div>
                 </div> : <h4 style={{textAlign:"center"}}>Nu exista date</h4> : <h4 style={{textAlign:"center"}}>Nu exista date</h4>

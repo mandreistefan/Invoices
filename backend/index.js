@@ -15,7 +15,7 @@ const employeesHandler = require('./Routes/Employees.js')
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./Routes/swagger.json');
 
-const inElectron = true
+const inElectron = false
 
 if(inElectron){
     const { app, BrowserWindow } = require('electron');
@@ -116,10 +116,35 @@ myApp.get("/database", (req, res)=>{
     })
 })
 
+//get databases names
+myApp.get("/databases", (req, res)=>{
+    let data = databaseController.getDatabases()
+    res.send({
+        status:"OK",
+        data:data
+    })
+})
+
 //exports a DB in a CSV file format
-myApp.get("/switchDatabase", (req, res)=>{
-    databaseController.changeDatabaseInfo(callback=>{
-        res.send(callback)
+myApp.post("/switchDatabase", (req, res)=>{
+    databaseController.changeDatabase(req.body.database).then(data=>{
+        if(data.status==="OK"){
+            res.send({
+                status:"OK",
+                data:null
+            })  
+        }else{
+            res.send({
+                status:"FAIL",
+                data:null
+            }) 
+        }     
+    }).catch(error=>{
+        console.log(error)
+        res.send({
+            status:"ERROR",
+            data:null
+        })
     })
     
 })

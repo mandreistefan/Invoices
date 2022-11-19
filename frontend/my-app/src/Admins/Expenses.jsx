@@ -73,15 +73,9 @@ let Expenses=()=>{
 
     return(
         <div className="expenses-container">
-            <header class="p-3 navbar-header">
-                <div class="container nav-head-container">
-                    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                        <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">                         
-                            <button className="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{setaddexpensesWindow(true)}}><div class="inner-button-content"><span class="material-icons-outlined">account_balance_wallet</span>Adauga</div></button>                                                   
-                        </div>
-                    </div>
-                </div>
-            </header>  
+            <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-end mb-md-0"> 
+                <button className="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{setaddexpensesWindow(true)}}><div class="inner-button-content"><span class="material-icons-outlined">add</span>Adauga</div></button>                                                                                             
+            </div> 
             {addexpensesWindow&&
                 <div>
                     <div className="blur-overlap"></div>     

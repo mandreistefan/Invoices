@@ -109,60 +109,55 @@ let InvoicesOverview = (props) =>{
 
     return(
         <div className="app-data-container">  
-            <header class="p-3 navbar-header">
-                <div class="container nav-head-container">
-                    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                        <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">                         
-                            <button disabled={newInvoiceWindow ? true : false} class="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{setnewInvoiceWindow(true)}}><div class="inner-button-content"><span class="material-icons-outlined" >receipt_long</span>Adauga</div></button>
-                            <button disabled={newInvoiceWindow ? true : false} class="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{openInvoice()}}><div class="inner-button-content"><span class="material-icons-outlined" >file_open</span>Genereaza</div></button>
-                            <button disabled={newInvoiceWindow ? true : false} class="btn btn-danger btn-sm no-shadow navigation-button" onClick={()=>{deleteInvoice()}}><div class="inner-button-content"><span class="material-icons-outlined" >delete</span>Stergere</div></button>
-                        </div>
-                        <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
-                            <div className="search-form-container">
-                                <div className="search-input-container">
-                                    <input disabled={newInvoiceWindow ? true : false} type="searcg" className="search-input form-control shadow-none" placeholder="Cauta.." id="filterData"></input>
-                                    <button type="button" className="search-reset-button" onClick={()=>{resetSearch()}}><span class="material-icons-outlined">close</span></button>
-                                </div>                 
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </header>  
             {newInvoiceWindow ? 
                 <div style={{backgroundColor:'white', overflowY:'auto', padding:'10px'}} id="new-invoice-container">  
                     <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between'}}>
                         <h5>Factura noua</h5>
-                        <button type="button" title="Inchide" style={{border:'none'}} onClick={()=>{setnewInvoiceWindow(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button> 
+                        <button type="button" title="Inchide" style={{border:'none',}} onClick={()=>{setnewInvoiceWindow(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button> 
                     </div>                    
                     <Invoice/>
                 </div> 
-            :invoicesData ?           
-                <div style={{display:'flex', flexDirection:'row', overflowY:'auto'}} id="invoices-overview-container">    
-                    <div style={{display:'flex', flexDirection:'column'}}>  
-                        <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white" style={{width: '250px'}}> 
-                            {invoicesData.length>0 && invoicesData.map((element, index)=>(
-                                <div>            
-                                    <div class="list-group list-group-flush border-bottom scrollarea">
+            :invoicesData &&    
+                    <div style={{display:'flex', flexDirection:'row'}}>  
+                        <div className="vertical-list-container">     
+                            <div className="d-flex flex-column align-items-stretch flex-shrink-0 bg-white vertical-list" style={{width: '300px'}}>  
+                                <div class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">
+                                    <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
+                                        <div className="search-form-container">
+                                            <button disabled={newInvoiceWindow ? true : false} class="btn btn-success btn-sm no-shadow navigation-button add-new-button" onClick={()=>{setnewInvoiceWindow(true)}}><span class="material-icons-outlined" >add</span></button>
+                                            <div className="search-input-container">
+                                                <input disabled={newInvoiceWindow ? true : false} type="search" className="search-input form-control shadow-none" placeholder="Cauta.." id="filterData"></input>
+                                                <button type="button" className="search-reset-button" onClick={()=>{resetSearch()}}><span class="material-icons-outlined">refresh</span></button>
+                                            </div>                 
+                                        </div>
+                                    </form>
+                                </div> 
+                                <div class="list-group list-group-flush border-bottom scrollarea" style={{width: '300px'}}> 
+                                    {invoicesData.length>0 && invoicesData.map((element, index)=>(          
                                         <a href="#" class={activeInvoice===element.invoice_number ? "list-group-item list-group-item-action py-3 lh-sm active" : "list-group-item list-group-item-action py-3 lh-sm"} onClick={()=>setActiveInvoice(element.invoice_number)} aria-current="true">
                                             <div class="d-flex w-100 align-items-center justify-content-between">
                                                 <strong class="mb-1">{element.client_first_name} {element.client_last_name}</strong> 
-                                                <small>{element.invoice_number}</small>    
-                                                                                     
+                                                <small>{element.invoice_number}</small>                                                                            
                                             </div>
                                             <div class="col-10 mb-1 small">
                                                 <small style={{display:'flex', flexDirection:"row", alignItems:'center'}}>{setStatus(element.invoice_status)} {simpleDate(element.invoice_date)} </small>                                                
                                             </div>
-                                        </a>                    
-                                    </div>
+                                        </a>     
+                                    ))}                                
                                 </div>
-                            ))}                            
+                                <div class="p-2">
+                                    <PageNavigation numberOfItems={numberOfElements} changePage={changePage}/>             
+                                </div> 
+                            </div>
                         </div>
-                        <PageNavigation numberOfItems={numberOfElements} changePage={changePage}/>
-                    </div>
-                    <div className="overview-container">
-                        <Invoice key={activeInvoice} invoiceID={activeInvoice}/>
-                    </div>
-                </div> : <h4 style={{textAlign:"center"}}>Nothing</h4>
+                        <div className="overview-container">
+                            <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-end mb-md-0"> 
+                                <button disabled={newInvoiceWindow ? true : false} class="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{openInvoice()}}><div class="inner-button-content"><span class="material-icons-outlined" >file_open</span>Genereaza</div></button>
+                                <button disabled={newInvoiceWindow ? true : false} class="btn btn-danger btn-sm no-shadow navigation-button" onClick={()=>{deleteInvoice()}}><div class="inner-button-content"><span class="material-icons-outlined" >delete</span>Stergere</div></button>
+                            </div>
+                            <Invoice key={activeInvoice} invoiceID={activeInvoice}/>
+                        </div>
+                </div>
             }
             <Snackbar text={alertUser.text} closeSnack={()=>{setAlertUser({text:null})}}/>  
         </div>

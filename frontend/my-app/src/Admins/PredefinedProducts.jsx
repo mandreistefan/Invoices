@@ -1,7 +1,6 @@
 import React from "react";
 import SmallMenu from '../SmallMenu/SmallMenu'
 import Snackbar from '../Snackbar/Snackbar.jsx'
-import './ProductInsert.css'
 import ProductForm from "./ProductForm.jsx";
 
 let Products=()=>{   
@@ -50,32 +49,17 @@ let Products=()=>{
 
     return(
         <div>
-            <header class="p-3 navbar-header">
-                <div class="container nav-head-container">
-                    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                        <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">      
-                            <button className="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{setaddproductWindow(true)}}><div class="inner-button-content"><span class="material-icons-outlined">sell</span>Adauga</div></button>                                                   
-                        </div>
-                        <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
-                            <div className="search-form-container">
-                                <div className="search-input-container">
-                                    <input type="searcg" className="search-input form-control shadow-none" placeholder="Cauta.." id="filterData"></input>
-                                    <button type="button" className="search-reset-button" onClick={()=>{resetSearch()}}><span class="material-icons-outlined">close</span></button>
-                                </div>                 
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </header>              
+            <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-end mb-md-0"> 
+                <button className="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{setaddproductWindow(true)}}><div class="inner-button-content"><span class="material-icons-outlined">add</span>Adauga</div></button>                                                   
+            </div>              
             {addproductWindow&&
-                <div>
-                    <div className="blur-overlap"></div>     
-                    <button type="button" className="action-close-window" onClick={()=>{setaddproductWindow(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
-                    <div className="overlapping-component-inner">
-                        <ProductForm/>
-                    </div>
+            <div>
+                <div className="blur-overlap"></div>     
+                <button type="button" className="action-close-window" onClick={()=>{setaddproductWindow(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
+                <div className="overlapping-component-inner">
+                    <ProductForm/>
                 </div>
-            }
+            </div>}
             <div className="products-container" style={{marginTop:'25px'}}>            
                 {predefinedProducts &&       
                     <div className="app-data-container"> 
