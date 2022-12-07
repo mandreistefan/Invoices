@@ -73,8 +73,11 @@ let Expenses=()=>{
 
     return(
         <div className="expenses-container">
-            <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-end mb-md-0"> 
-                <button className="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{setaddexpensesWindow(true)}}><div class="inner-button-content"><span class="material-icons-outlined">add</span>Adauga</div></button>                                                                                             
+            <div style={{display:'flex', flexDirection:'row'}}>
+                <div style={{width:'70%', display:'inherit', alignItems:'center'}} className="p-3"><h5>Cheltuieli</h5></div>
+                <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-end mb-md-0 p-3" style={{width:'30%'}}>                                
+                    <button className="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{setaddexpensesWindow(true)}}><div class="inner-button-content"><span class="material-icons-outlined">add</span>Adauga</div></button>                                                                                             
+                </div>
             </div> 
             {addexpensesWindow&&
                 <div>
@@ -86,7 +89,7 @@ let Expenses=()=>{
                 </div>
             }
             {expenses&&       
-                <div className="app-data-container" style={{marginTop:'25px'}}>
+                <div style={{padding:'10px'}}>
                     <h6>Cheltuieli inregistrate</h6> 
                     <div className="alert alert-secondary interval-setter">
                         <div className="row">

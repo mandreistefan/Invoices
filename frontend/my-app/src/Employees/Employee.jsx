@@ -213,7 +213,7 @@ export default class Employee extends React.Component{
     
      render(){
         return(
-            <div>
+            <div style={{padding:'16px'}}>
                 <div style={{display:'flex', alignItems:'center'}}>
                     <div style={{width:"50%", paddingRight:'10px'}}>
                         <div style={{display:'flex', flexDirection:'row'}}>

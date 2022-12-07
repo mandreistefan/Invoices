@@ -49,9 +49,12 @@ let Products=()=>{
 
     return(
         <div>
-            <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-end mb-md-0"> 
-                <button className="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{setaddproductWindow(true)}}><div class="inner-button-content"><span class="material-icons-outlined">add</span>Adauga</div></button>                                                   
-            </div>              
+            <div style={{display:'flex', flexDirection:'row'}}>
+                <div style={{width:'70%', display:'inherit', alignItems:'center'}} className="p-3"><h5>Produse sablon</h5></div>
+                <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-end mb-md-0 p-3" style={{width:'30%'}}>                                
+                    <button className="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{setaddproductWindow(true)}}><div class="inner-button-content"><span class="material-icons-outlined">add</span>Adauga</div></button>                                                   
+                </div>
+            </div>           
             {addproductWindow&&
             <div>
                 <div className="blur-overlap"></div>     
@@ -62,7 +65,7 @@ let Products=()=>{
             </div>}
             <div className="products-container" style={{marginTop:'25px'}}>            
                 {predefinedProducts &&       
-                    <div className="app-data-container"> 
+                    <div style={{padding:'10px'}}> 
                         <h6>Produse</h6>
                         <table className='table table-hover table-sm app-data-table'>
                             <thead className='table-active'>

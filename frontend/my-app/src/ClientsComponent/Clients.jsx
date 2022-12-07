@@ -23,7 +23,9 @@ let Clients = (props) =>{
         fetchClients()
     },[queryFilter])
 
-    //the fetcher
+    /**
+     * fetchesClients
+     */
     let fetchClients=()=>{
         //fetches all clients
         fetch(`http://localhost:3000/clients?&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page}`,
@@ -98,54 +100,52 @@ let Clients = (props) =>{
 
     return(
             <div className='app-data-container'>
-                {allClients && 
-                    <div style={{display:'flex', flexDirection:'row'}} className="clients-overview-container">
+                {allClients &&       
+                    <div className="clients-overview-container">
                         <div className="vertical-list-container">     
-                            <div className="d-flex flex-column align-items-stretch flex-shrink-0 bg-white vertical-list" style={{width: '300px'}}>  
-                                <div class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">
-                                    <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
-                                        <div className="search-form-container">
-                                        <button className="btn btn-success btn-sm no-shadow navigation-button add-new-button" onClick={()=>{showonewClientWindow(true)}}><span class="material-icons-outlined">add</span></button>                                
-                                            <div className="search-input-container">
-                                                <input type="search" className="search-input form-control shadow-none" placeholder="Cauta.." id="filterData"></input>
-                                                <button type="button" className="search-reset-button" onClick={()=>{resetSearch()}}><span class="material-icons-outlined">refresh</span></button>
-                                            </div>                 
-                                        </div>
-                                    </form>
-                                </div> 
-                                <div class="list-group list-group-flush border-bottom scrollarea" style={{width: '300px'}}> 
-                                    {allClients.length>0 && allClients.map((element, index)=>(        
-                                        <a href="#" class={parseInt(activeClient.id)===parseInt(element.id) ? "list-group-item list-group-item-action py-3 lh-sm active" : "list-group-item list-group-item-action py-3 lh-sm"} onClick={()=>{setActiveClient(element.id, element.client_first_name)}} aria-current="true">
-                                            <div style={{display:'flex', flexDirection:'row'}}>     
-                                                <div style={{display:'flex', flexDirection:'row'}}>
-                                                    <div className="name-badge" style={{backgroundColor:element.client_gui_color}}>{element.client_first_name.substring(0,1)}{element.client_last_name.substring(0,1)}</div>
+                            <div class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">                
+                                <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
+                                    <div className="search-form-container">
+                                        <button className="btn btn-success btn-sm no-shadow add-new-button" type="button" onClick={()=>{showonewClientWindow(true)}}><span class="material-icons-outlined">add</span></button>                                
+                                        <div className="search-input-container">
+                                            <input type="search" className="search-input form-control shadow-none" placeholder="Cauta.." id="filterData"></input>
+                                            <button type="button" className="search-reset-button" onClick={()=>{resetSearch()}}><span class="material-icons-outlined">refresh</span></button>
+                                        </div>                 
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="list-group list-group-flush border-bottom scrollarea" style={{width: '300px'}}> 
+                                {allClients.length>0 && allClients.map((element, index)=>(        
+                                    <a href="#" class={parseInt(activeClient.id)===parseInt(element.id) ? "list-group-item list-group-item-action py-3 lh-sm active" : "list-group-item list-group-item-action py-3 lh-sm"} onClick={()=>{setActiveClient(element.id, element.client_first_name)}} aria-current="true">
+                                        <div style={{display:'flex', flexDirection:'row'}}>     
+                                            <div style={{display:'flex', flexDirection:'row'}}>
+                                                <div className="name-badge" style={{backgroundColor:element.client_gui_color}}>{element.client_first_name.substring(0,1)}{element.client_last_name.substring(0,1)}</div>
+                                            </div>
+                                            <div>
+                                                <div class="d-flex w-100 align-items-center justify-content-between">
+                                                    <strong class="mb-1">{element.client_first_name} {element.client_last_name}</strong>                                            
                                                 </div>
-                                                <div>
-                                                    <div class="d-flex w-100 align-items-center justify-content-between">
-                                                        <strong class="mb-1">{element.client_first_name} {element.client_last_name}</strong>                                            
-                                                    </div>
-                                                    <div class="col-10 mb-1 small">
-                                                        <small>{element.client_type ? element.client_type==="pers" ? <span><span class="material-icons-outlined" style={{fontSize:'16px'}}>person</span>Persoana fizica</span> : <span><span class="material-icons-outlined" style={{fontSize:'16px'}}>store</span>Firma</span> : "NA"}<br/></small>
-                                                        {element.client_county}, {element.client_city}, {element.client_street}, {element.client_adress_number}, {element.client_zip}
-                                                    </div>
+                                                <div class="col-10 mb-1 small">
+                                                    <small>{element.client_type ? element.client_type==="pers" ? <span><span class="material-icons-outlined" style={{fontSize:'16px'}}>person</span>Persoana fizica</span> : <span><span class="material-icons-outlined" style={{fontSize:'16px'}}>store</span>Firma</span> : "NA"}<br/></small>
+                                                    {element.client_county}, {element.client_city}, {element.client_street}, {element.client_adress_number}, {element.client_zip}
                                                 </div>
                                             </div>
-                                        </a>  
-                                    ))}                                
-                                </div>    
-                                <div className="p-2">
-                                    <PageNavigation numberOfItems={numberOfElements} changePage={changePage}/>                                
-                                </div>
-                            </div>
+                                        </div>
+                                    </a>  
+                                ))}                                
+                            </div> 
                         </div>
                         <div className='overview-container'>
-                            <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-end mb-md-0">                                
-                                <button className="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{props.enableInvoiceApp(activeClient.name, activeClient.id)}}><div class="inner-button-content"><span class="material-icons-outlined">library_add</span>Factureaza</div></button>
-                                <button className="btn btn-danger btn-sm no-shadow navigation-button" onClick={()=>{deleteClient()}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span>Stergere</div></button>
+                            <div style={{display:'flex', flexDirection:'row'}}>
+                                <div style={{width:'70%', display:'inherit', alignItems:'center'}} className="p-3"><h5>{activeClient.name}</h5></div>
+                                <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-end mb-md-0 p-3" style={{width:'30%'}}>                                
+                                    <button className="btn btn-secondary btn-sm no-shadow navigation-button" onClick={()=>{props.enableInvoiceApp(activeClient.name, activeClient.id)}}><div class="inner-button-content"><span class="material-icons-outlined">library_add</span>Factureaza</div></button>
+                                    <button className="btn btn-danger btn-sm no-shadow navigation-button" onClick={()=>{deleteClient()}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span>Stergere</div></button>
+                                </div>
                             </div>
                             <ClientForm key={activeClient.id} editable={true} isSubmitable={true} clientID={activeClient.id}/>
                         </div>
-                    </div>                    
+                    </div>                             
                 }
                 {newClientWindow&&
                     <div>

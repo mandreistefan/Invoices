@@ -6,6 +6,10 @@
     width: 100%;
 }
 
+.invoices-add-container{
+    padding:10px;
+}
+
 .invoices-add-form-selector{
     margin-bottom:25px;
     display:flex;

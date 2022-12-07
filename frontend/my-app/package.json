@@ -13,6 +13,7 @@
     "react-chartjs-2": "^4.3.1",
     "react-datepicker": "^4.8.0",
     "react-dom": "^18.1.0",
+    "react-router-dom": "^6.4.4",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
@@ -20,7 +21,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "jsdoc": "jsdoc -c jsdoc.json"
   },
   "eslintConfig": {
     "extends": [
