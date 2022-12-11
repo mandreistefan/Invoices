@@ -604,12 +604,8 @@ async function getEmployees(filterObject){
         let matchingEmployees = await databaseOperations.searchDatabase({target:"employees", searchTerm:stringedFilterBy})
         if(matchingEmployees.length==0) return({status:"NO_DATA", data:null})
         employeesObject = await databaseOperations.getEmployees({filter:"search", filterBy:matchingEmployees, page:1})
-        console.log("1")
-        totalRecordsNumber = await databaseOperations.getRecordsNumber("employees", "all", "") 
-        console.log("2")       
+        totalRecordsNumber = await databaseOperations.getRecordsNumber("employees", "all", "")   
     }
-
-    console.log(totalRecordsNumber)
 
     if(employeesObject.status==="OK"){
         return({
@@ -697,12 +693,13 @@ async function addSalary(data){
 }
 
 async function addVacationDays(object){
-    if(object.employeeID===null) return({status:"ERROR", data:"INVALID_EMPLOYEE"})
+    if(object.employeeID===null) return({status:"ERROR", data:"INVALID_EMPLOYEE"})    
 
     let employeeID = object.employeeID
     let datesObject = object.dates
     
-    return databaseOperations.addVacationDays(employeeID, datesObject)
+    return await databaseOperations.addVacationDays(employeeID, datesObject)
+
 }
 
 async function getVacationDays(employee){

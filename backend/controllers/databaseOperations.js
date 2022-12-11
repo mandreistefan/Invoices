@@ -1527,33 +1527,56 @@ async function addSalary(paid_to, salary_month){
  * @returns {Promise<{status:string, data:null}>} Status of the OP
  */
 
-function addVacationDays(employee, daysObject){
-    console.log(daysObject)
+async function addVacationDays(employee, daysObject){
+
     const requestedDaysNumber = daysObject.length
 
     return new Promise((resolve, reject)=>{
-        let insertThing = `('${employee}', '${daysObject[0].date}', '${daysObject[0].type}')`
-        if(daysObject.length>1){
-            daysObject.shift()
-            //build insert query
-            daysObject.forEach((element, index)=>{
-                insertThing = insertThing + `,('${employee}', '${element.date}', '${element.type}')`
-            })
-        }
+        let anArray = []
+        daysObject.forEach(element=>{
+            anArray.push(element.date)
+        })
 
-        connection.query(`INSERT INTO employees_vacation(employee_id, vacation_date, vacation_type) VALUES ${insertThing}`, function(error, result){
+        connection.query(`SELECT * FROM employees_vacation WHERE vacation_date in (?) AND employee_id=${employee} `, anArray, function(error, result){
             if(error){
                 console.log(error)
-                reject ({status:"FAIL", data:null})
+                reject ("ERROR")
             }
-            if(requestedDaysNumber==result.affectedRows){
-                resolve({status:"OK", data:null})
+            if(result){
+                if(result.length>0){
+                    reject("INVALID_DATE")
+                }else{
+                    //create a query element
+                    let insertThing = `('${employee}', '${daysObject[0].date}', '${daysObject[0].type}')`
+                    if(daysObject.length>1){
+                        daysObject.shift()
+                        //build insert query
+                        daysObject.forEach((element, index)=>{
+                            insertThing = insertThing + `,('${employee}', '${element.date}', '${element.type}')`
+                        })
+                    }
+                    //add days to the DB
+                    connection.query(`INSERT INTO employees_vacation(employee_id, vacation_date, vacation_type) VALUES ${insertThing}`, function(error, result){
+                        if(error){
+                            console.log(error)
+                            reject ({status:"FAIL", data:null})
+                        }
+                        if(requestedDaysNumber==result.affectedRows){
+                            resolve({status:"OK", data:null})
+                        }else{
+                            resolve({status:"FAIL", data:null})
+                        }                           
+                    })              
+                }
             }else{
-                resolve({status:"FAIL", data:null})
-            }
-           
+                reject("ERROR")
+            }           
         })
     })
+
+
+
+
 }
 
 /**

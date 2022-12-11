@@ -244,9 +244,8 @@ export default class Employee extends React.Component{
                 </div>
                 <hr></hr>
                 <div id="additional-employee-info-container">
-                    <div style={{width:'100%', marginBottom:'25px', display:'flex', flexDirection:'row'}}>
-                        <span class="material-icons-outlined">attach_money</span>
-                        <div style={{width:'100%', paddingLeft:'16px'}}>
+                    <div style={{width:'100%', marginBottom:'25px', display:'flex', flexDirection:'row'}}>                        
+                        <div style={{width:'100%', paddingLeft:'16px'}} className="border-pill">
                             <h5>Salarii</h5>
                             <table className='table table-hover table-sm app-data-table' id="vacation-days-table">
                                 <thead className='table-active'>
@@ -280,8 +279,7 @@ export default class Employee extends React.Component{
                         </div>
                     </div>   
                     <div style={{width:'100%', marginBottom:'25px', display:'flex', flexDirection:'row'}}>                        
-                            <span class="material-icons-outlined">event</span>
-                            <div style={{width:'100%', paddingLeft:'16px'}}>
+                            <div style={{width:'100%', paddingLeft:'16px'}} className="border-pill">
                                 <h5>Zile libere</h5>
                                 <table className='table table-hover table-sm app-data-table' id="vacation-days-table">
                                     <thead className='table-active'>

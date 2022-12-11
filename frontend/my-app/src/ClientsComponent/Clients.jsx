@@ -106,7 +106,7 @@ let Clients = (props) =>{
                             <div class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">                
                                 <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
                                     <div className="search-form-container">
-                                        <button className="btn btn-success btn-sm no-shadow add-new-button" type="button" onClick={()=>{showonewClientWindow(true)}}><span class="material-icons-outlined">add</span></button>                                
+                                        <button className="btn btn-secondary btn-sm no-shadow add-new-button" type="button" onClick={()=>{showonewClientWindow(true)}}><span class="material-icons-outlined">add</span></button>                                
                                         <div className="search-input-container">
                                             <input type="search" className="search-input form-control shadow-none" placeholder="Cauta.." id="filterData"></input>
                                             <button type="button" className="search-reset-button" onClick={()=>{resetSearch()}}><span class="material-icons-outlined">refresh</span></button>

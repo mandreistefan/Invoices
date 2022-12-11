@@ -736,6 +736,7 @@ input[type=date]{
   display: flex;
   flex-direction: column;
   width: fit-content;
+  
   height: 100vh;
   background-color: white; 
   justify-content: space-between;
@@ -743,7 +744,8 @@ input[type=date]{
 
 .side-navigation-container{
   display: flex;
-  flex-direction: column;   
+  flex-direction: column;  
+  padding: 10px; 
   background-color: #FFFFFF;
 }
 
@@ -774,6 +776,7 @@ input[type=date]{
   font-weight: 400;
   color:#353535;
   width: 100%;
+  border-radius: 30px;
 }
 
 .nav-link .material-icons-outlined{
@@ -859,4 +862,12 @@ body{
 
 .invoices-add-container{
   padding:10px;
+}
+
+.border-pill{
+  border: 1px solid lightgray;
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }

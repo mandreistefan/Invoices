@@ -123,7 +123,7 @@ let InvoicesOverview = (props) =>{
                             <div class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">
                                 <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
                                     <div className="search-form-container">
-                                        <button disabled={newInvoiceWindow ? true : false} type="button" className="btn btn-success btn-sm no-shadow add-new-button" onClick={()=>{setnewInvoiceWindow(true)}}><span class="material-icons-outlined" >add</span></button>
+                                        <button disabled={newInvoiceWindow ? true : false} type="button" className="btn btn-secondary btn-sm no-shadow add-new-button" onClick={()=>{setnewInvoiceWindow(true)}}><span class="material-icons-outlined" >add</span></button>
                                         <div className="search-input-container">
                                             <input disabled={newInvoiceWindow ? true : false} type="search" className="search-input form-control shadow-none" placeholder="Cauta.." id="filterData"></input>
                                             <button type="button" className="search-reset-button" onClick={()=>{resetSearch()}}><span class="material-icons-outlined">refresh</span></button>

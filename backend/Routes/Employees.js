@@ -95,13 +95,20 @@ app.get('/employee_salary', (req, res)=>{
 
 app.post('/employee_vacation', (req, res)=>{
     addVacationDays(req.body).then(data=>{
+        console.log(data)
         res.send({
             status:data.status,
             data:data.data
         })
     }).catch(error=>{
-        res.send({status:"SERVER_ERROR", data:null}) 
-        console.log(error)
+        //the Promise that checks if any dates already exist has fired up
+        if(error==="ERROR"){
+            res.send({status:"FAIL", data:"Something went wrong"}) 
+        }else if(error==="INVALID_DATE"){
+            res.send({status:"INVALID_DATE", data:"One or more dates are invalid!"}) 
+        }else{
+            res.send({status:"SERVER_ERROR", data:null}) 
+        }        
     })
 })
 

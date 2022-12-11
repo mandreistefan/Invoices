@@ -38,12 +38,12 @@
                 <table class="billed-products-table">
                     <thead id="billed-products-table-header">
                         <tr>
-                            <th>No.</th>
+                            <th>Nr. crt.</th>
                             <th>Nume</th>
                             <th>UM</th>
                             <th>Cantitate</th>                            
-                            <th>Pret per unitate</th>
-                            <th>TVA(%)</th>
+                            <th>Pret unitar</th>
+                            <th>Cota TVA</th>
                             <th>Valoare TVA</th>
                             <th>Valoare totala</th>                            
                         </tr>
@@ -60,6 +60,12 @@
                         <td id="invoice-total"><b>{invoiceData.invoiceProperty.total.price} RON</b></td>                        
                     </tfoot>
                 </table>           
+            </div>
+            <div style="border-top:1px solid lightgray; border-bottom:1px solid lightgray">
+                <span>Conform art. 155 alin. (28) din Legea nr.571/2003 privind Codul fiscal, factura este valabila fara semnatura si stamplia</span>
+            </div>
+            <div>
+                <span>Emis de:<br>SLABU DORIN<br>CUI: XC 123456</span>
             </div>
         </div>
     </body>  
@@ -135,6 +141,7 @@
     </script>
 
     <style>
+
         #invoice-number, #invoice-date, #invoice-info-total{
             font-weight: 600;
         }
@@ -177,7 +184,7 @@
         }
 
         .billed-products-container{
-            margin-top:20px;
+            margin-top:30px;
             margin-bottom: 20px;
         }
 
@@ -202,6 +209,7 @@
         thead, thead tr{
             border:1px solid lightgray;
             border-bottom: 0;
+            background-color: #d3d3d3;
         }
 
         tfoot{
