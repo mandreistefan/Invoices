@@ -91,7 +91,7 @@ export default class Employee extends React.Component{
 
         if(this.state.id){
             fetch(`http://localhost:3000/employee/${this.state.id}`).then(response=>response.json()).then(data=>{
-                if(data.status=="OK"){
+                if(data.status==="OK"){
                     this.setState({
                         first_name:data.data.info[0].emp_first_name, 
                         last_name:data.data.info[0].emp_last_name,
@@ -156,7 +156,7 @@ export default class Employee extends React.Component{
                     dates: this.state.vacationDaysRequested
                 })
             }).then(response=>response.json()).then(data=>{
-                if(data.status=="OK"){
+                if(data.status==="OK"){
                     this.setState({alertUser:"Cerere inregistrata"})
                 }else{
                     this.setState({alertUser:"Ceva nu a functionat"})
@@ -204,7 +204,7 @@ export default class Employee extends React.Component{
                 curVac.push({date:curVac[theID].date, type:event.target.value})
             }               
         }else{
-            if(curVac.length==1) return false
+            if(curVac.length===1) return false
             curVac.splice(theID, 1)
         }
         this.setState({vacationDaysRequested: curVac})
@@ -238,7 +238,7 @@ export default class Employee extends React.Component{
                     <div style={{width:"50%", paddingLeft:'10px'}}>
                         <div>
                             <label>Note angajat</label>
-                            <textarea style={{height:'100%'}} rows="4" className="form-control" disabled="true" value={this.state.emp_notes}></textarea>
+                            <textarea style={{height:'100%'}} rows="4" className="form-control" disabled={true} value={this.state.emp_notes}></textarea>
                         </div>
                     </div>
                 </div>
@@ -262,7 +262,7 @@ export default class Employee extends React.Component{
                                 </thead>
                                 <tbody>
                                     {this.state.salaries!=[] ? this.state.salaries.map((element, index)=>(
-                                        <tr>
+                                        <tr key={index}>
                                             <td><b>{element.month}</b></td>
                                             <td><b>{element.date}</b></td>
                                             <td><b>{element.gross}</b></td>
@@ -275,7 +275,7 @@ export default class Employee extends React.Component{
                                     )):"Nu exista inregistrari"}
                                 </tbody>
                             </table>
-                            <button type="button" class="btn btn-primary w-100" onClick={()=>{this.setState({salaryWindow:true})}}>INREGISTRARE PLATA NOUA</button>
+                            <button type="button" className="btn btn-primary w-100" onClick={()=>{this.setState({salaryWindow:true})}}>INREGISTRARE PLATA NOUA</button>
                         </div>
                     </div>   
                     <div style={{width:'100%', marginBottom:'25px', display:'flex', flexDirection:'row'}}>                        
@@ -291,8 +291,8 @@ export default class Employee extends React.Component{
                                         </tr>    
                                     </thead>
                                     <tbody>
-                                        {this.state.vacationDays.length>0 ? this.state.vacationDays.map(element=>(
-                                            <tr>
+                                        {this.state.vacationDays.length>0 ? this.state.vacationDays.map((element,index)=>(
+                                            <tr key={index}>
                                                 <td><b>{element.date}</b></td>
                                                 <td><b>{element.registerDate}</b></td>
                                                 <td><b>{element.type}</b></td>
@@ -301,7 +301,7 @@ export default class Employee extends React.Component{
                                         )):"Nu exista inregistrari"}
                                     </tbody>
                                 </table>
-                                <button class="btn btn-primary w-100 my-1" onClick={()=>{this.setState({vacationDaysWindow: true})}}>CERERE NOUA</button>
+                                <button className="btn btn-primary w-100 my-1" onClick={()=>{this.setState({vacationDaysWindow: true})}}>CERERE NOUA</button>
                             </div>
                     </div>                            
                 </div>
@@ -315,24 +315,24 @@ export default class Employee extends React.Component{
                                     <h6>Informatii angajat</h6>
                                     <form onSubmit={this.handleSubmit}>
                                         <div className="row g-3">
-                                            <div class="col-sm-6">
-                                                <label for="firstName" class="form-label">Nume</label>
-                                                <input type="text" class="form-control" id="firstName" placeholder="" value={this.state.first_name} disabled={true} required=""></input>
+                                            <div className="col-sm-6">
+                                                <label for="firstName" className="form-label">Nume</label>
+                                                <input type="text" className="form-control" id="firstName" placeholder="" value={this.state.first_name} disabled={true} required=""></input>
                                             </div>
-                                            <div class="col-sm-6">
-                                                <label for="lastName" class="form-label">Prenume</label>
-                                                <input type="text" class="form-control" id="lastName" placeholder="" value={this.state.last_name} disabled={true} required=""></input>
+                                            <div className="col-sm-6">
+                                                <label for="lastName" className="form-label">Prenume</label>
+                                                <input type="text" className="form-control" id="lastName" placeholder="" value={this.state.last_name} disabled={true} required=""></input>
                                             </div>
                                         </div>
                                         <div className="row g-3">
-                                            <div class="col-sm-12">
-                                                <label for="cnp" class="form-label">CNP</label>
-                                                <input type="text" class="form-control" id="cnp" placeholder="" value={this.state.identification_number} disabled={true} required=""></input>
+                                            <div className="col-sm-12">
+                                                <label for="cnp" className="form-label">CNP</label>
+                                                <input type="text" className="form-control" id="cnp" placeholder="" value={this.state.identification_number} disabled={true} required=""></input>
                                             </div>   
                                         </div>
-                                        <div class="col-md-5">
-                                            <label for="paid_for" class="form-label">Luna</label>
-                                            <select class="form-select" id="paid_for" required="" onChange={this.handleMonthChange}>
+                                        <div className="col-md-5">
+                                            <label for="paid_for" className="form-label">Luna</label>
+                                            <select className="form-select" id="paid_for" required="" onChange={this.handleMonthChange}>
                                                 <option value="1">Ianuarie</option> 
                                                 <option value="2">Februarie</option>
                                                 <option value="3">Martie</option>
@@ -348,50 +348,50 @@ export default class Employee extends React.Component{
                                             </select>
                                         </div>
                                         <hr></hr>
-                                        <button class="w-100 btn btn-primary btn-lg" type="submit">INREGISTRARE</button>
+                                        <button className="w-100 btn btn-primary btn-lg" type="submit">INREGISTRARE</button>
                                     </form>
                                 </div>
-                                <div class="col-md-5 col-lg-4 order-md-last">
-                                    <ul class="list-group mb-3">
-                                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                                <div className="col-md-5 col-lg-4 order-md-last">
+                                    <ul className="list-group mb-3">
+                                        <li className="list-group-item d-flex justify-content-between lh-sm">
                                             <div>
-                                            <h6 class="my-0">Brut</h6>
-                                                <small class="text-muted">Salariu brut aferent angajatului</small>
+                                            <h6 className="my-0">Brut</h6>
+                                                <small className="text-muted">Salariu brut aferent angajatului</small>
                                             </div>
-                                            <span class="text-muted" ><b>{this.state.salary_gross}</b></span>
+                                            <span className="text-muted" ><b>{this.state.salary_gross}</b></span>
                                         </li>
-                                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                                        <li className="list-group-item d-flex justify-content-between lh-sm">
                                             <div>
-                                            <h6 class="my-0">CAS</h6>
-                                                <small class="text-muted">Asigurari Sociale</small>
+                                            <h6 className="my-0">CAS</h6>
+                                                <small className="text-muted">Asigurari Sociale</small>
                                             </div>
-                                            <span class="text-muted" >{parseFloat(this.state.salary_gross*taxesPercentages.CAS)}</span>
+                                            <span className="text-muted" >{parseFloat(this.state.salary_gross*taxesPercentages.CAS)}</span>
                                         </li>
-                                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                                        <li className="list-group-item d-flex justify-content-between lh-sm">
                                             <div>
-                                            <h6 class="my-0">CASS</h6>
-                                                <small class="text-muted">Asigurari Sociale Sanatate</small>
+                                            <h6 className="my-0">CASS</h6>
+                                                <small className="text-muted">Asigurari Sociale Sanatate</small>
                                             </div>
-                                            <span class="text-muted" >{parseFloat(this.state.salary_gross*taxesPercentages.CASS)}</span>
+                                            <span className="text-muted" >{parseFloat(this.state.salary_gross*taxesPercentages.CASS)}</span>
                                         </li>
                                         {
                                             this.state.isTaxable &&
-                                                <li class="list-group-item d-flex justify-content-between lh-sm">
+                                                <li className="list-group-item d-flex justify-content-between lh-sm">
                                                 <div>
-                                                <h6 class="my-0">Venit</h6>
-                                                    <small class="text-muted">Impozit venit</small>
+                                                <h6 className="my-0">Venit</h6>
+                                                    <small className="text-muted">Impozit venit</small>
                                                 </div>
-                                                <span class="text-muted" >{parseFloat(this.state.salary_gross*taxesPercentages.TAX)}</span>
+                                                <span className="text-muted" >{parseFloat(this.state.salary_gross*taxesPercentages.TAX)}</span>
                                             </li>
                                         }
-                                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                                        <li className="list-group-item d-flex justify-content-between lh-sm">
                                             <div>
-                                            <h6 class="my-0">CM</h6>
-                                                <small class="text-muted">Contributie Asiguratorie<br/>Munca</small>
+                                            <h6 className="my-0">CM</h6>
+                                                <small className="text-muted">Contributie Asiguratorie<br/>Munca</small>
                                             </div>
-                                            <span class="text-muted" >{parseFloat(this.state.salary_gross*taxesPercentages.CAM)}</span>
+                                            <span className="text-muted" >{parseFloat(this.state.salary_gross*taxesPercentages.CAM)}</span>
                                         </li> 
-                                        <li class="list-group-item d-flex justify-content-between">
+                                        <li className="list-group-item d-flex justify-content-between">
                                             <span>Net</span>
                                             <strong>{parseFloat(this.state.salary_gross - this.state.salary_gross*taxesPercentages.CAS - this.state.salary_gross*taxesPercentages.CASS - ((this.state.salary_gross*taxesPercentages.TAX)*this.state.isTaxable))} RON</strong>
                                         </li>                               
@@ -413,13 +413,13 @@ export default class Employee extends React.Component{
                                 <div className="list-group w-auto">
                                     {
                                         this.state.vacationDaysRequested.map((element, index)=>(
-                                            <div className="row g-3">
+                                            <div key={index} className="row g-3">
                                                 <div className="col-sm-6">
-                                                    <label class="form-label">Data</label>
+                                                    <label className="form-label">Data</label>
                                                     <input type="date" className="form-control shadow-none" name="trip-start" id={`date-${index}`} min={`${dateString.year}-${dateString.month}-${dateString.day}`} value={element.date} onChange={this.handleVacationDaysInput}></input>
                                                 </div>
                                                 <div className="col-md-6">
-                                                    <label class="form-label">Tip</label>
+                                                    <label className="form-label">Tip</label>
                                                     <div style={{display:"flex", flexDirection:"row", alignItems:'center'}}>
                                                         <select className="form-select shadow-none" id={`type-${index}`} value={element.type} onChange={this.handleVacationDaysInput}>
                                                             <option value="vacation">Vacation</option>
@@ -434,7 +434,7 @@ export default class Employee extends React.Component{
                                 </div>   
                                 <hr></hr> 
                                 <button type="button" className="w-100 btn btn-primary btn-success my-1 shadow-none" onClick={this.newVacationDay}>ADAUGA ZI</button>                            
-                                <button class="w-100 btn btn-primary my-1 shadow-none" type="submit">INREGISTRARE</button>                                
+                                <button className="w-100 btn btn-primary my-1 shadow-none" type="submit">INREGISTRARE</button>                                
                             </form>
                         </div>
                     </div>             

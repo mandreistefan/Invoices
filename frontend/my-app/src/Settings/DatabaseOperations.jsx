@@ -5,7 +5,6 @@ let DatabaseOperations=()=>{
 
     let [alertUser, setUserAlert] =React.useState({text: null})
     let [databaseInfo, setDBinfo] = React.useState({active: null, available:[]})
-    let curentDate = new Date()
 
     React.useEffect(()=>{
         if(databaseInfo.active===null){
@@ -54,23 +53,22 @@ let DatabaseOperations=()=>{
     return(
         <div>
             <div style={{display:'flex', flexDirection:'row'}}>
-                <div style={{width:'70%', display:'inherit', alignItems:'center'}} className="p-3"><h5>Produse sablon</h5></div>
+                <div style={{width:'70%', display:'inherit', alignItems:'center'}} className="p-3"><h5>Setari baza de date</h5></div>
                 <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-end mb-md-0 p-3" style={{width:'30%'}}>                                
                     
                 </div>
             </div> 
-            <div style={{padding:'10px'}}>            
-
+            <div style={{padding:'10px'}}> 
                 {
                     databaseInfo.available.length>0 &&
                     <form onSubmit={changeDatabase}>
-                        <label>Active database</label>
+                        <label>Baza de date</label>
                         <select id="databaseSelector" className="form-select" onChange={handleDBchange}>
                             {databaseInfo.available.map(element=>(
                                 <option selected={databaseInfo.active===element ? true : false} value={element}>{element}</option>
                             ))}
                         </select>      
-                        <button className="w-100 btn btn-primary btn-lg" ><span className="action-button-label">SALVARE</span></button>         
+                        <button className="w-100 btn btn-primary btn-lg" style={{marginTop:'10px'}}><span className="action-button-label">SALVARE</span></button>         
                     </form>
                 }
                 <div>

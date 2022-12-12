@@ -756,6 +756,7 @@ input[type=date]{
 .side-navigation-list .nav-link a{
   text-decoration: none;
   color:#353535;
+  width: 100%;
 }
 
 .side-navigation-list .nav-link a div{
@@ -777,6 +778,10 @@ input[type=date]{
   color:#353535;
   width: 100%;
   border-radius: 30px;
+}
+
+.nav-link div{
+  padding-right: 10px;
 }
 
 .nav-link .material-icons-outlined{
@@ -822,8 +827,13 @@ input[type=date]{
   border-top-left-radius: inherit;
   border-bottom-left-radius: inherit;
   width: 300px;
+  border-bottom-left-radius: 6px;
 }
 
+.list-group-item-action{
+  width: 100%;
+  max-width: 299px;
+}
 
 body{
   background-color: #E2E2E2;
@@ -870,4 +880,18 @@ body{
   padding: 10px;
   margin-top: 5px;
   margin-bottom: 5px;
+}
+
+.vertical-list-container .list-group .list-group-item:hover{
+  cursor: pointer;  
+}
+
+.page-navigation{
+  max-width: 200px;
+  margin: 10px;
+}
+
+#new-invoice-container{
+  max-height: 90vh;
+  border-radius: 6px;
 }

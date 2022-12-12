@@ -106,7 +106,7 @@ export default class Invoice extends React.Component{
         let validatingThis;
         //first name
         validatingThis=document.getElementById("client_first_name").value
-        if(validatingThis.length==0){
+        if(validatingThis.length===0){
             console.log("Invalid data for first name")
             return false
         }
@@ -119,26 +119,26 @@ export default class Invoice extends React.Component{
         //email - only if filled
         validatingThis=document.getElementById("client_email").value        
         if(validatingThis.length>0){
-            if((validatingThis.indexOf("@")==-1)||(validatingThis.indexOf(".")==-1)){
+            if((validatingThis.indexOf("@")===-1)||(validatingThis.indexOf(".")==-1)){
                 console.log("Invalid data for email")
                 return false
             }
         }
         //last name
         validatingThis=document.getElementById("client_county").value
-        if(validatingThis.length==0){
+        if(validatingThis.length===0){
             console.log("Invalid data for county")
             return false
         }
         //last name
         validatingThis=document.getElementById("client_city").value
-        if(validatingThis.length==0){
+        if(validatingThis.length===0){
             console.log("Invalid data for city")
             return false
         }
         //last name
         validatingThis=document.getElementById("client_street").value
-        if(validatingThis.length==0){
+        if(validatingThis.length===0){
             console.log("Invalid data for street")
             return false
         }
@@ -206,7 +206,7 @@ export default class Invoice extends React.Component{
                     this.setState({alertUser:"Invalid form data!"})
                     return false
                 }
-                dataToBeSent=({client_type: event.target.client_type.value, client_first_name: event.target.client_first_name.value, client_last_name: event.target.client_last_name.value, client_phone: event.target.client_phone.value, client_email: event.target.client_email.value, client_county: event.target.client_county.value, client_city: event.target.client_city.value, client_street: event.target.client_street.value, client_adress_number: event.target.client_adress_number.value, client_zip: event.target.client_zip.value, client_phone: event.target.client_phone.value, billingProducts: this.billedProductsServerFormat(this.state.tableElements), invoice_status: this.state.invoice_status, invoice_pay_method: this.state.invoice_pay_method, invoice_bank_ref: this.state.invoice_bank_ref})
+                dataToBeSent=({client_type: event.target.client_type.value, client_first_name: event.target.client_first_name.value, client_last_name: event.target.client_last_name.value, client_phone: event.target.client_phone.value, client_email: event.target.client_email.value, client_county: event.target.client_county.value, client_city: event.target.client_city.value, client_street: event.target.client_street.value, client_adress_number: event.target.client_adress_number.value, client_zip: event.target.client_zip.value, billingProducts: this.billedProductsServerFormat(this.state.tableElements), invoice_status: this.state.invoice_status, invoice_pay_method: this.state.invoice_pay_method, invoice_bank_ref: this.state.invoice_bank_ref})
                 if(dataToBeSent.client_type==="comp"){
                     dataToBeSent.client_fiscal_2 = event.target.client_fiscal_2.value
                     dataToBeSent.client_fiscal_1 = event.target.client_fiscal_1.value
@@ -291,7 +291,7 @@ export default class Invoice extends React.Component{
     calculateTotalandTax(){
         let total=0;
         let tax=0;
-        this.state.tableElements.map(element=>{
+        this.state.tableElements.forEach(element=>{
             //quantity and price should be >0
             if(element.data[2]*element.data[5]>0){
                 total=total+(element.data[2]*element.data[5])
@@ -359,7 +359,7 @@ export default class Invoice extends React.Component{
     addPredefinedElement = (dataObject) =>{
         let productAlready=false
         //make sure that the predefined product isnt already in the invoice
-        this.state.tableElements.map(element=>{
+        this.state.tableElements.forEach(element=>{
             if(element.properties.id){
                 if(element.properties.id===dataObject.id){
                     productAlready=true;
@@ -495,7 +495,7 @@ export default class Invoice extends React.Component{
                                 {false&&<div className="alert alert-secondary" style={{marginTop:'20px',marginLeft:'10px', marginRight:'10px'}} role="alert">
                                     <p className="lead" style={{fontSize: '16px', marginBottom:'0'}}>* Option not available<br/>
                                         ** Invoices ca be saved as:
-                                        <ul class="info-text-list">
+                                        <ul className="info-text-list">
                                             <li><b>Drafts</b>: an invoice that is saved and can be further edited</li>
                                             <li><b>Finalised</b>: the invoice is permanenlty closed and the user has been billed</li>
                                         </ul>
@@ -520,7 +520,7 @@ export default class Invoice extends React.Component{
                                             <div className="billing-products-body">
                                                 {                                                
                                                     this.state.tableElements.map((element, index)=>(
-                                                        <div>
+                                                        <div key={index}>
                                                             <div className="row" key={index} id={index}>
                                                                 <div className="col-3"><input type="text" className={element.properties.valid ? "product_name form-control shadow-none" : "product_name form-control invalid-input shadow-none"} name="product_name" disabled={element.properties.preloaded===true ? true : false} position={[index,0]} autoComplete="off" value={element.data[0]} onChange={this.validateAndUpdate}/></div>
                                                                 <div className="col-2"><input type="text" className={element.properties.valid ? "product_um form-control shadow-none": "product_um form-control invalid-input shadow-none"} name="product_um" disabled={element.properties.preloaded===true ? true : false} position={[index,1]} autoComplete="off" value={element.data[1]} onChange={this.validateAndUpdate}/></div>

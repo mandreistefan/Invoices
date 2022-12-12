@@ -82,7 +82,7 @@ let PredefinedProductsManager = (props) =>{
                         }
                         </tbody>
                     </table>
-                    {predefinedProducts.length==0 ? <div style={{textAlign:"center", width:"100%"}}><h4 >No data</h4></div> : ""}
+                    {predefinedProducts.length===0 ? <div style={{textAlign:"center", width:"100%"}}><h4 >No data</h4></div> : ""}
                     {productProps!=null &&
                         <div> 
                             <div className="blur-overlap"></div>    

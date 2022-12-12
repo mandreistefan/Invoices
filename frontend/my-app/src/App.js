@@ -7,24 +7,37 @@ import Settings from './Settings/SettingsComponent.jsx'
 import Employees from './Employees/Employees.jsx'
 import Admins from './Admins/AdminsOverview.jsx'
 import {Route, createBrowserRouter, RouterProvider, createRoutesFromElements, createHashRouter} from 'react-router-dom'
-import {useState, useEffect} from 'react'
 
 let App =()=> {
 
-  let [activeComponent, setActive] = useState(null)
-  let [settingsShown, setsettingsShown] = useState(null)
+  let router;
 
-  let router=createBrowserRouter(
-    createRoutesFromElements(
-      <Route path="/" element={<Layout/>}>
-        <Route path='clients' element={<ClientsComponent/>}/>
-        <Route path='invoices' element={<InvoicesComponent/>}/>
-        <Route path='admins' element={<Admins/>}/>
-        <Route path='settings' element={<Settings/>}/>
-        <Route path='employees' element={<Employees/>}/>
-      </Route>
+  //Electron env
+  if(navigator.userAgent.indexOf('Electron')>-1){
+    router=createHashRouter(
+      createRoutesFromElements(
+        <Route path="/" element={<Layout/>}>
+          <Route path='clients' element={<ClientsComponent/>}/>
+          <Route path='invoices' element={<InvoicesComponent/>}/>
+          <Route path='admins' element={<Admins/>}/>
+          <Route path='settings' element={<Settings/>}/>
+          <Route path='employees' element={<Employees/>}/>
+        </Route>
+      )
     )
-  )
+  }else{
+    router=createBrowserRouter(
+      createRoutesFromElements(
+        <Route path="/" element={<Layout/>}>
+          <Route path='clients' element={<ClientsComponent/>}/>
+          <Route path='invoices' element={<InvoicesComponent/>}/>
+          <Route path='admins' element={<Admins/>}/>
+          <Route path='settings' element={<Settings/>}/>
+          <Route path='employees' element={<Employees/>}/>
+        </Route>
+      )
+    )
+  }
 
   return(
       <RouterProvider router={router}/>
