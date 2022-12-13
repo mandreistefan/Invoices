@@ -28,9 +28,13 @@ let DatabaseOperations=()=>{
             headers: { 'Content-Type': 'application/json' },
             body:JSON.stringify({database: databaseInfo.active})
         }).then(response=>response.json()).then(data=>{
-
+            if(data.status==="OK"){
+                setUserAlert({text:`Database changed!`})
+            }else{
+                setUserAlert({text:"Eroare"})
+            }
         }).catch(error=>{
-
+            setUserAlert({text:"Eroare"})
         })
     }
 
@@ -75,7 +79,6 @@ let DatabaseOperations=()=>{
                     <h6>Import/ export</h6>
                     <div class="action-buttons-container">                   
                         <button class="btn btn-primary" onClick={()=>{exportDatabase()}}><div className="inner-button-content"><span className="material-icons-outlined">file_download</span>Export</div></button>
-                        <button class="btn btn-primary" onClick={()=>{}}><div className="inner-button-content"><span className="material-icons-outlined">file_upload</span>Import</div></button>
                     </div>
                 </div>
                 <Snackbar text={alertUser.text} closeSnack={()=>{setUserAlert({text:null})}}/>  

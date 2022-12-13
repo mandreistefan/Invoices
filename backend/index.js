@@ -15,7 +15,7 @@ const employeesHandler = require('./Routes/Employees.js')
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./Routes/swagger.json');
 
-const inElectron = true
+const inElectron = false
 
 if(inElectron){
     const { app, BrowserWindow } = require('electron');

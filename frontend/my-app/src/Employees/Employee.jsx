@@ -210,7 +210,12 @@ export default class Employee extends React.Component{
         this.setState({vacationDaysRequested: curVac})
     }
 
-    
+    //month starts with 0
+    parseDate=(date)=>{
+        let theDate = date.split('/')    
+        return `${theDate[0]}/${parseInt(theDate[1])+1}/${theDate[2]}`
+    }
+
      render(){
         return(
             <div style={{padding:'16px'}}>
@@ -293,9 +298,9 @@ export default class Employee extends React.Component{
                                     <tbody>
                                         {this.state.vacationDays.length>0 ? this.state.vacationDays.map((element,index)=>(
                                             <tr key={index}>
-                                                <td><b>{element.date}</b></td>
-                                                <td><b>{element.registerDate}</b></td>
-                                                <td><b>{element.type}</b></td>
+                                                <td><b>{this.parseDate(element.date)}</b></td>
+                                                <td>{this.parseDate(element.registerDate)}</td>
+                                                <td>{element.type}</td>
                                                 <td><b>{element.status}</b></td>            
                                             </tr>
                                         )):"Nu exista inregistrari"}

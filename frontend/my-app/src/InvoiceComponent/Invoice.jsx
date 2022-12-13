@@ -206,11 +206,29 @@ export default class Invoice extends React.Component{
                     this.setState({alertUser:"Invalid form data!"})
                     return false
                 }
-                dataToBeSent=({client_type: event.target.client_type.value, client_first_name: event.target.client_first_name.value, client_last_name: event.target.client_last_name.value, client_phone: event.target.client_phone.value, client_email: event.target.client_email.value, client_county: event.target.client_county.value, client_city: event.target.client_city.value, client_street: event.target.client_street.value, client_adress_number: event.target.client_adress_number.value, client_zip: event.target.client_zip.value, billingProducts: this.billedProductsServerFormat(this.state.tableElements), invoice_status: this.state.invoice_status, invoice_pay_method: this.state.invoice_pay_method, invoice_bank_ref: this.state.invoice_bank_ref})
+                console.log( 
+                    event.target.client_form
+         )
+                dataToBeSent=({
+                    client_type: event.target.client_type.value, 
+                    client_first_name: event.target.client_first_name.value, 
+                    client_last_name: event.target.client_last_name.value, 
+                    client_phone: event.target.client_phone.value, 
+                    client_email: event.target.client_email.value, 
+                    client_county: event.target.client_county.value, 
+                    client_city: event.target.client_city.value, 
+                    client_street: event.target.client_street.value, 
+                    client_adress_number: event.target.client_adress_number.value, 
+                    client_zip: event.target.client_zip.value, 
+                    billingProducts: this.billedProductsServerFormat(this.state.tableElements), 
+                    invoice_status: this.state.invoice_status, 
+                    invoice_pay_method: this.state.invoice_pay_method
+                })
                 if(dataToBeSent.client_type==="comp"){
                     dataToBeSent.client_fiscal_2 = event.target.client_fiscal_2.value
                     dataToBeSent.client_fiscal_1 = event.target.client_fiscal_1.value
                 } 
+                if(dataToBeSent.invoice_pay_method==="bank")  dataToBeSent.invoice_bank_ref = this.state.invoice_bank_ref
             }
         }else{
             method="PUT";

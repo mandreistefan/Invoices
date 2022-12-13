@@ -26,11 +26,6 @@ let Products=()=>{
         })
     },[query])
 
-    let resetSearch=()=>{
-        document.getElementById("filterData").value=""
-        setFilter({...query, filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
-    }
-
     let changePage=(pageNumber)=>{
         setFilter({...query, page:pageNumber})
     }
@@ -94,7 +89,7 @@ let Products=()=>{
                                                 <div className='actions-container'>                                    
                                                     <SmallMenu items={[
                                                         {name:"Edit", icon:"edit", disabled: false, clickAction:()=>{setProductProps({product_id:element.id, product_name: element.pp_name, product_um: element.pp_um, product_price: element.pp_price_per_item, product_tax:element.pp_tax, product_description:element.pp_description})}}, 
-                                                        {name:"Delete", icon:"delete", disabled:false, clickAction:()=>{deleteProduct()}}
+                                                        {name:"Delete", icon:"delete", disabled:false, clickAction:()=>{deleteProduct(element.id)}}
                                                     ]}/>
                                                 </div>
                                             } 
