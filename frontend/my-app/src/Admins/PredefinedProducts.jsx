@@ -13,6 +13,10 @@ let Products=()=>{
     let [addproductWindow, setaddproductWindow] = React.useState(false)
 
     React.useEffect(()=>{
+        fetchData()
+    },[query])
+
+    function fetchData(){
         fetch(`http://localhost:3000/products?filter=${query.filter}&filterBy=${query.filterBy}&page=${query.page}`).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 ppSet(data.data)
@@ -24,14 +28,28 @@ let Products=()=>{
         }).catch(error=>{
             setSnackBarText("Eroare")
         })
-    },[query])
+    }
 
     let changePage=(pageNumber)=>{
         setFilter({...query, page:pageNumber})
     }
 
-    let deleteProduct=()=>{
-
+    let deleteProduct=(productID)=>{
+        fetch(`http://localhost:3000/products/${productID}`, {
+            method:"DELETE",
+            headers: { 'Content-Type': 'application/json'
+        }
+        }).then(response=>response.json()).then(data=>{
+            if(data.status==="OK"){
+                fetchData()
+            }else if(data.status==="SERVER_ERROR"){
+                setSnackBarText("Baza de date nu poate fi accesata")
+            }else{
+                setSnackBarText("Eroare")
+            }
+        }).catch(error=>{
+            setSnackBarText("Eroare")
+        })
     }
 
     function handleSearchSubmit(event){

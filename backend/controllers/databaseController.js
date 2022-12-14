@@ -489,6 +489,15 @@ async function handleProduct(data){
     return status   
 }
 
+/**
+ * Removes a predefined product
+ * @param {*} productID The ID of the product
+ * @returns 
+ */
+async function deletePredefinedProduct(productID){
+    return await databaseOperations.removePredefinedProduct(productID)
+}
+
 //find the invoice of the product; remove the product from the database; calculate and update the total invoice SUM and TAX
 async function removeProduct(entry){
     if(entry===null)  return({status: "ERROR", data: "Entry invalid"})
@@ -747,5 +756,5 @@ module.exports={
     getExpenses:getExpenses,
     addExpense:addExpense,
     deleteExpense,
-    getEmployees, addEmployee, editEmployee, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeOverview, archiveEmployee,
+    getEmployees, addEmployee, editEmployee, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeOverview, archiveEmployee, deletePredefinedProduct
 }

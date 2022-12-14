@@ -17,7 +17,7 @@ app.get('/products', (req, res)=>{
             data:data.data
         })
     })
-    .catch(data=>{
+    .catch(error=>{
         res.send({
             status:"ERROR",
             data:null
@@ -33,18 +33,27 @@ app.put('/products', (req, res)=>{
             data:null
         })
     })
-    .catch(data=>{
+    .catch(error=>{
+        res.send({
+            status:"ERROR", 
+            data:null
+        })
         console.log("ERROR")
     })
 })
 
-app.delete('/products/*',(req, res)=>{
-    let url_path_arr = urlmod.parse(req.url, true).path.split("/");
-    databaseController.removeProduct(url_path_arr[2]).then(data=>{
+app.delete('/products/:productID',(req, res)=>{
+    databaseController.deletePredefinedProduct(req.params.productID).then(data=>{
         res.send({
             status:data.status, 
             data:data.data
         })
+    }).catch(error=>{
+        res.send({
+            status:"ERROR", 
+            data:null
+        })
+        console.log("ERROR")
     })
 })
 

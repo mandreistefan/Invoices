@@ -1280,8 +1280,8 @@ function getExpenses(filterObject, getAll){
  */
 
 function addExpense(object){
-    return new Promise((resolve, reject)=>{  
-        connection.query(`INSERT INTO expenses(exp_name, exp_sum, exp_description, exp_date, exp_deduct) VALUES ('${object.exp_name}', '${object.exp_sum}', '${object.exp_description}','${object.exp_date}','${object.exp_deduct}')`, function(error, result){
+    return new Promise((resolve, reject)=>{       
+        connection.query(`INSERT INTO expenses(exp_name, exp_sum, exp_description, exp_date, exp_deduct) VALUES ('${object.exp_name}', '${object.exp_sum}', '${object.exp_description}','${object.exp_date}','${object.exp_deduct ? 1 : 0}')`, function(error, result){
             if(error){
                 console.log(error)
                 reject({status:"ERROR"})
@@ -1793,7 +1793,6 @@ function archiveEmployee(employeeID){
 
 function deleteEmployee(employeeID){
     return new Promise((resolve, reject)=>{
-        console.log(`DELETE FROM employees WHERE id='${employeeID}'`)
         connection.query(`DELETE FROM employees WHERE id='${employeeID}'`, function(error, result){
             if(error){
                 console.log(error)
@@ -1809,6 +1808,25 @@ function deleteEmployee(employeeID){
             resolve({status:"FAIL", data:null})
         })
     })  
+}
+
+function removePredefinedProduct(productID){
+    return new Promise((resolve, reject)=>{
+        connection.query(`DELETE FROM predefined_products WHERE id='${productID}'`, function(error, result){
+            if(error){
+                console.log(error)
+                reject ({status:"ERROR", data:null})
+            }
+            if(result){
+                if(result.affectedRows>0){
+                    resolve({status:"OK", data:null})
+                }else{
+                    resolve({status:"FAIL", data:null})
+                } 
+            }
+            resolve({status:"FAIL", data:null})
+        })
+    })
 }
 
 module.exports ={
@@ -1840,13 +1858,5 @@ module.exports ={
     getProductInvoice:getProductInvoice,
     updateInvoiceTotals:updateInvoiceTotals,
     registerBilledProducts: registerBilledProducts,
-    getRecordsNumber:getRecordsNumber,
-    exportData:exportData,
-    getDBinfo:getDBinfo,
-    changeDatabase,
-    getExpenses,
-    addExpense,
-    deleteExpense,
-    searchDatabase,
-    getEmployees, addEmployee, editEmployee, hasSalaryOnDate, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeInfo, archiveEmployee, deleteEmployee,
+    getRecordsNumber:getRecordsNumber, exportData:exportData, getDBinfo:getDBinfo, changeDatabase, getExpenses,addExpense, deleteExpense, searchDatabase, getEmployees, addEmployee, editEmployee, hasSalaryOnDate, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeInfo, archiveEmployee, deleteEmployee, removePredefinedProduct
 }

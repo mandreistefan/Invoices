@@ -28,7 +28,7 @@ let PageNavigation=(props)=>{
     let buildPagesArray=(numberOfPages)=>{
         let pages=[]
         for(let i=1; i<=numberOfPages; i++){
-            pages.push(<li key={i} className={pagination.currentPage===i ? "page-item disabled" : "page-item"}><a className="page-link" href="#" onClick={()=>{changePage(i)}}>{i}</a></li>)
+            pages.push(<li key={i} className={pagination.currentPage===i ? "page-item disabled" : "page-item"}><div className="page-link" onClick={()=>{changePage(i)}}>{i}</div></li>)
         }
         setPages(pages)
     }
