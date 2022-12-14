@@ -160,8 +160,6 @@ export default class Invoice extends React.Component{
         return responseArray;
     }
 
-    
-
     //submits data to the server
     submitData = (event) => {
         //prevent default submit
@@ -206,9 +204,7 @@ export default class Invoice extends React.Component{
                     this.setState({alertUser:"Invalid form data!"})
                     return false
                 }
-                console.log( 
-                    event.target.client_form
-         )
+
                 dataToBeSent=({
                     client_type: event.target.client_type.value, 
                     client_first_name: event.target.client_first_name.value, 
@@ -418,7 +414,7 @@ export default class Invoice extends React.Component{
             return false
         }
         //remove the product from the database
-        fetch(`http://localhost:3000/products/${entry}`,{
+        fetch(`http://localhost:3000/billed_products/${entry}`,{
             method:"DELETE",
             headers: { 'Content-Type': 'application/json' }
         })

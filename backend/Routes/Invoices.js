@@ -98,4 +98,19 @@ app.put("/invoices",(req, res)=>{
     })   
 })
 
+//updates an invoice
+app.delete("/billed_products/:productID",(req, res)=>{
+    console.log(req.params.productID)
+    databaseController.removeProduct(req.params.productID).then(response=>{
+        res.send(response)
+    }) 
+    .catch(error=>{
+        console.log(error)
+        res.send({
+            status:"SERVER_ERROR",
+            data:null
+        })
+    })   
+})
+
 module.exports = app
