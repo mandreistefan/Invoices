@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  font-family: 'Oswald';
 }
 
 .App-logo {
@@ -841,6 +842,7 @@ input[type=date]{
 
 body{
   background-color: #E2E2E2;
+  font-family: 'Roboto'!important;
 }
 
 #nav-settings-button{
@@ -898,4 +900,35 @@ body{
 #new-invoice-container{
   max-height: 90vh;
   border-radius: 6px;
+}
+
+.header-buttons-container{
+  height: fit-content;
+  width: fit-content;
+}
+
+.header-buttons-container button{
+  border:none;
+  border:1px solid lightgray;
+}
+
+.header-buttons-container button:hover{
+  border:1px solid darkgray;
+}
+
+
+.header-buttons-container  .btn-light{
+  border-radius: 0;
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+
+.header-buttons-container  .btn-danger{
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.header-buttons-container{
+  display: inherit;
+  justify-content: end;
 }

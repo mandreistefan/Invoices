@@ -8,11 +8,12 @@ let Clients = (props) =>{
     let defaultFilter = {filter:"all", filterBy:"", page:1}
 
     //local storage
-    if(!localStorage.getItem('activeClient')) localStorage.setItem('activeClient', "")
-    if(!localStorage.getItem('activeClientName')) localStorage.setItem('activeClientName', "")
+    /*if(!localStorage.getItem('activeClient')) localStorage.setItem('activeClient', "")
+    if(!localStorage.getItem('activeClientName')) localStorage.setItem('activeClientName', "")*/
 
     const [allClients, setAllClients] = useState(null)
-    const [activeClient, setActive] = useState({id:localStorage.getItem('activeClient') ? localStorage.getItem('activeClient') : null, name:localStorage.getItem('activeClientName') ? localStorage.getItem('activeClientName'): ""})
+    //const [activeClient, setActive] = useState({id:localStorage.getItem('activeClient') ? localStorage.getItem('activeClient') : null, name:localStorage.getItem('activeClientName') ? localStorage.getItem('activeClientName'): ""})
+    const [activeClient, setActive] = useState({id: null, name:"", surname:""})
     let [numberOfElements, setNOE] = useState(null)
     let [alertUser, setAlertUser] = useState({text: null})
     let [newClientWindow, showonewClientWindow] = useState(false)
@@ -38,7 +39,7 @@ let Clients = (props) =>{
             if(data.status==="OK"){
                 setAllClients(data.data)
                 setNOE(data.totalRecordsNumber)
-                if(localStorage.getItem('activeClient').length===0) setActiveClient(data.data[0].id, data.data[0].client_first_name)
+                if(activeClient.id===null) setActiveClient(data.data[0].id, data.data[0].client_first_name, data.data[0].client_last_name)
             }else if(data.status==="SERVER_ERROR"){
                 setAlertUser({text:"Baza de date nu poate fi accesata"})
             }else if(data.status==="NO_DATA"){
@@ -92,10 +93,10 @@ let Clients = (props) =>{
         setFilter({...queryFilter, filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
     }
 
-    let setActiveClient=(id, name)=>{
-        setActive({id, name})
-        localStorage.setItem('activeClient', id)
-        localStorage.setItem('activeClientName', name)
+    let setActiveClient=(id, name, surname)=>{
+        setActive({id, name, surname})
+        /*localStorage.setItem('activeClient', id)
+        localStorage.setItem('activeClientName', name)*/
     }
 
     return(
@@ -116,7 +117,7 @@ let Clients = (props) =>{
                             </div>
                             <div className="list-group list-group-flush border-bottom scrollarea" style={{width: '300px'}}> 
                                 {allClients.length>0 && allClients.map((element, index)=>(        
-                                    <div className={parseInt(activeClient.id)===parseInt(element.id) ? "list-group-item list-group-item-action py-3 lh-sm active" : "list-group-item list-group-item-action py-3 lh-sm"} onClick={()=>{setActiveClient(element.id, element.client_first_name)}} aria-current="true">
+                                    <div className={parseInt(activeClient.id)===parseInt(element.id) ? "list-group-item list-group-item-action py-3 lh-sm active" : "list-group-item list-group-item-action py-3 lh-sm"} onClick={()=>{setActiveClient(element.id, element.client_first_name, element.client_last_name)}} aria-current="true">
                                         <div style={{display:'flex', flexDirection:'row'}}>     
                                             <div style={{display:'flex', flexDirection:'row'}}>
                                                 <div className="name-badge" style={{backgroundColor:element.client_gui_color}}>{element.client_first_name.substring(0,1)}{element.client_last_name.substring(0,1)}</div>
@@ -136,14 +137,14 @@ let Clients = (props) =>{
                                 <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>                               
                             </div> 
                         </div>
-                        <div className='overview-container'>
-                            <div style={{display:'flex', flexDirection:'row'}}>
-                                <div style={{width:'70%', display:'inherit', alignItems:'center'}} className="p-3"><h5>{activeClient.name}</h5></div>
-                                <div className="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-end mb-md-0 p-3" style={{width:'30%'}}>                                
-                                    <button className="btn btn-secondary btn-sm no-shadow navigation-button" onClick={()=>{props.enableInvoiceApp(activeClient.name, activeClient.id)}}><div className="inner-button-content"><span className="material-icons-outlined">library_add</span>Factureaza</div></button>
-                                    <button className="btn btn-danger btn-sm no-shadow navigation-button" onClick={()=>{deleteClient()}}><div className="inner-button-content"><span className="material-icons-outlined">delete</span>Stergere</div></button>
+                        <div className='overview-container'>      
+                                <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
+                                    <div style={{display:'inherit', alignItems:'center'}}><span style={{fontSize:'24px'}}>{activeClient.name} {activeClient.surname}</span></div>
+                                        <div className="nav col-12 col-lg-auto mb-2 justify-content-end header-buttons-container">                               
+                                            <button  className='btn-light' title="Factureaza client" onClick={()=>{props.enableInvoiceApp(activeClient.id)}}><div className="inner-button-content"><span className="material-icons-outlined">library_add</span></div></button>
+                                            <button className='btn-danger' title="Arhiveaza client" onClick={()=>{deleteClient()}}><div className="inner-button-content"><span className="material-icons-outlined">delete</span></div></button>
+                                    </div>
                                 </div>
-                            </div>
                             <ClientForm key={activeClient.id} editable={true} isSubmitable={true} clientID={activeClient.id}/>
                         </div>
                     </div>                             

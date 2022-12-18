@@ -89,7 +89,7 @@ let InvoicesOverview = (props) =>{
     }
 
     let openInvoice=()=>{
-        window.open(`http://localhost:3001/generateInvoice/${activeInvoice}`).focus();
+        window.open(`http://localhost:3000/generateInvoice/${activeInvoice}`).focus();
     }
 
     function handleSearchSubmit(event){
@@ -145,12 +145,12 @@ let InvoicesOverview = (props) =>{
                             </div>
                         </div>
                         <div className='overview-container'>
-                            <div style={{display:'flex', flexDirection:'row'}}>
-                                <div style={{width:'70%', display:'inherit', alignItems:'center'}} className="p-3"><h5>Factura numarul {activeInvoice}</h5></div>
-                                <div className="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-end mb-md-0 p-3" style={{width:'30%'}}>    
-                                    <button disabled={newInvoiceWindow ? true : false} className="btn btn-secondary btn-sm no-shadow navigation-button" onClick={()=>{openInvoice()}}><div className="inner-button-content"><span className="material-icons-outlined" >file_open</span>Genereaza</div></button>
-                                    <button disabled={newInvoiceWindow ? true : false} className="btn btn-danger btn-sm no-shadow navigation-button" onClick={()=>{deleteInvoice()}}><div className="inner-button-content"><span className="material-icons-outlined" >delete</span>Stergere</div></button>
-                                </div>
+                            <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
+                                <div style={{display:'inherit', alignItems:'center'}}><span style={{fontSize:'24px'}}>Factura numarul {activeInvoice}</span></div>
+                                <div className="nav col-12 col-lg-auto mb-2 justify-content-end header-buttons-container">                               
+                                    <button disabled={newInvoiceWindow ? true : false}  className='btn-light' title="Generaza factura" onClick={()=>{openInvoice()}}><div className="inner-button-content"><span className="material-icons-outlined" >file_open</span></div></button>
+                                    <button disabled={newInvoiceWindow ? true : false}  className='btn-danger' title="Arhiveaza factura" onClick={()=>{deleteInvoice()}}><div className="inner-button-content"><span className="material-icons-outlined" >delete</span></div></button>
+                                </div>                                                             
                             </div>
                             <Invoice key={activeInvoice} invoiceID={activeInvoice}/>
                         </div>
@@ -158,8 +158,6 @@ let InvoicesOverview = (props) =>{
             }
             <Snackbar text={alertUser.text} closeSnack={()=>{setAlertUser({text:null})}}/>  
         </div>
-
-
     )
 
 }

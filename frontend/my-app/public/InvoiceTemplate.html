@@ -59,11 +59,19 @@
                         <td></td>
                         <td id="invoice-total"><b>{invoiceData.invoiceProperty.total.price} RON</b></td>                        
                     </tfoot>
-                </table>           
+                </table>
+                <br>                
+                <div>
+                    <span>Emis de <b>Slabu Dorin</b>, CUI: <b>ZC 011565</b></span><br>
+                    <span>Date privind expeditia:</span><br>
+                    <span>Numele delegatului: <b><span id="delegate-name"></span></b></span><br>
+                    <span>CI Seria: nr: eliberat de:</span><br>
+                    <span>Mijlocul de transport: <b>BC 72 ADF</b></span><br>
+                    <span>Expedierea s-a efectuat la data:</span><br>
+                </div>           
             </div>
             <div style="position:absolute; bottom:0">
-                <span>Conform art. 155 alin. (28) din Legea nr.571/2003 privind Codul fiscal, factura este valabila fara semnatura si stamplia</span><br>
-                <span>Emis de <b>Slabu Dorin</b>, CUI: <b>XC 123456</b></span>
+                <span>Conform art. 155 alin. (28) din Legea nr.571/2003 privind Codul fiscal, factura este valabila fara semnatura si stamplia</span><br>                
             </div>
         </div>
     </body>  
@@ -76,7 +84,7 @@
                 tableContent=tableContent+
                 `<tr>
                     <td>${index+1}</td>
-                    <td>${element.name}</td>
+                    <td><b>${element.name}</b></td>
                     <td>${element.um}</td>
                     <td>${element.quantity}</td>
                     <td>${element.ppu} RON</td>
@@ -106,7 +114,8 @@
             document.getElementById("client-email").innerHTML=`Email: ${invoiceData.invoiceProperty.client_billing_adress.email}`
             document.getElementById("billed-products-table-body").innerHTML = generateTable(invoiceData.invoiceProducts)
             document.getElementById("invoice-total").innerHTML = `<b>${invoiceData.invoiceProperty.total.price} RON</b>`
-            document.getElementById("invoice-total-tax").innerHTML = `<b>${invoiceData.invoiceProperty.total.tax} RON</b>`
+            document.getElementById("delegate-name").innerHTML = `${invoiceData.invoiceProperty.client_first_name} ${invoiceData.invoiceProperty.client_last_name}`
+            //if(invoiceData.invoiceProperty.total.tax) document.getElementById("invoice-total-tax").innerHTML = `<b>${invoiceData.invoiceProperty.total.tax} RON</b>`
             if(invoiceData.invoiceProperty.client_type==="comp"){
                 document.getElementById("client_fiscal_1").innerHTML = `Nr. Reg. Com: ${invoiceData.invoiceProperty.client_fiscal_1}`
                 document.getElementById("client_fiscal_2").innerHTML = `CIF: ${invoiceData.invoiceProperty.client_fiscal_2}`
@@ -114,6 +123,24 @@
                 document.getElementById("client_fiscal_1").style.display="none"
                 document.getElementById("client_fiscal_2").style.display="none"
             }
+            printAsPdf()
+        }
+
+        //emits an event to the server to call the printToPDF() function
+        function printAsPdf(){
+            console.log("Generating PDF")
+                fetch("http://localhost:3000/generatePDF",
+                {
+                    method:"GET"
+                })
+                .then(response=>response.json())
+                .then(data=>{
+                    if(data.status==="OK"){
+                        alert("PDF generat!")
+                    }else{
+                        alert("PDF-ul nu a fost generat, verifica logurile!")
+                    }
+                })    
         }
 
         //fetch data from the DB
@@ -167,7 +194,7 @@
         .company-info{
             display:inherit;
             flex-direction: column;
-            background-color: lightgray;
+            background-color: #f2f2f2;
             padding: 8px;
             width:40%
         }
@@ -190,6 +217,7 @@
             color:black;
             font-weight: 500;
             font-size: 1.15rem;
+            margin-bottom: 10px;
         }
 
         .invoice-info-container span{
@@ -200,19 +228,24 @@
             width: 100%;
         }
 
-        tbody{
-            border:1px solid lightgray;
+        thead, thead tr{
+            border-bottom: 0;
+            background-color: #353535;   
+            color: #ffffff         
         }
 
-        thead, thead tr{
-            border:1px solid lightgray;
-            border-bottom: 0;
-            background-color: #d3d3d3;
+        thead tr th{
+            padding-top: 10px;
+            padding-bottom: 10px;
         }
 
         tfoot{
-            border: 1px solid lightgray;
-            background-color: #d3d3d3;
+            border-top: 2px solid #353535;
+        }
+
+        tfoot tr td{
+            padding-top: 10px;
+            padding-bottom: 10px;
         }
 
     </style>

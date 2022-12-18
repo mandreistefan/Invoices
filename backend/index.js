@@ -14,7 +14,10 @@ const expensesHandler = require('./Routes/Expenses.js')
 const employeesHandler = require('./Routes/Employees.js')
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./Routes/swagger.json');
-
+const os = require('os')
+const fs = require('fs')
+const { EventEmitter } =require('events');
+const event = new EventEmitter();
 const inElectron = false
 
 if(inElectron){
@@ -23,18 +26,37 @@ if(inElectron){
     const createWindow = () => {
         // Create the browser window.
         const mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
-        webPreferences: {
-            nodeIntegration: true
-        }
+            width: 1800,
+            height: 1600,
+            webPreferences: {
+                nodeIntegration: true
+            }
         });
 
         // and load the index.html of the app.
         mainWindow.loadFile(path.join(__dirname, './front_end_build/Aplicatie.html'));
 
-        // Open the DevTools.
-        mainWindow.webContents.openDevTools();
+        //listen for the print PDF event
+        event.on('printPDF', ()=>{
+            console.log("Printing PDF")
+            // Use default printing options
+            const pdfPath = path.join(os.homedir(), 'Desktop', 'temp.pdf')
+            //the page we want printet has just been opened
+            BrowserWindow.getFocusedWindow().webContents.printToPDF({printBackground:true}).then(data => {
+                fs.writeFile(pdfPath, data, (error) => {
+                    if (error){
+                        console.log(error)
+                        event.emit('printPDFstatus', "ERROR")
+                    }
+                    console.log("PDF generated")
+                    event.emit('printPDFstatus', "OK")
+                })
+            }).catch(error => {
+                console.log("PDF could not be generated")
+                event.emit('printPDFstatus', "ERROR")
+            })
+        })
+
     }
 
     // This method will be called when Electron has finished
@@ -63,20 +85,6 @@ cron.schedule('* 00 13 * *', () => {
 
 //recurrentController.handleRecurrencies()
 
-//search - not implemented
-myApp.get("/search",(req,res)=>{
-    let queryFilter = {}
-    if(req.query.filter) queryFilter.filter=req.query.filter
-    if(req.query.filterBy) queryFilter.filterBy=req.query.filterBy
-    databaseController.performSearch(queryFilter).then(data=>{
-        res.send(data)
-    }).catch(error=>{
-        console.log(error)
-        console.log("ups")
-    })
-
-})
-
 //recurrency
 myApp.get('/recurrent/*',(req,res)=>{
     let url_path_arr = urlmod.parse(req.url, true).path.split("/");
@@ -96,7 +104,7 @@ myApp.get('/recurrent/*',(req,res)=>{
 })
 
 
-//exports a DB in a CSV file format
+//exports the DB in a CSV file format
 myApp.get("/export", (req, res)=>{
     databaseController.createExportableData().then(data=>{
         console.log(data)
@@ -116,7 +124,7 @@ myApp.get("/database", (req, res)=>{
     })
 })
 
-//get databases names
+//get a list of databases
 myApp.get("/databases", (req, res)=>{
     let data = databaseController.getDatabases()
     res.send({
@@ -125,7 +133,7 @@ myApp.get("/databases", (req, res)=>{
     })
 })
 
-//exports a DB in a CSV file format
+//switches between databases
 myApp.post("/switchDatabase", (req, res)=>{
     databaseController.changeDatabase(req.body.database).then(data=>{
         if(data.status==="OK"){
@@ -149,5 +157,16 @@ myApp.post("/switchDatabase", (req, res)=>{
     
 })
 
+//emit event to print the opened page
+myApp.get("/generatePDF", (req, res)=>{
+    event.emit('printPDF')  
+    //the status of the printing operation 
+    event.once('printPDFstatus', status => {
+        res.send({
+            status:status,
+            data:null
+        })
+    });
+})
 
 myApp.listen(3001)
