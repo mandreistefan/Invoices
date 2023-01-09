@@ -18,9 +18,11 @@ const os = require('os')
 const fs = require('fs')
 const { EventEmitter } =require('events');
 const event = new EventEmitter();
-const inElectron = false
+let PORT = '3001'
+const inElectron = true
 
 if(inElectron){
+    PORT='3000'
     const { app, BrowserWindow } = require('electron');
 
     const createWindow = () => {
@@ -169,4 +171,4 @@ myApp.get("/generatePDF", (req, res)=>{
     });
 })
 
-myApp.listen(3001)
+myApp.listen(PORT)
