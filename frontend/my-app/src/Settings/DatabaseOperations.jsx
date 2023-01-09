@@ -29,7 +29,7 @@ let DatabaseOperations=()=>{
             body:JSON.stringify({database: databaseInfo.active})
         }).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
-                setUserAlert({text:`Database changed!`})
+                setUserAlert({text:`Baza de date activa a fost schimbata`})
             }else{
                 setUserAlert({text:"Eroare"})
             }
@@ -38,7 +38,7 @@ let DatabaseOperations=()=>{
         })
     }
 
-    let exportDatabase=()=>{
+    /*let exportDatabase=()=>{
         fetch('http://localhost:3000/export').then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 setUserAlert({text:`Export done. ${data.data.success}/${data.data.attempts} files exported`})
@@ -48,7 +48,7 @@ let DatabaseOperations=()=>{
                 setUserAlert({text:"Eroare"})
             }
         })
-    }
+    }*/
 
     let handleDBchange=(event)=>{
         setDBinfo({active: event.target.value, available:databaseInfo.available})
@@ -75,12 +75,6 @@ let DatabaseOperations=()=>{
                         <button className="w-100 btn btn-primary btn-lg" style={{marginTop:'10px'}}><span className="action-button-label">SALVARE</span></button>         
                     </form>
                 }
-                <div>
-                    <h6>Import/ export</h6>
-                    <div class="action-buttons-container">                   
-                        <button class="btn btn-primary" onClick={()=>{exportDatabase()}}><div className="inner-button-content"><span className="material-icons-outlined">file_download</span>Export</div></button>
-                    </div>
-                </div>
                 <Snackbar text={alertUser.text} closeSnack={()=>{setUserAlert({text:null})}}/>  
             </div> 
         </div>

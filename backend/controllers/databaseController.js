@@ -515,7 +515,7 @@ async function removeProduct(entry){
     }
 }
 
-async function createExportableData(){
+/*async function createExportableData(){
     let count=0
     let statuses = await  databaseOperations.exportData()
 
@@ -524,7 +524,7 @@ async function createExportableData(){
     })
 
     return [count, statuses.length]
-}
+}*/
 
 function getDatabaseInfo(){
     let data = databaseOperations.getDBinfo()
@@ -749,7 +749,6 @@ module.exports={
     getPredefinedProducts:getPredefinedProducts,
     handleProduct:handleProduct,
     removeProduct:removeProduct,
-    createExportableData:createExportableData,
     getDatabaseInfo:getDatabaseInfo,
     changeDatabase,
     updateClientData:updateClientData,

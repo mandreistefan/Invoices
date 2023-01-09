@@ -1001,7 +1001,7 @@ function getRecordsNumber(queryDB, queryFilter, queryFilterData){
  * @returns {Promise<Array>} An array containing an OK for each succesfull export
  */
 
-async function exportData(){
+/*async function exportData(){
 
     //create the directory if not existing
     if (!fs.existsSync('./exports')){
@@ -1219,7 +1219,7 @@ async function exportData(){
 
     //chain data
     return await Promise.all([exportInvoices, exportBilledProjects, predefinedProducts, clients, expenses, employees, emp_archv, emp_sal, emp_vac])    
-}
+}*/
 
 function getDBinfo(){
     return({
@@ -1858,5 +1858,5 @@ module.exports ={
     getProductInvoice:getProductInvoice,
     updateInvoiceTotals:updateInvoiceTotals,
     registerBilledProducts: registerBilledProducts,
-    getRecordsNumber:getRecordsNumber, exportData:exportData, getDBinfo:getDBinfo, changeDatabase, getExpenses,addExpense, deleteExpense, searchDatabase, getEmployees, addEmployee, editEmployee, hasSalaryOnDate, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeInfo, archiveEmployee, deleteEmployee, removePredefinedProduct
+    getRecordsNumber:getRecordsNumber, getDBinfo:getDBinfo, changeDatabase, getExpenses,addExpense, deleteExpense, searchDatabase, getEmployees, addEmployee, editEmployee, hasSalaryOnDate, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeInfo, archiveEmployee, deleteEmployee, removePredefinedProduct
 }

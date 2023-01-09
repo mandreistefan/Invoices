@@ -8,11 +8,11 @@ let Employees=(props)=>{
     const defaultFilter={filter:"all", filterBy:"", page:1}
 
     //local storage
-    if(!localStorage.getItem('activeEmployee')) localStorage.setItem('activeEmployee', "")
+    //if(!localStorage.getItem('activeEmployee')) localStorage.setItem('activeEmployee', "")
 
     let [employees, setEmployees] = useState([])
     let [query, setFilter] = useState({filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
-    let [activeEmployee, setActive] = useState(localStorage.getItem('activeEmployee').length>0 ? localStorage.getItem('activeEmployee') : "")
+    let [activeEmployee, setActive] = useState("")
     let [alertUser, setAlertUser] = useState(null)
     let [addEmployeeWindow, showaddEmployeeWindow] = useState(false)
     let [editEmployeeWindow, setEditableEmployee] = useState(false)
@@ -25,7 +25,7 @@ let Employees=(props)=>{
         fetch(`http://localhost:3000/employees?filter=${query.filter}&filterBy=${query.filterBy}&page=${query.page}`).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 setEmployees(data.data)
-                if(localStorage.getItem('activeEmployee').length===0) setActiveEmployee(data.data[0].id)
+                setActiveEmployee(data.data[0].id)
             }else if(data.status==="NO_DATA"){
                 setAlertUser("Nu sunt date")
             }            
@@ -41,7 +41,7 @@ let Employees=(props)=>{
 
     let setActiveEmployee=(id)=>{
         setActive(id)
-        localStorage.setItem('activeEmployee', id)
+        //localStorage.setItem('activeEmployee', id)
     }
 
     function handleSearchSubmit(event){
@@ -108,12 +108,12 @@ let Employees=(props)=>{
                         </div> 
                     </div>         
                     <div className="overview-container" key={activeEmployee}>
-                        <div style={{display:'flex', flexDirection:'row'}}>
-                            <div style={{width:'70%', display:'inherit', alignItems:'center'}} className="p-3"><span></span></div>
-                            <div className="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-end mb-md-0 p-3" style={{width:'30%'}}>                          
-                                <button className="btn btn-secondary btn-sm no-shadow navigation-button" onClick={()=>{setEditableEmployee(true)}}><div className="inner-button-content"><span className="material-icons-outlined">edit</span>Editare</div></button>
-                                <button className="btn btn-danger btn-sm no-shadow navigation-button" onClick={()=>{deleteEmployee()}}><div className="inner-button-content"><span className="material-icons-outlined">delete</span>Stergere</div></button>
-                            </div>
+                        <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
+                            <div style={{display:'inherit', alignItems:'center'}}><span style={{fontSize:'24px'}}>Overview angajat</span></div>
+                            <div className="nav col-12 col-lg-auto mb-2 justify-content-end header-buttons-container">                               
+                                <button disabled={activeEmployee ? false : true}  className='btn-light' title="Editeaza angajat" onClick={()=>{setEditableEmployee(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >file_open</span></div></button>
+                                <button disabled={activeEmployee ? false : true}  className='btn-danger' title="Arhiveaza angajat" onClick={()=>{deleteEmployee()}}><div className="inner-button-content"><span className="material-icons-outlined" >delete</span></div></button>
+                            </div>                                                             
                         </div>
                         <Employee id={activeEmployee}/>
                     </div>
