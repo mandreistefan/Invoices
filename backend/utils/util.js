@@ -366,9 +366,11 @@ function processFinancial(data, expenses, interval, salaries){
     returnObj.avg_per_step=returnObj.total / noMonths
 
     let salaries_total=0
-    salaries.forEach(element=>{
-        salaries_total+=element.sum_gross+element.tax_cm
-    })
+    if(salaries){
+        salaries.forEach(element=>{
+            salaries_total+=element.sum_gross+element.tax_cm
+        })
+    }
 
     returnObj.salaries=salaries_total
 

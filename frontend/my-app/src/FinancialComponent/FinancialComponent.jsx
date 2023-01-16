@@ -148,7 +148,7 @@ let Financial = (props) =>{
                             <h5 style={{margin:'0',marginLeft:'5px'}}>Grafic</h5>
                         </div>
                         <div>
-                            <div id="financial-chart" style={{width:"50%"}}>
+                            <div id="financial-chart" style={{width:"100%"}}>
                                 <FinancialChart data={chartData} plottedFor={chartTitle}/>             
                             </div>  
                         </div>  

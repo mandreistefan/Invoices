@@ -22,8 +22,8 @@ let Expenses=()=>{
     let fetchData=()=>{
 
         let startDateArray = dateInterval.start.split("-")
-        let endDayArray = dateInterval.end.split("-")
-        let filterBy=`${startDateArray[2]}${startDateArray[1]}${startDateArray[0].substring(2,4)}-${endDayArray[2]}${endDayArray[1]}${endDayArray[0].substring(2,4)}`
+        let endDateArray = dateInterval.end.split("-")
+        let filterBy=`${startDateArray[2]}${startDateArray[1]}${startDateArray[0].substring(2,4)}-${endDateArray[2]}${endDateArray[1]}${endDateArray[0].substring(2,4)}`
 
         fetch(`http://localhost:3000/expenses?filter=interval&filterBy=${filterBy}`).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
