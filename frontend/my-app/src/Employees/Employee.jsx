@@ -39,6 +39,7 @@ export default class Employee extends React.Component{
             alertUser:null, 
             vacationDaysWindow:false,
             vacationDaysRequested:[{date: `${dateString.year}-${dateString.month}-${dateString.day}`, type:"vacation"}], 
+            availableVacationDays:0,
             emp_notes: ""
         }
 
@@ -104,7 +105,8 @@ export default class Employee extends React.Component{
                         salaries:setSalaries(data.data.salaries),
                         vacationDays:setVacations(data.data.vacationDays),
                         isTaxable: data.data.info[0].emp_tax ? true : false,
-                        emp_notes: data.data.info[0].emp_notes ? data.data.info[0].emp_notes : ""
+                        emp_notes: data.data.info[0].emp_notes ? data.data.info[0].emp_notes : "",
+                        availableVacationDays: data.data.info[0].emp_vacation_days
                     })
                 }else{
                     this.setState({alertUser:"Eroare"})
@@ -226,7 +228,6 @@ export default class Employee extends React.Component{
                             <div style={{paddingLeft:'16px'}}>
                                 <h4>{this.state.first_name} {this.state.last_name}</h4>
                                 <h5 id="employee-title">{this.state.job_name}</h5>
-                                <label>Date angajat</label>
                                 <div>
                                     <ul id="employee-info">
                                         <li>Nume: {this.state.first_name}</li>
@@ -235,6 +236,7 @@ export default class Employee extends React.Component{
                                         <li>CNP: {this.state.identification_number}</li>
                                         <li>Salariu de baza: {this.state.salary_gross} RON</li>
                                         <li>Data angajarii: {this.state.registration_date}</li>
+                                        <li>Zile concediu: {this.state.availableVacationDays}</li>
                                     </ul>
                                 </div>
                             </div>
@@ -286,6 +288,8 @@ export default class Employee extends React.Component{
                     <div style={{width:'100%', marginBottom:'25px', display:'flex', flexDirection:'row'}}>                        
                             <div style={{width:'100%', paddingLeft:'16px'}} className="border-pill">
                                 <h5>Zile libere</h5>
+                                <h6>Alocate: {this.state.availableVacationDays}</h6>
+                                <h6>Ramase: {parseInt(this.state.availableVacationDays - this.state.vacationDays.length)}</h6>
                                 <table className='table table-hover table-sm app-data-table' id="vacation-days-table">
                                     <thead className='table-active'>
                                         <tr className='app-data-table-row table-active'>

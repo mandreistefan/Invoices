@@ -371,9 +371,11 @@ async function getFinancials(querryObject){
     if(data.status!="OK")  return({status:"ERROR", data: null}) 
     //expenses
     let expenses = await databaseOperations.getExpenses(interval, false)
+    //salaries
+    let salaries = await databaseOperations.getSalaries({page:1, filterBy:interval, filter:"interval"})
     if(expenses.status!="OK")  return({status:"ERROR", data: null})     
     //mathematics
-    return({status:data.data.length===0 ? "NO_DATA" : "OK", data: utile.processFinancial(data.data, expenses.data, interval)})    
+    return({status:data.data.length===0 ? "NO_DATA" : "OK", data: utile.processFinancial(data.data, expenses.data, interval, salaries.data)})    
 }
 
 async function updateInvoice(data){

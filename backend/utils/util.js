@@ -278,9 +278,9 @@ function parsePeriod(dataArray){
 
 
 //calculates the total sum and tax for all data in a timespan
-function processFinancial(data, expenses, interval){
+function processFinancial(data, expenses, interval, salaries){
     //default values
-    let returnObj={total:0, total_tax:0, total_net:0, total_number_invoices:1, avg_per_invoice:0, avg_per_step:0, periodicalData:null}
+    let returnObj={total:0, total_tax:0, total_net:0, total_number_invoices:1, avg_per_invoice:0, avg_per_step:0, total_salaries:0, periodicalData:null}
     //step
     let startYear, endYear, startMonth, endMonth, noMonths=0
 
@@ -364,6 +364,13 @@ function processFinancial(data, expenses, interval){
     returnObj.avg_per_invoice=returnObj.total/returnObj.total_number_invoices
     returnObj.periodicalData=arr2
     returnObj.avg_per_step=returnObj.total / noMonths
+
+    let salaries_total=0
+    salaries.forEach(element=>{
+        salaries_total+=element.sum_gross+element.tax_cm
+    })
+
+    returnObj.salaries=salaries_total
 
     return returnObj;
 

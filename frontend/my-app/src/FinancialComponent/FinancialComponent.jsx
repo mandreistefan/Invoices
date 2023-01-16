@@ -16,7 +16,7 @@ let Financial = (props) =>{
         end: `${currentDate.getFullYear()}-12-31`
     }) 
     
-    let [taxes, setTaxes]= React.useState({profitTaxPercentage: 3, profitTax: 0, profit: 0})
+    let [taxes, setTaxes]= React.useState({profitTaxPercentage: 1, profitTax: 0, profit: 0})
 
     React.useEffect(()=>{
         fetchData()
@@ -39,7 +39,7 @@ let Financial = (props) =>{
                 //contains data for plotting a chart
                 setChartTile(`${dateInterval.start} - ${dateInterval.end}`)
                 //calcualtes taxes
-                setTaxes({...taxes, profitTax: parseFloat(((data.data.total-data.data.total_exp)/100)*taxes.profitTaxPercentage).toFixed(2), profit:parseFloat(data.data.total-taxes.profitTax)})
+                setTaxes({...taxes, profitTax: parseFloat(((data.data.total-data.data.total_exp-data.data.salaries)/100)*taxes.profitTaxPercentage).toFixed(2), profit:parseFloat(data.data.total-taxes.profitTax)})
             }else if(data.status==="NO_DATA"){
                 setUserAlert({text: "Nu exista date"})
             }else if(data.status==="SERVER_ERROR"){
@@ -90,20 +90,23 @@ let Financial = (props) =>{
                                 <tbody>
                                     <tr style={{fontWeight:'600'}}>
                                         <td className="col-3">Venituri</td>
-                                        <td className="col-3">TVA</td>
+                                        <td className="col-3">Profit</td>
                                         <td className="col-3">Cheltuieli</td>
+                                        <td className="col-3">Salarii</td>
                                         <td className="col-3">Taxa profit</td>
                                     </tr>
                                     <tr style={{fontSize:'1.35rem'}}>
                                         <td><span className="card-head-text black-text">{parseFloat(financialData.total).toFixed(2)} RON</span></td>
-                                        <td><span className="card-head-text black-text">{parseFloat(financialData.total_tax).toFixed(2)} RON</span></td>
+                                        <td><span className="card-head-text black-text">{parseFloat(financialData.total - financialData.total_exp - financialData.salaries).toFixed(2)} RON</span></td>
                                         <td><span className="card-head-text black-text">{parseFloat(financialData.total_exp).toFixed(2)} RON</span></td>
+                                        <td><span className="card-head-text black-text">{parseFloat(financialData.salaries).toFixed(2)} RON</span></td>
                                         <td><span className="card-head-text black-text">{taxes.profitTax}</span></td>
                                     </tr>
                                     <tr style={{color:'gray',borderTop:'1px solid gray'}}>
                                         <td>Total incasari, facturi finalizare</td>
-                                        <td>Total TVA</td>
+                                        <td>Venituri - cheltuieli</td>
                                         <td>Deduceri/ cheltuieli</td>
+                                        <td>Salarii</td>
                                         <td>Taxa profit * (venituri - cheltuieli deductibile)</td>
                                     </tr>
                                 </tbody>

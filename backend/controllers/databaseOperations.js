@@ -1612,8 +1612,14 @@ async function addSalary(paid_to, salary_month){
         case "paid_to":
             querry=`SELECT * FROM employees_salaries WHERE paid_to=${queryObject.filterBy}`
             break
+        case "interval":
+            querry=`SELECT * FROM employees_salaries WHERE paid_on >= "${queryObject.filterBy.startYear}-${queryObject.filterBy.startMonth}-${queryObject.filterBy.startDay}" AND paid_on <= "${queryObject.filterBy.endYear}-${queryObject.filterBy.endMonth}-${queryObject.filterBy.endDay}" `
+            break
+        case "employee_interval":
+            querry=`SELECT * FROM employees_salaries WHERE paid_on >= "${queryObject.filterBy.startYear}-${queryObject.filterBy.startMonth}-${queryObject.filterBy.startDay}" AND paid_on <= "${queryObject.filterBy.endYear}-${queryObject.filterBy.endMonth}-${queryObject.filterBy.endDay}" AND id='${queryObject.filterBy.employeeID}' `
+            break
         default:
-            querry=`SELECT * FROM employee_salaries LIMIT ${offSet}, ${step}`
+            querry=`SELECT * FROM employees_salaries LIMIT ${offSet}, ${step}`
             break
     }
 

@@ -45,7 +45,7 @@ let EmployeeForm = (props)=>{
                     emp_job_name_input: employeeInfo.emp_job_name,
                     emp_cur_salary_gross_input: employeeInfo.emp_cur_salary_gross,
                     emp_tax_input: employeeInfo.emp_tax,
-                    emp_notes: employeeInfo.emp_notes
+                    emp_vacation_days_input: employeeInfo.emp_vacation_days
                 })
             }else if(data.status==="SERVER_ERROR"){
                 setAlertUser({text:"Baza de date nu poate fi accesata"})
@@ -111,7 +111,8 @@ let EmployeeForm = (props)=>{
                         emp_notes: data.emp_notes_input,
                         emp_job_name: data.emp_job_name_input,
                         emp_cur_salary_gross: data.emp_cur_salary_gross_input,
-                        emp_tax: data.emp_tax_input
+                        emp_tax: data.emp_tax_input,
+                        emp_vacation_days: data.emp_vacation_days_input
                     })
                 })
                 .then(response=>response.json())
@@ -144,7 +145,8 @@ let EmployeeForm = (props)=>{
         if(document.getElementById("emp_job_name").attributes.getNamedItem('modified').value==="true") dataToBeSent.emp_job_name=document.getElementById("emp_job_name").value;          
         if(document.getElementById("emp_cur_salary_gross").attributes.getNamedItem('modified').value==="true") dataToBeSent.emp_cur_salary_gross=document.getElementById("emp_cur_salary_gross").value;          
         if(document.getElementById("emp_notes").attributes.getNamedItem('modified').value==="true") dataToBeSent.emp_notes=document.getElementById("emp_notes").value; 
-        if(document.getElementById("emp_tax").attributes.getNamedItem('modified').value==="true") dataToBeSent.emp_notes=document.getElementById("emp_tax").value;          
+        if(document.getElementById("emp_tax").attributes.getNamedItem('modified').value==="true") dataToBeSent.emp_notes=document.getElementById("emp_tax").value;   
+        if(document.getElementById("emp_vacation_days").attributes.getNamedItem('modified').value==="true") dataToBeSent.emp_vacation_days=document.getElementById("emp_vacation_days").value;          
 
         fetch(`http://localhost:3000/employees`, {
             method:"PUT",
@@ -220,6 +222,10 @@ let EmployeeForm = (props)=>{
                         <option value="1">Da</option>
                         <option value="0">Nu</option>
                     </select>                    
+                </div>
+                <div className="form-group col-md-3">   
+                    <label className="form-subsection-label" htmlFor="emp_vacation_days">Zile libere</label><br/>
+                    <input type="text" id="emp_vacation_days" name="emp_vacation_days" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("emp_vacation_days") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.emp_vacation_days_input}/>
                 </div>
             </div>
             <div className='form-row'>
