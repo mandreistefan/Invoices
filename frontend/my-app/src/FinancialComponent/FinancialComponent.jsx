@@ -54,11 +54,6 @@ let Financial = (props) =>{
         event.target.name==="trip-start" ? setInterval({...dateInterval, start:event.target.value}) : setInterval({...dateInterval, end:event.target.value})
     }
 
-    let recalculateTaxes=(event)=>{
-        let profitTax = parseFloat(((financialData.total-financialData.total_exp)/100)*event.target.value).toFixed(2)
-        setTaxes({profitTaxPercentage:event.target.value, profitTax:profitTax, profit:parseFloat(financialData.total-profitTax).toFixed(2)})
-    }
-
     return( 
         <div>   
             <div style={{display:'flex', flexDirection:'row'}}>
@@ -89,25 +84,28 @@ let Financial = (props) =>{
                             <table style={{width:'100%'}}>
                                 <tbody>
                                     <tr style={{fontWeight:'600'}}>
-                                        <td className="col-3">Venituri</td>
-                                        <td className="col-3">Profit</td>
-                                        <td className="col-3">Cheltuieli</td>
-                                        <td className="col-3">Salarii</td>
-                                        <td className="col-3">Taxa profit</td>
+                                        <td className="col-10">Venituri</td>
+                                        <td>{parseFloat(financialData.total).toFixed(2)} RON</td>
                                     </tr>
-                                    <tr style={{fontSize:'1.35rem'}}>
-                                        <td><span className="card-head-text black-text">{parseFloat(financialData.total).toFixed(2)} RON</span></td>
-                                        <td><span className="card-head-text black-text">{parseFloat(financialData.total - financialData.total_exp - financialData.salaries).toFixed(2)} RON</span></td>
-                                        <td><span className="card-head-text black-text">{parseFloat(financialData.total_exp).toFixed(2)} RON</span></td>
-                                        <td><span className="card-head-text black-text">{parseFloat(financialData.salaries).toFixed(2)} RON</span></td>
-                                        <td><span className="card-head-text black-text">{taxes.profitTax}</span></td>
+                                    <tr>
+                                        <td cclassName="col-10">Cheltuieli</td>
+                                        <td>{parseFloat(financialData.total_exp).toFixed(2)} RON</td>
                                     </tr>
-                                    <tr style={{color:'gray',borderTop:'1px solid gray'}}>
-                                        <td>Total incasari, facturi finalizare</td>
-                                        <td>Venituri - cheltuieli</td>
-                                        <td>Deduceri/ cheltuieli</td>
-                                        <td>Salarii</td>
-                                        <td>Taxa profit * (venituri - cheltuieli deductibile)</td>
+                                    <tr>
+                                        <td className="col-10">Salarii</td>
+                                        <td>{parseFloat(financialData.salaries).toFixed(2)} RON</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="col-10">Total</td>
+                                        <td> {parseFloat(financialData.total - financialData.total_exp - financialData.salaries).toFixed(2)} RON</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="col-10">Taxa profit</td>
+                                        <td>{taxes.profitTax}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="col-10">Total fara taxa profit</td>
+                                        <td> {parseFloat(financialData.total - financialData.total_exp - financialData.salaries - taxes.profitTax).toFixed(2)} RON</td>
                                     </tr>
                                 </tbody>
                             </table>

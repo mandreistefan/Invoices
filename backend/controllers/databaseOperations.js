@@ -1259,6 +1259,7 @@ function changeDatabase(databaseName){
 function getExpenses(filterObject, getAll){
     let querryToBeExec = `SELECT * FROM expenses WHERE exp_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND exp_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" order by id`
     if(!getAll) querryToBeExec = `SELECT * FROM expenses WHERE exp_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND exp_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" AND exp_deduct='1' order by id`
+    console.log(querryToBeExec)
     return new Promise((resolve, reject)=>{  
         connection.query(querryToBeExec, function(error, result){
             if(error){
@@ -1548,17 +1549,17 @@ function hasSalaryOnDate(employeeID, month){
  * OK - data is the insertID
  */
 
-async function addSalary(paid_to, salary_month){
-
+async function addSalary(paid_to, salary_month, bank_ref){
+    
     //get gross salary
-    let grossSalary = await new Promise((resolve, reject)=>{
-        connection.query(`SELECT emp_cur_salary_gross FROM employees WHERE id='${paid_to}'`, function(error, result){
+    let salaryObject = await new Promise((resolve, reject)=>{
+        connection.query(`SELECT emp_cur_salary_gross, emp_tax, emp_tax_cass FROM employees WHERE id='${paid_to}'`, function(error, result){
             if(error){
                 console.log(error)
                 reject(null)
             }
-            if(result.length!=0){                
-                resolve(result[0].emp_cur_salary_gross)
+            if(result.length!=0){   
+                resolve(utile.calculateSalary(result[0].emp_cur_salary_gross, result[0].emp_tax, result[0].emp_tax_cass))             
             }else{
                 resolve(null)
             }
@@ -1566,14 +1567,12 @@ async function addSalary(paid_to, salary_month){
     })
 
     //no gross
-    if(grossSalary===null) return ({status:"FAIL", data:"FAILED_GETTING_SALARY"})
-    if(grossSalary==0) return ({status:"FAIL", data:"INVALID_SALARY"})
+    if(salaryObject.salary===null) return ({status:"FAIL", data:"FAILED_GETTING_SALARY"})
+    if(salaryObject.salary==0) return ({status:"FAIL", data:"INVALID_SALARY"})
 
-    //calculate all taxes
-    let salaryTaxes = utile.calculateSalary(grossSalary)
     //insert data
     return await new Promise((resolve, reject)=>{
-        connection.query(`INSERT INTO employees_salaries(sum_gross, sum_net, paid_to, salary_month, tax_cas, tax_cass, tax_income, tax_cm) VALUES ('${salaryTaxes.gross}', '${salaryTaxes.salary}', '${paid_to}', '${salary_month}', '${salaryTaxes.cas}', '${salaryTaxes.cass}', '${salaryTaxes.tax}', '${salaryTaxes.cam}')`, function(error, result){
+        connection.query(`INSERT INTO employees_salaries(sum_gross, sum_net, paid_to, salary_month, tax_cas, tax_cass, tax_income, tax_cm, bank_ref) VALUES ('${salaryObject.gross}', '${salaryObject.salary}', '${paid_to}', '${salary_month}', '${salaryObject.cas}', '${salaryObject.cass}', '${salaryObject.tax}', '${salaryObject.cam}', '${bank_ref}')`, function(error, result){
             if(error){
                 console.log(error)
                 reject({status:"ERROR"})

@@ -414,7 +414,7 @@ function calculateTotalSum(data){
  * @returns {{gross:float, cas:float, cass:float, tax:float, cam:float, salary:float}} An object, containing all contributions and the end salary
  */
 
-function calculateSalary(grossSalary, isTaxable){
+function calculateSalary(grossSalary, isTaxable, hasCASS){
     //no calcs for no salary
     if(grossSalary<1) return null
     //taxes
@@ -426,10 +426,11 @@ function calculateSalary(grossSalary, isTaxable){
     let netSalaryObject={ 
         gross: parseFloat(grossSalary),
         cas : parseFloat(grossSalary*CAS), 
-        cass : parseFloat(grossSalary*CASS), 
+        cass : hasCASS ? parseFloat(grossSalary*CASS) : 0, 
         tax: isTaxable ? parseFloat(grossSalary*TAX) : 0,
         cam : parseFloat(grossSalary*CAM) 
     }
+ 
     //net income
     netSalaryObject.salary = parseFloat(grossSalary-netSalaryObject.cas-netSalaryObject.cass-netSalaryObject.tax)
 

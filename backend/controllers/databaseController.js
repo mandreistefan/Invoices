@@ -642,7 +642,7 @@ async function addEmployee(data){
     //no salary no function
     if(data.emp_cur_salary_gross<1) return ({status:"FAIL", data:"INVALID_DATA"})
     //add the net salaray to the mix
-    let netSalary = utile.calculateSalary(data.emp_cur_salary_gross, data.emp_tax)
+    let netSalary = utile.calculateSalary(data.emp_cur_salary_gross, data.emp_tax, data.emp_tax_cass)
     data.emp_cur_salary_net=netSalary.salary
 
     return await databaseOperations.addEmployee(data)
@@ -683,6 +683,7 @@ async function archiveEmployee(employeeID){
 async function addSalary(data){
     let employeeID=data.paid_to
     let month = data.salary_month
+    let bank_ref = data.bank_ref
     //some checks on data. Month is in the interval 1..12
     if((!month)||(month>12)||(month<1)) return ({status:"ERROR", data:"INVALID_SALARY_MONTH"})
     if(!employeeID) return ({status:"ERROR", data:"INVALID_EMPLOYEE"})
@@ -691,7 +692,7 @@ async function addSalary(data){
     let checkExistingSalary = await databaseOperations.hasSalaryOnDate(employeeID, month)
     if(checkExistingSalary) return ({status:"FAIL", data:"SALARY_EXISTS"})
     //add the salary
-    return await databaseOperations.addSalary(employeeID, month)
+    return await databaseOperations.addSalary(employeeID, month, bank_ref)
 }
 
 /**

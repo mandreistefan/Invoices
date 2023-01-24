@@ -34,7 +34,8 @@ export default class Employee extends React.Component{
             salaries:[],
             vacationDays:[],
             salaryWindow: false,
-            isTaxable:false,
+            emp_tax:0,
+            emp_tax_cass:0,
             newSalaryMonth:1,
             alertUser:null, 
             vacationDaysWindow:false,
@@ -77,7 +78,7 @@ export default class Employee extends React.Component{
         let normalDate=((date,bool)=>{
             let months = ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"]
             let dateObject=new Date(date)
-            return bool ? `${dateObject.getDate()} ${months[dateObject.getMonth()]} ${dateObject.getFullYear()}` : `${dateObject.getDate()}/${dateObject.getMonth()}/${dateObject.getFullYear()}`
+            return bool ? `${dateObject.getDate()} ${months[dateObject.getMonth()]} ${dateObject.getFullYear()}` : `${dateObject.getDate()}/${dateObject.getMonth()+1}/${dateObject.getFullYear()}`
         })
 
         let setVacations=(vacationsObject)=>{
@@ -104,7 +105,8 @@ export default class Employee extends React.Component{
                         salary_gross:data.data.info[0].emp_cur_salary_gross,
                         salaries:setSalaries(data.data.salaries),
                         vacationDays:setVacations(data.data.vacationDays),
-                        isTaxable: data.data.info[0].emp_tax ? true : false,
+                        emp_tax: data.data.info[0].emp_tax ? 1 : 0,
+                        emp_tax_cass: data.data.info[0].emp_tax_cass ? 1 : 0,
                         emp_notes: data.data.info[0].emp_notes ? data.data.info[0].emp_notes : "",
                         availableVacationDays: data.data.info[0].emp_vacation_days
                     })
@@ -123,7 +125,7 @@ export default class Employee extends React.Component{
         fetch(`http://localhost:3000/employee_salary`, {
             method:"POST",
             headers: { 'Content-Type': 'application/json' },
-            body:JSON.stringify({paid_to:this.state.id, salary_month:this.state.newSalaryMonth})
+            body:JSON.stringify({paid_to:this.state.id, salary_month:this.state.newSalaryMonth, bank_ref:document.getElementById("bankref").value})
         }).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 this.setState({alertUser:"Salariu inregistrat"})
@@ -356,6 +358,10 @@ export default class Employee extends React.Component{
                                                 <option value="12">Decembrie</option> 
                                             </select>
                                         </div>
+                                        <div className="col-sm-6">
+                                            <label for="bankref" className="form-label">ID tranzactie bancara</label>
+                                            <input type="text" className="form-control" id="bankref" placeholder=""></input>
+                                        </div>
                                         <hr></hr>
                                         <button className="w-100 btn btn-primary btn-lg" type="submit">INREGISTRARE</button>
                                     </form>
@@ -381,16 +387,15 @@ export default class Employee extends React.Component{
                                             <h6 className="my-0">CASS</h6>
                                                 <small className="text-muted">Asigurari Sociale Sanatate</small>
                                             </div>
-                                            <span className="text-muted" >{parseFloat(this.state.salary_gross*taxesPercentages.CASS)}</span>
+                                            <span className="text-muted" >{parseFloat(this.state.salary_gross*(taxesPercentages.CASS*this.state.emp_tax_cass))}</span>
                                         </li>
                                         {
-                                            this.state.isTaxable &&
-                                                <li className="list-group-item d-flex justify-content-between lh-sm">
+                                            <li className="list-group-item d-flex justify-content-between lh-sm">
                                                 <div>
                                                 <h6 className="my-0">Venit</h6>
                                                     <small className="text-muted">Impozit venit</small>
                                                 </div>
-                                                <span className="text-muted" >{parseFloat(this.state.salary_gross*taxesPercentages.TAX)}</span>
+                                                <span className="text-muted" >{parseFloat(this.state.salary_gross*(taxesPercentages.TAX*this.state.emp_tax))}</span>
                                             </li>
                                         }
                                         <li className="list-group-item d-flex justify-content-between lh-sm">
@@ -402,7 +407,7 @@ export default class Employee extends React.Component{
                                         </li> 
                                         <li className="list-group-item d-flex justify-content-between">
                                             <span>Net</span>
-                                            <strong>{parseFloat(this.state.salary_gross - this.state.salary_gross*taxesPercentages.CAS - this.state.salary_gross*taxesPercentages.CASS - ((this.state.salary_gross*taxesPercentages.TAX)*this.state.isTaxable))} RON</strong>
+                                            <strong>{parseFloat(this.state.salary_gross - this.state.salary_gross*taxesPercentages.CAS - (this.state.salary_gross*(taxesPercentages.CASS*this.state.emp_tax_cass)) - (this.state.salary_gross*(taxesPercentages.TAX*this.state.emp_tax)))} RON</strong>
                                         </li>                               
                                     </ul>
                                 </div>
