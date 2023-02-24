@@ -59,103 +59,22 @@ async function updateClientData(data){
     return await databaseOperations.editClient(data)
 }
 
-function addInvoice(data, callback){
-    //reccurency
-    if(data.billingReccurency===true){   
-        let currentDate=new Date()
-        currentDate.setHours(12, 00, 00)
-        let billingDate=new Date(data.billingReDate)
-        billingDate.setHours(12, 00, 00)
-        //billing date is in the past
-        console.log(`Billing date is: ${billingDate} and current date is: ${currentDate}`)
-        /*if(billingDate<currentDate){
-            console.log("Time travel alert")
-            callback({
-                status: "FAIL", 
-                data: "Software is not a time traveler, invoice cannot be created in the past"
-            })
-            return false
-        }*/
-        //create a recurrent schema -> register products and link them to the schema -> check if the recurrency has the today date -> if yes, generate the first invoice of the recurrency
-        //creates the recurrent scheleton by creating a SCHEMA and registering PRODUCTS linked with the schema; will be used for future invoice generator
-        databaseOperations.createRecurrentBillSchema(data.clientID, data.billingFrequency, data.billingReDate, data.billingProducts)
-        .then(result=>{            
-            if(result.status==="OK"){
-                let recSchema = result.data;    
-                //adds an invoice linked to the SCHEMA 
-
-                //billing starts today            
-                if((currentDate.getFullYear()===billingDate.getFullYear())&&(currentDate.getMonth()===billingDate.getMonth())&&(currentDate.getDate()===billingDate.getDate())){
-                    
-                    //currently, data is an object with a productID key:value; data should be sent forward as array containing name, price, quantity, etc..
-                    //for recurrencies that issue invoices "today", there is no need to re-querry the database for properties of products, the properties are up-to-date
-                    data.billingProducts.forEach((element, index)=>{
-                        data.billingProducts[index]=element.data
-                    })                         
-                    //creates an invoice in today's date
-                    databaseOperations.addInvoice(data).then(result=>{
-                        if(result.status==="OK"){
-                            //update a common column in the database to link
-                            databaseOperations.linkInvoiceToRecSchema(recSchema, result.data)
-                            //calculate the next invoice date
-                            let futureInvoiceDate = utile.calculateNextInvoiceDate(data.billingFrequency, data.billingReDate)
-                            //update the next_billing_date field in the database that will be used to generate a new invoice in the future
-                            databaseOperations.setBillingdates(futureInvoiceDate.dateAsMYSQLString, `${currentDate.getFullYear()}-${currentDate.getMonth()+1}-${currentDate.getDate()}`, recSchema).then(response=>{
-                                if(response.status==="OK"){
-                                    callback(utile.returnal("OK", "Invoice has been created"))
-                                }else{
-                                    callback(utile.returnal("FAIL", "Something went wrong"))
-                                }
-                            })
-                            .catch(err=>{
-                                callback(utile.returnal("FAIL", "FAILED to add the invoice"))
-                            })                        
-                        }else{
-                            callback(utile.returnal("FAILED", "FAILED to add the invoice"))
-                        }
-                    })
-                    .catch(err=>{
-                        callback(utile.returnal("ERROR", "ERROR in adding the invoice"))
-                    })
-                //billing starts somewhere in the future
-                }else{
-                    let futureInvoiceDate = utile.calculateNextInvoiceDate(data.billingFrequency, data.billingReDate)
-                    databaseOperations.setBillingdates(futureInvoiceDate.dateAsMYSQLString, null, recSchema)
-                    .then(response=>{
-                        if(response.status==="OK"){
-                            callback(utile.returnal("OK", "Invoice has been created"))
-                        }else{
-                            callback(utile.returnal("FAIL", "Something went wrong"))
-                        }
-                    })
-                    .catch(err=>{
-                        console.log(err)
-                        callback(utile.returnal("FAIL", "FAILED to add the invoice"))
-                    })    
-                }
-            }
-        })
-        .catch(err=>{
-            callback(utile.returnal("ERROR", "ERROR in creating the recurrent schema"))
-        })
-    //non-recurrent     
-    }else{
-        databaseOperations.addInvoice(data).then(result=>{
-            //null result means no invoice created
-            if(result===null){
-                callback(null)
-            }else{
-                callback({
-                    status: result.status,
-                    message: result.status==="OK" ? "Invoice created" : "Invoice created but an error occured",
-                    invoiceID: result.data
-                })
-            }
-        })
-        .catch(err=>{
+function addInvoice(data, callback){ 
+    databaseOperations.addInvoice(data).then(result=>{
+        //null result means no invoice created
+        if(result===null){
             callback(null)
-        })
-    }
+        }else{
+            callback({
+                status: result.status,
+                message: result.status==="OK" ? "Invoice created" : "Invoice created but an error occured",
+                invoiceID: result.data
+            })
+        }
+    })
+    .catch(err=>{
+        callback(null)
+    })    
 }
 
 async function fetchInvoices(querryObject){

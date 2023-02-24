@@ -32,7 +32,9 @@ export default class Invoice extends React.Component{
             isFormDisabled: false,
             predefinedList: false,
             refreshFunction: props.refresh,
-            dataModified: false
+            dataModified: false, 
+            showClientInfo: false,
+            showBilledProducts: true
         };
     }
 
@@ -301,6 +303,7 @@ export default class Invoice extends React.Component{
         event.target.attributes.getNamedItem('modified').value=true;        
     }
 
+
     //pretty obvious what it does
     calculateTotalandTax(){
         let total=0;
@@ -444,82 +447,16 @@ export default class Invoice extends React.Component{
             return(
                 <div className="invoices-add-container">                              
                     <form id="invoice-form" onSubmit={this.submitData}>
-                            <div className="client-info-container form-sub-container">
-                                <ClientForm editable={((this.state.activeClient!=null)||this.state.isFormDisabled||this.state.invoiceID!=null||this.state.invoice_status==="finalised") ? false : true} isSubmitable={false} clientID={this.state.activeClient} userData={this.state.userData}/>
-                            </div>  
-                            <h6>Setari factura</h6>
-                            <div className="row">
-                                <div className="col-md-2">
-                                    <span className="form-subsection-label">Tip *</span>                  
-                                    <div className="form-group">  
-                                        <select className="form-control form-control-sm" id="billing-type" name="billingType" value={this.state.billingType} modified="false" onChange={this.handleSelect} disabled={((this.state.activeClient!=null) ? false : true)||this.state.invoice_status==="finalised"}>
-                                            <option value="one-time-billing-option">Unica</option>
-                                            <option value="recurring-billing-option">Recurenta</option>
-                                        </select>
-                                    </div>    
-                                </div>
-                                {this.state.billingType==="recurring-billing-option" && this.state.activeClient &&    
-                                    <div className="form-group col-md-2">  
-                                        <label htmlFor="billing-frequency">Billing frequency:</label><br/>
-                                        <select className="form-control form-control-sm" id="billing-frequency" name="billingFrequency" modified="false" onChange={this.handleSelect} disabled={(this.state.invoice_server_status==="finalised") ? true : false}>
-                                            <option value="monthly-billing">Monthly</option>
-                                            <option value="yearly-billing">Yearly</option>
-                                        </select>
-                                    </div> 
-                                }
-                                {this.state.billingType==="recurring-billing-option" && this.state.activeClient && this.state.billingFrequency==="monthly-billing" &&
-                                    <div className="form-group col-md-2">  
-                                        <label htmlFor="billing_rec">Billing date:</label><br/>
-                                        <DatePicker id="billing-date-monthly"  selected={this.state.monthlyBillingDate} disabled={(this.state.invoice_server_status==="finalised") ? true : false} onChange={(date:Date) => this.setState({monthlyBillingDate:date})}/>
-                                    </div>                                                
-                                }   
-                                {this.state.billingType==="recurring-billing-option" && this.state.activeClient && this.state.billingFrequency==="yearly-billing" &&
-                                    <div className="form-group col-md-2">  
-                                        <label htmlFor="billing_rec">Billing date:</label><br/>
-                                        <DatePicker id="billing-date-yearly"  selected={this.state.yearlyBillingDate} disabled={(this.state.invoice_server_status==="finalised") ? true : false} onChange={(date:Date) => this.setState({yearlyBillingDate:date})}/>
-                                    </div>
-                                }                                
+                            <div className="bordered-container p-1" style={{marginBottom:'10px'}}>
+                                <div style={{display:'flex', alignItems:'center', justifyContent:'space-between'}}><span><b>Client</b></span><button type="button" style={{backgroundColor:'transparent', border:'none'}} title="Show client info" onClick={()=>{this.setState({showClientInfo: !this.state.showClientInfo})}}><span className="material-icons-outlined">{this.state.showClientInfo ? "expand_less" : "expand_more"}</span></button></div>
+                                <div className="client-info-container form-sub-container" style={{display: this.state.showClientInfo ? "block" : "none"}}>
+                                    <ClientForm editable={((this.state.activeClient!=null)||this.state.isFormDisabled||this.state.invoiceID!=null||this.state.invoice_status==="finalised") ? false : true} isSubmitable={false} clientID={this.state.activeClient} userData={this.state.userData} />
+                                </div>    
                             </div>
-                            
-                            <div>                                
-                                <div className="save-as-container">                                      
-                                    <div className="form-group col-md-2">  
-                                        <span className="form-subsection-label">Status **</span><br/>  
-                                        <select className="form-control form-control-sm shadow-none" id="invoice_status" name="invoice_status" value={this.state.invoice_status} modified="false" disabled={(this.state.invoice_server_status==="finalised") ? true : false} onChange={this.handleSelect}>
-                                            <option hidden={(this.state.isFormDisabled) ? true : false} value="draft">Ciorna</option>
-                                            <option value="finalised">Finalizata</option>
-                                        </select>
-                                    </div> 
-                                    {this.state.invoice_status==="finalised" &&
-                                        <div className="form-group col-md-2">  
-                                            <span className="form-subsection-label">Plata cu:</span><br/>
-                                            <select className="form-control form-control-sm shadow-none" id="invoice_pay_method" name="invoice_pay_method" disabled={(this.state.invoice_server_status==="finalised") ? true : false} value={this.state.invoice_pay_method} modified="false" onChange={this.handleSelect}>
-                                                <option value="cash">Cash</option>
-                                                <option value="bank">Banca</option>
-                                            </select>
-                                        </div>
-                                    }
-                                    {this.state.invoice_pay_method==="bank" &&
-                                        <div className="form-group col-md-2">   
-                                            <span className="form-subsection-label">Ref:</span><br/>
-                                            <input type="text" id="invoice_bank_ref" name="invoice_bank_ref" className="form-control shadow-none" modified="false" onChange={this.handleSelect}  disabled={(this.state.invoice_server_status==="finalised") ? true : false} value={this.state.invoice_bank_ref}/>
-                                        </div>
-                                    }
-                                </div> 
-                                {false&&<div className="alert alert-secondary" style={{marginTop:'20px',marginLeft:'10px', marginRight:'10px'}} role="alert">
-                                    <p className="lead" style={{fontSize: '16px', marginBottom:'0'}}>* Option not available<br/>
-                                        ** Invoices ca be saved as:
-                                        <ul className="info-text-list">
-                                            <li><b>Drafts</b>: an invoice that is saved and can be further edited</li>
-                                            <li><b>Finalised</b>: the invoice is permanenlty closed and the user has been billed</li>
-                                        </ul>
-                                    </p>
-                                </div>}
-                            </div>
-                            
-                            <div className="billing-products-container form-sub-container">
-                                <h6>Produse facturate</h6>                                 
-                                <div className="invoice-products-container form-group"> 
+                          
+                            <div className="bordered-container p-1" style={{marginBottom:'10px'}}>   
+                            <div style={{display:'flex', alignItems:'center', justifyContent:'space-between'}}><span><b>Produse</b></span><button type="button" style={{backgroundColor:'transparent', border:'none'}} title="Show client info" onClick={()=>{this.setState({showBilledProducts: !this.state.showBilledProducts})}}><span className="material-icons-outlined">{this.state.showBilledProducts ? "expand_less" : "expand_more"}</span></button></div>                         
+                                <div className="invoice-products-container form-group" style={{display: this.state.showBilledProducts ? "block" : "none"}}> 
                                         <div className="">
                                             <div className="row billing-products-header">
                                                 <div className="col-3">Nume</div>

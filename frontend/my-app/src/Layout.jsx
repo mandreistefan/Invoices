@@ -10,13 +10,13 @@ let SideNavigation = (props) =>{
         {id:0, name: "clients", displayName:'Clienti', icon:'account_circle', path:'/clients'},
         {id:1, name: "invoices", displayName:'Facturi', icon:'receipt_long', path:'/invoices'},
         {id:6, name: "employees", displayName:'Angajati', icon:'group', path:'/employees'},
-        {id:2, name: "admins", displayName:'Diverse', icon:'sell', path:'/admins'},
         {id:7, name: "settings", displayName:'Setari', icon:'settings', path:'/settings'}
     ]
 
     //initial setup can be saved in localstorage
     let savedNavigationOption = localStorage.getItem('selectedNavigationOption')
     let [selectedItem, setSelectedItem] = useState(savedNavigationOption ? savedNavigationOption : 0);
+    let [expandedMenu, expandMenu] = useState(false)
 
     useEffect(()=>{
         //save in local storage
@@ -25,7 +25,7 @@ let SideNavigation = (props) =>{
     },[selectedItem])
 
     return(
-        <div style={{display:'flex', flexDirection:'row', height:"100vh", width:'100vw'}}>
+        <div style={{display:'flex', flexDirection:'row', height:"100vh", width:'100vw', backgroundColor:"#fafafa"}}>
             <div className="side-navigation-container expanded">           
                 <ul className="side-navigation-list">
                     {navigationElements.map(element=>(
@@ -38,6 +38,26 @@ let SideNavigation = (props) =>{
                             </Link>
                         </li>
                     ))}
+                    <li key="18" className="nav-link expandable" onClick={()=>{expandMenu(!expandedMenu)}}>
+                        <Link>
+                            <div>
+                                <span className="material-icons-outlined">sell</span>
+                                <span className="side-navigation-element-name">Diverse</span>
+                                <span className="material-icons-outlined">expand_more</span>
+                            </div>
+                        </Link>
+                    </li>
+                    {expandedMenu&&
+                    <div>
+                        <li key="cheie1" className="nav-link" onClick={()=>setSelectedItem(1)} >
+                            <Link to="/financials">
+                                <div>
+                                    <span className="material-icons-outlined">sell</span>
+                                    <span className="side-navigation-element-name">Financiare</span>
+                                </div>
+                            </Link>
+                        </li>  
+                    </div>}
                 </ul>
             </div> 
             <div style={{display:'flex', justifyContent:'center', alignItems:'center', padding:'32px', width:'100%'}}>

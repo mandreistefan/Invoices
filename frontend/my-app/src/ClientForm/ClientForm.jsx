@@ -260,7 +260,6 @@ let TheClientForm = (props)=>{
 
     return(            
         <div className={(props.isSubmitable===true) ? "form-container" : ""}> 
-            <h6>Date client</h6>
             {(props.isSubmitable===true) ? 
             <form onSubmit={submitClientData} id="client_form" name="client_form">
                 <div className='form-row'>

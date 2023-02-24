@@ -21,16 +21,69 @@ let InvoicesOverview = (props) =>{
         fetchData()
     },[queryFilter])
 
-    //archive an invoice
-    let deleteInvoice = () =>{
+    /**
+     * Fetches data
+     */
+    let fetchData=()=>{
+        //fetches all data
+        let fetcher;
+        fetcher = `http://localhost:3000/invoices?target=invoices&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page}`
+        
+        fetch(fetcher,
+        {
+            method:"GET",
+            headers: { 'Content-Type': 'application/json' },
+        })
+        .then(response=>response.json()).then(data=>{      
+            if(data.status==="OK"){
+                invoicesDataSet(data.data)
+                setNOE(data.recordsNumber)
+                //setActiveInvoice(data.data[0].invoice_number)
+            }else if(data.status==="SERVER_ERROR"){
+                setAlertUser({text: "Baza de date nu poate fi accesata"})
+            }else if(data.status==="NO_DATA"){
+                setAlertUser({text: "Nu exista date"})
+            }else{
+                if(data===null||data.recordsNumber===0){
+                    setAlertUser({text:"Nu exista date"})
+                    return false
+                } 
+            }            
+        })
+    }
+
+    /**
+     * Archives an invoice
+     * @param {*} invoiceID If undefined, the function uses activeInvoice
+     */
+    let deleteInvoice = (invoiceID) =>{
+        let invoice = invoiceID
+        if(!invoice) invoice = activeInvoice
         fetch("http://localhost:3000/invoices",
         {
             method:"DELETE",
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({invoiceID:activeInvoice})
+            body: JSON.stringify({invoiceID: invoice})
         })
         .then(response=>response.json())
         .then(data=>{
+            if(data.status==="OK"){
+                setAlertUser({text: "Invoice archived"})
+            }else if(data.status==="SERVER_ERROR"){
+                setAlertUser({text: "Baza de date nu poate fi accesata"})
+            }else{
+                setAlertUser({text: "An error ocurred"})
+            }
+        })
+    }
+
+    let setInvoiceFinalised = (invoiceID) =>{
+        fetch(`http://localhost:3000/invoices`, {
+            method:"PUT",
+            headers: { 'Content-Type': 'application/json' },
+            body:JSON.stringify({invoice_status: "finalised", invoiceID})
+        })
+        .then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 setAlertUser({text: "Invoice archived"})
             }else if(data.status==="SERVER_ERROR"){
@@ -56,33 +109,7 @@ let InvoicesOverview = (props) =>{
         }
     }
 
-    let fetchData=()=>{
-        //fetches all data
-        let fetcher;
-        fetcher = `http://localhost:3000/invoices?target=invoices&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page}`
-        
-        fetch(fetcher,
-        {
-            method:"GET",
-            headers: { 'Content-Type': 'application/json' },
-        })
-        .then(response=>response.json()).then(data=>{      
-            if(data.status==="OK"){
-                invoicesDataSet(data.data)
-                setNOE(data.recordsNumber)
-                setActiveInvoice(data.data[0].invoice_number)
-            }else if(data.status==="SERVER_ERROR"){
-                setAlertUser({text: "Baza de date nu poate fi accesata"})
-            }else if(data.status==="NO_DATA"){
-                setAlertUser({text: "Nu exista date"})
-            }else{
-                if(data===null||data.recordsNumber===0){
-                    setAlertUser({text:"Nu exista date"})
-                    return false
-                } 
-            }            
-        })
-    }
+
 
     let changePage=(pageNumber)=>{
         setFilter({...queryFilter, page:pageNumber})
@@ -94,66 +121,81 @@ let InvoicesOverview = (props) =>{
 
     function handleSearchSubmit(event){
         event.preventDefault()
-        let searchTerm = event.target.filterData.value
+        let searchTerm = event.target.searchinput.value
         if(searchTerm.length===0) return false
         let searchTermStringified = searchTerm.replaceAll(" ", "+")
         setFilter({...queryFilter, filter:"search", filterBy:searchTermStringified})
     }
 
     let resetSearch=()=>{
-        document.getElementById("filterData").value=""
+        document.getElementById("searchinput").value=""
         setFilter({...queryFilter, filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
     }
 
     return(
         <div className="app-data-container">  
-            {newInvoiceWindow ? 
-                <div style={{backgroundColor:'white', overflowY:'auto', padding:'10px'}} id="new-invoice-container">  
-                    <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between'}}>
-                        <h5>Factura noua</h5>
-                        <button type="button" title="Inchide" style={{border:'none',}} onClick={()=>{setnewInvoiceWindow(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button> 
-                    </div>                    
-                    <Invoice/>
-                </div> 
-            :invoicesData &&    
-                    <div className="clients-overview-container">  
-                        <div className="vertical-list-container">         
-                            <div className="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">
-                                <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
-                                    <div className="search-form-container">
-                                        <button disabled={newInvoiceWindow ? true : false} type="button" className="btn btn-secondary btn-sm no-shadow add-new-button" onClick={()=>{setnewInvoiceWindow(true)}}><span className="material-icons-outlined" >add</span></button>
-                                        <div className="search-input-container">
-                                            <input disabled={newInvoiceWindow ? true : false} type="search" className="search-input form-control shadow-none" placeholder="Cauta.." id="filterData"></input>
-                                            <button type="button" className="search-reset-button" onClick={()=>{resetSearch()}}><span className="material-icons-outlined">refresh</span></button>
-                                        </div>                 
-                                    </div>
-                                </form>
-                            </div> 
-                            <div className="list-group list-group-flush border-bottom scrollarea" style={{width: '300px'}}> 
-                                {invoicesData.length>0 && invoicesData.map((element, index)=>(          
-                                    <div key={index} className={activeInvoice===element.invoice_number ? "list-group-item list-group-item-action py-3 lh-sm active" : "list-group-item list-group-item-action py-3 lh-sm"} onClick={()=>setActiveInvoice(element.invoice_number)} aria-current="true">
-                                        <div className="d-flex w-100 align-items-center justify-content-between">
-                                            <strong className="mb-1">{element.client_first_name} {element.client_last_name}</strong> 
-                                            <small>{element.invoice_number}</small>                                                                            
+                {invoicesData &&    
+                <div className="clients-overview-container">  
+                    <div className="" style={{width:'100%'}}>
+                        {!activeInvoice &&
+                            <div>           
+                                <div className="bordered-container" style={{marginBottom:'25px'}}>
+                                    <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
+                                        <div className="search-form-container"> 
+                                            <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
+                                            <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>
+                                            <div className="search-header-buttons-container">                               
+                                                <button type="button" className='btn-light' title="Factura noua" onClick={()=>{setnewInvoiceWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span></div></button>
+                                                <button type="button" className='btn-danger' title="Reincarca date"  onClick={()=>{resetSearch()}}><div className="inner-button-content"><span className="material-icons-outlined" >refresh</span></div></button>
+                                            </div>                                                     
                                         </div>
-                                        <div className="col-10 mb-1 small">
-                                            <small style={{display:'flex', flexDirection:"row", alignItems:'center'}}>{setStatus(element.invoice_status)} {simpleDate(element.invoice_date)} </small>                                                
-                                        </div>
-                                    </div>     
-                                ))}  
-                                <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>                              
-                            </div>
-                        </div>
-                        <div className='overview-container'>
-                            <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
-                                <div style={{display:'inherit', alignItems:'center'}}><span style={{fontSize:'24px'}}>Factura numarul {activeInvoice}</span></div>
-                                <div className="nav col-12 col-lg-auto mb-2 justify-content-end header-buttons-container">                               
-                                    <button disabled={newInvoiceWindow ? true : false}  className='btn-light' title="Generaza factura" onClick={()=>{openInvoice()}}><div className="inner-button-content"><span className="material-icons-outlined" >file_open</span></div></button>
-                                    <button disabled={newInvoiceWindow ? true : false}  className='btn-danger' title="Arhiveaza factura" onClick={()=>{deleteInvoice()}}><div className="inner-button-content"><span className="material-icons-outlined" >delete</span></div></button>
-                                </div>                                                             
-                            </div>
-                            <Invoice key={activeInvoice} invoiceID={activeInvoice}/>
-                        </div>
+                                    </form>
+                                </div>
+                                <div style={{overflowY:'scroll', maxHeight:'80vh'}} className='bordered-container'>
+                                    <table className="table" id="invoices-table">
+                                        <thead>
+                                            <tr>
+                                                <td>Client</td>
+                                                <td>Numar factura</td>
+                                                <td>Status</td>
+                                                <td>Data</td>
+                                                <td>Total</td>
+                                                <td></td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {invoicesData.length>0 && invoicesData.map((element, index)=>(          
+                                                <tr>
+                                                    <td>{element.client_first_name} {element.client_last_name}</td>
+                                                    <td>{element.invoice_number}</td>
+                                                    <td>{setStatus(element.invoice_status)}</td>
+                                                    <td>{simpleDate(element.invoice_date)}</td>   
+                                                    <td>{element.invoice_total_sum}</td>                                          
+                                                    <td className="table-actions-container">
+                                                        <button title="Arhiveaza factura" onClick={()=>{deleteInvoice(element.invoice_number)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
+                                                        <button title="Seteaza ca platita" onClick={()=>{setInvoiceFinalised(element.invoice_number)}}><div class="inner-button-content"><span class="material-icons-outlined">task_alt</span></div></button>
+                                                        <button title="Deschide factura" onClick={()=>{setActiveInvoice(element.invoice_number)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span></div></button>                                                </td>
+                                                </tr>    
+                                            ))}
+                                        </tbody>  
+                                    </table>
+                                    <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>
+                                </div>
+                            </div>  
+                        } 
+                        {activeInvoice &&
+                            <div className='overview-container bordered-container'>
+                                <button style={{border:'none', borderRadius:'6px', display:'flex', alignItems:'center', margin:'10px'}} onClick={()=>{setActiveInvoice(null)}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>
+                                <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
+                                    <div style={{display:'inherit', alignItems:'center'}}><span style={{fontSize:'24px'}}>Factura numarul {activeInvoice}</span></div>
+                                    <div className="nav col-12 col-lg-auto mb-2 justify-content-end header-buttons-container">                               
+                                        <button disabled={newInvoiceWindow ? true : false}  className='btn-light' title="Generaza factura" onClick={()=>{openInvoice()}}><div className="inner-button-content"><span className="material-icons-outlined" >file_open</span></div></button>
+                                        <button disabled={newInvoiceWindow ? true : false}  className='btn-danger' title="Arhiveaza factura" onClick={()=>{deleteInvoice()}}><div className="inner-button-content"><span className="material-icons-outlined" >delete</span></div></button>
+                                    </div>                                                             
+                                </div>
+                                <Invoice key={activeInvoice} invoiceID={activeInvoice}/>
+                        </div>}
+                    </div>
                 </div>
             }
             <Snackbar text={alertUser.text} closeSnack={()=>{setAlertUser({text:null})}}/>  
