@@ -79,19 +79,17 @@ let Products=()=>{
             <div className="products-container" style={{marginTop:'25px'}}>            
                 {predefinedProducts &&       
                     <div style={{padding:'10px'}}> 
-                        <h6>Produse</h6>
-                        <table className='table table-hover table-sm app-data-table'>
-                            <thead className='table-active'>
-                                <tr className='app-data-table-row table-active'>
-                                    <th></th>
-                                    <th>NUME</th>
-                                    <th>UM</th>
-                                    <th>PRET</th>
-                                    <th>TAXA</th>
-                                    <th>DESCRIERE</th>
-                                    <th></th>
-                                </tr>    
-                            </thead>               
+                        <table className='table'>                            
+                            <thead>
+                                <tr>
+                                    <td>Nume</td>
+                                    <td>UM</td>
+                                    <td>Pret</td>
+                                    <td>Taxa</td>
+                                    <td>Descriere</td>
+                                    <td></td>
+                                </tr>
+                            </thead>                     
                             <tbody className='clients-table-body app-data-table-body'>
                             {predefinedProducts.length>0 ? 
                                 predefinedProducts.map((element, index)=>(

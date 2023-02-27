@@ -11,7 +11,7 @@ let ExpenseForm = (props) =>{
         exp_sum: {value: 0, modified:false}, 
         exp_description: {value: "", modified:false}, 
         exp_deduct: {value:true, modified:false},
-        exp_date: {value: `${currentDate.getFullYear()}-${currentDate.getMonth()+1>9 ? currentDate.getMonth()+1 : "0"(currentDate.getMonth()+1)}-${currentDate.getDate()}`, modified:false}
+        exp_date: {value: currentDate, modified:false}
     })
     let [snackBarText, setSnackBarText] = React.useState(null)
     let [dataModified, setdataModified] = React.useState(false)

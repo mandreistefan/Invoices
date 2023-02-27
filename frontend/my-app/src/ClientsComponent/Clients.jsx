@@ -81,14 +81,14 @@ let Clients = (props) =>{
 
     function handleSearchSubmit(event){
         event.preventDefault()
-        let searchTerm = event.target.filterData.value
+        let searchTerm = event.target.searchinput.value
         if(searchTerm.length==0) return false
         let searchTermStringified = searchTerm.replaceAll(" ", "+")
         setFilter({...queryFilter, filter:"search", filterBy:searchTermStringified})
     }
 
     let resetSearch=()=>{
-        document.getElementById("filterData").value=""
+        document.getElementById("searchinput").value=""
         setFilter({...queryFilter, filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
     }
 
@@ -123,12 +123,13 @@ let Clients = (props) =>{
                                     <tbody>
                                         {allClients.length>0 && allClients.map((element, index)=>(          
                                             <tr>
-                                                <td>{element.client_first_name} {element.client_last_name}</td>
+                                                <td><b>{element.client_first_name} {element.client_last_name}</b></td>
                                                 <td>{element.client_type ? element.client_type==="pers" ? <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>person</span>Persoana fizica</span> : <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>store</span>Firma</span> : "NA"}</td> 
                                                 <td>{element.client_county}, {element.client_city}, {element.client_street}, {element.client_adress_number}, {element.client_zip}</td>                                          
                                                 <td className="table-actions-container">
                                                     <button title="Arhiveaza factura" onClick={()=>{deleteClient(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
-                                                    <button title="Deschide factura" onClick={()=>{setActive(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span></div></button>                                                </td>
+                                                    <button  className='btn-light' title="Factureaza client" onClick={()=>{props.enableInvoiceApp(element.id)}}><div className="inner-button-content"><span className="material-icons-outlined">library_add</span></div></button>
+                                                    <button title="Deschide client" onClick={()=>{setActive(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span></div></button>                                                </td>
                                             </tr>    
                                         ))}
                                     </tbody>  

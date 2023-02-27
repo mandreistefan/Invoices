@@ -6,6 +6,9 @@ import InvoicesComponent from './InvoiceComponent/InvoicesOverview'
 import Settings from './Settings/SettingsComponent.jsx'
 import Employees from './Employees/Employees.jsx'
 import Admins from './Admins/AdminsOverview.jsx'
+import PredefinedProducts from './Admins/ExistingProducts.jsx'
+import Expenses from './Admins/Expenses'
+import Financials from './FinancialComponent/FinancialComponent'
 import {Route, createBrowserRouter, RouterProvider, createRoutesFromElements, createHashRouter} from 'react-router-dom'
 
 let App =()=> {
@@ -22,6 +25,9 @@ let App =()=> {
           <Route path='admins' element={<Admins/>}/>
           <Route path='settings' element={<Settings/>}/>
           <Route path='employees' element={<Employees/>}/>
+          <Route path='products' element={<PredefinedProducts/>}/>
+          <Route path='expenses' element={<Expenses/>}/>
+          <Route path='financials' element={<Financials/>}/>
         </Route>
       )
     )
@@ -34,6 +40,9 @@ let App =()=> {
           <Route path='admins' element={<Admins/>}/>
           <Route path='settings' element={<Settings/>}/>
           <Route path='employees' element={<Employees/>}/>
+          <Route path='products' element={<PredefinedProducts/>}/>
+          <Route path='expenses' element={<Expenses/>}/>
+          <Route path='financials' element={<Financials/>}/>
         </Route>
       )
     )

@@ -122,9 +122,9 @@ function createNewInvoice(data)
         let querryToBeExecuted = ``;
 
         if(data.clientID){
-            querryToBeExecuted = `INSERT INTO invoices(client_type, client_fiscal_1, client_fiscal_2, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_phone, client_email, customer_id, invoice_status, invoice_pay_method, invoice_bank_ref) SELECT client_type, client_fiscal_1, client_fiscal_2, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_phone, client_email,  '${data.clientID}', 'unpaid', '${data.invoice_pay_method}', '${data.invoice_bank_ref}' FROM clients WHERE id='${data.clientID}'` 
+            querryToBeExecuted = `INSERT INTO invoices(client_type, client_fiscal_1, client_fiscal_2, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_phone, client_email, customer_id, invoice_status, invoice_pay_method, invoice_bank_ref) SELECT client_type, client_fiscal_1, client_fiscal_2, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_phone, client_email,  '${data.clientID}', 'draft', '${data.invoice_pay_method}', '${data.invoice_bank_ref}' FROM clients WHERE id='${data.clientID}'` 
         }else{
-            querryToBeExecuted = `INSERT INTO invoices(client_type, client_fiscal_1, client_fiscal_2, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_phone, client_email, invoice_status, invoice_pay_method, invoice_bank_ref) VALUES ('${data.client_type}', '${data.client_fiscal_1}', '${data.client_fiscal_2}', '${data.client_first_name}', '${data.client_last_name}', '${data.client_county}', '${data.client_city}', '${data.client_street}', '${data.client_adress_number}', '${data.client_zip}', '${data.client_phone}', '${data.client_email}', 'unpaid', '${data.invoice_pay_method}', '${data.invoice_bank_ref}')`
+            querryToBeExecuted = `INSERT INTO invoices(client_type, client_fiscal_1, client_fiscal_2, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_phone, client_email, invoice_status, invoice_pay_method, invoice_bank_ref) VALUES ('${data.client_type}', '${data.client_fiscal_1}', '${data.client_fiscal_2}', '${data.client_first_name}', '${data.client_last_name}', '${data.client_county}', '${data.client_city}', '${data.client_street}', '${data.client_adress_number}', '${data.client_zip}', '${data.client_phone}', '${data.client_email}', 'draft', '${data.invoice_pay_method}', '${data.invoice_bank_ref}')`
         }  
 
         connection.query(querryToBeExecuted, function(error, result){
@@ -705,11 +705,12 @@ function getFinancialData(filterObject){
 /**
  * 
  * @param {integer} invoiceID The id of the invoice 
- * @returns {string} The status of the invoice(draft/ finalised)
+ * @returns {Promise<{status:string, data:object}>} The status of the invoice(draft/ finalised)
  */
 
-function checkInvoiceStatus(invoiceID){
+async function checkInvoiceStatus(invoiceID){
     return new Promise((resolve, reject)=>{
+        console.log(`SELECT invoice_status FROM invoices WHERE invoice_number=${invoiceID}`)
         connection.query(`SELECT invoice_status FROM invoices WHERE invoice_number=${invoiceID}`, function(error, result){
             if(error){
                 console.log(error)
@@ -838,6 +839,31 @@ function getPredefinedProducts(queryObject){
         })
     })
 }
+
+/**
+ * 
+ * @param {*} productID ID of a predefined product
+ * @returns status of the OP and data
+ */
+async function getProductInfo(productID){
+    return new Promise((resolve, reject)=>{
+        connection.query(`SELECT * FROM predefined_products WHERE id=${productID}`, function(error, result){
+            if(error){
+                console.log(error)
+                reject({
+                    status:"ERROR",
+                    data:null
+                })
+            }
+            if(result.length>0){
+                resolve({status:"OK", data: result})
+            }else{
+                resolve({status:"NO_DATA", data: null})
+            }
+        })
+    })
+}
+
 
 /**
  * Registers a predefined product
@@ -1856,7 +1882,7 @@ module.exports ={
     setBillingdates:setBillingdates,
     retrieveRecurrentProducts:retrieveRecurrentProducts,
     getRecurrentInvoiceProducts:getRecurrentInvoiceProducts,
-    getPredefinedProducts: getPredefinedProducts,
+    getPredefinedProducts: getPredefinedProducts, getProductInfo,
     registerProduct:registerProduct,
     editPredefinedProduct:editPredefinedProduct,
     removeProduct:removeProduct,

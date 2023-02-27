@@ -1,5 +1,4 @@
 import React from "react";
-import './InvoiceAdd.css'
 import './Invoices.css'
 import Snackbar from '../Snackbar/Snackbar.jsx'
 import PageNavigation from '../PageNavigation.jsx'
@@ -68,7 +67,7 @@ let InvoicesOverview = (props) =>{
         .then(response=>response.json())
         .then(data=>{
             if(data.status==="OK"){
-                setAlertUser({text: "Invoice archived"})
+                setAlertUser({text: "Factura arhivata"})
             }else if(data.status==="SERVER_ERROR"){
                 setAlertUser({text: "Baza de date nu poate fi accesata"})
             }else{
@@ -85,7 +84,7 @@ let InvoicesOverview = (props) =>{
         })
         .then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
-                setAlertUser({text: "Invoice archived"})
+                setAlertUser({text: "Factura setata ca finalizata"})
             }else if(data.status==="SERVER_ERROR"){
                 setAlertUser({text: "Baza de date nu poate fi accesata"})
             }else{
@@ -116,7 +115,7 @@ let InvoicesOverview = (props) =>{
     }
 
     let openInvoice=()=>{
-        window.open(`http://localhost:3000/generateInvoice/${activeInvoice}`).focus();
+        window.open(`http://localhost:3001/generateInvoice/${activeInvoice}`).focus();
     }
 
     function handleSearchSubmit(event){
@@ -166,15 +165,16 @@ let InvoicesOverview = (props) =>{
                                         <tbody>
                                             {invoicesData.length>0 && invoicesData.map((element, index)=>(          
                                                 <tr>
-                                                    <td>{element.client_first_name} {element.client_last_name}</td>
+                                                    <td><b>{element.client_first_name} {element.client_last_name}</b></td>
                                                     <td>{element.invoice_number}</td>
                                                     <td>{setStatus(element.invoice_status)}</td>
                                                     <td>{simpleDate(element.invoice_date)}</td>   
-                                                    <td>{element.invoice_total_sum}</td>                                          
+                                                    <td><b>{element.invoice_total_sum} RON</b></td>                                          
                                                     <td className="table-actions-container">
                                                         <button title="Arhiveaza factura" onClick={()=>{deleteInvoice(element.invoice_number)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
                                                         <button title="Seteaza ca platita" onClick={()=>{setInvoiceFinalised(element.invoice_number)}}><div class="inner-button-content"><span class="material-icons-outlined">task_alt</span></div></button>
-                                                        <button title="Deschide factura" onClick={()=>{setActiveInvoice(element.invoice_number)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span></div></button>                                                </td>
+                                                        <button title="Deschide factura" onClick={()=>{setActiveInvoice(element.invoice_number)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span></div></button>
+                                                    </td>
                                                 </tr>    
                                             ))}
                                         </tbody>  

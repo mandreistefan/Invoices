@@ -325,7 +325,7 @@ async function updateInvoice(data){
                 }                
             }
             //new products to be added
-            if(billingProducts.length>0){
+            if(billingProducts!=null){
                 //register products
                 let productsUpdateStatus = await databaseOperations.registerBilledProducts(invoice_number, billingProducts)
                 if(productsUpdateStatus.status!="OK") return("UPDATE_PRODUCTS_ERROR")                
@@ -340,8 +340,7 @@ async function updateInvoice(data){
         return("UPDATE_INVOICE_NOT_POSSIBLE")        
     }
     //no invoice found?
-    return("UPDATE_INVOICE_NOT_FOUND")
-    
+    return("UPDATE_INVOICE_NOT_FOUND")    
 }
 
 async function getRecurrentInvoiceProducts(invoiceID){

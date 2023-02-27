@@ -56,12 +56,7 @@ let Financial = (props) =>{
 
     return( 
         <div>   
-            <div style={{display:'flex', flexDirection:'row'}}>
-                <div style={{width:'70%', display:'inherit', alignItems:'center'}} className="p-3"><h5>Finante</h5></div>
-                <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-end mb-md-0 p-3" style={{width:'30%'}}>                                
-                    
-                </div>
-            </div>     
+  
             <div style={{padding:'10px'}}>
 
                 <div class="alert alert-secondary interval-setter">
@@ -74,7 +69,7 @@ let Financial = (props) =>{
                     </div>
                 </div>
                 {financialData ?
-                <div className="app-data-container">
+                <div className="bordered-container p-3" style={{backgroundColor:'white'}}>
                     <div className="list-group w-auto">
                         <div className="border-pill">
                             <div style={{display:'flex', flexDirection:'row', alignItems:'center', marginBottom:'5px'}}>                

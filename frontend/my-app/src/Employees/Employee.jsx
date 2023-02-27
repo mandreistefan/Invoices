@@ -223,25 +223,22 @@ export default class Employee extends React.Component{
      render(){
         return(
             <div style={{padding:'16px'}}>
-                <div style={{display:'flex', alignItems:'center'}}>
+                <div style={{display:'flex', alignItems:'center'}} className='bordered-container p-3'>
                     <div style={{width:"50%", paddingRight:'10px'}}>
-                        <div style={{display:'flex', flexDirection:'row'}}>
-                            {this.state.active ? <span title="Angajat activ" className="material-icons-outlined">check_circle</span> : <span title="Angajat inactiv" className="material-icons-outlined">highlight_off</span>}
-                            <div style={{paddingLeft:'16px'}}>
-                                <h4>{this.state.first_name} {this.state.last_name}</h4>
-                                <h5 id="employee-title">{this.state.job_name}</h5>
-                                <div>
-                                    <ul id="employee-info">
-                                        <li>Nume: {this.state.first_name}</li>
-                                        <li>Prenume: {this.state.last_name}</li>
-                                        <li>Adresa: {this.state.adress}</li>
-                                        <li>CNP: {this.state.identification_number}</li>
-                                        <li>Salariu de baza: {this.state.salary_gross} RON</li>
-                                        <li>Data angajarii: {this.state.registration_date}</li>
-                                        <li>Zile concediu: {this.state.availableVacationDays}</li>
-                                    </ul>
-                                </div>
-                            </div>
+                        <div>
+                            <h4>{this.state.first_name} {this.state.last_name}</h4>
+                            <h5 id="employee-title">{this.state.job_name}</h5>
+                            <div>
+                                <ul id="employee-info">
+                                    <li><b>Nume:</b> {this.state.first_name}</li>
+                                    <li><b>Prenume:</b> {this.state.last_name}</li>
+                                    <li><b>Adresa:</b> {this.state.adress}</li>
+                                    <li><b>CNP:</b> {this.state.identification_number}</li>
+                                    <li><b>Salariu de baza:</b> {this.state.salary_gross} RON</li>
+                                    <li><b>Data angajarii:</b> {this.state.registration_date}</li>
+                                    <li><b>Zile concediu:</b> {this.state.availableVacationDays}</li>
+                                </ul>
+                            </div>                            
                         </div>
                     </div>
                     <div style={{width:"50%", paddingLeft:'10px'}}>
@@ -251,54 +248,51 @@ export default class Employee extends React.Component{
                         </div>
                     </div>
                 </div>
-                <hr></hr>
                 <div id="additional-employee-info-container">
-                    <div style={{width:'100%', marginBottom:'25px', display:'flex', flexDirection:'row'}}>                        
-                        <div style={{width:'100%', paddingLeft:'16px'}} className="border-pill">
+                    <div style={{width:'100%', marginBottom:'25px', marginTop:'25px', display:'flex', flexDirection:'column'}} className="bordered-container p-3">                        
+                       
                             <h5>Salarii</h5>
-                            <table className='table table-hover table-sm app-data-table' id="vacation-days-table">
-                                <thead className='table-active'>
-                                    <tr className='app-data-table-row table-active'>
-                                        <th>LUNA</th>
-                                        <th>DATA</th>
-                                        <th>BRUT</th>
-                                        <th>CAS</th>
-                                        <th>CASS</th>
-                                        <th>VENIT</th>
-                                        <th>CM</th>
-                                        <th>NET</th>
+                            <table className='table' id="vacation-days-table">
+                                <thead>
+                                    <tr>
+                                        <td>Luna</td>
+                                        <td>Data</td>
+                                        <td>Brut</td>
+                                        <td>CAS</td>
+                                        <td>CASS</td>
+                                        <td>Venit</td>
+                                        <td>CM</td>
+                                        <td>Net</td>
                                     </tr>    
                                 </thead>
                                 <tbody>
                                     {this.state.salaries!=[] ? this.state.salaries.map((element, index)=>(
                                         <tr key={index}>
                                             <td><b>{element.month}</b></td>
-                                            <td><b>{element.date}</b></td>
+                                            <td>{element.date}</td>
                                             <td><b>{element.gross}</b></td>
-                                            <td><b>{element.taxes.cas}</b></td>
-                                            <td><b>{element.taxes.cass}</b></td>
-                                            <td><b>{element.taxes.income}</b></td>
-                                            <td><b>{element.taxes.cm}</b></td>
-                                            <td className="text-success"><b>{element.net}</b></td>
+                                            <td>{element.taxes.cas}</td>
+                                            <td>{element.taxes.cass}</td>
+                                            <td>{element.taxes.income}</td>
+                                            <td>{element.taxes.cm}</td>
+                                            <td><b>{element.net}</b></td>
                                         </tr>
                                     )):"Nu exista inregistrari"}
                                 </tbody>
                             </table>
-                            <button type="button" className="btn btn-primary w-100" onClick={()=>{this.setState({salaryWindow:true})}}>INREGISTRARE PLATA NOUA</button>
-                        </div>
+                            <button type="button" className="btn btn-primary" style={{width:'fit-content'}} onClick={()=>{this.setState({salaryWindow:true})}}>PLATA NOUA</button>
+                        
                     </div>   
                     <div style={{width:'100%', marginBottom:'25px', display:'flex', flexDirection:'row'}}>                        
-                            <div style={{width:'100%', paddingLeft:'16px'}} className="border-pill">
-                                <h5>Zile libere</h5>
-                                <h6>Alocate: {this.state.availableVacationDays}</h6>
-                                <h6>Ramase: {parseInt(this.state.availableVacationDays - this.state.vacationDays.length)}</h6>
-                                <table className='table table-hover table-sm app-data-table' id="vacation-days-table">
-                                    <thead className='table-active'>
-                                        <tr className='app-data-table-row table-active'>
-                                            <th>DATA ZI LIBERA</th>
-                                            <th>DATA INREGISTRARE</th>
-                                            <th>TIP</th>
-                                            <th>STATUS</th>
+                            <div style={{width:'100%', paddingLeft:'16px'}} className="bordered-container p-3">
+                                <h5>Zile libere(A:{this.state.availableVacationDays}/ R:{parseInt(this.state.availableVacationDays - this.state.vacationDays.length)})</h5>
+                                <table className='table' id="vacation-days-table">
+                                    <thead>
+                                        <tr>
+                                            <td>Data</td>
+                                            <td>Data inregistrare</td>
+                                            <td>Tip</td>
+                                            <td>Status</td>
                                         </tr>    
                                     </thead>
                                     <tbody>
@@ -312,7 +306,7 @@ export default class Employee extends React.Component{
                                         )):"Nu exista inregistrari"}
                                     </tbody>
                                 </table>
-                                <button className="btn btn-primary w-100 my-1" onClick={()=>{this.setState({vacationDaysWindow: true})}}>CERERE NOUA</button>
+                                <button className="btn btn-primary" onClick={()=>{this.setState({vacationDaysWindow: true})}}>CERERE NOUA</button>
                             </div>
                     </div>                            
                 </div>

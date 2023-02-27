@@ -38,25 +38,38 @@ let SideNavigation = (props) =>{
                             </Link>
                         </li>
                     ))}
-                    <li key="18" className="nav-link expandable" onClick={()=>{expandMenu(!expandedMenu)}}>
+                    <li key="18" className={parseInt(selectedItem)===8 ? "nav-link active" : "nav-link"} onClick={()=>{expandMenu(!expandedMenu)}}>
                         <Link>
                             <div>
                                 <span className="material-icons-outlined">sell</span>
                                 <span className="side-navigation-element-name">Diverse</span>
-                                <span className="material-icons-outlined">expand_more</span>
+                                {expandedMenu ? <span className="material-icons-outlined">expand_less</span> : <span className="material-icons-outlined">expand_more</span>}
                             </div>
                         </Link>
                     </li>
                     {expandedMenu&&
-                    <div>
-                        <li key="cheie1" className="nav-link" onClick={()=>setSelectedItem(1)} >
-                            <Link to="/financials">
+                    <div style={{paddingLeft:'48px'}} >
+                        <li key="cheie1" className="nav-link" onClick={()=>setSelectedItem(8)} >
+                            <Link to="/products">
                                 <div>
-                                    <span className="material-icons-outlined">sell</span>
-                                    <span className="side-navigation-element-name">Financiare</span>
+                                    <span style={{padding:'6px'}}  className="side-navigation-element-name">Produse</span>
                                 </div>
                             </Link>
-                        </li>  
+                        </li>
+                        <li key="cheie2" className="nav-link" onClick={()=>setSelectedItem(8)} >
+                            <Link to="/expenses">
+                                <div>
+                                    <span  style={{padding:'6px'}} className="side-navigation-element-name">Cheltuieli</span>
+                                </div>
+                            </Link>
+                        </li> 
+                        <li key="cheie3" className="nav-link" onClick={()=>setSelectedItem(8)} >
+                            <Link to="/financials">
+                                <div>
+                                    <span  style={{padding:'6px'}} className="side-navigation-element-name">Finante</span>
+                                </div>
+                            </Link>
+                        </li>       
                     </div>}
                 </ul>
             </div> 

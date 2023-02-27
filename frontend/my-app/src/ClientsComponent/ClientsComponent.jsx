@@ -40,7 +40,6 @@ export default class ClientsComponent extends React.Component{
                         <div className="blur-overlap"></div>     
                         <button type="button" className="action-close-window" onClick={()=>{this.enableInvoiceApp(null)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
                         <div className="overlapping-component-inner">
-                            <span><b>Factura noua pentru {this.state.activeClientName}</b></span>
                             <Invoice activeClient={this.state.activeClient} enableInvoiceApp={this.enableInvoiceApp}/>
                         </div>              
                     </div>

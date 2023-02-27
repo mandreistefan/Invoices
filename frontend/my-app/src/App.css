@@ -3,42 +3,6 @@
   font-family: 'Oswald';
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-
 .app-content{
   width: 100%;
   height: 100%;
@@ -68,7 +32,7 @@ table >tbody> tr:hover{
   background-color: lightgray;
 }
 
-.table thead{
+.table thead {
   border-bottom: 1px solid lightgray;
   font-size:15px;
   font-weight: 300 !important;
@@ -144,7 +108,6 @@ td{
   justify-content: flex-end;
 }
 
-
 .action-close-window{
   position: absolute;
   top:0;
@@ -152,9 +115,6 @@ td{
   top:5px;
   background-color: transparent;
   border:none;
-  --font-family-sans-serif: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-  --font-family-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
-  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
   line-height: 1.5;
   color: white;
   font-weight: 400!important;
@@ -224,7 +184,7 @@ td{
   scrollbar-width: none;  /* Firefox */
   display: flex;
   align-items: center;
-
+  box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
 }
 
 
@@ -522,12 +482,11 @@ input[type=date]{
   border-radius: 6px;
 }
 
-.expenses-container .app-data-container, .products-container .app-data-container{
+.app-data-container, .products-container .app-data-container{
   max-width: 1000px;
   margin-left: auto;
   margin-right: auto;
   padding: 16px;
-  background-color: white;
   border-radius: 6px;
 }
 
@@ -717,6 +676,7 @@ input[type=date]{
 #employee-info, #employee-title{
   padding: 0;
   list-style-type: none;
+  font-weight: 400;
 }
 
 .b-example-divider {
@@ -871,14 +831,6 @@ body{
   padding:10px;
 }
 
-.border-pill{
-  border: 1px solid lightgray;
-  border-radius: 8px;
-  padding: 10px;
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-
 .vertical-list-container .list-group .list-group-item:hover{
   cursor: pointer;  
 }
@@ -902,6 +854,9 @@ body{
   border:1px solid darkgray;
 }
 
+.btn-light:hover{
+  background-color: lightgray;
+}
 
 .header-buttons-container  .btn-light{
   border-radius: 0;
@@ -923,4 +878,63 @@ body{
   border: 1px solid lightgray;
   border-radius: 6px;
   box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
+  max-height: 90vh;
+}
+
+.billing-products-header{
+  border-bottom: 1px solid lightgray;
+  font-size:15px;
+  font-weight: 300 !important;
+  color:black;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  background-color: #f7f7f8;
+  display: grid;
+  grid-template-columns: 25% 20% 10% 10% 10% 10% 10%;
+}
+
+.billing-products-header > div{
+  padding-left: 12px;
+  padding-bottom: 6px;
+  padding-right: 12px;
+  padding-top: 6px;
+}
+
+.billing-products-body-row{
+  display: grid;
+  grid-template-columns: 25% 20% 10% 10% 10% 10% 10% 5%;
+}
+
+.billing-products-body-row > div, .billing-products-body-descriptor-row > div{
+  padding: 0;
+}
+
+.billing-products-body-row, .billing-products-body-descriptor-row{
+  width: 100%;
+}
+
+.billing-products-body-row > div > input, .billing-products-body-descriptor-row >div > input{
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid lightgray;
+}
+
+.round-button{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 36px;
+  width: 28px;
+  height: 28px;
+  border: none;
+}
+
+.round-button:hover{
+  background-color: lightgray;
+}
+
+.billing-products-footer{
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 85% 15%;
 }

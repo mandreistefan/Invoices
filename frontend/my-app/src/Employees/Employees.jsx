@@ -109,12 +109,13 @@ let Employees=(props)=>{
                                     <tbody>
                                         {employees.length>0 && employees.map((element, index)=>(          
                                             <tr>
-                                                <td>{element.emp_first_name} {element.emp_last_name}</td>
+                                                <td><b>{element.emp_first_name} {element.emp_last_name}</b></td>
                                                 <td>{element.emp_job_name}</td> 
-                                                <td>{element.emp_active}</td>                                          
+                                                <td>{element.emp_active ? <span class="material-icons-outlined">task_alt</span> : <span class="material-icons-outlined">cancel</span>}</td>                                          
                                                 <td className="table-actions-container">
                                                     <button title="Arhiveaza factura" onClick={()=>{deleteEmployee(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
-                                                    <button title="Deschide factura" onClick={()=>{setActiveEmployee(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span></div></button>                                                </td>
+                                                    <button title="Deschide factura" onClick={()=>{setActiveEmployee(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span></div></button>
+                                                </td>
                                             </tr>    
                                         ))}
                                     </tbody>  
