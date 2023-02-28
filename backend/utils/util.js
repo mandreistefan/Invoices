@@ -410,24 +410,27 @@ function calculateTotalSum(data){
 /**
  * 
  * @param {float} grossSalary Gross income
- * @param {bool} isTaxable TRUE - salary is taxable, FALSE it is not
+ * @param {float} cas CAS - full percentage(21.5%, example)
+ * @param {float} cass CASS - full percentage(21.5%, example)
+ * @param {float} cas TAX - impozit venit - full percentage(21.5%, example)
+ * @param {float} cam CAM - full percentage(21.5%, example)
  * @returns {{gross:float, cas:float, cass:float, tax:float, cam:float, salary:float}} An object, containing all contributions and the end salary
  */
 
-function calculateSalary(grossSalary, isTaxable, hasCASS){
+function calculateSalary(grossSalary, cas, cass, tax, cam){
     //no calcs for no salary
     if(grossSalary<1) return null
     //taxes
-    const CAS = 0.25;
-    const CASS = 0.1;
-    const TAX = 0.1;
-    const CAM = 0.0225;
+    const CAS = parseFloat(cas/100);
+    const CASS = parseFloat(cass/100);
+    const TAX = parseFloat(tax/100);
+    const CAM = parseFloat(cam/100)
     //taxes calc
     let netSalaryObject={ 
         gross: parseFloat(grossSalary),
         cas : parseFloat(grossSalary*CAS), 
-        cass : hasCASS ? parseFloat(grossSalary*CASS) : 0, 
-        tax: isTaxable ? parseFloat(grossSalary*TAX) : 0,
+        cass : parseFloat(grossSalary*CASS), 
+        tax: parseFloat(grossSalary*TAX),
         cam : parseFloat(grossSalary*CAM) 
     }
  

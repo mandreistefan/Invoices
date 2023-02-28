@@ -1,4 +1,4 @@
-import React from "react";
+import {useEffect, useState} from 'react';
 import './Invoices.css'
 import Snackbar from '../Snackbar/Snackbar.jsx'
 import PageNavigation from '../PageNavigation.jsx'
@@ -8,15 +8,15 @@ let InvoicesOverview = (props) =>{
 
     let defaultFilter = {filter:"all", filterBy:"", page:1}
 
-    let [invoicesData, invoicesDataSet] = React.useState(null)
-    let [activeInvoice, setActiveInvoice] = React.useState(null)
-    let [alertUser, setAlertUser] = React.useState({text: null})
-    let [numberOfElements, setNOE] = React.useState(null)
-    let [newInvoiceWindow, setnewInvoiceWindow] = React.useState(false)
-    let [queryFilter, setFilter]=React.useState({filter: props.queryFilterBy ? props.queryFilterBy : defaultFilter.filter, filterBy: props.queryFilterData ? props.queryFilterData : defaultFilter.filterBy, page:1})
+    let [invoicesData, invoicesDataSet] = useState(null)
+    let [activeInvoice, setActiveInvoice] = useState(null)
+    let [alertUser, setAlertUser] = useState({text: null})
+    let [numberOfElements, setNOE] = useState(null)
+    let [newInvoiceWindow, setnewInvoiceWindow] = useState(false)
+    let [queryFilter, setFilter] = useState({filter: props.queryFilterBy ? props.queryFilterBy : defaultFilter.filter, filterBy: props.queryFilterData ? props.queryFilterData : defaultFilter.filterBy, page:1})
 
     //refecth on page change or when the query parameters change (ex. when a search is attempted)
-    React.useEffect(()=>{
+    useEffect(()=>{
         fetchData()
     },[queryFilter])
 
@@ -172,7 +172,7 @@ let InvoicesOverview = (props) =>{
                                                     <td><b>{element.invoice_total_sum} RON</b></td>                                          
                                                     <td className="table-actions-container">
                                                         <button title="Arhiveaza factura" onClick={()=>{deleteInvoice(element.invoice_number)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
-                                                        <button title="Seteaza ca platita" onClick={()=>{setInvoiceFinalised(element.invoice_number)}}><div class="inner-button-content"><span class="material-icons-outlined">task_alt</span></div></button>
+                                                        {element.invoice_status!=="finalised" && <button title="Seteaza ca platita" onClick={()=>{setInvoiceFinalised(element.invoice_number)}}><div class="inner-button-content"><span class="material-icons-outlined">task_alt</span></div></button>}
                                                         <button title="Deschide factura" onClick={()=>{setActiveInvoice(element.invoice_number)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span></div></button>
                                                     </td>
                                                 </tr>    
@@ -189,8 +189,7 @@ let InvoicesOverview = (props) =>{
                                 <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
                                     <div style={{display:'inherit', alignItems:'center'}}><span style={{fontSize:'24px'}}>Factura numarul {activeInvoice}</span></div>
                                     <div className="nav col-12 col-lg-auto mb-2 justify-content-end header-buttons-container">                               
-                                        <button disabled={newInvoiceWindow ? true : false}  className='btn-light' title="Generaza factura" onClick={()=>{openInvoice()}}><div className="inner-button-content"><span className="material-icons-outlined" >file_open</span></div></button>
-                                        <button disabled={newInvoiceWindow ? true : false}  className='btn-danger' title="Arhiveaza factura" onClick={()=>{deleteInvoice()}}><div className="inner-button-content"><span className="material-icons-outlined" >delete</span></div></button>
+                                        <button className='btn-light' title="Genereaza factura" onClick={()=>{openInvoice()}}><div className="inner-button-content"><span className="material-icons-outlined" >file_open</span></div></button>                                
                                     </div>                                                             
                                 </div>
                                 <Invoice key={activeInvoice} invoiceID={activeInvoice}/>

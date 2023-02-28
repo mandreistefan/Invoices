@@ -125,12 +125,6 @@ let Employees=(props)=>{
                         {activeEmployee&&
                             <div className='overview-container bordered-container' style={{maxHeight:'80vh', overflowY:'scroll'}}> 
                                 <button style={{border:'none', borderRadius:'6px', display:'flex', alignItems:'center', margin:'10px'}} onClick={()=>{setActive(null)}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>     
-                                <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
-                                    <div className="nav col-12 col-lg-auto mb-2 justify-content-end header-buttons-container">                               
-                                        <button  className='btn-light' title="Factureaza client" ><div className="inner-button-content"><span className="material-icons-outlined">library_add</span></div></button>
-                                        <button className='btn-danger' title="Arhiveaza client" ><div className="inner-button-content"><span className="material-icons-outlined">delete</span></div></button>
-                                    </div>
-                                </div>
                                 <Employee id={activeEmployee}/>
                             </div>    
                         }

@@ -20,23 +20,6 @@ let PredefinedProductsManager = (props) =>{
         })
     },[])
 
-    let deleteProduct=(productID)=>{
-        fetch(`http://localhost:3000/products/${productID}`,
-        {
-            method:"DELETE"
-        })
-        .then(response=>response.json())
-        .then(data=>{
-            if(data.status==="OK"){
-                setSnackBarText("Produs sters")
-            }else if(data.status==="SERVER_ERROR"){
-                setSnackBarText("Baza de date nu poate fi accesata")
-            }else{
-                setSnackBarText("Eroare!")
-            }
-        })
-    }
-
     return(
         <div className="app-data-container">            
             {predefinedProducts===null ? <div><span>Loading...</span></div>:        
@@ -67,8 +50,7 @@ let PredefinedProductsManager = (props) =>{
                                                 <td>{element.pp_tax}%</td>
                                                 <td>{element.pp_description}</td>
                                                 <td className="table-actions-container">
-                                                    <button title="Sterge" onClick={()=>{deleteProduct(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
-                                                    <button title="Editeaza" onClick={()=>{setActive(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">task_alt</span></div></button>
+                                                    <button title="Aplica" onClick={()=>{props.addElement({id:element.id, name: element.pp_name, um: element.pp_um, price: element.pp_price_per_item, tax:element.pp_tax, description:element.pp_description})}}><div class="inner-button-content"><span class="material-icons-outlined">done</span></div></button>                                                    
                                                 </td>                  
                                             </tr>
                                         )):""
@@ -76,12 +58,6 @@ let PredefinedProductsManager = (props) =>{
                                     </tbody>
                                 </table>
                             </div>
-                        }
-                        {active&&
-                            <div className='bordered-container overview-container'>
-                                <button style={{border:'none', borderRadius:'6px', display:'flex', alignItems:'center', margin:'10px'}} onClick={()=>{setActive(null)}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>
-                                <ProductForm productID={active}/>      
-                            </div>                       
                         }
                     </div>  
                 </div>

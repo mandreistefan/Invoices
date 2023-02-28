@@ -391,7 +391,7 @@ export default class Invoice extends React.Component{
             }
 
             //add a new row
-            this.setState({tableElements:[...this.state.tableElements,{properties:{preloaded:false, id:dataObject.id, entry: null, valid:true}, data:[dataObject.name, dataObject.um, "1", dataObject.tax, parseFloat(((dataObject.price/100)*dataObject.tax)).toFixed(2), dataObject.price]}]})
+            this.setState({tableElements:[...this.state.tableElements,{properties:{preloaded:false, id:dataObject.id, entry: null, valid:true}, data:[dataObject.name, dataObject.um, "1", dataObject.tax, parseFloat(((dataObject.price/100)*dataObject.tax)).toFixed(2), dataObject.price, dataObject.description]}]})
             this.setState({total_tax:parseFloat(parseFloat(this.state.total_tax)+((dataObject.price/100)*dataObject.tax)).toFixed(2), total_prod_price:parseFloat(parseFloat(this.state.total_prod_price)+(dataObject.price)).toFixed(2)})
 
             //close the predefined elements list
@@ -449,52 +449,51 @@ export default class Invoice extends React.Component{
                           
                             <div className="bordered-container p-1" style={{marginBottom:'10px'}}>   
                             <div style={{display:'flex', alignItems:'center', justifyContent:'space-between'}}><span><b>Produse</b></span><button type="button" style={{backgroundColor:'transparent', border:'none'}} title="Show client info" onClick={()=>{this.setState({showBilledProducts: !this.state.showBilledProducts})}}><span className="material-icons-outlined">{this.state.showBilledProducts ? "expand_less" : "expand_more"}</span></button></div>                         
-                                <div className="invoice-products-container form-group" style={{display: this.state.showBilledProducts ? "block" : "none"}}> 
-
-                                            <div className="billing-products-header">
-                                                <div>Nume</div>
-                                                <div>UM</div>
-                                                <div>Cantitate</div>
-                                                <div>Taxa(%)</div>
-                                                <div>Taxa</div>
-                                                <div>Pret</div>
-                                                <div>Pret total</div>
-                                            </div>
-                                            <div className="billing-products-body">
-                                                {                                                
-                                                    this.state.tableElements.map((element, index)=>(
-                                                        <div key={index}>
-                                                            <div className="billing-products-body-row" key={index} id={index}>
-                                                                <div><input type="text" className={element.properties.valid ? "product_name form-control shadow-none" : "product_name form-control invalid-input shadow-none"} name="product_name" disabled={element.properties.preloaded===true ? true : false} position={[index,0]} autoComplete="off" value={element.data[0]} onChange={this.validateAndUpdate}/></div>
-                                                                <div><input type="text" className={element.properties.valid ? "product_um form-control shadow-none": "product_um form-control invalid-input shadow-none"} name="product_um" disabled={element.properties.preloaded===true ? true : false} position={[index,1]} autoComplete="off" value={element.data[1]} onChange={this.validateAndUpdate}/></div>
-                                                                <div><input type="text" className={element.properties.valid ? "product_q form-control shadow-none" : "product_q form-control invalid-input shadow-none"}name="product_quantity" disabled={element.properties.preloaded===true ? true : false} position={[index,2]} autoComplete="off" value={element.data[2]} onChange={this.validateAndUpdate}/></div>
-                                                                <div><input type="text" className={element.properties.valid ? "product_tax form-control shadow-none": "product_tax form-control invalid-input shadow-none"} name="product_tax"  disabled={element.properties.preloaded===true ? true : false} position={[index,3]} autoComplete="off" value={element.data[3]} onChange={this.validateAndUpdate}/></div>
-                                                                <div><input type="text" className={element.properties.valid ? "product_tax form-control shadow-none": "product_tax form-control invalid-input shadow-none"} name="product_tax_value"  position={[index,4]} autoComplete="off" disabled={true} value={parseFloat(element.data[4]).toFixed(2)}/></div>
-                                                                <div><input type="text" className={element.properties.valid ? "product_ppu form-control shadow-none": "product_ppu form-control invalid-input shadow-none"} name="product_price" disabled={element.properties.preloaded===true ? true : false} position={[index,5]} autoComplete="off" value={element.data[5]} onChange={this.validateAndUpdate}/></div>
-                                                                <div><input type="text" rows="1" className="product_ppu form-control shadow-none" name="product_price" disabled={true} position={[index,6]} autoComplete="off" value={parseFloat(element.data[5]*element.data[2]).toFixed(2)} onChange={this.validateAndUpdate}/></div>
-                                                                <div style={{display:'flex', alignItems:'center', justifyContent:'center', backgroundColor:'#e9ecef', borderBottom:'1px solid lightgray'}}>  
-                                                                    <button type="button" title="Stergere" style={{float:"right"}} className="remove-product-button round-button" disabled={((this.state.invoice_status==="finalised") ? true : false)||(this.state.tableElements.length<2)} onClick={()=>{this.removeEntry(index)}}><span className="material-icons-outlined">close</span></button>
-                                                                </div>
-                                                            </div> 
-                                                            <div className="billing-products-body-descriptor-row">
-                                                                <div style={{width:'100%'}}>
-                                                                    <input type="text" className={element.properties.valid ? "product_description form-control shadow-none": "product_description form-control invalid-input shadow-none"} name="product_description" disabled={element.properties.preloaded===true ? true : false} position={[index,6]} autoComplete="off" value={element.data[6]} onChange={this.validateAndUpdate}/>
-                                                                </div>
+                                <div className="invoice-products-container form-group" style={{display: this.state.showBilledProducts ? "block" : "none"}}>
+                                        <div className="billing-products-header">
+                                            <div>Nume</div>
+                                            <div>UM</div>
+                                            <div>Cantitate</div>
+                                            <div>Taxa(%)</div>
+                                            <div>Taxa</div>
+                                            <div>Pret</div>
+                                            <div>Pret total</div>
+                                        </div>
+                                        <div className="billing-products-body">
+                                            {                                                
+                                                this.state.tableElements.map((element, index)=>(
+                                                    <div key={index}>
+                                                        <div className="billing-products-body-row" key={index} id={index}>
+                                                            <div><input type="text" className={element.properties.valid ? "product_name form-control shadow-none" : "product_name form-control invalid-input shadow-none"} name="product_name" disabled={element.properties.preloaded===true ? true : false} position={[index,0]} autoComplete="off" value={element.data[0]} onChange={this.validateAndUpdate}/></div>
+                                                            <div><input type="text" className={element.properties.valid ? "product_um form-control shadow-none": "product_um form-control invalid-input shadow-none"} name="product_um" disabled={element.properties.preloaded===true ? true : false} position={[index,1]} autoComplete="off" value={element.data[1]} onChange={this.validateAndUpdate}/></div>
+                                                            <div><input type="text" className={element.properties.valid ? "product_q form-control shadow-none" : "product_q form-control invalid-input shadow-none"}name="product_quantity" disabled={element.properties.preloaded===true ? true : false} position={[index,2]} autoComplete="off" value={element.data[2]} onChange={this.validateAndUpdate}/></div>
+                                                            <div><input type="text" className={element.properties.valid ? "product_tax form-control shadow-none": "product_tax form-control invalid-input shadow-none"} name="product_tax"  disabled={element.properties.preloaded===true ? true : false} position={[index,3]} autoComplete="off" value={element.data[3]} onChange={this.validateAndUpdate}/></div>
+                                                            <div><input type="text" className={element.properties.valid ? "product_tax form-control shadow-none": "product_tax form-control invalid-input shadow-none"} name="product_tax_value"  position={[index,4]} autoComplete="off" disabled={true} value={parseFloat(element.data[4]).toFixed(2)}/></div>
+                                                            <div><input type="text" className={element.properties.valid ? "product_ppu form-control shadow-none": "product_ppu form-control invalid-input shadow-none"} name="product_price" disabled={element.properties.preloaded===true ? true : false} position={[index,5]} autoComplete="off" value={element.data[5]} onChange={this.validateAndUpdate}/></div>
+                                                            <div><input type="text" rows="1" className="product_ppu form-control shadow-none" name="product_price" disabled={true} position={[index,6]} autoComplete="off" value={parseFloat(element.data[5]*element.data[2]).toFixed(2)} onChange={this.validateAndUpdate}/></div>
+                                                            <div style={{display:'flex', alignItems:'center', justifyContent:'center', backgroundColor:'#e9ecef', borderBottom:'1px solid lightgray'}}>  
+                                                                <button type="button" title="Stergere" style={{float:"right"}} className="remove-product-button round-button" disabled={((this.state.invoice_status==="finalised") ? true : false)||(this.state.tableElements.length<2)} onClick={()=>{this.removeEntry(index)}}><span className="material-icons-outlined">close</span></button>
                                                             </div>
-                                                        </div>                                                             
-                                                    ))                                                
-                                                }
-                                            </div>
-                                            <div className="billing-products-footer">
-                                                <div><span><b>Total</b></span></div>
-                                                <div><span>{this.state.total_prod_price} RON</span></div>
-                                            </div>
-
+                                                        </div> 
+                                                        <div className="billing-products-body-descriptor-row">
+                                                            <div style={{width:'100%'}}>
+                                                                <input type="text" className={element.properties.valid ? "product_description form-control shadow-none": "product_description form-control invalid-input shadow-none"} name="product_description" disabled={element.properties.preloaded===true ? true : false} position={[index,6]} autoComplete="off" value={element.data[6]} onChange={this.validateAndUpdate}/>
+                                                            </div>
+                                                        </div>
+                                                    </div>                                                             
+                                                ))                                                
+                                            }
+                                        </div>
+                                        <div className="billing-products-footer" style={{paddingLeft:'12px', paddingRight:'12px'}}>
+                                            <div><span><b>Total</b></span></div>
+                                            <div><span><b>{this.state.total_prod_price} RON</b></span></div>
+                                        </div>
+                                        <br/>
                                     <button type="button" className="btn btn-light btn-sm" disabled={(this.state.invoice_server_status==="finalised") ? true : false} style={{marginRight:'5px'}} onClick={this.addNewRow}><span className="action-button-label"><span className="material-icons-outlined">add</span>Rand nou</span></button>
                                     <button type="button" className="btn btn-light btn-sm" disabled={(this.state.invoice_server_status==="finalised") ? true : false} onClick={()=>{this.setState({predefinedList: true})}}><span className="action-button-label"><span className="material-icons-outlined">apps</span>Predefinite</span></button>
                                 </div>
                             </div>  
-                            <button className="w-100 btn btn-primary btn-lg" disabled={(this.state.dataModified) ? false : true} form="invoice-form" id="submit-invoice-button"><span className="action-button-label">SALVARE</span></button>                                                          
+                            <button className="btn btn-primary" disabled={(this.state.dataModified) ? false : true} form="invoice-form" id="submit-invoice-button"><span className="action-button-label">SALVARE</span></button>                                                          
                     </form>
                     {this.state.predefinedList&&
                         <div> 

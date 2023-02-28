@@ -602,6 +602,7 @@ async function addSalary(data){
     let employeeID=data.paid_to
     let month = data.salary_month
     let bank_ref = data.bank_ref
+    let taxes = data.taxes
     //some checks on data. Month is in the interval 1..12
     if((!month)||(month>12)||(month<1)) return ({status:"ERROR", data:"INVALID_SALARY_MONTH"})
     if(!employeeID) return ({status:"ERROR", data:"INVALID_EMPLOYEE"})
@@ -610,7 +611,7 @@ async function addSalary(data){
     let checkExistingSalary = await databaseOperations.hasSalaryOnDate(employeeID, month)
     if(checkExistingSalary) return ({status:"FAIL", data:"SALARY_EXISTS"})
     //add the salary
-    return await databaseOperations.addSalary(employeeID, month, bank_ref)
+    return await databaseOperations.addSalary(employeeID, month, bank_ref, taxes)
 }
 
 /**

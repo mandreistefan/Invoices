@@ -104,7 +104,7 @@ let Clients = (props) =>{
                                         <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
                                         <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>
                                         <div className="search-header-buttons-container">                               
-                                            <button type="button" className='btn-light' title="Factura noua" onClick={()=>{showonewClientWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span></div></button>
+                                            <button type="button" className='btn-light' title="Client nou" onClick={()=>{showonewClientWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span></div></button>
                                             <button type="button" className='btn-danger' title="Reincarca date"  onClick={()=>{resetSearch()}}><div className="inner-button-content"><span className="material-icons-outlined" >refresh</span></div></button>
                                         </div>                                                     
                                     </div>
@@ -124,12 +124,13 @@ let Clients = (props) =>{
                                         {allClients.length>0 && allClients.map((element, index)=>(          
                                             <tr>
                                                 <td><b>{element.client_first_name} {element.client_last_name}</b></td>
-                                                <td>{element.client_type ? element.client_type==="pers" ? <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>person</span>Persoana fizica</span> : <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>store</span>Firma</span> : "NA"}</td> 
+                                                <td><div style={{display:'flex', alignItems:'center'}}>{element.client_type ? element.client_type==="pers" ? <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>person</span>Persoana fizica</span> : <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>store</span>Firma</span> : "NA"}</div></td> 
                                                 <td>{element.client_county}, {element.client_city}, {element.client_street}, {element.client_adress_number}, {element.client_zip}</td>                                          
                                                 <td className="table-actions-container">
                                                     <button title="Arhiveaza factura" onClick={()=>{deleteClient(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
                                                     <button  className='btn-light' title="Factureaza client" onClick={()=>{props.enableInvoiceApp(element.id)}}><div className="inner-button-content"><span className="material-icons-outlined">library_add</span></div></button>
-                                                    <button title="Deschide client" onClick={()=>{setActive(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span></div></button>                                                </td>
+                                                    <button title="Deschide client" onClick={()=>{setActive(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span></div></button>
+                                                </td>
                                             </tr>    
                                         ))}
                                     </tbody>  

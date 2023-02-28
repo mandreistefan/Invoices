@@ -1,13 +1,6 @@
 import React from "react";
 import Snackbar from '../Snackbar/Snackbar.jsx'
 
-//global taxes
-const taxesPercentages={
-    CAS: 0.25,
-    CASS: 0.1,
-    TAX: 0.1,
-    CAM: 0.0225
-}
 //the current date
 const currentDate = new Date()
 //component data
@@ -31,17 +24,23 @@ export default class Employee extends React.Component{
             active:false,
             job_name:"",
             salary_gross:0,
+            salary_net:0,
             salaries:[],
             vacationDays:[],
             salaryWindow: false,
-            emp_tax:0,
-            emp_tax_cass:0,
             newSalaryMonth:1,
             alertUser:null, 
             vacationDaysWindow:false,
             vacationDaysRequested:[{date: `${dateString.year}-${dateString.month}-${dateString.day}`, type:"vacation"}], 
             availableVacationDays:0,
-            emp_notes: ""
+            emp_notes: "", 
+            taxesPercentages: [
+                {name: "CAS", key:"CAS", description:"Asigurare sociale", value: 21.5},
+                {name: "CASS", key:"CASS", description: "Asigurari sociale sanatate", value: 10},
+                {name: "VENIT", key:"TAX", description: "Impozit venit", value: 10},
+                {name: "CAM", key:"CAM", description:"Contributie asiguratorie munca", value: 2.25}
+            ]
+            
         }
 
         this.handleMonthChange = this.handleMonthChange.bind(this);
@@ -105,11 +104,10 @@ export default class Employee extends React.Component{
                         salary_gross:data.data.info[0].emp_cur_salary_gross,
                         salaries:setSalaries(data.data.salaries),
                         vacationDays:setVacations(data.data.vacationDays),
-                        emp_tax: data.data.info[0].emp_tax ? 1 : 0,
-                        emp_tax_cass: data.data.info[0].emp_tax_cass ? 1 : 0,
                         emp_notes: data.data.info[0].emp_notes ? data.data.info[0].emp_notes : "",
                         availableVacationDays: data.data.info[0].emp_vacation_days
                     })
+                    this.calculateNet()
                 }else{
                     this.setState({alertUser:"Eroare"})
                 }
@@ -122,10 +120,14 @@ export default class Employee extends React.Component{
 
     handleSubmit=(event)=>{
         event.preventDefault();
+        let taxes = []
+        this.state.taxesPercentages.forEach(element=>{
+            taxes.push(element.value)
+        })
         fetch(`http://localhost:3000/employee_salary`, {
             method:"POST",
             headers: { 'Content-Type': 'application/json' },
-            body:JSON.stringify({paid_to:this.state.id, salary_month:this.state.newSalaryMonth, bank_ref:document.getElementById("bankref").value})
+            body:JSON.stringify({paid_to:this.state.id, salary_month:this.state.newSalaryMonth, bank_ref:document.getElementById("bankref").value, taxes})
         }).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 this.setState({alertUser:"Salariu inregistrat"})
@@ -220,6 +222,34 @@ export default class Employee extends React.Component{
         return `${theDate[0]}/${parseInt(theDate[1])+1}/${theDate[2]}`
     }
 
+    updateEmployeeSalaries=()=>{
+        fetch(`http://localhost:3000/employee_salary?filter=paid_to&filterBy=${this.state.id}`
+        ).then(response=>response.json()).then(data=>{
+            if(data.status==="OK"){
+                this.setState({salaries:data.data})
+            }else{
+                this.setState({alertUser:"Ceva nu a functionat"})
+            }                
+        })
+    }
+
+    calculateNet=()=>{
+        let onePercentOfGross = parseFloat(this.state.salary_gross/100)
+        this.setState({salary_net: parseFloat(this.state.salary_gross-(onePercentOfGross*this.state.taxesPercentages[0].value + onePercentOfGross*this.state.taxesPercentages[1].value + onePercentOfGross*this.state.taxesPercentages[2].value))})        
+    }
+
+    reacalculateTaxesWithThis=(event)=>{
+        let shallowCopy = [...this.state.taxesPercentages]        
+        shallowCopy.forEach(element=>{
+            if(element.key===event.target.name){
+                element.value=event.target.value
+                return
+            }
+        })
+        this.calculateNet()
+        this.setState({taxesPercentages:shallowCopy})
+    }
+
      render(){
         return(
             <div style={{padding:'16px'}}>
@@ -249,10 +279,15 @@ export default class Employee extends React.Component{
                     </div>
                 </div>
                 <div id="additional-employee-info-container">
-                    <div style={{width:'100%', marginBottom:'25px', marginTop:'25px', display:'flex', flexDirection:'column'}} className="bordered-container p-3">                        
-                       
-                            <h5>Salarii</h5>
-                            <table className='table' id="vacation-days-table">
+                    <div style={{width:'100%', marginBottom:'25px', marginTop:'25px', display:'flex', flexDirection:'column'}} className="bordered-container">  
+                            <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
+                                <h5>Salarii</h5>
+                                <div className="btn-group">                               
+                                    <button className='btn btn-light' type="button" onClick={()=>{this.setState({salaryWindow:true})}} title="Plata noua" ><div className="inner-button-content"><span className="material-icons-outlined">add</span></div></button>
+                                    <button className='btn btn-light' type="button" onClick={()=>{this.updateEmployeeSalaries()}} title="Reincarca" ><div className="inner-button-content"><span className="material-icons-outlined">refresh</span></div></button>
+                                </div>
+                            </div>
+                            <table className='table' id="salaries-table">
                                 <thead>
                                     <tr>
                                         <td>Luna</td>
@@ -280,12 +315,16 @@ export default class Employee extends React.Component{
                                     )):"Nu exista inregistrari"}
                                 </tbody>
                             </table>
-                            <button type="button" className="btn btn-primary" style={{width:'fit-content'}} onClick={()=>{this.setState({salaryWindow:true})}}>PLATA NOUA</button>
-                        
                     </div>   
                     <div style={{width:'100%', marginBottom:'25px', display:'flex', flexDirection:'row'}}>                        
-                            <div style={{width:'100%', paddingLeft:'16px'}} className="bordered-container p-3">
-                                <h5>Zile libere(A:{this.state.availableVacationDays}/ R:{parseInt(this.state.availableVacationDays - this.state.vacationDays.length)})</h5>
+                            <div style={{width:'100%'}} className="bordered-container">
+                                <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
+                                    <h5>Zile libere</h5>
+                                    <div className="btn-group">                               
+                                        <button className='btn btn-light' type="button" onClick={()=>{this.setState({vacationDaysWindow:true})}} title="Cerere noua" ><div className="inner-button-content"><span className="material-icons-outlined">add</span></div></button>
+                                        <button className='btn btn-light' type="button" onClick={()=>{this.updateEmployeeSalaries()}}  title="Reincarca" ><div className="inner-button-content"><span className="material-icons-outlined">refresh</span></div></button>
+                                    </div>
+                                </div>
                                 <table className='table' id="vacation-days-table">
                                     <thead>
                                         <tr>
@@ -306,7 +345,6 @@ export default class Employee extends React.Component{
                                         )):"Nu exista inregistrari"}
                                     </tbody>
                                 </table>
-                                <button className="btn btn-primary" onClick={()=>{this.setState({vacationDaysWindow: true})}}>CERERE NOUA</button>
                             </div>
                     </div>                            
                 </div>
@@ -316,7 +354,7 @@ export default class Employee extends React.Component{
                         <button type="button" className="action-close-window" onClick={()=>{this.setState({salaryWindow: false})}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
                         <div className="overlapping-component-inner">
                             <div className="row g-5 p-5">
-                                <div className="col-md-7 col-lg-8">
+                                <div className="col-md-7 col-lg-6">
                                     <h6>Informatii angajat</h6>
                                     <form onSubmit={this.handleSubmit}>
                                         <div className="row g-3">
@@ -360,48 +398,31 @@ export default class Employee extends React.Component{
                                         <button className="w-100 btn btn-primary btn-lg" type="submit">INREGISTRARE</button>
                                     </form>
                                 </div>
-                                <div className="col-md-5 col-lg-4 order-md-last">
+                                <div className="col-md-5 col-lg-6 order-md-last">
                                     <ul className="list-group mb-3">
-                                        <li className="list-group-item d-flex justify-content-between lh-sm">
-                                            <div>
-                                            <h6 className="my-0">Brut</h6>
-                                                <small className="text-muted">Salariu brut aferent angajatului</small>
-                                            </div>
-                                            <span className="text-muted" ><b>{this.state.salary_gross}</b></span>
-                                        </li>
-                                        <li className="list-group-item d-flex justify-content-between lh-sm">
-                                            <div>
-                                            <h6 className="my-0">CAS</h6>
-                                                <small className="text-muted">Asigurari Sociale</small>
-                                            </div>
-                                            <span className="text-muted" >{parseFloat(this.state.salary_gross*taxesPercentages.CAS)}</span>
-                                        </li>
-                                        <li className="list-group-item d-flex justify-content-between lh-sm">
-                                            <div>
-                                            <h6 className="my-0">CASS</h6>
-                                                <small className="text-muted">Asigurari Sociale Sanatate</small>
-                                            </div>
-                                            <span className="text-muted" >{parseFloat(this.state.salary_gross*(taxesPercentages.CASS*this.state.emp_tax_cass))}</span>
-                                        </li>
                                         {
-                                            <li className="list-group-item d-flex justify-content-between lh-sm">
+                                            this.state.taxesPercentages.map(element=>(
+                                                <li className="list-group-item d-flex justify-content-between lh-sm">
                                                 <div>
-                                                <h6 className="my-0">Venit</h6>
-                                                    <small className="text-muted">Impozit venit</small>
+                                                    <h6 className="my-0">{element.key}</h6>
+                                                    <small className="text-muted">{element.description}</small>
                                                 </div>
-                                                <span className="text-muted" >{parseFloat(this.state.salary_gross*(taxesPercentages.TAX*this.state.emp_tax))}</span>
-                                            </li>
+                                                <div>
+                                                    <div class="input-group">                                                    
+                                                        <input type="text" className="form-control shadow-none" style={{width:'50px', padding:'2px'}} value={element.value} onChange={this.reacalculateTaxesWithThis} name={element.key}></input>
+                                                        <span class="input-group-text" style={{padding:'2px'}}>%</span>
+                                                    </div>
+                                                    <div class="input-group">  
+                                                        <input type="text" className="form-control shadow-none" disabled={true}  style={{width:'50px', padding:'2px'}} value={parseFloat(this.state.salary_gross/100)*parseFloat(element.value)}></input>
+                                                        <span class="input-group-text" style={{padding:'2px'}}>RON</span>
+                                                    </div>
+                                                </div>  
+                                            </li> 
+                                            ))
                                         }
-                                        <li className="list-group-item d-flex justify-content-between lh-sm">
-                                            <div>
-                                            <h6 className="my-0">CM</h6>
-                                                <small className="text-muted">Contributie Asiguratorie<br/>Munca</small>
-                                            </div>
-                                            <span className="text-muted" >{parseFloat(this.state.salary_gross*taxesPercentages.CAM)}</span>
-                                        </li> 
                                         <li className="list-group-item d-flex justify-content-between">
                                             <span>Net</span>
-                                            <strong>{parseFloat(this.state.salary_gross - this.state.salary_gross*taxesPercentages.CAS - (this.state.salary_gross*(taxesPercentages.CASS*this.state.emp_tax_cass)) - (this.state.salary_gross*(taxesPercentages.TAX*this.state.emp_tax)))} RON</strong>
+                                            <strong>{this.state.salary_net} RON</strong>
                                         </li>                               
                                     </ul>
                                 </div>

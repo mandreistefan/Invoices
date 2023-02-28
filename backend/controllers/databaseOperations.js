@@ -710,7 +710,6 @@ function getFinancialData(filterObject){
 
 async function checkInvoiceStatus(invoiceID){
     return new Promise((resolve, reject)=>{
-        console.log(`SELECT invoice_status FROM invoices WHERE invoice_number=${invoiceID}`)
         connection.query(`SELECT invoice_status FROM invoices WHERE invoice_number=${invoiceID}`, function(error, result){
             if(error){
                 console.log(error)
@@ -1575,7 +1574,7 @@ function hasSalaryOnDate(employeeID, month){
  * OK - data is the insertID
  */
 
-async function addSalary(paid_to, salary_month, bank_ref){
+async function addSalary(paid_to, salary_month, bank_ref, taxes){
     
     //get gross salary
     let salaryObject = await new Promise((resolve, reject)=>{
@@ -1585,7 +1584,7 @@ async function addSalary(paid_to, salary_month, bank_ref){
                 reject(null)
             }
             if(result.length!=0){   
-                resolve(utile.calculateSalary(result[0].emp_cur_salary_gross, result[0].emp_tax, result[0].emp_tax_cass))             
+                resolve(utile.calculateSalary(result[0].emp_cur_salary_gross, taxes[0], taxes[1], taxes[2], taxes[3]))             
             }else{
                 resolve(null)
             }
