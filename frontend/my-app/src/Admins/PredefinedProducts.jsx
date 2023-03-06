@@ -66,7 +66,7 @@ let Products=()=>{
                 <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
                     <h5>Produse sablon</h5>
                     <div className="btn-group">                               
-                        <button className='btn btn-light' type="button" onClick={()=>{setaddproductWindow(true)}} title="Produs nou" ><div className="inner-button-content"><span className="material-icons-outlined">add</span></div></button>
+                        <button className='btn btn-light' type="button" onClick={()=>{setaddproductWindow(true)}} title="Produs nou" ><div className="inner-button-content"><span className="material-icons-outlined">add</span>Produs nou</div></button>
                         <button className='btn btn-light' type="button" onClick={()=>{fetchData()}}  title="Reincarca" ><div className="inner-button-content"><span className="material-icons-outlined">refresh</span></div></button>
                     </div>
                 </div>          
@@ -75,6 +75,7 @@ let Products=()=>{
                         <table className='table'>                            
                             <thead>
                                 <tr>
+                                    <td>#</td>
                                     <td>Nume</td>
                                     <td>UM</td>
                                     <td>Pret</td>
@@ -87,7 +88,7 @@ let Products=()=>{
                             {predefinedProducts.length>0 ? 
                                 predefinedProducts.map((element, index)=>(
                                     <tr key={index} className='clients-table-row app-data-table-row'>
-                                        <td className="centered-text-in-td">{index+1}</td>
+                                        <td>{index+1}</td>
                                         <td>{element.pp_name}</td>
                                         <td>{element.pp_um}</td>
                                         <td>{element.pp_price_per_item} RON</td>

@@ -104,7 +104,7 @@ let Expenses=()=>{
                                     {expenses.length>0 &&
                                         expenses.map((element, index)=>(
                                             <tr key={index} className='clients-table-row app-data-table-row'>
-                                                <td className="centered-text-in-td">{index+1}</td>
+                                                <td>{index+1}</td>
                                                 <td>{element.exp_name}</td>
                                                 <td>{element.exp_sum}</td>
                                                 <td>{element.exp_description}</td>

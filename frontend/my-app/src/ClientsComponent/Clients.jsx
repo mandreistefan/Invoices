@@ -104,7 +104,7 @@ let Clients = (props) =>{
                                         <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
                                         <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>
                                         <div className="search-header-buttons-container">                               
-                                            <button type="button" className='no-backgroud-button' title="Client nou" onClick={()=>{showonewClientWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span></div></button>
+                                            <button type="button" className='no-backgroud-button' title="Client nou" onClick={()=>{showonewClientWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span>Client nou</div></button>
                                             <button type="button" className='btn-danger' title="Reincarca date"  onClick={()=>{resetSearch()}}><div className="inner-button-content"><span className="material-icons-outlined" >refresh</span></div></button>
                                         </div>                                                     
                                     </div>
@@ -114,6 +114,7 @@ let Clients = (props) =>{
                                 <table className="table" id="invoices-table">
                                     <thead>
                                         <tr>
+                                            <td>#</td>
                                             <td>Nume</td>
                                             <td>Tip</td>
                                             <td>Adresa</td>
@@ -123,6 +124,7 @@ let Clients = (props) =>{
                                     <tbody>
                                         {allClients.length>0 && allClients.map((element, index)=>(          
                                             <tr>
+                                                <td>{index+1}</td>
                                                 <td><b>{element.client_first_name} {element.client_last_name}</b></td>
                                                 <td><div style={{display:'flex', alignItems:'center'}}>{element.client_type ? element.client_type==="pers" ? <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>person</span>Persoana fizica</span> : <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>store</span>Firma</span> : "NA"}</div></td> 
                                                 <td>{element.client_county}, {element.client_city}, {element.client_street}, {element.client_adress_number}, {element.client_zip}</td>                                          

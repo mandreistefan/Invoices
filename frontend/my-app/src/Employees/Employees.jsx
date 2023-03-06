@@ -90,7 +90,7 @@ let Employees=(props)=>{
                                         <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
                                         <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>
                                         <div className="search-header-buttons-container">                               
-                                            <button type="button" className='no-background-button' title="Factura noua" onClick={()=>{showaddEmployeeWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span></div></button>
+                                            <button type="button" className='no-background-button' title="Factura noua" onClick={()=>{showaddEmployeeWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span>Angajat nou</div></button>
                                             <button type="button" className='btn-danger' title="Reincarca date"  onClick={()=>{resetSearch()}}><div className="inner-button-content"><span className="material-icons-outlined" >refresh</span></div></button>
                                         </div>                                                     
                                     </div>
@@ -100,6 +100,7 @@ let Employees=(props)=>{
                                 <table className="table" id="invoices-table">
                                     <thead>
                                         <tr>
+                                            <td>#</td>
                                             <td>Nume</td>
                                             <td>Titlu</td>
                                             <td>Activ</td>
@@ -109,6 +110,7 @@ let Employees=(props)=>{
                                     <tbody>
                                         {employees.length>0 && employees.map((element, index)=>(          
                                             <tr>
+                                                <td>{index+1}</td>
                                                 <td><b>{element.emp_first_name} {element.emp_last_name}</b></td>
                                                 <td>{element.emp_job_name}</td> 
                                                 <td>{element.emp_active ? <span class="material-icons-outlined">task_alt</span> : <span class="material-icons-outlined">cancel</span>}</td>                                          

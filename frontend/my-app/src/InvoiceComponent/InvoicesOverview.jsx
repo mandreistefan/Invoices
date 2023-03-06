@@ -144,7 +144,7 @@ let InvoicesOverview = (props) =>{
                                             <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
                                             <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>
                                             <div className="search-header-buttons-container">                               
-                                                <button type="button" className='no-background-button' title="Factura noua" onClick={()=>{setnewInvoiceWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span></div></button>
+                                                <button type="button" className='no-background-button' title="Factura noua" onClick={()=>{setnewInvoiceWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span>Factura noua</div></button>
                                                 <button type="button" className='btn-danger' title="Reincarca date"  onClick={()=>{resetSearch()}}><div className="inner-button-content"><span className="material-icons-outlined" >refresh</span></div></button>
                                             </div>                                                     
                                         </div>
@@ -154,6 +154,7 @@ let InvoicesOverview = (props) =>{
                                     <table className="table" id="invoices-table">
                                         <thead>
                                             <tr>
+                                                <td>#</td>
                                                 <td>Client</td>
                                                 <td>Numar factura</td>
                                                 <td>Status</td>
@@ -165,6 +166,7 @@ let InvoicesOverview = (props) =>{
                                         <tbody>
                                             {invoicesData.length>0 && invoicesData.map((element, index)=>(          
                                                 <tr>
+                                                    <td>{index+1}</td>
                                                     <td><b>{element.client_first_name} {element.client_last_name}</b></td>
                                                     <td>{element.invoice_number}</td>
                                                     <td>{setStatus(element.invoice_status)}</td>
