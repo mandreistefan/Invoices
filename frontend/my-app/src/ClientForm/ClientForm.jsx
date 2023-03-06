@@ -260,11 +260,10 @@ let TheClientForm = (props)=>{
 
     return(            
         <div className={(props.isSubmitable===true) ? "form-container" : ""}> 
-            <h6>Date client</h6>
             {(props.isSubmitable===true) ? 
             <form onSubmit={submitClientData} id="client_form" name="client_form">
                 <div className='form-row'>
-                    <div className="form-group col-md-3">
+                    <div className="form-group col-md-4">
                         <label className="form-subsection-label" htmlFor="client_type">Tip client</label><br/>               
                         <select className="form-control form-control shadow-none" id="client_type" name="client_type"disabled={(fieldsDisabled===false) ?  true: false} modified="false" autoComplete="off" onChange={changeFormData} value={data.client_type_input}>
                             <option value="pers">Persoana fizica</option>
@@ -272,13 +271,13 @@ let TheClientForm = (props)=>{
                         </select>  
                     </div>
                     {data.client_type_input==="comp" && 
-                        <div className="form-group col-md-3">            
+                        <div className="form-group col-md-4">            
                             <label className="form-subsection-label" htmlFor="client_fiscal_1">Nr. Reg. Com</label><br/>
                             <input type="text" id="client_fiscal_1" name="client_fiscal_1" disabled={(fieldsDisabled===false ? true: false || data.client_type_input==="pers")} className={invalidDataItems.includes("client_fiscal_1") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" autoComplete="off" onChange={changeFormData} value={data.client_fiscal_1_input}/>
                         </div>
                     }
                     {data.client_type_input==="comp" && 
-                        <div className="form-group col-md-3">   
+                        <div className="form-group col-md-4">   
                             <label className="form-subsection-label" htmlFor="client_fiscal_2">CIF</label><br/>
                             <input type="text" id="client_fiscal_2" name="client_fiscal_2" disabled={(fieldsDisabled===false ?  true: false || data.client_type_input==="pers")} className={invalidDataItems.includes("client_fiscal_2") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.client_fiscal_2_input}/>
                         </div>
@@ -330,8 +329,8 @@ let TheClientForm = (props)=>{
                         <label className="form-subsection-label" htmlFor="client_notes">Informatii aditionale:</label><br/>
                         <textarea id="client_notes" name="client_notes" rows="4" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("client_notes") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.client_notes_input}></textarea>
                     </div>
-                </div>
-                <button id="edit-client-data" className="w-100 btn btn-primary btn-lg" disabled={dataModified ? false:true}><span className="action-button-label">SALVARE</span></button>
+                </div>                
+                <button id="edit-client-data" class="btn btn-light btn-sm" disabled={dataModified ? false:true}><span class="action-button-label"><span class="material-icons-outlined">check</span>Salvare</span></button>
             </form> : 
             <div>
                 <div className='form-row'>

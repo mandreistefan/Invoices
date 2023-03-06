@@ -18,17 +18,30 @@ let ProductForm = (props) =>{
 
     //received some data as props
     React.useEffect(()=>{
-        if(props.data){                    
-            setData({
-                product_id: props.data.product_id,
-                pp_name: {value: props.data.product_name, modified:false}, 
-                pp_um: {value: props.data.product_um, modified:false}, 
-                pp_price_per_item: {value: props.data.product_price, modified:false}, 
-                pp_tax: {value: props.data.product_tax, modified:false}, 
-                pp_description: {value: props.data.product_description, modified:false}
+        if(props.productID){ 
+            fetch(`http://localhost:3000/products/${props.productID}`, {
+                method:"GET"
             })
+            .then(response=>response.json())
+            .then(data=>{
+                
+                if(data.status==="OK"){
+                    setData({
+                        product_id: props.productID,
+                        pp_name: {value: data.data[0].pp_name, modified:false}, 
+                        pp_um: {value: data.data[0].pp_um, modified:false}, 
+                        pp_price_per_item: {value: data.data[0].pp_price_per_item, modified:false}, 
+                        pp_tax: {value: data.data[0].pp_tax, modified:false}, 
+                        pp_description: {value: data.data[0].pp_description, modified:false}
+                    })
+                }else if(data.status==="SERVER_ERROR"){
+                    setSnackBarText("Baza de date nu poate fi accesata")
+                }else{
+                    setSnackBarText("An error ocurred")
+                }
+            })                 
         }
-    }, [props])
+    }, [])
 
     //add a new product to the database
     let submitData=()=>{
@@ -81,7 +94,7 @@ let ProductForm = (props) =>{
         }   
         
         
-        //submit data
+        //submit data; same PUT request for new product and editing a product; when the ID is sent, the data is edited
         fetch(`http://localhost:3000/products`, {
             method:"PUT",
             headers: { 'Content-Type': 'application/json' },

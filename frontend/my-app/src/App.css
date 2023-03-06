@@ -3,41 +3,12 @@
   font-family: 'Oswald';
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body{
+  background-color: #f5f7fa;
+  --font-family-sans-serif: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  --font-family-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 
 .app-content{
   width: 100%;
@@ -56,24 +27,42 @@
   font-size:15px;
   background-color: #F7F7F8;
   padding:10px;
-  border-radius: 6px;
 }
 
 table tbody{
   background-color: white;  
 }
 
-table tr:hover{
+table >tbody> tr:hover{
   cursor: default !important;
+  background-color: lightgray;
 }
 
-.table thead{
+.table thead {
   border-bottom: 1px solid lightgray;
   font-size:15px;
   font-weight: 300 !important;
   color:black;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
+}
+
+.table > tbody > tr > .table-actions-container > button{
+  visibility:hidden;
+  float: right;
+}
+
+.table-actions-container button{
+  background-color: transparent;
+  border: none;
+}
+
+.table > tbody > tr:hover > .table-actions-container > button{
+  visibility:visible;
+}
+
+td{
+  vertical-align: middle;
 }
 
 .centered-td{
@@ -105,6 +94,7 @@ table tr:hover{
   box-sizing: border-box;
   width: 100%;
   height: 100%;
+  overflow-y: scroll;
 }
 
 .page-link{
@@ -125,7 +115,6 @@ table tr:hover{
   justify-content: flex-end;
 }
 
-
 .action-close-window{
   position: absolute;
   top:0;
@@ -133,9 +122,6 @@ table tr:hover{
   top:5px;
   background-color: transparent;
   border:none;
-  --font-family-sans-serif: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-  --font-family-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
-  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
   line-height: 1.5;
   color: white;
   font-weight: 400!important;
@@ -205,7 +191,7 @@ table tr:hover{
   scrollbar-width: none;  /* Firefox */
   display: flex;
   align-items: center;
-
+  box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
 }
 
 
@@ -495,7 +481,6 @@ input[type=date]{
   padding-left: 5px;
   padding-right: 5px;
   margin-right: 5px;
-  border:1px solid black;
   border-radius: 6px;
 }
 
@@ -503,12 +488,10 @@ input[type=date]{
   border-radius: 6px;
 }
 
-.expenses-container .app-data-container, .products-container .app-data-container{
-  max-width: 1000px;
+.app-data-container, .products-container .app-data-container{
   margin-left: auto;
   margin-right: auto;
-  padding: 16px;
-  background-color: white;
+  padding: 32px;
   border-radius: 6px;
 }
 
@@ -558,54 +541,33 @@ input[type=date]{
   background: lightgray;
 }
 
-.search-input-container{
-  width: 100%;
-  border:1px solid lightgray;
-  border-radius: 0;
-  border-top-right-radius: 36px;
-  border-bottom-right-radius: 36px;
-  height: 100%;
-  display: flex;
+.search-form-container{
+  display: grid;
+  grid-template-columns: 5% 80% 15%;
   align-items: center;
+  background-color: white;
+  border: 1px solid lightgray;
+  border-radius: 30px;
+  box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
 }
 
-.search-input-container button{
-  display: inherit;
-  align-items: center;
-  background-color: transparent;
-  height: 28px;
-}
-
-.search-input-container button:hover{
-  background-color: transparent;
-}
-
-.search-input:focus{
-  border: none!important;
-}
-
-.search-icon{
-  display:flex;
-  align-items:center;
-  justify-content:'center';
-  color:black;
-}
-
-.search-input{
-  height: 26px;
+.search-form-container input{
   border: none;
 }
 
-.search-form-container{
+.search-header-buttons-container{
   display: flex;
-  flex-direction: row;
-  height: 38px;
-  border-radius: 38px;
+  justify-content: end;
 }
 
-.search-form-container button{
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
+.search-header-buttons-container button{
+  border: none;
+  background-color: transparent;
+  color: lightgray;
+}
+
+.search-header-buttons-container button:hover{
+  color: black;
 }
 
 .search-reset-button{
@@ -722,6 +684,7 @@ input[type=date]{
 #employee-info, #employee-title{
   padding: 0;
   list-style-type: none;
+  font-weight: 400;
 }
 
 .b-example-divider {
@@ -737,8 +700,7 @@ input[type=date]{
 #side-navigation{
   display: flex;
   flex-direction: column;
-  width: fit-content;
-  
+  width: fit-content;  
   height: 100vh;
   background-color: white; 
   justify-content: space-between;
@@ -746,9 +708,15 @@ input[type=date]{
 
 .side-navigation-container{
   display: flex;
-  flex-direction: column;  
-  padding: 10px; 
-  background-color: #FFFFFF;
+  flex-direction: column; 
+  justify-content: space-between; 
+  padding-top: 10px; 
+  padding-bottom: 10px; 
+  background-color: #313a46;
+  border-right: 1px solid lightgray;
+  padding-top: 32px;
+  padding-bottom: 16px;
+  width: 200px!important;
 }
 
 .side-navigation-list{
@@ -757,7 +725,6 @@ input[type=date]{
 
 .side-navigation-list .nav-link a{
   text-decoration: none;
-  color:#353535;
   width: 100%;
 }
 
@@ -765,11 +732,18 @@ input[type=date]{
   display: flex;
   justify-content: start;
   align-items: center;
+  width: 100%;
+  padding-left: 16px;
+}
+
+.navigation-list-name{
+  color: #3eb489;
+  font-size:12px;
+  padding-left: 12px;
 }
 
 .navbar-header{
   border-bottom: 1px solid lightgray;
-  height: 50px;
 }
 
 .nav-link{
@@ -777,9 +751,24 @@ input[type=date]{
   align-items: center;
   cursor: pointer;
   font-weight: 400;
-  color:#353535;
-  width: 100%;
-  border-radius: 30px;
+  color: #525b75;
+  width: 100%;  
+  height: 35px;
+}
+
+.nav-link > a > div{
+  color:#8391a2;
+  transition: 0.3s;
+  height: 35px;
+}
+
+.nav-link > a > div:hover{
+  color: #bccee4;
+}
+
+.nav-link.active > a > div{
+  color:#3eb489;
+  font-weight: 600;
 }
 
 .nav-link div{
@@ -792,15 +781,6 @@ input[type=date]{
   display: flex;
   justify-content:center;
   align-items: center;
-}
-
-.nav-link:hover{
-  background-color: lightgray;
-}
-
-.nav-link.active{
-  color:#353535;
-  font-weight: 600;
 }
 
 .add-new-button{
@@ -837,13 +817,6 @@ input[type=date]{
   max-width: 299px;
 }
 
-body{
-  background-color: #E2E2E2;
-  --font-family-sans-serif: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-  --font-family-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
-  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-}
-
 #nav-settings-button{
   border-radius: 16px;
   width: 30px;
@@ -870,21 +843,10 @@ body{
   margin-top:auto;
   margin-bottom:auto;
   height: 100%;
-  background-color: white;
-  -webkit-box-shadow: 0px 0px 5px 0px #768491; 
-  box-shadow: 0px 0px 5px 0px #768491;
 }
 
 .invoices-add-container{
   padding:10px;
-}
-
-.border-pill{
-  border: 1px solid lightgray;
-  border-radius: 8px;
-  padding: 10px;
-  margin-top: 5px;
-  margin-bottom: 5px;
 }
 
 .vertical-list-container .list-group .list-group-item:hover{
@@ -901,11 +863,6 @@ body{
   border-radius: 6px;
 }
 
-.header-buttons-container{
-  height: fit-content;
-  width: fit-content;
-}
-
 .header-buttons-container button{
   border:none;
   border:1px solid lightgray;
@@ -915,6 +872,9 @@ body{
   border:1px solid darkgray;
 }
 
+.btn-light:hover{
+  background-color: lightgray;
+}
 
 .header-buttons-container  .btn-light{
   border-radius: 0;
@@ -930,4 +890,94 @@ body{
 .header-buttons-container{
   display: inherit;
   justify-content: end;
+}
+
+.bordered-container{
+  border: 1px solid lightgray;
+  border-radius: 6px;
+  box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
+  max-height: 90vh;
+  background-color: white;
+}
+
+.billing-products-header{
+  border-bottom: 1px solid lightgray;
+  font-size:15px;
+  font-weight: 300 !important;
+  color:black;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  background-color: #f7f7f8;
+  display: grid;
+  grid-template-columns: 25% 20% 10% 10% 10% 10% 10%;
+}
+
+.billing-products-header > div{
+  padding-left: 12px;
+  padding-bottom: 6px;
+  padding-right: 12px;
+  padding-top: 6px;
+}
+
+.billing-products-body-row{
+  display: grid;
+  grid-template-columns: 25% 20% 10% 10% 10% 10% 10% 5%;
+}
+
+.billing-products-body-row > div, .billing-products-body-descriptor-row > div{
+  padding: 0;
+}
+
+.billing-products-body-row, .billing-products-body-descriptor-row{
+  width: 100%;
+}
+
+.billing-products-body-row > div > input, .billing-products-body-descriptor-row >div > input{
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid lightgray;
+}
+
+.round-button{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 36px;
+  width: 28px;
+  height: 28px;
+  border: none;
+}
+
+.round-button:hover{
+  background-color: lightgray;
+}
+
+.billing-products-footer{
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 85% 15%;
+}
+
+.grid-row{
+  display: flex;
+  justify-content: flex-start;
+}
+
+.grid-container > .grid-row > div{
+  height: 100%;
+}
+
+.grid-container > .grid-row > div > div{
+  height: 100%;
+}
+
+.grid-container > .grid-row > div > div > ul{
+  max-height: 250px;
+  overflow-y: scroll;
+}
+
+#databaseSelector{
+  background-color: #313a46;
+  border-color: #3eb489;
+  color: #3eb489
 }

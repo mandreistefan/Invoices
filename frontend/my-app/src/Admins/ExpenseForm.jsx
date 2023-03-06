@@ -11,7 +11,7 @@ let ExpenseForm = (props) =>{
         exp_sum: {value: 0, modified:false}, 
         exp_description: {value: "", modified:false}, 
         exp_deduct: {value:true, modified:false},
-        exp_date: {value: `${currentDate.getFullYear()}-${currentDate.getMonth()+1>9 ? currentDate.getMonth()+1 : "0"(currentDate.getMonth()+1)}-${currentDate.getDate()}`, modified:false}
+        exp_date: {value: currentDate, modified:false}
     })
     let [snackBarText, setSnackBarText] = React.useState(null)
     let [dataModified, setdataModified] = React.useState(false)
@@ -140,7 +140,7 @@ let ExpenseForm = (props) =>{
                     <input type="date" className="form-control shadow-none" id="end" name="trip-end" value={arrayData.exp_date.value} onChange={changeDate}></input>
                 </div>
             </div>
-            <button className="w-100 btn btn-primary btn-lg" disabled={dataModified ? false : true} onClick={()=>{submitData()}}><span className="action-button-label"><span class="material-icons-outlined">save</span> SAVE</span></button>
+            <button className="btn btn-primary btn-light btn-sm" disabled={dataModified ? false : true} onClick={()=>{submitData()}}><span className="action-button-label"><span class="material-icons-outlined">check</span> SAVE</span></button>
             <Snackbar text={snackBarText} closeSnack={()=>{setSnackBarText(null)}}/>
         </div>
     )

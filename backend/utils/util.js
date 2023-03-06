@@ -280,9 +280,9 @@ function parsePeriod(dataArray){
 //calculates the total sum and tax for all data in a timespan
 function processFinancial(data, expenses, interval, salaries){
     //default values
-    let returnObj={total:0, total_tax:0, total_net:0, total_number_invoices:1, avg_per_invoice:0, avg_per_step:0, total_salaries:0, periodicalData:null}
+    let returnObj={total:0, total_gross:0, total_number_invoices:1, avg_per_invoice:0, avg_per_step:0, total_salaries:0, periodicalData:null, productNames:null, productsDescriptions:null}
     //step
-    let startYear, endYear, startMonth, endMonth, noMonths=0
+    let startYear, endYear, startMonth, endMonth, noMonths=0, productNamesArr=[], productDescriptionArr=[]
 
     startYear = interval.startYear.indexOf(0)==="0" ? parseInt(interval.startYear.substring(1,1)) : parseInt(interval.startYear)
     endYear = interval.endYear.indexOf(0)==="0" ? parseInt(interval.endYear.substring(1,1)) : parseInt(interval.endYear)
@@ -311,27 +311,44 @@ function processFinancial(data, expenses, interval, salaries){
     expenses.forEach(element=>{
         totalExpenses=totalExpenses+element.exp_sum
     })
+
     //process data - calculate totals and data for the graph
     data.forEach((element, index)=>{
+        //totals
         returnObj.total+=element.total_price
         returnObj.total_tax+=element.total_tax 
         //totals per month
+        //currentMonth is the same as the invoice month, so we add
         if(element.invoice_date.getMonth()===currentMonth){
             stepSum=stepSum+element.total_price
         }else{
+            //the invoice month is different than the current month, add everything up and switch to the new month
             arr.push({month: currentMonth+1, year:currentYear, total:stepSum})
             currentMonth=element.invoice_date.getMonth()
+            currentYear=element.invoice_date.getFullYear()
             stepSum=element.total_price
         }        
         //number of unique invoices 
         if(element.invoice_number!=currentInvoice){
             returnObj.total_number_invoices=returnObj.total_number_invoices+1
             currentInvoice=element.invoice_number
-        }          
-    })
+        } 
+
+        //products names
+        productNamesArr.push({name:element.product_name, invoice: element.invoice_number})
+        
+        //product descriptions
+        if(element.product_description!==null){
+            element.product_description.split(",").forEach(descriptionElement=>{
+                descriptionElement[0]===" " ? productDescriptionArr.push({name: descriptionElement.substring(1, descriptionElement.length), invoice:element.invoice_number}) : productDescriptionArr.push({name: descriptionElement, invoice:element.invoice_number})            
+            })
+        }
+    })  
 
     //forEach finished, some data is in stepSum
-    arr.push({month: currentMonth+1, year:currentYear, total:stepSum})
+    arr.push({month: currentMonth+1, year:data[data.length-1].invoice_date.getFullYear(), total:stepSum})
+
+    console.log(arr)
 
     let arr2=[]
     let i=0, iMonth=0, iYear=startYear
@@ -347,6 +364,8 @@ function processFinancial(data, expenses, interval, salaries){
         i=i+1
     }while(i<noMonths)
 
+    console.log(arr2)
+
     //merge the two - arr holds only the months and totals for where there is data; arr2 holds an array that has one element for each month in the interval startmonth, startmonth+number of months
     //merging the two means that for months from arr2 where there is data in arr(those months have invoices), update the totals and send an arr in the format [{month:2, year:2021, total:0},..,{month:2, year:2022, total:342},..]
     arr2.map(element=>{
@@ -359,12 +378,6 @@ function processFinancial(data, expenses, interval, salaries){
         })
     })
 
-    returnObj.total_net=returnObj.total-returnObj.total_tax
-    returnObj.total_exp=totalExpenses
-    returnObj.avg_per_invoice=returnObj.total/returnObj.total_number_invoices
-    returnObj.periodicalData=arr2
-    returnObj.avg_per_step=returnObj.total / noMonths
-
     let salaries_total=0
     if(salaries){
         salaries.forEach(element=>{
@@ -372,7 +385,18 @@ function processFinancial(data, expenses, interval, salaries){
         })
     }
 
+    returnObj.total_exp=totalExpenses
+    returnObj.avg_per_invoice=returnObj.total/returnObj.total_number_invoices
+    returnObj.periodicalData=arr2
+    returnObj.avg_per_step=returnObj.total / noMonths
+    returnObj.productNames=productNamesArr
+    returnObj.productsDescriptions=productDescriptionArr
     returnObj.salaries=salaries_total
+    returnObj.total_gross=returnObj.total-totalExpenses-salaries_total
+
+    returnObj.salariesPercentIncome = ((salaries_total*100)/returnObj.total)
+    returnObj.expensesPercentIncome = ((totalExpenses*100)/returnObj.total)
+    returnObj.profitPercentIncome = parseFloat(100 - returnObj.salariesPercentIncome - returnObj.expensesPercentIncome)
 
     return returnObj;
 
@@ -410,24 +434,27 @@ function calculateTotalSum(data){
 /**
  * 
  * @param {float} grossSalary Gross income
- * @param {bool} isTaxable TRUE - salary is taxable, FALSE it is not
+ * @param {float} cas CAS - full percentage(21.5%, example)
+ * @param {float} cass CASS - full percentage(21.5%, example)
+ * @param {float} cas TAX - impozit venit - full percentage(21.5%, example)
+ * @param {float} cam CAM - full percentage(21.5%, example)
  * @returns {{gross:float, cas:float, cass:float, tax:float, cam:float, salary:float}} An object, containing all contributions and the end salary
  */
 
-function calculateSalary(grossSalary, isTaxable, hasCASS){
+function calculateSalary(grossSalary, cas, cass, tax, cam){
     //no calcs for no salary
     if(grossSalary<1) return null
     //taxes
-    const CAS = 0.25;
-    const CASS = 0.1;
-    const TAX = 0.1;
-    const CAM = 0.0225;
+    const CAS = parseFloat(cas/100);
+    const CASS = parseFloat(cass/100);
+    const TAX = parseFloat(tax/100);
+    const CAM = parseFloat(cam/100)
     //taxes calc
     let netSalaryObject={ 
         gross: parseFloat(grossSalary),
         cas : parseFloat(grossSalary*CAS), 
-        cass : hasCASS ? parseFloat(grossSalary*CASS) : 0, 
-        tax: isTaxable ? parseFloat(grossSalary*TAX) : 0,
+        cass : parseFloat(grossSalary*CASS), 
+        tax: parseFloat(grossSalary*TAX),
         cam : parseFloat(grossSalary*CAM) 
     }
  

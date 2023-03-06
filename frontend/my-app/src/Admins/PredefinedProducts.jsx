@@ -61,37 +61,28 @@ let Products=()=>{
     }
 
     return(
-        <div>
-            <div style={{display:'flex', flexDirection:'row'}}>
-                <div style={{width:'70%', display:'inherit', alignItems:'center'}} className="p-3"><h5>Produse sablon</h5></div>
-                <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-end mb-md-0 p-3" style={{width:'30%'}}>                                
-                    <button className="btn btn-primary btn-sm no-shadow navigation-button" onClick={()=>{setaddproductWindow(true)}}><div class="inner-button-content"><span class="material-icons-outlined">add</span>Adauga</div></button>                                                   
-                </div>
-            </div>           
-            {addproductWindow&&
-            <div>
-                <div className="blur-overlap"></div>     
-                <button type="button" className="action-close-window" onClick={()=>{setaddproductWindow(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
-                <div className="overlapping-component-inner">
-                    <ProductForm/>
-                </div>
-            </div>}
-            <div className="products-container" style={{marginTop:'25px'}}>            
+        <div className="app-data-container">  
+            <div className="bordered-container" style={{marginTop:'25px'}}>  
+                <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
+                    <h5>Produse sablon</h5>
+                    <div className="btn-group">                               
+                        <button className='btn btn-light' type="button" onClick={()=>{setaddproductWindow(true)}} title="Produs nou" ><div className="inner-button-content"><span className="material-icons-outlined">add</span></div></button>
+                        <button className='btn btn-light' type="button" onClick={()=>{fetchData()}}  title="Reincarca" ><div className="inner-button-content"><span className="material-icons-outlined">refresh</span></div></button>
+                    </div>
+                </div>          
                 {predefinedProducts &&       
                     <div style={{padding:'10px'}}> 
-                        <h6>Produse</h6>
-                        <table className='table table-hover table-sm app-data-table'>
-                            <thead className='table-active'>
-                                <tr className='app-data-table-row table-active'>
-                                    <th></th>
-                                    <th>NUME</th>
-                                    <th>UM</th>
-                                    <th>PRET</th>
-                                    <th>TAXA</th>
-                                    <th>DESCRIERE</th>
-                                    <th></th>
-                                </tr>    
-                            </thead>               
+                        <table className='table'>                            
+                            <thead>
+                                <tr>
+                                    <td>Nume</td>
+                                    <td>UM</td>
+                                    <td>Pret</td>
+                                    <td>Taxa</td>
+                                    <td>Descriere</td>
+                                    <td></td>
+                                </tr>
+                            </thead>                     
                             <tbody className='clients-table-body app-data-table-body'>
                             {predefinedProducts.length>0 ? 
                                 predefinedProducts.map((element, index)=>(
@@ -102,15 +93,8 @@ let Products=()=>{
                                         <td>{element.pp_price_per_item} RON</td>
                                         <td>{element.pp_tax}%</td>
                                         <td>{element.pp_description}</td>
-                                        <td>   
-                                            {
-                                                <div className='actions-container'>                                    
-                                                    <SmallMenu items={[
-                                                        {name:"Edit", icon:"edit", disabled: false, clickAction:()=>{setProductProps({product_id:element.id, product_name: element.pp_name, product_um: element.pp_um, product_price: element.pp_price_per_item, product_tax:element.pp_tax, product_description:element.pp_description})}}, 
-                                                        {name:"Delete", icon:"delete", disabled:false, clickAction:()=>{deleteProduct(element.id)}}
-                                                    ]}/>
-                                                </div>
-                                            } 
+                                        <td className="table-actions-container">                            
+                                            <button title="Sterge produs" onClick={()=>{deleteProduct(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
                                         </td>
                                     </tr>
                                 )):"Nu exista produse"
@@ -129,6 +113,14 @@ let Products=()=>{
                         }      
                     </div>
                 }
+                {addproductWindow&&
+                <div>
+                    <div className="blur-overlap"></div>     
+                    <button type="button" className="action-close-window" onClick={()=>{setaddproductWindow(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
+                    <div className="overlapping-component-inner">
+                        <ProductForm/>
+                    </div>
+                </div>}
                 <Snackbar text={snackBarText} closeSnack={()=>{setSnackBarText(null)}}/>
             </div>
         </div>

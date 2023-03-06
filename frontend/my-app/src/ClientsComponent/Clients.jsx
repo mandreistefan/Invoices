@@ -13,7 +13,7 @@ let Clients = (props) =>{
 
     const [allClients, setAllClients] = useState(null)
     //const [activeClient, setActive] = useState({id:localStorage.getItem('activeClient') ? localStorage.getItem('activeClient') : null, name:localStorage.getItem('activeClientName') ? localStorage.getItem('activeClientName'): ""})
-    const [activeClient, setActive] = useState({id: null, name:"", surname:""})
+    const [activeClient, setActive] = useState(null)
     let [numberOfElements, setNOE] = useState(null)
     let [alertUser, setAlertUser] = useState({text: null})
     let [newClientWindow, showonewClientWindow] = useState(false)
@@ -38,8 +38,7 @@ let Clients = (props) =>{
         .then(data=>{
             if(data.status==="OK"){
                 setAllClients(data.data)
-                setNOE(data.totalRecordsNumber)
-                if(activeClient.id===null) setActiveClient(data.data[0].id, data.data[0].client_first_name, data.data[0].client_last_name)
+                setNOE(data.totalRecordsNumber)                
             }else if(data.status==="SERVER_ERROR"){
                 setAlertUser({text:"Baza de date nu poate fi accesata"})
             }else if(data.status==="NO_DATA"){
@@ -54,19 +53,19 @@ let Clients = (props) =>{
         })
     }
 
-    let deleteClient=()=>{
+    let deleteClient=(cliendID)=>{
+        let client = cliendID
+        if(!client) client = cliendID
         //fetches all clients
         fetch(`http://localhost:3000/clients`,
         {
             method:"DELETE",
             headers: { 'Content-Type': 'application/json' },
-            body:JSON.stringify({clientID:activeClient.id})
+            body:JSON.stringify({clientID: client})
         })
         .then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 setAlertUser({text:"Client arhivat"})
-                localStorage.setItem('activeClient', "")
-                localStorage.setItem('activeClientName', "")
                 fetchClients()
             }else if(data.status==="SERVER_ERROR"){
                 setAlertUser({text:"Baza de date nu poate fi accesata"})
@@ -82,71 +81,76 @@ let Clients = (props) =>{
 
     function handleSearchSubmit(event){
         event.preventDefault()
-        let searchTerm = event.target.filterData.value
+        let searchTerm = event.target.searchinput.value
         if(searchTerm.length==0) return false
         let searchTermStringified = searchTerm.replaceAll(" ", "+")
         setFilter({...queryFilter, filter:"search", filterBy:searchTermStringified})
     }
 
     let resetSearch=()=>{
-        document.getElementById("filterData").value=""
+        document.getElementById("searchinput").value=""
         setFilter({...queryFilter, filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
     }
 
-    let setActiveClient=(id, name, surname)=>{
-        setActive({id, name, surname})
-        /*localStorage.setItem('activeClient', id)
-        localStorage.setItem('activeClientName', name)*/
-    }
-
     return(
-            <div className='app-data-container'>
+            <div>
                 {allClients &&       
-                    <div className="clients-overview-container">
-                        <div className="vertical-list-container">     
-                            <div className="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">                
+                    <div className="bordered-container p-3" style={{width:'100%'}}>
+                        {!activeClient&&  
+                        <div>    
+                            <div style={{marginBottom:'25px'}}>
                                 <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
-                                    <div className="search-form-container">
-                                        <button className="btn btn-secondary btn-sm no-shadow add-new-button" type="button" onClick={()=>{showonewClientWindow(true)}}><span className="material-icons-outlined">add</span></button>                                
-                                        <div className="search-input-container">
-                                            <input type="search" className="search-input form-control shadow-none" placeholder="Cauta.." id="filterData"></input>
-                                            <button type="button" className="search-reset-button" onClick={()=>{resetSearch()}}><span className="material-icons-outlined">refresh</span></button>
-                                        </div>                 
+                                    <div className="search-form-container"> 
+                                        <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
+                                        <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>
+                                        <div className="search-header-buttons-container">                               
+                                            <button type="button" className='no-backgroud-button' title="Client nou" onClick={()=>{showonewClientWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span></div></button>
+                                            <button type="button" className='btn-danger' title="Reincarca date"  onClick={()=>{resetSearch()}}><div className="inner-button-content"><span className="material-icons-outlined" >refresh</span></div></button>
+                                        </div>                                                     
                                     </div>
                                 </form>
-                            </div>
-                            <div className="list-group list-group-flush border-bottom scrollarea" style={{width: '300px'}}> 
-                                {allClients.length>0 && allClients.map((element, index)=>(        
-                                    <div className={parseInt(activeClient.id)===parseInt(element.id) ? "list-group-item list-group-item-action py-3 lh-sm active" : "list-group-item list-group-item-action py-3 lh-sm"} onClick={()=>{setActiveClient(element.id, element.client_first_name, element.client_last_name)}} aria-current="true">
-                                        <div style={{display:'flex', flexDirection:'row'}}>     
-                                            <div style={{display:'flex', flexDirection:'row'}}>
-                                                <div className="name-badge" style={{backgroundColor:element.client_gui_color}}>{element.client_first_name.substring(0,1)}{element.client_last_name.substring(0,1)}</div>
-                                            </div>
-                                            <div>
-                                                <div className="d-flex w-100 align-items-center justify-content-between">
-                                                    <strong className="mb-1">{element.client_first_name} {element.client_last_name}</strong>                                            
-                                                </div>
-                                                <div className="col-10 mb-1 small">
-                                                    <small>{element.client_type ? element.client_type==="pers" ? <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>person</span>Persoana fizica</span> : <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>store</span>Firma</span> : "NA"}<br/></small>
-                                                    {element.client_county}, {element.client_city}, {element.client_street}, {element.client_adress_number}, {element.client_zip}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>  
-                                ))} 
-                                <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>                               
                             </div> 
-                        </div>
-                        <div className='overview-container'>      
+                            <div style={{overflowY:'scroll', maxHeight:'80vh'}}>
+                                <table className="table" id="invoices-table">
+                                    <thead>
+                                        <tr>
+                                            <td>Nume</td>
+                                            <td>Tip</td>
+                                            <td>Adresa</td>
+                                            <td></td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {allClients.length>0 && allClients.map((element, index)=>(          
+                                            <tr>
+                                                <td><b>{element.client_first_name} {element.client_last_name}</b></td>
+                                                <td><div style={{display:'flex', alignItems:'center'}}>{element.client_type ? element.client_type==="pers" ? <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>person</span>Persoana fizica</span> : <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>store</span>Firma</span> : "NA"}</div></td> 
+                                                <td>{element.client_county}, {element.client_city}, {element.client_street}, {element.client_adress_number}, {element.client_zip}</td>                                          
+                                                <td className="table-actions-container">
+                                                    <button title="Arhiveaza factura" onClick={()=>{deleteClient(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
+                                                    <button  className='btn-light' title="Factureaza client" onClick={()=>{props.enableInvoiceApp(element.id)}}><div className="inner-button-content"><span className="material-icons-outlined">library_add</span></div></button>
+                                                    <button title="Deschide client" onClick={()=>{setActive(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span></div></button>
+                                                </td>
+                                            </tr>    
+                                        ))}
+                                    </tbody>  
+                                </table>
+                                <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>
+                            </div>
+                        </div>}
+                        {activeClient&&
+                            <div className='overview-container bordered-container'> 
+                                <button style={{border:'none', borderRadius:'6px', display:'flex', alignItems:'center', margin:'10px'}} onClick={()=>{setActive(null)}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>     
                                 <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
                                     <div style={{display:'inherit', alignItems:'center'}}><span style={{fontSize:'24px'}}>{activeClient.name} {activeClient.surname}</span></div>
                                         <div className="nav col-12 col-lg-auto mb-2 justify-content-end header-buttons-container">                               
-                                            <button  className='btn-light' title="Factureaza client" onClick={()=>{props.enableInvoiceApp(activeClient.id)}}><div className="inner-button-content"><span className="material-icons-outlined">library_add</span></div></button>
+                                            <button  className='btn-light' title="Factureaza client" onClick={()=>{props.enableInvoiceApp(activeClient)}}><div className="inner-button-content"><span className="material-icons-outlined">library_add</span></div></button>
                                             <button className='btn-danger' title="Arhiveaza client" onClick={()=>{deleteClient()}}><div className="inner-button-content"><span className="material-icons-outlined">delete</span></div></button>
                                     </div>
                                 </div>
-                            <ClientForm key={activeClient.id} editable={true} isSubmitable={true} clientID={activeClient.id}/>
-                        </div>
+                                <ClientForm key={activeClient.id} editable={true} isSubmitable={true} clientID={activeClient}/>
+                            </div>
+                        }
                     </div>                             
                 }
                 {newClientWindow&&

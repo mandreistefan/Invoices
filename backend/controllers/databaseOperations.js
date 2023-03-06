@@ -8,6 +8,7 @@ const testDB = "invoicemanager"
 const liveDB = "baza_date_facturi"
 databases = [testDB, liveDB]
 const queryStep = 25
+let offSet = 0
 
 const connection=mysql.createConnection({
     host:"localhost",
@@ -32,6 +33,7 @@ try{
     })
 }catch(error){
     console.log(`${error}`)
+    connection.destroy()
     return false
 }
 
@@ -41,27 +43,25 @@ try{
  * @returns {Promise<{status: string, data: array}>} status of the OP as string and the data as array containing key:pair values
  */
 
-function getAllClients(querryObject){
+async function getClients(querryObject){    
+    if(querryObject.page>1) offSet = (querryObject.page-1) * queryStep
+    let queryStatement;
+    if(querryObject.filter==="search" && querryObject.filterBy.length===0) return ({status:"NO_DATA", data:null})
+    switch(querryObject.filter){
+        case "id":
+            queryStatement=`SELECT * FROM clients WHERE id='${querryObject.filterBy}' ORDER by id desc`;
+            break;
+        case "all":
+            queryStatement=`SELECT * FROM clients  ORDER by id desc LIMIT ${offSet}, ${queryStep}`;
+            break;
+        case "search":
+            queryStatement=`SELECT * FROM clients WHERE id IN (${querryObject.filterBy})  ORDER by id desc LIMIT ${offSet}, ${queryStep}`
+            break
+        default:
+            queryStatement=`SELECT * FROM clients LIMIT ${offSet}, ${queryStep} ORDER by id desc`;
+    }        
+
     return new Promise((resolve,reject)=>{
-        let offSet = 0
-        let step=queryStep
-        if(querryObject.page>1) offSet = (querryObject.page-1) * queryStep
-        let queryStatement;
-
-        switch(querryObject.filter){
-            case "id":
-                queryStatement=`SELECT * FROM clients WHERE id='${querryObject.filterBy}' ORDER by id desc`;
-                break;
-            case "all":
-                queryStatement=`SELECT * FROM clients  ORDER by id desc LIMIT ${offSet}, ${step}`;
-                break;
-            case "search":
-                queryStatement=`SELECT * FROM clients WHERE id IN (${querryObject.filterBy})  ORDER by id desc LIMIT ${offSet}, ${step}`
-                break
-            default:
-                queryStatement=`SELECT * FROM clients LIMIT ${offSet}, ${step} ORDER by id desc`;
-        }        
-
         connection.query(queryStatement, function(error,result){
             if(error){
                 console.log(`An error occured: ${error}`)
@@ -122,9 +122,9 @@ function createNewInvoice(data)
         let querryToBeExecuted = ``;
 
         if(data.clientID){
-            querryToBeExecuted = `INSERT INTO invoices(client_type, client_fiscal_1, client_fiscal_2, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_phone, client_email, customer_id, invoice_status, invoice_pay_method, invoice_bank_ref) SELECT client_type, client_fiscal_1, client_fiscal_2, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_phone, client_email,  '${data.clientID}', '${data.invoice_status}', '${data.invoice_pay_method}', '${data.invoice_bank_ref}' FROM clients WHERE id='${data.clientID}'` 
+            querryToBeExecuted = `INSERT INTO invoices(client_type, client_fiscal_1, client_fiscal_2, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_phone, client_email, customer_id, invoice_status, invoice_pay_method, invoice_bank_ref) SELECT client_type, client_fiscal_1, client_fiscal_2, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_phone, client_email,  '${data.clientID}', 'draft', '${data.invoice_pay_method}', '${data.invoice_bank_ref}' FROM clients WHERE id='${data.clientID}'` 
         }else{
-            querryToBeExecuted = `INSERT INTO invoices(client_type, client_fiscal_1, client_fiscal_2, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_phone, client_email, invoice_status, invoice_pay_method, invoice_bank_ref) VALUES ('${data.client_type}', '${data.client_fiscal_1}', '${data.client_fiscal_2}', '${data.client_first_name}', '${data.client_last_name}', '${data.client_county}', '${data.client_city}', '${data.client_street}', '${data.client_adress_number}', '${data.client_zip}', '${data.client_phone}', '${data.client_email}', '${data.invoice_status}', '${data.invoice_pay_method}', '${data.invoice_bank_ref}')`
+            querryToBeExecuted = `INSERT INTO invoices(client_type, client_fiscal_1, client_fiscal_2, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_phone, client_email, invoice_status, invoice_pay_method, invoice_bank_ref) VALUES ('${data.client_type}', '${data.client_fiscal_1}', '${data.client_fiscal_2}', '${data.client_first_name}', '${data.client_last_name}', '${data.client_county}', '${data.client_city}', '${data.client_street}', '${data.client_adress_number}', '${data.client_zip}', '${data.client_phone}', '${data.client_email}', 'draft', '${data.invoice_pay_method}', '${data.invoice_bank_ref}')`
         }  
 
         connection.query(querryToBeExecuted, function(error, result){
@@ -228,35 +228,34 @@ async function addInvoice(data){
 /**
  * 
  * @param {{filter: string, filterBy: string, page:BigInteger, target:string}} querryObject filter is the case, filterBy is the value, page is the page(offset), target can be used to specify the table
- * @returns {{status: string, data: array}} status of the OP as string and the data as array containing key:pair values
+ * @returns {Promise<{status: string, data: array}>} status of the OP as string and the data as array containing key:pair values
  */
 
 async function getInvoices(querryObject){
-    let offSet = 0
-    let step=queryStep
     if(querryObject.page>1) offSet = (querryObject.page-1) * queryStep
     let querry;    
+    if(querryObject.filter==="search" && querryObject.filterBy.length===0) return ({status:"NO_DATA", data:null})
     switch(querryObject.filter){
         case "all":
-            querry=`SELECT * FROM ${querryObject.target} ORDER BY invoice_number DESC LIMIT ${offSet}, ${step}`
+            querry=`SELECT * FROM ${querryObject.target} ORDER BY invoice_number DESC LIMIT ${offSet}, ${queryStep}`
             break
         case "clientID":
-            querry=`SELECT * FROM ${querryObject.target} WHERE customer_id=${querryObject.filterBy} LIMIT ${offSet}, ${step}`
+            querry=`SELECT * FROM ${querryObject.target} WHERE customer_id=${querryObject.filterBy} LIMIT ${offSet}, ${queryStep}`
             break;
         case "invoiceID":
             querry=`SELECT * FROM ${querryObject.target} WHERE invoice_number=${querryObject.filterBy}`
             break;
         case "recID":
-            querry=`SELECT * FROM ${querryObject.target} WHERE rec_number=${querryObject.filterBy} LIMIT ${offSet}, ${step}`
+            querry=`SELECT * FROM ${querryObject.target} WHERE rec_number=${querryObject.filterBy} LIMIT ${offSet}, ${queryStep}`
             break;
         case "active":
-            querry=`SELECT * FROM ${querryObject.target} WHERE invoice_active=${querryObject.filterBy} LIMIT ${offSet}, ${step}`
+            querry=`SELECT * FROM ${querryObject.target} WHERE invoice_active=${querryObject.filterBy} LIMIT ${offSet}, ${queryStep}`
             break;
         case "search":
-            querry=`SELECT * FROM invoices WHERE invoice_number in (${querryObject.filterBy}) order by invoice_number DESC LIMIT ${offSet}, ${step}`
+            querry=`SELECT * FROM invoices WHERE invoice_number in (${querryObject.filterBy}) order by invoice_number DESC LIMIT ${offSet}, ${queryStep}`
             break
         default:
-            querry=`SELECT * FROM ${querryObject.target} LIMIT ${offSet}, ${step}`
+            querry=`SELECT * FROM ${querryObject.target} LIMIT ${offSet}, ${queryStep}`
             break
     }
 
@@ -692,7 +691,7 @@ function getRecInfo(queryFilter, queryFilterData,){
 
 function getFinancialData(filterObject){
     return new Promise((resolve, reject)=>{  
-        connection.query(`SELECT invoice_number, invoiceID, invoice_status, invoice_pay_method, invoice_date, product_id, product_quantity, product_tax_pr, total_tax, product_price, total_price FROM invoices join invoices_billed_products productsTable on productsTable.invoiceID=invoice_number WHERE invoice_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND invoice_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" AND invoice_status='finalised' order by invoice_number;`, function(error, result){
+        connection.query(`SELECT invoice_number, invoiceID, invoice_status, invoice_pay_method, invoice_date, product_id, product_name, product_description, product_quantity, product_tax_pr, total_tax, product_price, total_price FROM invoices join invoices_billed_products productsTable on productsTable.invoiceID=invoice_number WHERE invoice_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND invoice_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" AND invoice_status='finalised' order by invoice_number;`, function(error, result){
             if(error){
                 console.log(error)
                 reject({status:"ERROR"})
@@ -705,10 +704,10 @@ function getFinancialData(filterObject){
 /**
  * 
  * @param {integer} invoiceID The id of the invoice 
- * @returns {string} The status of the invoice(draft/ finalised)
+ * @returns {Promise<{status:string, data:object}>} The status of the invoice(draft/ finalised)
  */
 
-function checkInvoiceStatus(invoiceID){
+async function checkInvoiceStatus(invoiceID){
     return new Promise((resolve, reject)=>{
         connection.query(`SELECT invoice_status FROM invoices WHERE invoice_number=${invoiceID}`, function(error, result){
             if(error){
@@ -838,6 +837,31 @@ function getPredefinedProducts(queryObject){
         })
     })
 }
+
+/**
+ * 
+ * @param {*} productID ID of a predefined product
+ * @returns status of the OP and data
+ */
+async function getProductInfo(productID){
+    return new Promise((resolve, reject)=>{
+        connection.query(`SELECT * FROM predefined_products WHERE id=${productID}`, function(error, result){
+            if(error){
+                console.log(error)
+                reject({
+                    status:"ERROR",
+                    data:null
+                })
+            }
+            if(result.length>0){
+                resolve({status:"OK", data: result})
+            }else{
+                resolve({status:"NO_DATA", data: null})
+            }
+        })
+    })
+}
+
 
 /**
  * Registers a predefined product
@@ -1259,7 +1283,6 @@ function changeDatabase(databaseName){
 function getExpenses(filterObject, getAll){
     let querryToBeExec = `SELECT * FROM expenses WHERE exp_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND exp_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" order by id`
     if(!getAll) querryToBeExec = `SELECT * FROM expenses WHERE exp_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND exp_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" AND exp_deduct='1' order by id`
-    console.log(querryToBeExec)
     return new Promise((resolve, reject)=>{  
         connection.query(querryToBeExec, function(error, result){
             if(error){
@@ -1299,7 +1322,7 @@ function addExpense(object){
 /**
  * Removes an expense
  * @param {integer} id ID of the expense 
- * @returns {string} ERROR, OK or FAIL(no error but no rows affected)
+ * @returns {Promise<{string}>} ERROR, OK or FAIL(no error but no rows affected)
  */
 
 function deleteExpense(id){
@@ -1358,7 +1381,8 @@ function deleteExpense(id){
                     resolve(anArray)
                 })
             })
-            return await Promise.all([invoices, products])
+            let [invoicesData, productsData] = await Promise.all([invoices, products])
+            return invoicesData.concat(productsData)
         case "clients":
             return new Promise((resolve, reject)=>{
                 connection.query(`select id from clients where client_fiscal_1 LIKE '%${queryObject.searchTerm}%' OR client_fiscal_2 LIKE '%${queryObject.searchTerm}%' OR client_first_name LIKE '%${queryObject.searchTerm}%' OR client_last_name LIKE '%${queryObject.searchTerm}%' OR client_city LIKE '%${queryObject.searchTerm}%' OR client_street LIKE '%${queryObject.searchTerm}%' OR client_adress_number LIKE '%${queryObject.searchTerm}%' OR client_zip LIKE '%${queryObject.searchTerm}%' OR client_phone LIKE '%${queryObject.searchTerm}%' OR client_email LIKE '%${queryObject.searchTerm}%' OR client_notes LIKE '%${queryObject.searchTerm}%' order by id desc;`, function(error, result){
@@ -1421,13 +1445,12 @@ function deleteExpense(id){
  */
 
 function getEmployees(queryObject){
-    let offSet = 0
-    let step=queryStep
     if(queryObject.page>1) offSet = (queryObject.page-1) * queryStep
+    if(queryObject.filter==="search" && queryObject.filterBy.length===0) return ({status:"NO_DATA", data:null})
     let querry;    
     switch(queryObject.filter){
         case "all":
-            querry=`SELECT * FROM employees ORDER BY id DESC LIMIT ${offSet}, ${step}`
+            querry=`SELECT * FROM employees ORDER BY id DESC LIMIT ${offSet}, ${queryStep}`
             break
         case "id":
             querry=`SELECT * FROM employees WHERE id=${queryObject.filterBy}`
@@ -1436,7 +1459,7 @@ function getEmployees(queryObject){
             querry=`SELECT * FROM employees WHERE id IN (${queryObject.filterBy})`
             break
         default:
-            querry=`SELECT * FROM employees LIMIT ${offSet}, ${step}`
+            querry=`SELECT * FROM employees LIMIT ${offSet}, ${queryStep}`
             break
     }
 
@@ -1520,17 +1543,18 @@ function editEmployee(employeeID, data){
  * Check if there is a salary registered for a certain employee on a specific month
  * @param {int} employeeID ID of the employee
  * @param {int} month month, as integer from 1 to 12
+ * @param {int} year year, as integer in the form XXXX
  * @returns {Promise<boolean>} true if there is already a payment
  */
 
-function hasSalaryOnDate(employeeID, month){
+function hasSalaryOnDate(employeeID, month, year){
     return new Promise((resolve, reject)=>{
-        connection.query(`SELECT id FROM employees_salaries WHERE salary_month='${month}' AND paid_to='${employeeID}'`, function(error, result){
+        connection.query(`SELECT id FROM employees_salaries WHERE salary_month='${month}' AND salary_year='${year}' AND paid_to='${employeeID}'`, function(error, result){
             if(error){
                 console.log(error)
                 reject({status:"ERROR"})
             }
-            if(result.length!=0){
+            if(result.length>0){
                 resolve(true)
             }else{
                 resolve(false)
@@ -1549,7 +1573,7 @@ function hasSalaryOnDate(employeeID, month){
  * OK - data is the insertID
  */
 
-async function addSalary(paid_to, salary_month, bank_ref){
+async function addSalary(paid_to, salary_month, salary_year, bank_ref, taxes){
     
     //get gross salary
     let salaryObject = await new Promise((resolve, reject)=>{
@@ -1559,7 +1583,7 @@ async function addSalary(paid_to, salary_month, bank_ref){
                 reject(null)
             }
             if(result.length!=0){   
-                resolve(utile.calculateSalary(result[0].emp_cur_salary_gross, result[0].emp_tax, result[0].emp_tax_cass))             
+                resolve(utile.calculateSalary(result[0].emp_cur_salary_gross, taxes[0], taxes[1], taxes[2], taxes[3]))             
             }else{
                 resolve(null)
             }
@@ -1572,7 +1596,7 @@ async function addSalary(paid_to, salary_month, bank_ref){
 
     //insert data
     return await new Promise((resolve, reject)=>{
-        connection.query(`INSERT INTO employees_salaries(sum_gross, sum_net, paid_to, salary_month, tax_cas, tax_cass, tax_income, tax_cm, bank_ref) VALUES ('${salaryObject.gross}', '${salaryObject.salary}', '${paid_to}', '${salary_month}', '${salaryObject.cas}', '${salaryObject.cass}', '${salaryObject.tax}', '${salaryObject.cam}', '${bank_ref}')`, function(error, result){
+        connection.query(`INSERT INTO employees_salaries(sum_gross, sum_net, paid_to, salary_month, salary_year, tax_cas, tax_cass, tax_income, tax_cm, bank_ref) VALUES ('${salaryObject.gross}', '${salaryObject.salary}', '${paid_to}', '${salary_month}', '${salary_year}', '${salaryObject.cas}', '${salaryObject.cass}', '${salaryObject.tax}', '${salaryObject.cam}', '${bank_ref}')`, function(error, result){
             if(error){
                 console.log(error)
                 reject({status:"ERROR"})
@@ -1835,7 +1859,7 @@ function removePredefinedProduct(productID){
 }
 
 module.exports ={
-    getAllClients:getAllClients,
+    getClients:getClients,
     addClient:addClient,
     addInvoice:addInvoice,
     getInvoices:getInvoices,
@@ -1856,7 +1880,7 @@ module.exports ={
     setBillingdates:setBillingdates,
     retrieveRecurrentProducts:retrieveRecurrentProducts,
     getRecurrentInvoiceProducts:getRecurrentInvoiceProducts,
-    getPredefinedProducts: getPredefinedProducts,
+    getPredefinedProducts: getPredefinedProducts, getProductInfo,
     registerProduct:registerProduct,
     editPredefinedProduct:editPredefinedProduct,
     removeProduct:removeProduct,
