@@ -31,14 +31,14 @@ let FinanchialChart=(props)=>{
                 position: 'top',
             },
             title: {
-                display: true,
-                text: 'Spread across time period',
+                display: false,
+                text: 'Suma incasata in fiecare luna',
             },
         },
     };
 
     //dataset and intervals
-    let [data, setData] = React.useState({labels:[], datasets: [{ label: 'Suma incasata', data: [], borderColor: 'rgb(255, 99, 132)', backgroundColor: 'rgba(255, 99, 132, 0.5)'}]})
+    let [data, setData] = React.useState({labels:[], datasets: [{ label: 'Suma incasata', data: [], borderColor: 'rgba(40, 167, 69, 1)', backgroundColor: 'rgba(40, 167, 69, 1)'}]})
 
     //get dataset and intervals from props
     React.useEffect(()=>{
@@ -59,10 +59,7 @@ let FinanchialChart=(props)=>{
     },[props])
 
     return(
-        <div className='px-4 py-2 my-2 text-center alert alert-light'>
-            <h6 className='my-1'>{props.plottedFor}</h6>
-            <Line key={props.plottedFor} options={options} data={data}/>
-        </div>
+        <Line key={props.plottedFor} options={options} data={data}/>
     )
     
 }

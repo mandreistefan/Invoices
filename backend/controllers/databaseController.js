@@ -9,34 +9,31 @@ const utile = require('../utils/util.js')
  */
 
 async function fetchClients(querryObject){
-    let clientsObj={}
-    let totalRecordsNumber=0
+    let clientsData, recordsNumber;
 
     if(querryObject.filter!="search"){
-        //client data
-        clientsObj = await databaseOperations.getAllClients(querryObject)
-        if(clientsObj.status!=="OK") return({status: "ERROR"})
-        totalRecordsNumber = await databaseOperations.getRecordsNumber("clients", querryObject.filter, querryObject.filterBy)
+        try{
+            [clientsData, recordsNumber] = await Promise.all([databaseOperations.getClients(querryObject), databaseOperations.getRecordsNumber("clients", querryObject.filter, querryObject.filterBy)])
+        }catch(error){
+            console.log(error)
+            return({status:"ERROR", data:null})
+        }        
     }else{
-        //can use + to replace the space in the search text
-        let stringedFilterBy=querryObject.filterBy.replace("+"," ")
-        let matchingClients = await databaseOperations.searchDatabase({target:"clients", searchTerm:stringedFilterBy})
-        if(matchingClients.length==0) return({status:"NO_DATA", data:null})
-        clientsObj = await databaseOperations.getAllClients({filter:"search", filterBy:matchingClients, page:1})
+
+        try{
+            //can use + to replace the space in the search text
+            let stringedFilterBy=querryObject.filterBy.replace("+"," ")
+            clientsData = await databaseOperations.getClients({filter:"search", filterBy: await databaseOperations.searchDatabase({target:"clients", searchTerm: stringedFilterBy}), page:1})
+        }catch(error){
+            console.log(error)
+        }
     }
 
-    if(clientsObj.status==="OK"){
-        return({
-            status:"OK",
-            totalRecordsNumber: totalRecordsNumber,
-            data:clientsObj.data
-        })
-    }else{
-        return({
-            status:"ERROR"
-        })
-    }
-
+    return({
+        status: clientsData.status,
+        totalRecordsNumber: recordsNumber,
+        data:clientsData.data
+    })
 }
 
 /**
@@ -78,63 +75,27 @@ function addInvoice(data, callback){
 }
 
 async function fetchInvoices(querryObject){
-    let totalNumberOfRecords = 0;
-    let invoicesObj
+    let invoicesData, recordsNumber
 
     if(querryObject.filter!="search"){
-        //simply pass the filtering object
-        invoicesObj = await databaseOperations.getInvoices(querryObject)
-        totalNumberOfRecords = await databaseOperations.getRecordsNumber(querryObject.target, querryObject.filter, querryObject.filterBy)
+        try{
+            [invoicesData, recordsNumber] = await Promise.all([databaseOperations.getInvoices(querryObject), databaseOperations.getRecordsNumber(querryObject.target, querryObject.filter, querryObject.filterBy)])
+        }catch(error){
+            console.log(error)
+            return({status:"ERROR", data:null})
+        }  
     }else{
         //can use + to replace the space in the search text
         let stringedFilterBy=querryObject.filterBy.replace("+"," ")
-        let matchingInvoicesArrays = await databaseOperations.searchDatabase({target:"invoices", searchTerm:stringedFilterBy})
-        console.log(matchingInvoicesArrays)
-        let matchingInvoices = matchingInvoicesArrays[0].concat(matchingInvoicesArrays[1])
-        if(matchingInvoices.length==0) return({status:"NO_DATA", data:null})
-        invoicesObj = await databaseOperations.getInvoices({filter:"search", filterBy:matchingInvoices, page:1})
+        invoicesData = await databaseOperations.getInvoices({filter:"search", filterBy:await databaseOperations.searchDatabase({target:"invoices", searchTerm:stringedFilterBy}), page:1})
     }
 
-    if(invoicesObj.status==="OK"){
-        return({
-            status:"OK", 
-            totalRecordsNumber: totalNumberOfRecords,
-            data: (querryObject.target==="invoices_recurrent") ? utile.procesRecData(invoicesObj.data) : invoicesObj.data            
-        })               
-    }else{
-        return({status:"ERROR"})
-    }
-}
+    return({
+        status: invoicesData.status, 
+        totalRecordsNumber: recordsNumber,
+        data: invoicesData.data      
+    })               
 
-function fetchRecInvData(queryFilter, queryFilterData, callback){
-    let returnArr={
-        generalInfo:[],
-        nextBilling: null
-    }
-    databaseOperations.getRecInfo(queryFilter, queryFilterData,)
-    .then(data=>{
-        if(data.status==="OK"){
-            returnArr.generalInfo=data.data
-            let recDate=null;
-           //pretty billing recurrency info
-            if(returnArr.generalInfo[0].invoice_recurrency==="monthly-billing"){
-                returnArr.generalInfo[0].invoice_recurrency="monthly";
-                recDate=returnArr.generalInfo[0].invoice_re_mo_date;
-            }else if(returnArr.generalInfo[0].invoice_recurrency==="yearly-billing"){
-                returnArr.generalInfo[0].invoice_recurrency="yearly";
-                recDate=returnArr.generalInfo[0].invoice_re_y_date;
-            }
-
-            returnArr.nextBilling = utile.calculateNextInvoiceDate(data.data[0].invoice_recurrency, recDate)
-
-            callback(utile.returnal("OK", returnArr));   
-        }else{
-            callback(utile.returnal("FAIL", null));   
-        }
-    })
-    .catch(err=>{
-        callback(utile.returnal("ERROR", null))
-    })
 }
 
 function archiveClient(clientID, callback){
@@ -176,8 +137,7 @@ function archiveInvoice(invoiceID, callback){
             //if data has been moved, we can remove it from the table
             if(data.status==="OK"){
                 console.log(`Invoice ${invoiceID} archived`)
-                databaseOperations.deleteInvoice(invoiceID)
-                .then((data)=>{
+                databaseOperations.deleteInvoice(invoiceID).then((data)=>{
                     if(data.status==="OK"){
                         callback({status:"OK"})
                     }else{
@@ -267,7 +227,7 @@ function translateInterval(interval){
 }
 
 /**
- * 
+ * Retrieves data for the financial component
  * @param {Object} querryObject object that filters data  
  * @returns {Object} containing the status of the OP and processed data
  */
@@ -285,21 +245,24 @@ async function getFinancials(querryObject){
 
     let interval=translateInterval(querryObject.filterBy)
 
-    //financials
-    let data = await databaseOperations.getFinancialData(interval)
-    if(data.status!="OK")  return({status:"ERROR", data: null}) 
-    //expenses
-    let expenses = await databaseOperations.getExpenses(interval, false)
-    //salaries
-    let salaries = await databaseOperations.getSalaries({page:1, filterBy:interval, filter:"interval"})
-    if(expenses.status!="OK")  return({status:"ERROR", data: null})     
-    //mathematics
-    return({status:data.data.length===0 ? "NO_DATA" : "OK", data: utile.processFinancial(data.data, expenses.data, interval, salaries.data)})    
+    //get all data and process it
+    try {
+        const [financialData, expenses, salaries] = await Promise.all([databaseOperations.getFinancialData(interval), databaseOperations.getExpenses(interval, false), databaseOperations.getSalaries({page:1, filterBy:interval, filter:"interval"})])
+        return({status:"OK", data: utile.processFinancial(financialData.data, expenses.data, interval, salaries.data)})
+    }catch (error) {
+        console.log(error)
+        return({status:"ERROR", data: "Data could not be fetched"})
+    } 
 }
 
+/**
+ * Updates the data of an invoice
+ * @param {*} data Object containing the invoiceID and fields+values to be changed
+ * @returns 
+ */
 async function updateInvoice(data){
     let databaseStatus = await databaseOperations.checkInvoiceStatus(data.invoiceID)
-    //will contain the attached products, if any
+    //check if we have billed products
     let billingProducts=null;
     if(databaseStatus!=null){
         //draft invoice, so editable
@@ -343,48 +306,11 @@ async function updateInvoice(data){
     return("UPDATE_INVOICE_NOT_FOUND")    
 }
 
-async function getRecurrentInvoiceProducts(invoiceID){
-    try{
-        let data = await databaseOperations.getRecurrentInvoiceProducts(invoiceID)
-        if(data.status==="OK"){       
-            let totalPrice=0
-            let productsArr=new Array                
-            if(billedProducts.length!=0){
-                billedProducts.forEach(element=>{
-                    totalPrice=element.product_quantity*element.pp_price_per_item
-                    productsArr.push([element.pp_name, element.pp_um, element.product_quantity, element.pp_tax, utile.calculateTax(element.product_quantity, element.pp_tax, element.pp_price_per_item), element.pp_price_per_item])
-                })
-                return ({
-                    totalPrice: totalPrice,
-                    products: productsArr
-                })
-            }
-        }
-        console.log("No products found!")
-        return null
-    }
-    catch{
-        console.log("Error ocurred when fetching recurrent products!")
-        return
-    }
-}
 
 async function getPredefinedProducts(filterObject){
-
     let productsObject, totalRecordsNumber
-    if(filterObject.filter!="search"){
-        //client data
-        productsObject = await databaseOperations.getPredefinedProducts({filter:"all", filterBy:"", page:1})
-        if(productsObject.status!=="OK") return({status: "ERROR"})
-        totalRecordsNumber = await databaseOperations.getRecordsNumber("predefined_products", "all", "")
-    }else{
-        //can use + to replace the space in the search text
-        let stringedFilterBy=filterObject.filterBy.replace("+"," ")
-        let matchingProducts = await databaseOperations.searchDatabase({target:"predefined-products", searchTerm:stringedFilterBy})
-        if(matchingProducts.length==0) return({status:"NO_DATA", data:null})
-        productsObject = await databaseOperations.getPredefinedProducts({filter:"search", filterBy:matchingProducts, page:1})
-    }
-
+    //client data
+    [productsObject, totalRecordsNumber] = await Promise.all([databaseOperations.getPredefinedProducts({filter:"all", filterBy:"", page:1}), databaseOperations.getRecordsNumber("predefined_products", "all", "")]) 
     if(productsObject.status==="OK"){
         return({
             status:"OK",
@@ -399,13 +325,13 @@ async function getPredefinedProducts(filterObject){
     }
 }
 
+/**
+ * When a product form is submitted, either edit the product that has the provided ID or create a new product if no ID provided
+ * @param {*} data 
+ * @returns 
+ */
 async function handleProduct(data){
-    let status=null
-    if(data.product_id!=null){
-        status = await databaseOperations.editPredefinedProduct(data) 
-    }else{
-        status = await databaseOperations.registerProduct(data) 
-    }
+    let status= data.product_id!=null ? await databaseOperations.editPredefinedProduct(data) : await databaseOperations.registerProduct(data) 
     return status   
 }
 
@@ -421,7 +347,7 @@ async function deletePredefinedProduct(productID){
 //find the invoice of the product; remove the product from the database; calculate and update the total invoice SUM and TAX
 async function removeProduct(entry){
     if(entry===null)  return({status: "ERROR", data: "Entry invalid"})
-    //find its invoice
+    //find the invoice
     let invoiceID = await databaseOperations.getProductInvoice(entry)
     //this removes the entry from the database
     let removeOp = await databaseOperations.removeProduct(entry)
@@ -434,17 +360,6 @@ async function removeProduct(entry){
         })
     }
 }
-
-/*async function createExportableData(){
-    let count=0
-    let statuses = await  databaseOperations.exportData()
-
-    statuses.forEach(element=>{
-        if(element==="OK") count=count+1
-    })
-
-    return [count, statuses.length]
-}*/
 
 function getDatabaseInfo(){
     let data = databaseOperations.getDBinfo()
@@ -481,7 +396,6 @@ async function getExpenses(querryObject){
  * @param {Object} data Data to be inserted in the DB 
  * @returns {Object} Object containing the status of the OP and the ID of the new element, if applicable
  */
-
 async function addExpense(data){
     return await databaseOperations.addExpense(data)
 }
@@ -496,71 +410,38 @@ async function deleteExpense(id){
 }
 
 /**
- * 
- * @param {Object} querryObject filter is the searched text and filterBy is the category
+ * Returns the list of employees
+ * @param {*} filterObject contains filter, filterBy and page number
+ * @returns {Promise<{status: string, totalRecordsNumber:int, data: int}>} status of the OP and data
  */
-
-async function performSearch(queryObject){
-    //small validation
-    if(!queryObject.filterBy) return ({status:"INVALID_REQUEST", data:"category"})
-    if(queryObject.filter.length===0) return ({status:"INVALID_REQUEST", data:"search text"})
-    const aMap = new Map([['invoice_date','Nume'], ['client_first_name','Nume'], ['client_last_name','Prenume'], ['client_city','Oras'], ['client_street','Strada'], ['client_adress_number','Numar'], ['client_zip','Cod postal'], ['client_phone','Numar telefon'], ['client_email','Email'], ['client_notes','Note'], ['client_county','Judet'],['invoice_bank_ref','Nume'], ['client_fiscal_1','Fiscal1'], ['client_fiscal_2','Fiscal2']])
-    let searchResults = await databaseOperations.searchDatabase(queryObject)
-    let anArray=[]
-    searchResults.forEach(element=>{
-        anArray.push(element.invoice_number)
-    })
-
-    let filteredData = await databaseOperations.filterDatabase(anArray)
-    console.log(filteredData)
-}
-
-/**
- * 
- * @param {object} filterObject Object that filters data 
- */
-
 async function getEmployees(filterObject){
     let employeesObject, totalRecordsNumber
     if(filterObject.filter!="search"){
         //client data
-        employeesObject = await databaseOperations.getEmployees(filterObject)
-        if(employeesObject.status!=="OK") return({status: "ERROR"})
-        totalRecordsNumber = await databaseOperations.getRecordsNumber("employees", filterObject.filter, filterObject.filterBy)
+        [employeesObject, totalRecordsNumber] = await Promise.all([databaseOperations.getEmployees(filterObject), databaseOperations.getRecordsNumber("employees", filterObject.filter, filterObject.filterBy)])
     }else{
         //can use + to replace the space in the search text
-        let stringedFilterBy=filterObject.filterBy.replace("+"," ")
-        let matchingEmployees = await databaseOperations.searchDatabase({target:"employees", searchTerm:stringedFilterBy})
-        if(matchingEmployees.length==0) return({status:"NO_DATA", data:null})
-        employeesObject = await databaseOperations.getEmployees({filter:"search", filterBy:matchingEmployees, page:1})
-        totalRecordsNumber = await databaseOperations.getRecordsNumber("employees", "all", "")   
+        [employeesObject, totalRecordsNumber] = await Promise.all([await databaseOperations.getEmployees({filter:"search", filterBy:await databaseOperations.searchDatabase({target:"employees", searchTerm:filterObject.filterBy.replace("+"," ")}), page:1}), 0])
     }
 
-    if(employeesObject.status==="OK"){
-        return({
-            status:"OK",
-            totalRecordsNumber,
-            data:employeesObject.data
-        })
-    }else{
-        return({
-            status:"ERROR",
-            data:null
-        })
-    }
+    return({
+        status: employeesObject.status,
+        totalRecordsNumber,
+        data: employeesObject.data
+    })
+
 }
 
 /**
- * 
+ * Adds a new eomployee
  * @param {object} data Object containing employee data 
  * @returns {Promise<{status: string, data: int}>} Object containing status of OP and the ID of the employee
  */
-
 async function addEmployee(data){
     //no salary no function
     if(data.emp_cur_salary_gross<1) return ({status:"FAIL", data:"INVALID_DATA"})
     //add the net salaray to the mix
-    let netSalary = utile.calculateSalary(data.emp_cur_salary_gross, data.emp_tax, data.emp_tax_cass)
+    let netSalary = utile.calculateSalary(data.emp_cur_salary_gross, 25, 10, data.emp_tax ? 10 : 0, 2.25)
     data.emp_cur_salary_net=netSalary.salary
 
     return await databaseOperations.addEmployee(data)
@@ -571,7 +452,6 @@ async function addEmployee(data){
  * @param {{employeeID: string, data:any}} data Object, containing the employeeID and data to be updated
  * @returns {Promise<{status:string, data:null}>} Status of the OP
  */
-
 async function editEmployee(data){
     if(data.employeeID===null) return({status:"ERROR", data:"Invalid employeeID"})
     return await databaseOperations.editEmployee(data.employeeID, data.dataToBeUpdated)
@@ -582,7 +462,6 @@ async function editEmployee(data){
  * @param {integer} employeeID The employee ID
  * @returns {Promise<status:string, data:null>} The status of the OP
  */
-
 async function archiveEmployee(employeeID){
 
     let moveDataStatus = await databaseOperations.archiveEmployee(employeeID)
@@ -593,7 +472,7 @@ async function archiveEmployee(employeeID){
 }
 
 /**
- * Registers a new salary. Needs the ID of the employee and the month for which the salary is paid. Salary values and taxes are calculated based on DB data
+ * Registers a new salary. Needs the ID of the employee,the month for which the salary is paid and the year. Salary taxes are provided by the form
  * @param {{paid_to:int, salary_month:int}} data 
  * @returns 
  */
@@ -601,38 +480,39 @@ async function archiveEmployee(employeeID){
 async function addSalary(data){
     let employeeID=data.paid_to
     let month = data.salary_month
+    let year = data.salary_year
     let bank_ref = data.bank_ref
+    //an object containing taxes
     let taxes = data.taxes
+
     //some checks on data. Month is in the interval 1..12
     if((!month)||(month>12)||(month<1)) return ({status:"ERROR", data:"INVALID_SALARY_MONTH"})
+    if(!year) return ({status:"ERROR", data:"INVALID_SALARY_YEAR"})
     if(!employeeID) return ({status:"ERROR", data:"INVALID_EMPLOYEE"})
 
     //check if the employee has a salary for the provided salary_month
-    let checkExistingSalary = await databaseOperations.hasSalaryOnDate(employeeID, month)
+    let checkExistingSalary = await databaseOperations.hasSalaryOnDate(employeeID, month, year)
     if(checkExistingSalary) return ({status:"FAIL", data:"SALARY_EXISTS"})
     //add the salary
-    return await databaseOperations.addSalary(employeeID, month, bank_ref, taxes)
+    return await databaseOperations.addSalary(employeeID, month, data.salary_year, bank_ref, taxes)
 }
 
 /**
- * 
+ * Retrieves the salaries of an employee
  * @param {object} filterObject Object that filters data 
  */
-
  async function getSalaries(filterObject){
     return await databaseOperations.getSalaries(filterObject)
 }
 
+//adds vacation days
 async function addVacationDays(object){
+    //check that the employee is there
     if(object.employeeID===null) return({status:"ERROR", data:"INVALID_EMPLOYEE"})    
-
-    let employeeID = object.employeeID
-    let datesObject = object.dates
-    
-    return await databaseOperations.addVacationDays(employeeID, datesObject)
-
+    return await databaseOperations.addVacationDays(object.employeeID, object.dates)
 }
 
+//retrieves vacation days
 async function getVacationDays(employee){
     return databaseOperations.getVacationDays(employee)
 }
@@ -644,11 +524,7 @@ async function getVacationDays(employee){
  */
 
 async function getEmployeeOverview(employeeID){
-    let employeeInfo = databaseOperations.getEmployeeInfo(employeeID)
-    let salaries = databaseOperations.getSalaries({filter:"paid_to", filterBy:employeeID, page:1})
-    let vacationDays = databaseOperations.getVacationDays(employeeID)
-
-    let result = await Promise.all([employeeInfo, salaries, vacationDays])
+    let result = await Promise.all([databaseOperations.getEmployeeInfo(employeeID), databaseOperations.getSalaries({filter:"paid_to", filterBy:employeeID, page:1}), databaseOperations.getVacationDays(employeeID)])
     if(result[0].status==="OK" && result[1].status==="OK" && result[2].status==="OK"){
         return({status:"OK", data:{info:result[0].data, salaries:result[1].data, vacationDays:result[2].data}})
     }else{
@@ -664,10 +540,8 @@ module.exports={
     archiveInvoice: archiveInvoice,
     fetchInvoiceData: fetchInvoiceData,
     handleClientData: handleClientData,
-    fetchRecInvData: fetchRecInvData,
     getFinancials: getFinancials,
     updateInvoice:updateInvoice,
-    getRecurrentInvoiceProducts: getRecurrentInvoiceProducts,
     getPredefinedProducts:getPredefinedProducts,
     handleProduct:handleProduct,
     removeProduct:removeProduct,

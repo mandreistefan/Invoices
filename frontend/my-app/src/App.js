@@ -3,7 +3,6 @@ import React from 'react';
 import Layout from './Layout'
 import ClientsComponent from './ClientsComponent/ClientsComponent.jsx'
 import InvoicesComponent from './InvoiceComponent/InvoicesOverview'
-import Settings from './Settings/SettingsComponent.jsx'
 import Employees from './Employees/Employees.jsx'
 import Admins from './Admins/AdminsOverview.jsx'
 import PredefinedProducts from './Admins/PredefinedProducts.jsx'
@@ -23,7 +22,6 @@ let App =()=> {
           <Route path='clients' element={<ClientsComponent/>}/>
           <Route path='invoices' element={<InvoicesComponent/>}/>
           <Route path='admins' element={<Admins/>}/>
-          <Route path='settings' element={<Settings/>}/>
           <Route path='employees' element={<Employees/>}/>
           <Route path='products' element={<PredefinedProducts/>}/>
           <Route path='expenses' element={<Expenses/>}/>
@@ -38,7 +36,6 @@ let App =()=> {
           <Route path='clients' element={<ClientsComponent/>}/>
           <Route path='invoices' element={<InvoicesComponent/>}/>
           <Route path='admins' element={<Admins/>}/>
-          <Route path='settings' element={<Settings/>}/>
           <Route path='employees' element={<Employees/>}/>
           <Route path='products' element={<PredefinedProducts/>}/>
           <Route path='expenses' element={<Expenses/>}/>

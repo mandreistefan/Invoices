@@ -329,8 +329,8 @@ let TheClientForm = (props)=>{
                         <label className="form-subsection-label" htmlFor="client_notes">Informatii aditionale:</label><br/>
                         <textarea id="client_notes" name="client_notes" rows="4" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("client_notes") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.client_notes_input}></textarea>
                     </div>
-                </div>
-                <button id="edit-client-data" className="btn btn-primary" disabled={dataModified ? false:true}><span className="action-button-label">SALVARE</span></button>
+                </div>                
+                <button id="edit-client-data" class="btn btn-light btn-sm" disabled={dataModified ? false:true}><span class="action-button-label"><span class="material-icons-outlined">check</span>Salvare</span></button>
             </form> : 
             <div>
                 <div className='form-row'>

@@ -61,7 +61,7 @@ let Products=()=>{
     }
 
     return(
-        <div>  
+        <div className="app-data-container">  
             <div className="bordered-container" style={{marginTop:'25px'}}>  
                 <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
                     <h5>Produse sablon</h5>

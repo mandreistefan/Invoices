@@ -76,17 +76,17 @@ let Expenses=()=>{
             <div style={{overflowY:'scroll', maxHeight:'80vh'}} className="bordered-container">
                 {!addexpensesWindow&&       
                     <div style={{padding:'10px'}}>
-                        <div className="alert alert-secondary interval-setter">
-                            <div className="row" style={{display:'flex', justifyContent:"flex-start"}}>
-                                <div style={{display:'flex', alignItems:'center'}}>
+                        <div className="bordered-container p-2">
+                            <div style={{display:'flex', justifyContent:"flex-start"}}>
+                                <div style={{display:'flex', alignItems:'center', width:'fit-content', borderRadius:'6px', padding:'3px', marginRight:'5px'}}>
                                     <span title="Interval" style={{marginRight:'5px'}} className="material-icons-outlined">date_range</span>
-                                    <input type="date" id="start" name="trip-start" value={dateInterval.start} onChange={someFunction}></input>
-                                    <input type="date" id="end" name="trip-end" value={dateInterval.end} onChange={someFunction}></input>
+                                    <input type="date" className="form-control shadow-none" style={{width:'fit-content'}} id="start" name="trip-start" value={dateInterval.start} onChange={someFunction}></input>
+                                    <input type="date" className="form-control shadow-none" style={{width:'fit-content', margin:'0'}} id="end" name="trip-end" value={dateInterval.end} onChange={someFunction}></input>
                                 </div>
-                                <button style={{border:'none', backgroundColor:'transparent', width:'fit-content'}} title="Adauga" onClick={()=>{setaddexpensesWindow(true)}}><span class="material-icons-outlined">add</span></button>
+                                <button class="btn btn-light" type="button" title="Adauga" onClick={()=>{setaddexpensesWindow(true)}}><div class="inner-button-content"><span class="material-icons-outlined">add</span>Adauga</div></button>
                             </div>
-                        </div>
-                        {expenses.length&&
+                        </div>   
+                        <br></br>                     
                         <div className="bordered-container">                       
                             <table className='table'>
                                 <thead>      
@@ -118,15 +118,13 @@ let Expenses=()=>{
                                     }
                                 </tbody>
                             </table> 
-                        </div>                     
-                        }
+                        </div>                  
                     </div>           
                 }
                 {addexpensesWindow&&
                     <div>   
                         <button style={{border:'none', borderRadius:'6px', display:'flex', alignItems:'center', margin:'10px'}} onClick={()=>{setaddexpensesWindow(false)}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>
                         <ExpenseForm reFetch={fetchData}/>
-
                     </div>
                 }
             </div>

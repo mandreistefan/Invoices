@@ -492,8 +492,8 @@ export default class Invoice extends React.Component{
                                     <button type="button" className="btn btn-light btn-sm" disabled={(this.state.invoice_server_status==="finalised") ? true : false} style={{marginRight:'5px'}} onClick={this.addNewRow}><span className="action-button-label"><span className="material-icons-outlined">add</span>Rand nou</span></button>
                                     <button type="button" className="btn btn-light btn-sm" disabled={(this.state.invoice_server_status==="finalised") ? true : false} onClick={()=>{this.setState({predefinedList: true})}}><span className="action-button-label"><span className="material-icons-outlined">apps</span>Predefinite</span></button>
                                 </div>
-                            </div>  
-                            <button className="btn btn-primary" disabled={(this.state.dataModified) ? false : true} form="invoice-form" id="submit-invoice-button"><span className="action-button-label">SALVARE</span></button>                                                          
+                            </div> 
+                            <button class="btn btn-light btn-sm" disabled={(this.state.dataModified) ? false : true} form="invoice-form" id="submit-invoice-button"><span class="action-button-label"><span class="material-icons-outlined">check</span>Salvare</span></button>                                                           
                     </form>
                     {this.state.predefinedList&&
                         <div> 

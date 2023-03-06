@@ -34,7 +34,7 @@ let Employees=(props)=>{
     }
 
     let resetSearch=()=>{
-        document.getElementById("filterData").value=""
+        document.getElementById("searchinput").value=""
         setFilter({...query, filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
     }
 
@@ -45,7 +45,7 @@ let Employees=(props)=>{
 
     function handleSearchSubmit(event){
         event.preventDefault()
-        let searchTerm = event.target.filterData.value
+        let searchTerm = event.target.searchinput.value
         if(searchTerm.length===0) return false
         let searchTermStringified = searchTerm.replaceAll(" ", "+")
         setFilter({...query, filter:"search", filterBy:searchTermStringified})
@@ -80,17 +80,17 @@ let Employees=(props)=>{
     return(
         <div className="app-data-container">
             {employees&&                       
-                <div className="clients-overview-container">
+                <div className="bordered-container p-3">
                     <div className="" style={{width:'100%'}}>
                         {!activeEmployee &&
                         <div>
-                            <div className="bordered-container" style={{marginBottom:'25px'}}>
+                            <div style={{marginBottom:'25px'}}>
                                 <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
                                     <div className="search-form-container"> 
                                         <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
                                         <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>
                                         <div className="search-header-buttons-container">                               
-                                            <button type="button" className='btn-light' title="Factura noua" onClick={()=>{showaddEmployeeWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span></div></button>
+                                            <button type="button" className='no-background-button' title="Factura noua" onClick={()=>{showaddEmployeeWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span></div></button>
                                             <button type="button" className='btn-danger' title="Reincarca date"  onClick={()=>{resetSearch()}}><div className="inner-button-content"><span className="material-icons-outlined" >refresh</span></div></button>
                                         </div>                                                     
                                     </div>

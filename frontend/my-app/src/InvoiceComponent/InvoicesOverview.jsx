@@ -134,23 +134,23 @@ let InvoicesOverview = (props) =>{
     return(
         <div className="app-data-container">  
                 {invoicesData &&    
-                <div className="clients-overview-container">  
+                <div className="bordered-container p-3" >  
                     <div className="" style={{width:'100%'}}>
                         {!activeInvoice &&
                             <div>           
-                                <div className="bordered-container" style={{marginBottom:'25px'}}>
+                                <div style={{marginBottom:'25px'}}>
                                     <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
                                         <div className="search-form-container"> 
                                             <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
                                             <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>
                                             <div className="search-header-buttons-container">                               
-                                                <button type="button" className='btn-light' title="Factura noua" onClick={()=>{setnewInvoiceWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span></div></button>
+                                                <button type="button" className='no-background-button' title="Factura noua" onClick={()=>{setnewInvoiceWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span></div></button>
                                                 <button type="button" className='btn-danger' title="Reincarca date"  onClick={()=>{resetSearch()}}><div className="inner-button-content"><span className="material-icons-outlined" >refresh</span></div></button>
                                             </div>                                                     
                                         </div>
                                     </form>
                                 </div>
-                                <div style={{overflowY:'scroll', maxHeight:'80vh'}} className='bordered-container'>
+                                <div style={{overflowY:'scroll', maxHeight:'80vh'}}>
                                     <table className="table" id="invoices-table">
                                         <thead>
                                             <tr>
