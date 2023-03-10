@@ -7,7 +7,7 @@ const { resolve } = require('path');
 const testDB = "invoicemanager"
 const liveDB = "baza_date_facturi"
 databases = [testDB, liveDB]
-const queryStep = 25
+const queryStep = 10
 let offSet = 0
 
 const connection=mysql.createConnection({
@@ -52,21 +52,21 @@ async function getClients(querryObject){
             queryStatement=`SELECT * FROM clients WHERE id='${querryObject.filterBy}' ORDER by id desc`;
             break;
         case "all":
-            queryStatement=`SELECT * FROM clients  ORDER by id desc LIMIT ${offSet}, ${queryStep}`;
+            queryStatement=`SELECT * FROM clients  ORDER by id desc LIMIT ${queryStep} OFFSET ${queryStep*querryObject.page}`;
             break;
         case "search":
-            queryStatement=`SELECT * FROM clients WHERE id IN (${querryObject.filterBy})  ORDER by id desc LIMIT ${offSet}, ${queryStep}`
+            queryStatement=`SELECT * FROM clients WHERE id IN (${querryObject.filterBy})  ORDER by id desc LIMIT ${queryStep} OFFSET ${queryStep*querryObject.page}`
             break
         default:
-            queryStatement=`SELECT * FROM clients LIMIT ${offSet}, ${queryStep} ORDER by id desc`;
+            queryStatement=`SELECT * FROM clients ORDER by id desc LIMIT ${queryStep} OFFSET ${queryStep*querryObject.page}`;
     }        
-
     return new Promise((resolve,reject)=>{
         connection.query(queryStatement, function(error,result){
             if(error){
                 console.log(`An error occured: ${error}`)
                 reject("ERROR")
             }
+            console.log(result)
             if(result.length>0){
                 resolve({
                     status: "OK",
@@ -237,25 +237,25 @@ async function getInvoices(querryObject){
     if(querryObject.filter==="search" && querryObject.filterBy.length===0) return ({status:"NO_DATA", data:null})
     switch(querryObject.filter){
         case "all":
-            querry=`SELECT * FROM ${querryObject.target} ORDER BY invoice_number DESC LIMIT ${offSet}, ${queryStep}`
+            querry=`SELECT * FROM ${querryObject.target} ORDER BY invoice_number DESC LIMIT ${queryStep} OFFSET ${queryStep*querryObject.page}`
             break
         case "clientID":
-            querry=`SELECT * FROM ${querryObject.target} WHERE customer_id=${querryObject.filterBy} LIMIT ${offSet}, ${queryStep}`
+            querry=`SELECT * FROM ${querryObject.target} WHERE customer_id=${querryObject.filterBy} LIMIT ${queryStep} OFFSET ${queryStep*querryObject.page}`
             break;
         case "invoiceID":
             querry=`SELECT * FROM ${querryObject.target} WHERE invoice_number=${querryObject.filterBy}`
             break;
         case "recID":
-            querry=`SELECT * FROM ${querryObject.target} WHERE rec_number=${querryObject.filterBy} LIMIT ${offSet}, ${queryStep}`
+            querry=`SELECT * FROM ${querryObject.target} WHERE rec_number=${querryObject.filterBy} LIMIT ${queryStep} OFFSET ${queryStep*querryObject.page}`
             break;
         case "active":
-            querry=`SELECT * FROM ${querryObject.target} WHERE invoice_active=${querryObject.filterBy} LIMIT ${offSet}, ${queryStep}`
+            querry=`SELECT * FROM ${querryObject.target} WHERE invoice_active=${querryObject.filterBy} LIMIT ${queryStep} OFFSET ${queryStep*querryObject.page}`
             break;
         case "search":
-            querry=`SELECT * FROM invoices WHERE invoice_number in (${querryObject.filterBy}) order by invoice_number DESC LIMIT ${offSet}, ${queryStep}`
+            querry=`SELECT * FROM invoices WHERE invoice_number in (${querryObject.filterBy}) order by invoice_number DESC LIMIT ${queryStep} OFFSET ${queryStep*querryObject.page}`
             break
         default:
-            querry=`SELECT * FROM ${querryObject.target} LIMIT ${offSet}, ${queryStep}`
+            querry=`SELECT * FROM ${querryObject.target} LIMIT ${queryStep} OFFSET ${queryStep*querryObject.page}`
             break
     }
 
@@ -1020,231 +1020,6 @@ function getRecordsNumber(queryDB, queryFilter, queryFilterData){
     }) 
 }
 
-/**
- * Exports the DB as multiple CSV files
- * @returns {Promise<Array>} An array containing an OK for each succesfull export
- */
-
-/*async function exportData(){
-
-    //create the directory if not existing
-    if (!fs.existsSync('./exports')){
-        fs.mkdirSync('./exports');
-    }
-
-    let jsonData, json2csvParser, csv;
-
-    let exportInvoices = new Promise((resolve, reject)=>{
-        connection.query("SELECT * FROM invoices", function(error, data, fields) {
-            if(data.length>0){
-                jsonData = JSON.parse(JSON.stringify(data));
-                json2csvParser = new Json2csvParser({ header: true});
-                csv = json2csvParser.parse(jsonData);
-            }else{
-                //no data means there is nothing to export; resolve and end execution
-                resolve("NO_DATA")
-                return false
-            }
-            if(error){
-                reject("ERROR")
-                return false
-            }
-            fs.writeFile("./exports/invoices.csv", csv, function(error) {
-              if (error) reject("ERROR")
-              console.log("invoices.csv generated");
-              resolve("OK")
-            });
-        });
-    })
-
-    let exportBilledProjects = new Promise((resolve, reject)=>{
-        connection.query("SELECT * FROM invoices_billed_products", function(error, data, fields) {
-            if(data.length>0){
-                jsonData = JSON.parse(JSON.stringify(data));
-                json2csvParser = new Json2csvParser({ header: true});
-                csv = json2csvParser.parse(jsonData);
-            }else{
-                //no data means there is nothing to export; resolve and end execution
-                resolve("NO_DATA")
-                return false
-            }
-            if(error){
-                reject("ERROR")
-                return false
-            }
-            fs.writeFile("./exports/invoices_billed_products.csv", csv, function(error) {
-              if (error) reject("ERROR")
-              console.log("invoices_billed_products.csv generated");
-              resolve("OK")
-            });
-        });
-    })
-
-    let predefinedProducts = new Promise((resolve, reject)=>{
-        connection.query("SELECT * FROM predefined_products", function(error, data, fields) {
-            if(data.length>0){
-                jsonData = JSON.parse(JSON.stringify(data));
-                json2csvParser = new Json2csvParser({ header: true});
-                csv = json2csvParser.parse(jsonData);
-            }else{
-                //no data means there is nothing to export; resolve and end execution
-                resolve("NO_DATA")
-                return false
-            }
-            if(error){
-                reject("ERROR")
-                return false
-            }
-            fs.writeFile("./exports/predefined_products.csv", csv, function(error) {
-                if (error) reject("ERROR")
-              console.log("predefined_products.csv generated");
-              resolve("OK")
-            });
-        });
-    })
-
-    let clients = new Promise((resolve, reject)=>{
-        connection.query("SELECT * FROM clients", function(error, data, fields) {
-            if(data.length>0){
-                jsonData = JSON.parse(JSON.stringify(data));
-                json2csvParser = new Json2csvParser({ header: true});
-                csv = json2csvParser.parse(jsonData);
-            }else{
-                //no data means there is nothing to export; resolve and end execution
-                resolve("NO_DATA")
-                return false
-            }
-            if(error){
-                reject("ERROR")
-                return false
-            }
-            fs.writeFile("./exports/clients.csv", csv, function(error) {
-                if (error) reject("ERROR")
-              console.log("clients.csv generated");
-              resolve("OK")
-            });
-        });
-    })
-
-    let expenses = new Promise((resolve, reject)=>{
-        connection.query("SELECT * FROM expenses", function(error, data, fields) {
-            if(data.length>0){
-                jsonData = JSON.parse(JSON.stringify(data));
-                json2csvParser = new Json2csvParser({ header: true});
-                csv = json2csvParser.parse(jsonData);
-            }else{
-                //no data means there is nothing to export; resolve and end execution
-                resolve("NO_DATA")
-                return false
-            }
-            if(error){
-                reject("ERROR")
-                return false
-            }
-            fs.writeFile("./exports/expenses.csv", csv, function(error) {
-              if (error) reject("ERROR")
-              console.log("expenses.csv generated");
-              resolve("OK")
-            });
-        });
-    })
-
-    let employees = new Promise((resolve, reject)=>{
-        connection.query("SELECT * FROM employees", function(error, data, fields) {
-            if(data.length>0){
-                jsonData = JSON.parse(JSON.stringify(data));
-                json2csvParser = new Json2csvParser({ header: true});
-                csv = json2csvParser.parse(jsonData);
-            }else{
-                //no data means there is nothing to export; resolve and end execution
-                resolve("NO_DATA")
-                return false
-            }
-            if(error){
-                reject("ERROR")
-                return false
-            }
-            fs.writeFile("./exports/employees.csv", csv, function(error) {
-              if (error) reject("ERROR")
-              console.log("employees.csv generated");
-              resolve("OK")
-            });
-        });
-    })
-
-    let emp_archv = new Promise((resolve, reject)=>{
-        connection.query("SELECT * FROM employees_archived", function(error, data, fields) {
-            if(data.length>0){
-                jsonData = JSON.parse(JSON.stringify(data));
-                json2csvParser = new Json2csvParser({ header: true});
-                csv = json2csvParser.parse(jsonData);
-            }else{
-                //no data means there is nothing to export; resolve and end execution
-                resolve("NO_DATA")
-                return false
-            }
-            if(error){
-                reject("ERROR")
-                return false
-            }
-            fs.writeFile("./exports/employees_archived.csv", csv, function(error) {
-                if (error) reject("ERROR")
-              console.log("employees_archived.csv generated");
-              resolve("OK")
-            });
-        });
-    })
-
-    let emp_sal = new Promise((resolve, reject)=>{
-        connection.query("SELECT * FROM employees_salaries", function(error, data, fields) {
-            if(data.length>0){
-                jsonData = JSON.parse(JSON.stringify(data));
-                json2csvParser = new Json2csvParser({ header: true});
-                csv = json2csvParser.parse(jsonData);
-            }else{
-                //no data means there is nothing to export; resolve and end execution
-                resolve("NO_DATA")
-                return false
-            }
-            if(error){
-                reject("ERROR")
-                return false
-            }
-            fs.writeFile("./exports/employees_salaries.csv", csv, function(error) {
-                if (error) reject("ERROR")
-              console.log("employees_salaries.csv generated");
-              resolve("OK")
-            });
-        });
-    })
-
-    let emp_vac = new Promise((resolve, reject)=>{
-        connection.query("SELECT * FROM employees_vacation", function(error, data, fields) {
-            if(data.length>0){
-                jsonData = JSON.parse(JSON.stringify(data));
-                json2csvParser = new Json2csvParser({ header: true});
-                csv = json2csvParser.parse(jsonData);
-            }else{
-                //no data means there is nothing to export; resolve and end execution
-                resolve("NO_DATA")
-                return false
-            }
-            if(error){
-                reject("ERROR")
-                return false
-            }
-            fs.writeFile("./exports/employees_vacation.csv", csv, function(error) {
-              if (error) reject("ERROR")
-              console.log("employees_vacation.csv generated");
-              resolve("OK")
-            });
-        });
-    })
-
-    //chain data
-    return await Promise.all([exportInvoices, exportBilledProjects, predefinedProducts, clients, expenses, employees, emp_archv, emp_sal, emp_vac])    
-}*/
-
 function getDBinfo(){
     return({
         host: connection.config.host,
@@ -1450,7 +1225,7 @@ function getEmployees(queryObject){
     let querry;    
     switch(queryObject.filter){
         case "all":
-            querry=`SELECT * FROM employees ORDER BY id DESC LIMIT ${offSet}, ${queryStep}`
+            querry=`SELECT * FROM employees ORDER BY id DESC LIMIT ${queryStep} OFFSET ${queryStep*queryObject.page}`
             break
         case "id":
             querry=`SELECT * FROM employees WHERE id=${queryObject.filterBy}`
@@ -1459,10 +1234,10 @@ function getEmployees(queryObject){
             querry=`SELECT * FROM employees WHERE id IN (${queryObject.filterBy})`
             break
         default:
-            querry=`SELECT * FROM employees LIMIT ${offSet}, ${queryStep}`
+            querry=`SELECT * FROM employees`
             break
     }
-
+    console.log(querry)
     return new Promise((resolve, reject)=>{
         connection.query(querry, function(err, result){
             if(err){

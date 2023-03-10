@@ -4,63 +4,49 @@ import Snackbar from '../Snackbar/Snackbar.jsx'
 let EmployeeForm = (props)=>{
 
     let [data, setTheData]=useState({
-        emp_first_name_input: "", 
-        emp_last_name_input:  "", 
-        emp_phone_input:  "", 
-        emp_ident_no_input: "", 
-        emp_adress_input: "", 
-        emp_notes_input:  "",
-        emp_job_name_input: "",
-        emp_cur_salary_gross_input: "",
-        emp_tax_input: 0
+        emp_first_name: {value: "", modified: false, invalid: false}, 
+        emp_last_name:  {value: "", modified: false, invalid: false}, 
+        emp_phone:  {value: "", modified: false, invalid: false}, 
+        emp_ident_no: {value: "", modified: false, invalid: false}, 
+        emp_adress: {value: "", modified: false, invalid: false}, 
+        emp_notes:  {value: "", modified: false, invalid: false},
+        emp_job_name: {value: "", modified: false, invalid: false},
+        emp_cur_salary_gross: {value: "", modified: false, invalid: false},
+        emp_tax: {value: "0", modified: false, invalid: false}
     })
 
     let [alertUser, setAlertUser] = useState({text: null})
     let [fieldsDisabled, setFieldsDisabled] = useState(true)
     let [invalidDataItems, setInvalidData] = useState([])
-    let [dataModified, setdataModified] = useState(false)
+    let [employeeID, setID] = useState(props.employeeID ?  props.employeeID : null)
 
     useEffect(()=>{
-        if(props.employeeID) setEmployeeData(props.employeeID)
-    },[props.clientID, props.userData])
+        if(props.employeeID){
+            fetchEmployeeData()
+        }
+    },[])
 
     //for a client ID, retrieve and set form data
-    let setEmployeeData=(ID)=>{
-        fetch(`http://localhost:3000/employee/${ID}`,
+    let fetchEmployeeData=()=>{
+        fetch(`http://localhost:3000/employee/${employeeID}`,
         {
             method:"GET",
             headers: { 'Content-Type': 'application/json' }
         })
-        .then(response=>response.json())
-        .then(data=>{
-            if(data.status==="OK"){
-                let employeeInfo = data.data.info[0]
-                setTheData({
-                    emp_first_name_input: employeeInfo.emp_first_name, 
-                    emp_last_name_input:  employeeInfo.emp_last_name, 
-                    emp_phone_input:  employeeInfo.emp_phone, 
-                    emp_ident_no_input: employeeInfo.emp_ident_no, 
-                    emp_adress_input: employeeInfo.emp_adress, 
-                    emp_notes_input:  employeeInfo.emp_notes,
-                    emp_job_name_input: employeeInfo.emp_job_name,
-                    emp_cur_salary_gross_input: employeeInfo.emp_cur_salary_gross,
-                    emp_tax_input: employeeInfo.emp_tax,
-                    emp_vacation_days_input: employeeInfo.emp_vacation_days
-                })
-            }else if(data.status==="SERVER_ERROR"){
+        .then(response=>response.json()).then(responseData=>{
+            if(responseData.status==="OK"){
+                let employeeInfo = responseData.data.info[0]
+                let employeesCopy = {...data}
+                for(const[key, value] of Object.entries(employeesCopy)){
+                    employeesCopy[key].value = employeeInfo[key]
+                }
+                setTheData(employeesCopy)
+            }else if(responseData.status==="SERVER_ERROR"){
                 setAlertUser({text:"Baza de date nu poate fi accesata"})
             }else{
                 setAlertUser({text:"Eroare"})
             }
         })
-    }
-
-    //small valdiations at submit
-    let newemployeeDataValid=()=>{
-        let validatingThis, invalidDataArray=[];        
-        //all good
-        setInvalidData([])
-        return true
     }
 
     //validates only an key input
@@ -88,79 +74,66 @@ let EmployeeForm = (props)=>{
     }
 
     let changeFormData = (event)=>{
+        let shallowCopy = {...data}
         let elementTrigger = `${event.target.name}`;
-        let happenedIn = `${elementTrigger}_input`;
-        if(validateInput(elementTrigger, event.target.value, happenedIn)){ 
-            event.target.attributes.getNamedItem('modified').value=true;
-        }
-        setdataModified(true)
+        if(validateInput(elementTrigger, event.target.value)){
+            if(data[elementTrigger].modified===false) data[elementTrigger].modified = true
+            data[elementTrigger].value=event.target.value        
+            setTheData(shallowCopy) 
+        }   
     }
 
     //register a new employee
     let submitNewEmployee = () =>{
-            if(newemployeeDataValid()){
-                fetch(`http://localhost:3000/employees`, {
-                    method:"POST",
-                    headers: { 'Content-Type': 'application/json' },
-                    body:JSON.stringify({
-                        emp_first_name: data.emp_first_name_input,
-                        emp_last_name: data.emp_last_name_input,
-                        emp_phone: data.emp_phone_input,
-                        emp_ident_no: data.emp_ident_no_input, 
-                        emp_adress: data.emp_adress_input, 
-                        emp_notes: data.emp_notes_input,
-                        emp_job_name: data.emp_job_name_input,
-                        emp_cur_salary_gross: data.emp_cur_salary_gross_input,
-                        emp_tax: data.emp_tax_input,
-                        emp_vacation_days: data.emp_vacation_days_input
-                    })
-                })
-                .then(response=>response.json())
-                .then(data=>{
-                    if(data.status==="OK"){
-                        setEmployeeData(data.data)
-                        setFieldsDisabled(false) 
-                        setAlertUser({text:"Employee registered"})
-                        setdataModified(false)
-                    }else if(data.status==="SERVER_ERROR"){
-                        setAlertUser({text:"Baza de date nu poate fi accesata"})
-                    }else{
-                        setAlertUser({text:"Something went wrong"})
-                    }
-                })
-        }else{
-            setAlertUser({text:"Invalid client data"})
-        }
+            let dataToBeSent = {}
+            let shallowCopy = {...data}
+            for (const [key, value] of Object.entries(shallowCopy)) {
+                if(shallowCopy[key].modified===true){                        
+                    shallowCopy[key].modified=false
+                }   
+                dataToBeSent[key] = shallowCopy[key].value  
+            }
+            fetch(`http://localhost:3000/employees`, {
+                method:"POST",
+                headers: { 'Content-Type': 'application/json' },
+                body:JSON.stringify(dataToBeSent)
+            })
+            .then(response=>response.json()).then(data=>{
+                if(data.status==="OK"){
+                    setAlertUser({text:"Angajat inregistrat"})
+                    setID(data.data)
+                }else if(data.status==="SERVER_ERROR"){
+                    setAlertUser({text:"Baza de date nu poate fi accesata"})
+                }else{
+                    setAlertUser({text:"Something went wrong"})
+                }
+            })
     }
 
     //edit the data for a registered client
     let updateExistingClient = () =>{
-        let dataToBeSent ={}     
-       
-        if(document.getElementById("emp_first_name").attributes.getNamedItem('modified').value==="true") dataToBeSent.emp_first_name=document.getElementById("emp_first_name").value;
-        if(document.getElementById("emp_last_name").attributes.getNamedItem('modified').value==="true") dataToBeSent.emp_last_name=document.getElementById("emp_last_name").value;
-        if(document.getElementById("emp_ident_no").attributes.getNamedItem('modified').value==="true") dataToBeSent.emp_ident_no=document.getElementById("emp_ident_no").value;
-        if(document.getElementById("emp_adress").attributes.getNamedItem('modified').value==="true") dataToBeSent.emp_adress=document.getElementById("emp_adress").value;
-        if(document.getElementById("emp_phone").attributes.getNamedItem('modified').value==="true") dataToBeSent.emp_phone=document.getElementById("emp_phone").value;          
-        if(document.getElementById("emp_job_name").attributes.getNamedItem('modified').value==="true") dataToBeSent.emp_job_name=document.getElementById("emp_job_name").value;          
-        if(document.getElementById("emp_cur_salary_gross").attributes.getNamedItem('modified').value==="true") dataToBeSent.emp_cur_salary_gross=document.getElementById("emp_cur_salary_gross").value;          
-        if(document.getElementById("emp_notes").attributes.getNamedItem('modified').value==="true") dataToBeSent.emp_notes=document.getElementById("emp_notes").value; 
-        if(document.getElementById("emp_tax").attributes.getNamedItem('modified').value==="true") dataToBeSent.emp_notes=document.getElementById("emp_tax").value;   
-        if(document.getElementById("emp_vacation_days").attributes.getNamedItem('modified').value==="true") dataToBeSent.emp_vacation_days=document.getElementById("emp_vacation_days").value;          
+        let dataToBeSent = {}
+        let shallowCopy = {...data}
+        for (const [key, value] of Object.entries(shallowCopy)) {
+            if(shallowCopy[key].modified===true){                        
+                shallowCopy[key].modified=false
+                dataToBeSent[key] = shallowCopy[key].value
+            }              
+        }
+
+        if(dataToBeSent==={}) return false
 
         fetch(`http://localhost:3000/employees`, {
             method:"PUT",
             headers: { 'Content-Type': 'application/json' },
             body:JSON.stringify({
-                employeeID:props.employeeID,
-                dataToBeUpdated:dataToBeSent
+                employeeID: employeeID,
+                dataToBeUpdated: dataToBeSent
             })
         })
-        .then(response=>response.json())
-        .then(data=>{
+        .then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 setAlertUser({text:"Angajat actualizat"})
-                setdataModified(false)
             }else if(data.status==="SERVER_ERROR"){
                 setAlertUser({text:"Baza de date nu poate fi accesata"})
             }else{
@@ -173,7 +146,7 @@ let EmployeeForm = (props)=>{
 
     //send data to the server - update if existing client, create if non-existent
     let submitemployeeData = () =>{ 
-        if(props.employeeID){
+        if(employeeID){
             updateExistingClient()           
         }else{
             submitNewEmployee()
@@ -183,58 +156,64 @@ let EmployeeForm = (props)=>{
     return(            
         <div className={(props.isSubmitable===true) ? "form-container" : ""}> 
             <h6>Date angajat</h6>
-            <div className='form-row'>
-                <div className="form-group col-md-3">            
-                    <label className="form-subsection-label" htmlFor="emp_first_name">Nume</label><br/>
-                    <input type="text" id="emp_first_name" name="emp_first_name" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("emp_first_name") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" autoComplete="off" onChange={changeFormData} value={data.emp_first_name_input}/>
+            <div class="row g-2   mb-3">
+                <div class="col-md">
+                    <div class="form-floating">
+                        <input type="text"  placeholder="Name" id="emp_first_name" name="emp_first_name" disabled={(fieldsDisabled===false) ?  true: false} className={data.emp_first_name.invalid ? "form-control shadow-none invalid-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_first_name.value}/>
+                        <label htmlFor="floatingInputGrid">Nume</label>
+                    </div>
                 </div>
-                <div className="form-group col-md-3">   
-                    <label className="form-subsection-label" htmlFor="emp_last_name">Prenume</label><br/>
-                    <input type="text" id="emp_last_name" name="emp_last_name" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("emp_last_name") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.emp_last_name_input}/>
-                </div>
-                <div className="form-group col-md-3">  
-                    <label className="form-subsection-label" htmlFor="emp_phone">Telefon</label><br/>
-                    <input type="text" id="emp_phone" name="emp_phone" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("emp_phone") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.emp_phone_input}/>
-                </div>
-                <div className="form-group col-md-3">   
-                    <label className="form-subsection-label" htmlFor="emp_ident_no">CNP</label><br/>
-                    <input type="text" id="emp_ident_no" name="emp_ident_no" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("emp_ident_no") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.emp_ident_no_input}/>
+                <div class="col-md">
+                    <div class="form-floating">
+                        <input type="text"  placeholder="Prenume" id="emp_last_name" name="emp_last_name" disabled={(fieldsDisabled===false) ?  true: false} className={data.emp_last_name.invalid  ? "form-control shadow-none invalid-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_last_name.value}/>
+                        <label htmlFor="floatingInputGrid">Prenume</label>
+                    </div>
                 </div>
             </div>
-            <div className='form-row'>
-                <div className="form-group col-md-12">   
-                    <label className="form-subsection-label" htmlFor="emp_adress">Adresa</label><br/>
-                    <input type="text" id="emp_adress" name="emp_adress" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("emp_adress") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.emp_adress_input}/>
+
+            <div class="form-floating  mb-3">
+                <input type="text"  placeholder="Prenume" id="emp_phone" name="emp_phone" disabled={(fieldsDisabled===false) ?  true: false} className={data.emp_phone.invalid  ? "form-control shadow-none invalid-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_phone.value}/>
+                <label htmlFor="floatingInputGrid">Telefon</label>
+            </div>
+
+            <div class="form-floating  mb-3">
+                <input type="text"  placeholder="CNP" id="emp_ident_no" name="emp_ident_no" disabled={(fieldsDisabled===false) ?  true: false} className={data.emp_ident_no.invalid  ? "form-control shadow-none invalid-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_ident_no.value}/>
+                <label htmlFor="floatingInputGrid">CNP</label>
+            </div>
+
+            <div class="form-floating  mb-3">
+                <input type="text"  placeholder="Adresa" id="emp_adress" name="emp_adress" disabled={(fieldsDisabled===false) ?  true: false} className={data.emp_adress.invalid ? "form-control shadow-none invalid-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_adress.value}/>
+                <label htmlFor="floatingInputGrid">Adresa</label>
+            </div>
+
+            <div class="form-floating  mb-3">
+                <input type="text"  placeholder="Incadrare" id="emp_job_name" name="emp_job_name" disabled={(fieldsDisabled===false) ?  true: false} className={data.emp_job_name.invalid ? "form-control shadow-none invalid-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_job_name.value}/>
+                <label htmlFor="floatingInputGrid">Incadrare</label>
+            </div>
+
+            <div class="row g-2">
+                <div class="col-md">            
+                    <div class="form-floating">
+                        <input type="text"  placeholder="Salariu brut" id="emp_cur_salary_gross" name="emp_cur_salary_gross" disabled={(fieldsDisabled===false) ?  true: false} className={data.emp_cur_salary_gross.invalid ? "form-control shadow-none invalid-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_cur_salary_gross.value}/>
+                        <label htmlFor="floatingInputGrid">Salariu brut</label>
+                    </div>
+                </div>
+                <div class="col-md">  
+                    <div class="form-floating  mb-3">
+                        <select class="form-select" aria-label="Floating label select example" id="emp_tax" name="emp_tax" onChange={changeFormData} value={data.emp_tax.value} disabled={(fieldsDisabled===false) ?  true: false}>
+                            <option value="1">Da</option>
+                            <option value="0">Nu</option>
+                        </select>
+                        <label htmlFor="floatingSelect">Impozit venit</label>
+                    </div>
                 </div>
             </div>
-            <div className='form-row'>
-                <div className="form-group col-md-3">   
-                    <label className="form-subsection-label" htmlFor="emp_job_name">Incadrare</label><br/>
-                    <input type="text" id="emp_job_name" name="emp_job_name" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("emp_job_name") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.emp_job_name_input}/>
-                </div>
-                <div className="form-group col-md-3">   
-                    <label className="form-subsection-label" htmlFor="emp_cur_salary_gross">Salariu brut</label><br/>
-                    <input type="text" id="emp_cur_salary_gross" name="emp_cur_salary_gross" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("emp_cur_salary_gross") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.emp_cur_salary_gross_input}/>
-                </div>
-                <div className="form-group col-md-3">   
-                    <label className="form-subsection-label" htmlFor="emp_cur_salary_gross">Se aplica impozit venit</label><br/>
-                    <select id="emp_tax" name="emp_tax" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("emp_tax") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.emp_tax_input}>
-                        <option value="1">Da</option>
-                        <option value="0">Nu</option>
-                    </select>                    
-                </div>
-                <div className="form-group col-md-3">   
-                    <label className="form-subsection-label" htmlFor="emp_vacation_days">Zile libere</label><br/>
-                    <input type="text" id="emp_vacation_days" name="emp_vacation_days" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("emp_vacation_days") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.emp_vacation_days_input}/>
-                </div>
+
+            <div class="form-floating  mb-3">
+                <textarea rows="4" placeholder="Salariu brut" id="emp_notes" name="emp_notes" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("emp_first_name") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_notes.value}/>
+                <label htmlFor="emp_notes">Informatii aditionale</label>
             </div>
-            <div className='form-row'>
-                <div className="form-group col-md-12">   
-                    <label className="form-subsection-label" htmlFor="emp_notes">Informatii aditionale:</label><br/>
-                    <textarea class="form-control" id="emp_notes" name="emp_notes" rows="4" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("emp_notes") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} modified="false" onChange={changeFormData} value={data.emp_notes_input}></textarea>
-                </div>
-            </div>
-            <button id="edit-client-data" className="w-100 btn btn-primary btn-lg" disabled={dataModified ? false:true}><span className="action-button-label" onClick={()=>{submitemployeeData()}}><span class="material-icons-outlined">save</span> SAVE</span></button>
+            <button className="btn btn-light" onClick={()=>{submitemployeeData()}} type="button" title="Editare angajat"><div class="inner-button-content"><span class="material-icons-outlined" style={{fontSize: '18px'}}>save</span>Salvare</div></button>
             <Snackbar text={alertUser.text} closeSnack={()=>{setAlertUser({text:null})}}/>   
         </div>
     )       

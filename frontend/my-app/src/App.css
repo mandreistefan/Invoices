@@ -3,6 +3,13 @@
   font-family: 'Oswald';
 }
 
+:root {
+  --navBackground: #313a46;
+  --navActive: #3eb489;
+  --navColor: #8391a2;
+}
+
+
 body{
   background-color: #f5f7fa;
   --font-family-sans-serif: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
@@ -50,6 +57,28 @@ table >tbody> tr:hover{
 .table > tbody > tr > .table-actions-container > button{
   visibility:hidden;
   float: right;
+}
+
+.new-invoice-table > tbody > tr > td > input{
+  border: none;
+  border-radius: 0;
+}
+
+.new-invoice-table > tbody > tr > td{
+  padding: 0;
+}
+
+.new-invoice-table > tbody> tr:hover{
+  background-color: transparent;
+}
+
+.new-invoice-table > tbody > tr > td > input:disabled{
+  color:gray;
+  background-color: #f7f7f8
+}
+
+.new-invoice-table > tbody{
+  border-bottom: 1px solid lightgray;
 }
 
 .table-actions-container button{
@@ -116,25 +145,26 @@ td{
 }
 
 .action-close-window{
-  position: absolute;
-  top:0;
-  right: 5px;
-  top:5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--navActive);
+  border-radius: 30px;
+  font-size: 20px;
+  color: var(--navActive);
   background-color: transparent;
-  border:none;
-  line-height: 1.5;
-  color: white;
-  font-weight: 400!important;
-  z-index: 5;
+  width: 26px;
+  height: 26px;
+}
+
+.action-close-window > span{ 
+  font-size: inherit!important;
 }
 
 .material-icons-outlined{
   font-size: 24px;
 }
 
-.action-close-window .material-icons-outlined{
-  font-size: 30px!important;
-}
 .actions-button{
   border-radius: 5px;
   color:#FFFFFF;
@@ -169,7 +199,6 @@ td{
 
 .overlapping-component-inner{
   border-radius: 8px;
-  padding:20px;
   background-color: white;
   position: absolute;
   z-index:10;
@@ -190,6 +219,7 @@ td{
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
   display: flex;
+  flex-direction: column;
   align-items: center;
   box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
 }
@@ -198,7 +228,6 @@ td{
 .overlapping-component-inner::-webkit-scrollbar {
   display: none;
 }
-
 
 .overlapping-component-actions{
   display:flex;
@@ -214,6 +243,18 @@ td{
 
 .overlapping-component-actions button{
   float: right;
+}
+
+.overlapping-component-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background-color: var(--navBackground);
+  padding: 16px;
+  color:var(--navActive);
+  font-size: 20px;
+  font-weight: 600;
 }
 
 .app-title-container{
@@ -369,14 +410,6 @@ background-color:#D1D1D1
   line-height: 25px;
 }
 
-.form-group label{
-  color: #353535;
-  font-weight: 500;
-}
-
-.form-group input:focus{
-  border-color: #353535;
-}
 
 .menu-instructions{
   margin-top: 20px;
@@ -520,7 +553,7 @@ input[type=date]{
 #new-product-form{
   background-color: white;
   padding: 16px;
-  max-width: 1000px;
+  width: 100%;
   border-radius: 6px;
 }
 
@@ -712,7 +745,7 @@ input[type=date]{
   justify-content: space-between; 
   padding-top: 10px; 
   padding-bottom: 10px; 
-  background-color: #313a46;
+  background-color: var(--navBackground);
   border-right: 1px solid lightgray;
   padding-top: 32px;
   padding-bottom: 16px;
@@ -757,7 +790,7 @@ input[type=date]{
 }
 
 .nav-link > a > div{
-  color:#8391a2;
+  color: var(--navColor);
   transition: 0.3s;
   height: 35px;
 }
@@ -767,7 +800,7 @@ input[type=date]{
 }
 
 .nav-link.active > a > div{
-  color:#3eb489;
+  color:var(--navActive);
   font-weight: 600;
 }
 
@@ -905,8 +938,6 @@ input[type=date]{
   font-size:15px;
   font-weight: 300 !important;
   color:black;
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
   background-color: #f7f7f8;
   display: grid;
   grid-template-columns: 25% 20% 10% 10% 10% 10% 10%;
@@ -917,6 +948,17 @@ input[type=date]{
   padding-bottom: 6px;
   padding-right: 12px;
   padding-top: 6px;
+}
+
+.billing-products-container{
+  display: flex;
+  justify-content: flex-start;
+  border:1px solid black;
+  border-radius: 6px;
+}
+
+.billing-products-container:hover{
+  box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
 }
 
 .billing-products-body-row{
@@ -945,11 +987,14 @@ input[type=date]{
   border-radius: 36px;
   width: 28px;
   height: 28px;
-  border: none;
+  border: 1px solid lightgray;
+  color:lightgray;
 }
 
 .round-button:hover{
   background-color: lightgray;
+  color: black;
+  border: 1px solid black;
 }
 
 .billing-products-footer{
@@ -980,4 +1025,16 @@ input[type=date]{
   background-color: #313a46;
   border-color: #3eb489;
   color: #3eb489
+}
+
+.financial-square{
+  background-color:white;
+  height: 100%;
+  display: flex;
+  justify-content: row;
+}
+
+.financial-square > div{
+  display: inherit;
+  flex-direction: column;
 }

@@ -1,6 +1,5 @@
 import React from "react";
 import Clients from './Clients.jsx'
-import './ClientsComponent.css'
 import Invoice from '../InvoiceComponent/Invoice.jsx';
 
 export default class ClientsComponent extends React.Component{
@@ -12,8 +11,7 @@ export default class ClientsComponent extends React.Component{
           searchField: "",
           searchResult: null,
           searchActionStatus: false,
-          activeClient:null,
-          activeClientName: null
+          activeClient:null
         };
       }
 
@@ -25,9 +23,10 @@ export default class ClientsComponent extends React.Component{
         this.setState({searchField:event.target.value})
     }
 
-    enableInvoiceApp = (clientID) =>{
+    enableInvoiceApp = (clientID, first_name, last_name, phone, email, notes) =>{
         this.setState({
-            activeClient:clientID
+            activeClient: clientID,
+            clientData: [first_name, last_name, phone, email, notes]
         })
     }
 

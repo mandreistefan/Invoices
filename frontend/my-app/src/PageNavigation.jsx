@@ -8,7 +8,7 @@ import React from "react";
 
 let PageNavigation=(props)=>{
 
-    const step=25
+    const step=10
 
     let [pagination, setPagination] = React.useState({
         currentPage: 1,

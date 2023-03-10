@@ -110,8 +110,8 @@
             document.getElementById("invoice-date").innerHTML=invoiceData.invoiceProperty.date
             document.getElementById("invoice-info-total").innerHTML=`${invoiceData.invoiceProperty.total.price} RON`
             document.getElementById("client-name").innerHTML=`${invoiceData.invoiceProperty.client_first_name} ${invoiceData.invoiceProperty.client_last_name}`
-            document.getElementById("client-adress").innerHTML=`Adresa: ${invoiceData.invoiceProperty.client_billing_adress.county}, ${invoiceData.invoiceProperty.client_billing_adress.city}, ${invoiceData.invoiceProperty.client_billing_adress.street}, ${invoiceData.invoiceProperty.client_billing_adress.number}`
-            document.getElementById("client-email").innerHTML=`Email: ${invoiceData.invoiceProperty.client_billing_adress.email}`
+            document.getElementById("client-adress").innerHTML=`Adresa: ${invoiceData.invoiceProperty.client_county}, ${invoiceData.invoiceProperty.client_city}, ${invoiceData.invoiceProperty.client_street}, ${invoiceData.invoiceProperty.client_adress_number}`
+            document.getElementById("client-email").innerHTML=`Email: ${invoiceData.invoiceProperty.client_email}`
             document.getElementById("billed-products-table-body").innerHTML = generateTable(invoiceData.invoiceProducts)
             document.getElementById("invoice-total").innerHTML = `<b>${invoiceData.invoiceProperty.total.price} RON</b>`
             document.getElementById("delegate-name").innerHTML = `${invoiceData.invoiceProperty.client_first_name} ${invoiceData.invoiceProperty.client_last_name}`

@@ -163,7 +163,7 @@ function archiveInvoice(invoiceID, callback){
 
 async function fetchInvoiceData(querryObject){
     let dataArray={
-        invoiceProperty:({number:"", date:"", client_type:"", client_fiscal_1:"", client_fiscal_2:"", client_first_name:"", client_last_name:"", client_billing_adress:{county:"", city:"", street:"", number:"", zip:"", phone:"", email:""}, date:"", total:({price:0, tax:0, items:0})}),
+        invoiceProperty:({number:"", date:"", client_type:"", client_fiscal_1:"", client_fiscal_2:"", client_first_name:"", client_last_name:"", date:"", total:({price:0, tax:0, items:0})}),
         invoiceProducts:{}
     }
 
@@ -179,13 +179,13 @@ async function fetchInvoiceData(querryObject){
     dataArray.invoiceProperty.client_fiscal_1=invoiceData.data[0].client_fiscal_1
     dataArray.invoiceProperty.client_fiscal_2=invoiceData.data[0].client_fiscal_2
     dataArray.invoiceProperty.client_type=invoiceData.data[0].client_type
-    dataArray.invoiceProperty.client_billing_adress.county=invoiceData.data[0].client_county
-    dataArray.invoiceProperty.client_billing_adress.city=invoiceData.data[0].client_city
-    dataArray.invoiceProperty.client_billing_adress.street=invoiceData.data[0].client_street
-    dataArray.invoiceProperty.client_billing_adress.number=invoiceData.data[0].client_adress_number
-    dataArray.invoiceProperty.client_billing_adress.zip=invoiceData.data[0].client_zip
-    dataArray.invoiceProperty.client_billing_adress.phone=invoiceData.data[0].client_phone
-    dataArray.invoiceProperty.client_billing_adress.email=invoiceData.data[0].client_email
+    dataArray.invoiceProperty.client_county=invoiceData.data[0].client_county
+    dataArray.invoiceProperty.client_city=invoiceData.data[0].client_city
+    dataArray.invoiceProperty.client_street=invoiceData.data[0].client_street
+    dataArray.invoiceProperty.client_adress_number=invoiceData.data[0].client_adress_number
+    dataArray.invoiceProperty.client_zip=invoiceData.data[0].client_zip
+    dataArray.invoiceProperty.client_phone=invoiceData.data[0].client_phone
+    dataArray.invoiceProperty.client_email=invoiceData.data[0].client_email
     dataArray.invoiceProperty.invoice_date=invoiceData.data[0].invoice_date
     dataArray.invoiceProperty.invoice_status=invoiceData.data[0].invoice_status
     dataArray.invoiceProperty.invoice_pay_method=invoiceData.data[0].invoice_pay_method

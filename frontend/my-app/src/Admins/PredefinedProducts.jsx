@@ -117,8 +117,11 @@ let Products=()=>{
                 {addproductWindow&&
                 <div>
                     <div className="blur-overlap"></div>     
-                    <button type="button" className="action-close-window" onClick={()=>{setaddproductWindow(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
-                    <div className="overlapping-component-inner">
+                        <div className="overlapping-component-inner">
+                        <div className='overlapping-component-header'>
+                            <span>Predefinit nou</span>
+                            <button type="button" className="action-close-window" onClick={()=>{setaddproductWindow(false)}}><span className="material-icons-outlined">close</span></button>
+                        </div>
                         <ProductForm/>
                     </div>
                 </div>}

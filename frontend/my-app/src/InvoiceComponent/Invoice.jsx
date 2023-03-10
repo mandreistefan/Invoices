@@ -1,5 +1,4 @@
 import React from "react";
-import ClientForm from '../ClientForm/ClientForm.jsx';
 import "react-datepicker/dist/react-datepicker.css";
 import Snackbar from '../Snackbar/Snackbar.jsx'
 import PredefinedProducts from '../Admins/ExistingProducts.jsx'
@@ -11,7 +10,7 @@ export default class Invoice extends React.Component{
         super(props);
         this.state = {
             invoiceID: (props.invoiceID) ? props.invoiceID : null,
-            userData: null,
+            clientData: {client_type:"", client_first_name: "",client_last_name: "", client_phone: "", client_email: "", client_county: "", client_city: "", client_street: "", client_adress_number: "", client_zip: "", client_notes: ""},
             billingType: "one-time-billing-option",
             billingFrequency: "monthly-billing",
             monthlyBillingDate: new Date(),
@@ -21,7 +20,7 @@ export default class Invoice extends React.Component{
             total_prod_quantity: 0,
             total_prod_price: 0,  
             total_tax:0,
-            activeClient: props.activeClient ? props.activeClient : null,
+            activeClient: props.activeClient ? props.activeClient.id : null,
             alertUser: null,
             invoice_server_status: "draft",
             invoice_status: "draft",
@@ -42,27 +41,27 @@ export default class Invoice extends React.Component{
         if(this.state.invoiceID){
             this.fetchInvoiceData(this.state.invoiceID)
         }
+        if(this.state.activeClient!==null){
+            let clientDataCopy = {...this.state.clientData}
+            for(const[key, value] of Object.entries(clientDataCopy)){
+                clientDataCopy[key]=this.props.activeClient[key]
+            }
+            this.setState({clientData:clientDataCopy})
+        }
     }
 
     //gets all the data linked to an invoice; sets the state of certain elements based on retrieved data
     fetchInvoiceData=(invoice)=>{
         fetch(`http://localhost:3000/invoice?filter=invoiceID&filterBy=${invoice}`).then(response=>response.json()).then(data=>{
             let invoiceData = data.data
+            //client data
+            let clientDataCopy = {...this.state.clientData}
+            for(const[key, value] of Object.entries(clientDataCopy)){
+                clientDataCopy[key]=invoiceData.invoiceProperty[key]
+            }
+            //set state
             this.setState({
-                userData: {
-                    client_type: invoiceData.invoiceProperty.client_type, 
-                    client_fiscal_1: invoiceData.invoiceProperty.client_fiscal_1, 
-                    client_fiscal_2: invoiceData.invoiceProperty.client_fiscal_2,
-                    client_first_name: invoiceData.invoiceProperty.client_first_name, 
-                    client_last_name: invoiceData.invoiceProperty.client_last_name, 
-                    client_phone: invoiceData.invoiceProperty.client_billing_adress.phone,
-                    client_email: invoiceData.invoiceProperty.client_billing_adress.email,
-                    client_county: invoiceData.invoiceProperty.client_billing_adress.county,
-                    client_city: invoiceData.invoiceProperty.client_billing_adress.city,
-                    client_street: invoiceData.invoiceProperty.client_billing_adress.street,
-                    client_adress_number: invoiceData.invoiceProperty.client_billing_adress.number,
-                    client_zip: invoiceData.invoiceProperty.client_billing_adress.zip
-                },
+                clientData:{...clientDataCopy},
                 tableElements: this.decodeTableElements(invoiceData.invoiceProducts),
                 total_prod_price: parseFloat(invoiceData.invoiceProperty.total.price).toFixed(2),  
                 total_tax: parseFloat(invoiceData.invoiceProperty.total.tax).toFixed(2),
@@ -101,51 +100,6 @@ export default class Invoice extends React.Component{
         this.setState({billingElements:props})
     }
 
-    //small valdiations at submit
-    clientDataValid=()=>{
-        let validatingThis;
-        //first name
-        validatingThis=document.getElementById("client_first_name").value
-        if(validatingThis.length===0){
-            console.log("Invalid data for first name")
-            return false
-        }
-        //phone name
-        validatingThis=document.getElementById("client_phone").value
-        if(validatingThis.length!=10){
-            console.log("Invalid data for phone")
-            return false
-        }
-        //email - only if filled
-        validatingThis=document.getElementById("client_email").value        
-        if(validatingThis.length>0){
-            if((validatingThis.indexOf("@")===-1)||(validatingThis.indexOf(".")==-1)){
-                console.log("Invalid data for email")
-                return false
-            }
-        }
-        //last name
-        validatingThis=document.getElementById("client_county").value
-        if(validatingThis.length===0){
-            console.log("Invalid data for county")
-            return false
-        }
-        //last name
-        validatingThis=document.getElementById("client_city").value
-        if(validatingThis.length===0){
-            console.log("Invalid data for city")
-            return false
-        }
-        //last name
-        validatingThis=document.getElementById("client_street").value
-        if(validatingThis.length===0){
-            console.log("Invalid data for street")
-            return false
-        }
-        //all good
-        return true
-    }
-
     //the Array containing products data has, for each element, properties and values; based on these, return an Array that can be sent to the server
     billedProductsServerFormat=(data)=>{
         let responseArray=[]
@@ -170,32 +124,13 @@ export default class Invoice extends React.Component{
 
         //logic for a new invoice
         if(this.state.invoiceID===null){
-            //set recurrency properties
-            let billingReccurencyDate;
-            let isReccurent = (this.state.billingType==="one-time-billing-option") ? false : true;
-            if(isReccurent){
-                switch(this.state.billingFrequency){
-                    case "monthly-billing":
-                        billingReccurencyDate=this.state.monthlyBillingDate;
-                        break;
-                    case "yearly-billing":
-                        billingReccurencyDate=this.state.yearlyBillingDate;
-                        break;
-                    default:
-                        billingReccurencyDate=new Date();
-                        break; 
-                }
-            }
 
             //creates an invoice for a predefined client - user-data is preloaded, shouldn't be checked
             if(this.state.activeClient!=null){ 
-                //recurrent invoices           
-                if(isReccurent){
-                    dataToBeSent=({clientID: this.state.activeClient, billingProducts: this.billedProductsServerFormat(this.state.tableElements), billingReccurency: isReccurent, billingFrequency: this.state.billingFrequency, billingReDate: billingReccurencyDate})
-                }else{
-                    //non-recurrent
-                    dataToBeSent=({clientID: this.state.activeClient, billingProducts: this.billedProductsServerFormat(this.state.tableElements), invoice_status: this.state.invoice_status, invoice_pay_method: this.state.invoice_pay_method, invoice_bank_ref: this.state.invoice_bank_ref})
-                }
+
+            //non-recurrent
+            dataToBeSent=({clientID: this.state.activeClient, billingProducts: this.billedProductsServerFormat(this.state.tableElements), invoice_status: this.state.invoice_status, invoice_pay_method: this.state.invoice_pay_method, invoice_bank_ref: this.state.invoice_bank_ref})
+                
             //creates an invoice for a non-existent user - no preloaded user-data
             }else{
                 //don't submit an invoice with no user data
@@ -227,24 +162,7 @@ export default class Invoice extends React.Component{
                 if(dataToBeSent.invoice_pay_method==="bank")  dataToBeSent.invoice_bank_ref = this.state.invoice_bank_ref
             }
         }else{
-            method="PUT";
-            //editing an existing invoice that has an ID
-            if(event.target.client_first_name.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_first_name=event.target.client_first_name.value;
-            if(event.target.client_last_name.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_last_name=event.target.client_last_name.value;
-            if(event.target.client_phone.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_phone=event.target.client_phone.value;
-            if(event.target.client_type.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_type=event.target.client_type.value;
-            if(event.target.client_type.value==="comp"){
-                if(event.target.client_fiscal_1.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_fiscal_1=event.target.client_fiscal_1.value;
-                if(event.target.client_fiscal_2.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_fiscal_2=event.target.client_fiscal_2.value;     
-            }
-            if(event.target.client_email.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_email=event.target.client_email.value;
-            if(event.target.client_county.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_county=event.target.client_county.value;
-            if(event.target.client_city.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_city=event.target.client_city.value;
-            if(event.target.client_street.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_street=event.target.client_street.value;
-            if(event.target.client_adress_number.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_adress_number=event.target.client_adress_number.value;
-            if(event.target.client_zip.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_zip=event.target.client_zip.value;
-            if(event.target.client_phone.attributes.getNamedItem('modified').value==="true") dataToBeSent.client_phone=event.target.client_phone.value;            
-           
+            method="PUT";           
             dataToBeSent.billingProducts=this.billedProductsServerFormat(this.state.tableElements)
             dataToBeSent.invoiceID=this.state.invoiceID;
         }        
@@ -391,11 +309,12 @@ export default class Invoice extends React.Component{
             }
 
             //add a new row
-            this.setState({tableElements:[...this.state.tableElements,{properties:{preloaded:false, id:dataObject.id, entry: null, valid:true}, data:[dataObject.name, dataObject.um, "1", dataObject.tax, parseFloat(((dataObject.price/100)*dataObject.tax)).toFixed(2), dataObject.price, dataObject.description]}]})
-            this.setState({total_tax:parseFloat(parseFloat(this.state.total_tax)+((dataObject.price/100)*dataObject.tax)).toFixed(2), total_prod_price:parseFloat(parseFloat(this.state.total_prod_price)+(dataObject.price)).toFixed(2)})
-
-            //close the predefined elements list
-            this.setState({predefinedList: false})
+            this.setState({
+                tableElements:[...this.state.tableElements,{properties:{preloaded:false, id:dataObject.id, entry: null, valid:true}, data:[dataObject.name, dataObject.um, "1", dataObject.tax, parseFloat(((dataObject.price/100)*dataObject.tax)).toFixed(2), dataObject.price, dataObject.description]}],
+                total_tax:parseFloat(parseFloat(this.state.total_tax)+((dataObject.price/100)*dataObject.tax)).toFixed(2), total_prod_price:parseFloat(parseFloat(this.state.total_prod_price)+(dataObject.price)).toFixed(2),
+                predefinedList: false,
+                dataModified: true
+            })
         }
 
     }
@@ -414,8 +333,7 @@ export default class Invoice extends React.Component{
             method:"DELETE",
             headers: { 'Content-Type': 'application/json' }
         })
-        .then(response=>response.json())
-        .then(data=>{
+        .then(response=>response.json()).then(data=>{
             //succesfull in removing the element from the DB
             if(data.status==="OK"){
                 this.removeTableElement(rowIndex)
@@ -435,71 +353,97 @@ export default class Invoice extends React.Component{
         this.calculateTotalandTax()
     }
 
+    setInvoiceFinalised = () =>{
+        let invoiceID = this.state.invoiceID
+        fetch(`http://localhost:3000/invoices`, {
+            method:"PUT",
+            headers: { 'Content-Type': 'application/json' },
+            body:JSON.stringify({invoice_status: "finalised", invoiceID})
+        })
+        .then(response=>response.json()).then(data=>{
+            if(data.status==="OK"){
+                this.setState({invoice_status:"finalised"})
+            }else if(data.status==="SERVER_ERROR"){
+                this.setState({alertUser:"Factura setata ca finalizata"})
+            }else{
+                this.setState({alertUser:"A aparut o eroare"})
+            }
+        })
+    }
+
+    generateInvoice = () =>{
+        let activeInvoice = this.state.invoiceID
+        window.open(`http://localhost:3001/generateInvoice/${activeInvoice}`).focus();
+    }
+
     render()
         {
             return(
-                <div className="invoices-add-container">                              
-                    <form id="invoice-form" onSubmit={this.submitData}>
-                            <div className="bordered-container p-1" style={{marginBottom:'10px'}}>
-                                <div style={{display:'flex', alignItems:'center', justifyContent:'space-between'}}><span><b>Client</b></span><button type="button" style={{backgroundColor:'transparent', border:'none'}} title="Show client info" onClick={()=>{this.setState({showClientInfo: !this.state.showClientInfo})}}><span className="material-icons-outlined">{this.state.showClientInfo ? "expand_less" : "expand_more"}</span></button></div>
-                                <div className="client-info-container form-sub-container" style={{display: this.state.showClientInfo ? "block" : "none"}}>
-                                    <ClientForm editable={((this.state.activeClient!=null)||this.state.isFormDisabled||this.state.invoiceID!=null||this.state.invoice_status==="finalised") ? false : true} isSubmitable={false} clientID={this.state.activeClient} userData={this.state.userData} />
-                                </div>    
-                            </div>
-                          
-                            <div className="bordered-container p-1" style={{marginBottom:'10px'}}>   
-                            <div style={{display:'flex', alignItems:'center', justifyContent:'space-between'}}><span><b>Produse</b></span><button type="button" style={{backgroundColor:'transparent', border:'none'}} title="Show client info" onClick={()=>{this.setState({showBilledProducts: !this.state.showBilledProducts})}}><span className="material-icons-outlined">{this.state.showBilledProducts ? "expand_less" : "expand_more"}</span></button></div>                         
-                                <div className="invoice-products-container form-group" style={{display: this.state.showBilledProducts ? "block" : "none"}}>
-                                        <div className="billing-products-header">
-                                            <div>Nume</div>
-                                            <div>UM</div>
-                                            <div>Cantitate</div>
-                                            <div>Taxa(%)</div>
-                                            <div>Taxa</div>
-                                            <div>Pret</div>
-                                            <div>Pret total</div>
-                                        </div>
-                                        <div className="billing-products-body">
-                                            {                                                
-                                                this.state.tableElements.map((element, index)=>(
-                                                    <div key={index}>
-                                                        <div className="billing-products-body-row" key={index} id={index}>
-                                                            <div><input type="text" className={element.properties.valid ? "product_name form-control shadow-none" : "product_name form-control invalid-input shadow-none"} name="product_name" disabled={element.properties.preloaded===true ? true : false} position={[index,0]} autoComplete="off" value={element.data[0]} onChange={this.validateAndUpdate}/></div>
-                                                            <div><input type="text" className={element.properties.valid ? "product_um form-control shadow-none": "product_um form-control invalid-input shadow-none"} name="product_um" disabled={element.properties.preloaded===true ? true : false} position={[index,1]} autoComplete="off" value={element.data[1]} onChange={this.validateAndUpdate}/></div>
-                                                            <div><input type="text" className={element.properties.valid ? "product_q form-control shadow-none" : "product_q form-control invalid-input shadow-none"}name="product_quantity" disabled={element.properties.preloaded===true ? true : false} position={[index,2]} autoComplete="off" value={element.data[2]} onChange={this.validateAndUpdate}/></div>
-                                                            <div><input type="text" className={element.properties.valid ? "product_tax form-control shadow-none": "product_tax form-control invalid-input shadow-none"} name="product_tax"  disabled={element.properties.preloaded===true ? true : false} position={[index,3]} autoComplete="off" value={element.data[3]} onChange={this.validateAndUpdate}/></div>
-                                                            <div><input type="text" className={element.properties.valid ? "product_tax form-control shadow-none": "product_tax form-control invalid-input shadow-none"} name="product_tax_value"  position={[index,4]} autoComplete="off" disabled={true} value={parseFloat(element.data[4]).toFixed(2)}/></div>
-                                                            <div><input type="text" className={element.properties.valid ? "product_ppu form-control shadow-none": "product_ppu form-control invalid-input shadow-none"} name="product_price" disabled={element.properties.preloaded===true ? true : false} position={[index,5]} autoComplete="off" value={element.data[5]} onChange={this.validateAndUpdate}/></div>
-                                                            <div><input type="text" rows="1" className="product_ppu form-control shadow-none" name="product_price" disabled={true} position={[index,6]} autoComplete="off" value={parseFloat(element.data[5]*element.data[2]).toFixed(2)} onChange={this.validateAndUpdate}/></div>
-                                                            <div style={{display:'flex', alignItems:'center', justifyContent:'center', backgroundColor:'#e9ecef', borderBottom:'1px solid lightgray'}}>  
-                                                                <button type="button" title="Stergere" style={{float:"right"}} className="remove-product-button round-button" disabled={((this.state.invoice_status==="finalised") ? true : false)||(this.state.tableElements.length<2)} onClick={()=>{this.removeEntry(index)}}><span className="material-icons-outlined">close</span></button>
-                                                            </div>
-                                                        </div> 
-                                                        <div className="billing-products-body-descriptor-row">
-                                                            <div style={{width:'100%'}}>
-                                                                <input type="text" className={element.properties.valid ? "product_description form-control shadow-none": "product_description form-control invalid-input shadow-none"} name="product_description" disabled={element.properties.preloaded===true ? true : false} position={[index,6]} autoComplete="off" value={element.data[6]} onChange={this.validateAndUpdate}/>
-                                                            </div>
-                                                        </div>
-                                                    </div>                                                             
-                                                ))                                                
-                                            }
-                                        </div>
-                                        <div className="billing-products-footer" style={{paddingLeft:'12px', paddingRight:'12px'}}>
-                                            <div><span><b>Total</b></span></div>
-                                            <div><span><b>{this.state.total_prod_price} RON</b></span></div>
-                                        </div>
-                                        <br/>
-                                    <button type="button" className="btn btn-light btn-sm" disabled={(this.state.invoice_server_status==="finalised") ? true : false} style={{marginRight:'5px'}} onClick={this.addNewRow}><span className="action-button-label"><span className="material-icons-outlined">add</span>Rand nou</span></button>
-                                    <button type="button" className="btn btn-light btn-sm" disabled={(this.state.invoice_server_status==="finalised") ? true : false} onClick={()=>{this.setState({predefinedList: true})}}><span className="action-button-label"><span className="material-icons-outlined">apps</span>Predefinite</span></button>
+                <div className="invoices-add-container p-3">                              
+                    <form id="invoice-form" onSubmit={this.submitData}>                              
+                        <div className="client-info-container form-sub-container" style={{display:'flex', flexDirection:'column'}}>
+                            <h6>Date client</h6>
+                            <span>Nume: <b>{this.state.clientData.client_last_name} {this.state.clientData.client_first_name}</b></span>
+                            <span>Telefon: <b>{this.state.clientData.client_phone}</b></span>
+                            <span>Email: <b>{this.state.clientData.client_email}</b></span> 
+                            <span style={{color:'gray'}}>Note: {this.state.clientData.client_notes}</span>                                   
+                        </div>
+                        <div className="invoice-products-container" style={{marginTop:'20px', marginBottom:'20px'}}>
+                            <div style={{display:'flex', justifyContent:'space-between', marginBottom:'10px'}}>
+                                <h6>Produse</h6>
+                                <div class="btn-group" role="group">
+                                    <button title="Rand nou" type="button" className="btn btn-light btn-sm" disabled={(this.state.invoice_server_status==="finalised") ? true : false} onClick={this.addNewRow}><span className="action-button-label"><span style={{fontSize:'18px'}} className="material-icons-outlined">add</span></span></button>
+                                    <button title="Predefinite" type="button" className="btn btn-light btn-sm" disabled={(this.state.invoice_server_status==="finalised") ? true : false} onClick={()=>{this.setState({predefinedList: true})}}><span className="action-button-label"><span style={{fontSize:'18px'}} className="material-icons-outlined">apps</span></span></button>
                                 </div>
-                            </div> 
-                            <button class="btn btn-light btn-sm" disabled={(this.state.dataModified) ? false : true} form="invoice-form" id="submit-invoice-button"><span class="action-button-label"><span class="material-icons-outlined">check</span>Salvare</span></button>                                                           
+                            </div>
+                            <div className="billing-products-body">
+                                <table className="table new-invoice-table">
+                                    <thead>
+                                        <tr>
+                                            <td className="col-2">Nume</td>
+                                            <td className="col-1">Unitate</td>
+                                            <td className="col-1">Cantitate</td>
+                                            <td className="col-1">Pret</td>
+                                            <td className="col-6">Descriere</td>
+                                            <td className="col-1">Pret total</td>                                            
+                                            <td></td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {
+                                        this.state.tableElements.map((element, index)=>(
+                                            <tr key={index}>
+                                                <td><input type="text" className={element.properties.valid ? "form-control shadow-none" : "form-control invalid-input shadow-none"} name="product_name" disabled={element.properties.preloaded===true ? true : false} position={[index,0]} autoComplete="off" value={element.data[0]} onChange={this.validateAndUpdate}/></td>
+                                                <td><input type="text" className={element.properties.valid ? "form-control shadow-none": "form-control invalid-input shadow-none"} name="product_um" disabled={element.properties.preloaded===true ? true : false} position={[index,1]} autoComplete="off" value={element.data[1]} onChange={this.validateAndUpdate}/></td>
+                                                <td><input type="text" className={element.properties.valid ? "form-control shadow-none" : "form-control invalid-input shadow-none"}name="product_quantity" disabled={element.properties.preloaded===true ? true : false} position={[index,2]} autoComplete="off" value={element.data[2]} onChange={this.validateAndUpdate} /></td>
+                                                <td><input type="text" className={element.properties.valid ? "form-control shadow-none": "invalid-input shadow-none"} name="product_price" disabled={element.properties.preloaded===true ? true : false} position={[index,5]} autoComplete="off" value={element.data[5]} onChange={this.validateAndUpdate} /></td>
+                                                <td><input type="text" className={element.properties.valid ? "form-control shadow-none" : "form-control invalid-input shadow-none"}name="product_description" disabled={element.properties.preloaded===true ? true : false} position={[index,6]} autoComplete="off" value={element.data[6]} onChange={this.validateAndUpdate}/></td>
+                                                <td><input type="text" rows="1" className="product_ppu form-control shadow-none" name="product_price" disabled={true} position={[index,6]} autoComplete="off" value={parseFloat(element.data[5]*element.data[2]).toFixed(2)} onChange={this.validateAndUpdate}/></td>
+                                                <td style={{paddingLeft:'5px', paddingRight:'5px'}}><button type="button" title="Stergere" className="remove-product-button round-button" disabled={((this.state.invoice_status==="finalised") ? true : false)||(this.state.tableElements.length<2)} onClick={()=>{this.removeEntry(index)}}><span className="material-icons-outlined">remove</span></button></td>
+                                            </tr>
+                                        ))
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div className="billing-products-footer">
+                                <h6>Total: {this.state.total_prod_price}</h6>
+                            </div>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button className="btn btn-success btn-sm" disabled={(this.state.dataModified) ? false : true} form="invoice-form" id="submit-invoice-button"><span class="action-button-label"><span class="material-icons-outlined">check</span>Salvare</span></button>                                                           
+                            <button title="Finalizare" type="button" className="btn btn-success btn-sm" disabled={(this.state.invoice_status==="finalised" || this.state.invoiceID===null) ? true : false} onClick={()=>{this.setInvoiceFinalised()}}><span class="action-button-label"><span class="material-icons-outlined">task_alt</span></span></button>
+                            <button title="Generare" type="button" className="btn btn-success btn-sm" disabled={(this.state.invoiceID===null) ? true : false} onClick={()=>{this.generateInvoice()}}><span class="action-button-label"><span class="material-icons-outlined">file_open</span></span></button>
+                        </div>
                     </form>
                     {this.state.predefinedList&&
                         <div> 
-                            <div className="blur-overlap"></div>     
-                            <button type="button" className="action-close-window" onClick={()=>{this.setState({predefinedList: false})}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
+                            <div className="blur-overlap"></div>                                 
                             <div className="overlapping-component-inner">
+                                <div className='overlapping-component-header'>
+                                    <span>Predefinite</span>
+                                    <button type="button" className="action-close-window" onClick={()=>{this.setState({predefinedList: false})}}><span className="material-icons-outlined">close</span></button>
+                                </div>
                                 <PredefinedProducts addElement={this.addPredefinedElement} insertable={true}/> 
                             </div>              
                         </div>

@@ -26,7 +26,7 @@ let InvoicesOverview = (props) =>{
     let fetchData=()=>{
         //fetches all data
         let fetcher;
-        fetcher = `http://localhost:3000/invoices?target=invoices&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page}`
+        fetcher = `http://localhost:3000/invoices?target=invoices&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}`
         
         fetch(fetcher,
         {
@@ -144,7 +144,6 @@ let InvoicesOverview = (props) =>{
                                             <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
                                             <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>
                                             <div className="search-header-buttons-container">                               
-                                                <button type="button" className='no-background-button' title="Factura noua" onClick={()=>{setnewInvoiceWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span>Factura noua</div></button>
                                                 <button type="button" className='btn-danger' title="Reincarca date"  onClick={()=>{resetSearch()}}><div className="inner-button-content"><span className="material-icons-outlined" >refresh</span></div></button>
                                             </div>                                                     
                                         </div>
@@ -166,7 +165,7 @@ let InvoicesOverview = (props) =>{
                                         <tbody>
                                             {invoicesData.length>0 && invoicesData.map((element, index)=>(          
                                                 <tr>
-                                                    <td>{index+1}</td>
+                                                    <td>{((queryFilter.page*10)-10) +index+1}</td>
                                                     <td><b>{element.client_first_name} {element.client_last_name}</b></td>
                                                     <td>{element.invoice_number}</td>
                                                     <td>{setStatus(element.invoice_status)}</td>
@@ -189,10 +188,7 @@ let InvoicesOverview = (props) =>{
                             <div className='overview-container bordered-container'>
                                 <button style={{border:'none', borderRadius:'6px', display:'flex', alignItems:'center', margin:'10px'}} onClick={()=>{setActiveInvoice(null)}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>
                                 <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
-                                    <div style={{display:'inherit', alignItems:'center'}}><span style={{fontSize:'24px'}}>Factura numarul {activeInvoice}</span></div>
-                                    <div className="nav col-12 col-lg-auto mb-2 justify-content-end header-buttons-container">                               
-                                        <button className='btn-light' title="Genereaza factura" onClick={()=>{openInvoice()}}><div className="inner-button-content"><span className="material-icons-outlined" >file_open</span></div></button>                                
-                                    </div>                                                             
+                                    <div style={{display:'inherit', alignItems:'center'}}><span style={{fontSize:'24px'}}>Factura numarul {activeInvoice}</span></div>                                                        
                                 </div>
                                 <Invoice key={activeInvoice} invoiceID={activeInvoice}/>
                         </div>}

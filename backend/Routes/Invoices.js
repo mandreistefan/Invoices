@@ -34,6 +34,7 @@ app.get('/invoices',(req,res)=>{
     //fetch data
     databaseController.fetchInvoices(filterObject).then(results=>{
         if(results.status==="OK"){
+            console.log("OK")
             res.send({
                 status:"OK",
                 recordsNumber: results.totalRecordsNumber,

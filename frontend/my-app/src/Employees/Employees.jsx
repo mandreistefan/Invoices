@@ -11,7 +11,7 @@ let Employees=(props)=>{
     //if(!localStorage.getItem('activeEmployee')) localStorage.setItem('activeEmployee', "")
 
     let [employees, setEmployees] = useState([])
-    let [query, setFilter] = useState({filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
+    let [queryFilter, setFilter] = useState({filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
     let [activeEmployee, setActive] = useState("")
     let [alertUser, setAlertUser] = useState(null)
     let [addEmployeeWindow, showaddEmployeeWindow] = useState(false)
@@ -19,10 +19,10 @@ let Employees=(props)=>{
 
     useEffect(()=>{
         fetchData()        
-    },[query])
+    },[queryFilter.page])
 
     function fetchData(){
-        fetch(`http://localhost:3000/employees?filter=${query.filter}&filterBy=${query.filterBy}&page=${query.page}`).then(response=>response.json()).then(data=>{
+        fetch(`http://localhost:3000/employees?filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}`).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 setEmployees(data.data)
             }else if(data.status==="NO_DATA"){
@@ -35,7 +35,7 @@ let Employees=(props)=>{
 
     let resetSearch=()=>{
         document.getElementById("searchinput").value=""
-        setFilter({...query, filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
+        setFilter({...queryFilter, filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
     }
 
     let setActiveEmployee=(id)=>{
@@ -48,7 +48,7 @@ let Employees=(props)=>{
         let searchTerm = event.target.searchinput.value
         if(searchTerm.length===0) return false
         let searchTermStringified = searchTerm.replaceAll(" ", "+")
-        setFilter({...query, filter:"search", filterBy:searchTermStringified})
+        setFilter({...queryFilter, filter:"search", filterBy:searchTermStringified})
     }
 
     function deleteEmployee(){
@@ -90,7 +90,7 @@ let Employees=(props)=>{
                                         <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
                                         <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>
                                         <div className="search-header-buttons-container">                               
-                                            <button type="button" className='no-background-button' title="Factura noua" onClick={()=>{showaddEmployeeWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span>Angajat nou</div></button>
+                                            <button type="button" className='no-background-button' title="Angajat nou" onClick={()=>{showaddEmployeeWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span></div></button>
                                             <button type="button" className='btn-danger' title="Reincarca date"  onClick={()=>{resetSearch()}}><div className="inner-button-content"><span className="material-icons-outlined" >refresh</span></div></button>
                                         </div>                                                     
                                     </div>
@@ -115,8 +115,8 @@ let Employees=(props)=>{
                                                 <td>{element.emp_job_name}</td> 
                                                 <td>{element.emp_active ? <span class="material-icons-outlined">task_alt</span> : <span class="material-icons-outlined">cancel</span>}</td>                                          
                                                 <td className="table-actions-container">
-                                                    <button title="Arhiveaza factura" onClick={()=>{deleteEmployee(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
-                                                    <button title="Deschide factura" onClick={()=>{setActiveEmployee(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span></div></button>
+                                                    <button title="Arhiveaza angajat" onClick={()=>{deleteEmployee(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
+                                                    <button title="Deschide angajat" onClick={()=>{setActiveEmployee(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span></div></button>
                                                 </td>
                                             </tr>    
                                         ))}
@@ -135,10 +135,13 @@ let Employees=(props)=>{
             }
             {addEmployeeWindow && 
                 <div>
-                    <div className="blur-overlap"></div>     
-                    <button type="button" className="action-close-window" onClick={()=>{closeAndRefresh()}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
+                    <div className="blur-overlap"></div> 
                     <div className="overlapping-component-inner">
-                        <EmployeeForm/>
+                        <div className='overlapping-component-header'>
+                            <span>Angajat nou</span>
+                            <button type="button" className="action-close-window" onClick={()=>{closeAndRefresh()}}><span className="material-icons-outlined">close</span></button>
+                        </div>
+                        <div className="p-3"><EmployeeForm/></div>
                     </div>
                 </div>
             }

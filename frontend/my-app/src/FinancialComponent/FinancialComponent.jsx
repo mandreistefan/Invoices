@@ -77,7 +77,7 @@ let Financial = (props) =>{
             {financialData ?
             <div className='grid-container'>
                 <div className="grid-row" style={{height:'325px'}}>
-                    <div className="col-6 p-2">
+                    <div className="col-4 p-2">
                         <div style={{backgroundColor:'white'}} className="bordered-container  p-2">
                             <div style={{display:'flex', flexDirection:'row', alignItems:'center', marginBottom:'5px'}} className="p-1">                
                                 <span className="material-icons-outlined">payments</span>
@@ -113,32 +113,37 @@ let Financial = (props) =>{
                             </table>
                         </div>
                     </div>
-                    <div className="col-6 p-2">
-                        <div style={{backgroundColor:'white'}} className="bordered-container p-2">
-                            <div style={{display:'flex', flexDirection:'row', alignItems:'center', marginBottom:'5px'}}  className="p-1">                
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-clipboard2-data" viewBox="0 0 16 16">
-                                    <path d="M9.5 0a.5.5 0 0 1 .5.5.5.5 0 0 0 .5.5.5.5 0 0 1 .5.5V2a.5.5 0 0 1-.5.5h-5A.5.5 0 0 1 5 2v-.5a.5.5 0 0 1 .5-.5.5.5 0 0 0 .5-.5.5.5 0 0 1 .5-.5h3Z"/>
-                                    <path d="M3 2.5a.5.5 0 0 1 .5-.5H4a.5.5 0 0 0 0-1h-.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1H12a.5.5 0 0 0 0 1h.5a.5.5 0 0 1 .5.5v12a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-12Z"/>
-                                    <path d="M10 7a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0V7Zm-6 4a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0v-1Zm4-3a1 1 0 0 0-1 1v3a1 1 0 1 0 2 0V9a1 1 0 0 0-1-1Z"/>
-                                </svg>
-                                <h5 style={{margin:'0',marginLeft:'5px'}}>Valori medii</h5>
+                    <div className="col-4 p-2">
+                        <div className='row' style={{height:'50%'}}>
+                            <div className="col-6">
+                                <div className="bordered-container financial-square p-2">
+                                    <span style={{color:'gray'}}  className="material-icons-outlined p-1">payments</span>
+                                    <div className="p-1">                                
+                                        <span style={{color:'gray', fontWeight:'500'}}>Numar facturi</span>
+                                        <span style={{fontSize:'32px', fontWeight:'600'}}>{parseFloat(financialData.total_number_invoices)}</span>
+                                    </div>                                    
+                                </div>
                             </div>
-                            <table style={{width:'100%'}} className='table'>
-                                <tbody>
-                                    <tr>
-                                        <td className="col-6">Numar facturi</td>
-                                        <td style={{textAlign:'right'}}><span>{financialData.total_number_invoices}</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td className="col-6">Valoare medie factura</td>
-                                        <td style={{textAlign:'right'}}><span>{parseFloat(financialData.avg_per_invoice).toFixed(2)} RON</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td className="col-6">Valoare medie pe luna</td>
-                                        <td style={{textAlign:'right'}}><span>{parseFloat(financialData.avg_per_step).toFixed(2)} RON</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div className="col-6">
+                                <div className="bordered-container financial-square p-2">
+                                    <span style={{color:'gray'}} className="material-icons-outlined p-1">money</span>
+                                    <div className="p-1">                                
+                                        <span style={{color:'gray', fontWeight:'500'}}>Valoare medie factura</span>
+                                        <span style={{fontSize:'32px', fontWeight:'600'}}>{parseFloat(financialData.avg_per_invoice).toFixed(2)}</span>
+                                    </div>                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div className='row' style={{height:'50%'}}>
+                            <div className="col-6">
+                                <div className="bordered-container financial-square p-2">
+                                    <span style={{color:'gray'}} className="material-icons-outlined">money</span>                                    
+                                    <div className="p-1"> 
+                                        <span style={{color:'gray', fontWeight:'500'}}>Valoare medie lunara</span>
+                                        <span style={{fontSize:'32px', fontWeight:'600'}}>{parseFloat(financialData.avg_per_step).toFixed(2)}</span>
+                                    </div>                                    
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

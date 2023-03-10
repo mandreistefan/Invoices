@@ -2,23 +2,27 @@ import {useState, useEffect} from 'react';
 import ClientForm from '../ClientForm/ClientForm.jsx';
 import Snackbar from '../Snackbar/Snackbar.jsx'
 import PageNavigation from '../PageNavigation.jsx'
+import Invoice from '../InvoiceComponent/Invoice.jsx';
+import SmallMenu from '../SmallMenu/SmallMenu.jsx';
 
 let Clients = (props) =>{
 
     let defaultFilter = {filter:"all", filterBy:"", page:1}
 
-    //local storage
-    /*if(!localStorage.getItem('activeClient')) localStorage.setItem('activeClient', "")
-    if(!localStorage.getItem('activeClientName')) localStorage.setItem('activeClientName', "")*/
 
-    const [allClients, setAllClients] = useState(null)
-    //const [activeClient, setActive] = useState({id:localStorage.getItem('activeClient') ? localStorage.getItem('activeClient') : null, name:localStorage.getItem('activeClientName') ? localStorage.getItem('activeClientName'): ""})
+    const [allClients, setAllClients] = useState(null)   
+    //client that is being edited
     const [activeClient, setActive] = useState(null)
+    //used in pagination
     let [numberOfElements, setNOE] = useState(null)
     let [alertUser, setAlertUser] = useState({text: null})
+    //new client form
     let [newClientWindow, showonewClientWindow] = useState(false)
-    
+    //used to fetch data
     let [queryFilter, setFilter]=useState({filter: props.queryFilterBy ? props.queryFilterBy : defaultFilter.filter, filterBy: props.queryFilterData ? props.queryFilterData : defaultFilter.filterBy, page:1})
+    //new ivoice for him
+    let [invoiceClient, invoiceThisClient] = useState(null)
+
 
     useEffect(()=>{
         fetchClients()
@@ -29,7 +33,7 @@ let Clients = (props) =>{
      */
     let fetchClients=()=>{
         //fetches all clients
-        fetch(`http://localhost:3000/clients?&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page}`,
+        fetch(`http://localhost:3000/clients?&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}`,
         {
             method:"GET",
             headers: { 'Content-Type': 'application/json' }
@@ -130,10 +134,11 @@ let Clients = (props) =>{
                                                 <td>{element.client_county}, {element.client_city}, {element.client_street}, {element.client_adress_number}, {element.client_zip}</td>                                          
                                                 <td className="table-actions-container">
                                                     <button title="Arhiveaza factura" onClick={()=>{deleteClient(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
-                                                    <button  className='btn-light' title="Factureaza client" onClick={()=>{props.enableInvoiceApp(element.id)}}><div className="inner-button-content"><span className="material-icons-outlined">library_add</span></div></button>
+                                                    <button  className='btn-light' title="Factureaza client" onClick={()=>{invoiceThisClient(element)}}><div className="inner-button-content"><span className="material-icons-outlined">library_add</span></div></button>
                                                     <button title="Deschide client" onClick={()=>{setActive(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span></div></button>
                                                 </td>
-                                            </tr>    
+                                            </tr> 
+ 
                                         ))}
                                     </tbody>  
                                 </table>
@@ -143,26 +148,35 @@ let Clients = (props) =>{
                         {activeClient&&
                             <div className='overview-container bordered-container'> 
                                 <button style={{border:'none', borderRadius:'6px', display:'flex', alignItems:'center', margin:'10px'}} onClick={()=>{setActive(null)}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>     
-                                <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
-                                    <div style={{display:'inherit', alignItems:'center'}}><span style={{fontSize:'24px'}}>{activeClient.name} {activeClient.surname}</span></div>
-                                        <div className="nav col-12 col-lg-auto mb-2 justify-content-end header-buttons-container">                               
-                                            <button  className='btn-light' title="Factureaza client" onClick={()=>{props.enableInvoiceApp(activeClient)}}><div className="inner-button-content"><span className="material-icons-outlined">library_add</span></div></button>
-                                            <button className='btn-danger' title="Arhiveaza client" onClick={()=>{deleteClient()}}><div className="inner-button-content"><span className="material-icons-outlined">delete</span></div></button>
-                                    </div>
-                                </div>
-                                <ClientForm key={activeClient.id} editable={true} isSubmitable={true} clientID={activeClient}/>
+                                <ClientForm key={activeClient.id} editable={true} clientID={activeClient}/>
                             </div>
                         }
                     </div>                             
                 }
                 {newClientWindow&&
                     <div>
-                        <div className="blur-overlap"></div>     
-                        <button type="button" className="action-close-window" onClick={()=>{showonewClientWindow(false)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
+                        <div className="blur-overlap"></div>
                         <div className="overlapping-component-inner">
+                            <div className='overlapping-component-header'>
+                                <span>Client nou</span>
+                                <button type="button" className="action-close-window" onClick={()=>{showonewClientWindow(false)}}><span className="material-icons-outlined">close</span></button>
+                            </div>
                             <ClientForm editable={true} isSubmitable={true} clientID={null}/>
                         </div>
-                    </div>}
+                    </div>
+                }
+                {invoiceClient!=null &&
+                    <div>
+                        <div className="blur-overlap"></div>                
+                        <div className="overlapping-component-inner">
+                            <div className='overlapping-component-header'>
+                                <span>Factura noua</span>
+                                <button type="button" className="action-close-window" onClick={()=>{invoiceThisClient(null)}}><span className="material-icons-outlined">close</span></button>
+                            </div>
+                            <Invoice activeClient={invoiceClient}/>
+                        </div>
+                    </div>
+                }
                 <Snackbar text={alertUser.text} closeSnack={()=>{setAlertUser({text:null})}}/>                
             </div>
     )

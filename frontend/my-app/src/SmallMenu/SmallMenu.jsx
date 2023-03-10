@@ -37,13 +37,7 @@ let SmallMenu = (props) =>{
         <div class="dropdown" ref={carlig}>
             <button onClick={()=>{setVisibility(true)}} className="dropbtn"><span class="material-icons-outlined">more_vert</span></button>
             <div id="myDropdown" className={menuVisible ? "dropdown-content show" : "dropdown-content"} ref={carlig}>
-                {props.items.map((element, index)=>(
-                        <button key={index} className='small-menu-button' disabled={element.disabled ? true : false} onClick={()=>{handleButtonClick(element.clickAction)}}>                                
-                            <div className='inner-button-content'>
-                                <span className="material-icons-outlined">{element.icon}</span>{element.name}
-                            </div>
-                        </button>
-                ))}
+                <h3>Hello</h3>
             </div>
         </div>
     )

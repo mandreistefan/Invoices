@@ -137,31 +137,42 @@ let ProductForm = (props) =>{
     }
 
     return (
-        <div id="new-product-form">
-            <h6>Produs nou</h6>
-            <div className='form-row' ref={carlig}>
-                <div className="form-group col-2">            
-                    <label className="form-subsection-label" htmlFor="pp_name">Nume</label><br/>
-                    <input type="text" id="pp_name" name="pp_name" className="form-control shadow-none" onChange={changeFormData} value={arrayData.pp_name.value}/>
-                </div>
-                <div className="form-group col-2">   
-                    <label className="form-subsection-label" htmlFor="pp_um">UM</label><br/>
-                    <input type="text" id="pp_um" name="pp_um"  className="form-control shadow-none" onChange={changeFormData} value={arrayData.pp_um.value}/>
-                </div>
-                <div className="form-group col-2">  
-                    <label className="form-subsection-label" htmlFor="pp_price_per_item">Pret per unitate</label><br/>
-                    <input type="text" id="pp_price_per_item" name="pp_price_per_item"  className="form-control shadow-none"onChange={changeFormData} value={arrayData.pp_price_per_item.value}/>
-                </div>
-                <div className="form-group col-2">   
-                    <label className="form-subsection-label" htmlFor="pp_tax">Taxa</label><br/>
-                    <input type="text" id="pp_tax" name="pp_tax"  className="form-control shadow-none"onChange={changeFormData} value={arrayData.pp_tax.value}/>
-                </div>
-                <div className="form-group col-4">   
-                    <label className="form-subsection-label" htmlFor="pp_description">Descriere</label><br/>
-                    <input type="text" id="pp_description" name="pp_description"  className="form-control shadow-none" onChange={changeFormData} value={arrayData.pp_description.value}/>
+        <div id="new-product-form">  
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <input type="text" id="pp_name" name="pp_name" className="form-control shadow-none" placeHolder="Nume" onChange={changeFormData} value={arrayData.pp_name.value}/>
+                    <label className="form-subsection-label" htmlFor="pp_name">Nume</label>
                 </div>
             </div>
-            <button className="w-100 btn btn-primary btn-lg" disabled={dataModified ? false : true}  onClick={()=>{submitData()}}><span className="action-button-label"><span class="material-icons-outlined">save</span> SAVE</span></button>
+
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <input type="text" id="pp_um" name="pp_um" placeHolder="UM" className="form-control shadow-none" onChange={changeFormData} value={arrayData.pp_um.value}/>
+                    <label className="form-subsection-label" htmlFor="pp_um">UM</label>
+                </div>
+            </div>
+
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <input type="text" id="pp_price_per_item" name="pp_price_per_item" placeHolder="PPU" className="form-control shadow-none"onChange={changeFormData} value={arrayData.pp_price_per_item.value}/>
+                    <label className="form-subsection-label" htmlFor="pp_price_per_item">Pret per unitate</label>
+                </div>
+            </div>
+
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <input type="text" id="pp_tax" name="pp_tax"  className="form-control shadow-none" placeHolder="Taxa" onChange={changeFormData} value={arrayData.pp_tax.value}/>
+                    <label className="form-subsection-label" htmlFor="pp_price_per_item">Taxa</label>
+                </div>
+            </div>
+
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <input type="text" id="pp_description" name="pp_description"  className="form-control shadow-none" placeHolder="Descriere" onChange={changeFormData} value={arrayData.pp_description.value}/>
+                    <label className="form-subsection-label" htmlFor="pp_price_per_item">Descriere</label>
+                </div>
+            </div>
+            <button class="btn btn-light btn-sm" onClick={()=>{submitData()}} disabled={dataModified ? false : true}><span class="action-button-label"><span class="material-icons-outlined">check</span>Salvare</span></button>
             <Snackbar text={snackBarText} closeSnack={()=>{setSnackBarText(null)}}/>
         </div>
     )

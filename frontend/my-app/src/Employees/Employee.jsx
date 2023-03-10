@@ -1,5 +1,6 @@
 import React from "react";
 import Snackbar from '../Snackbar/Snackbar.jsx'
+import EmployeeForm from "./EmployeeForm.jsx";
 
 //the current date
 const currentDate = new Date()
@@ -32,8 +33,9 @@ export default class Employee extends React.Component{
             salaryYear:2023,
             alertUser:null, 
             vacationDaysWindow:false,
-            vacationDaysRequested:[{date: `${dateString.year}-${dateString.month}-${dateString.day}`, type:"vacation"}], 
+            vacationDaysRequested:[{date: `${dateString.year}-${dateString.month}-${dateString.day}`, type:"vacation", disabled:false}], 
             availableVacationDays:0,
+            editWindow: false,
             emp_notes: "" ,
             taxesPercentages: [
                 {name: "CAS", key:"CAS", description:"Asigurare sociale", value: 21.5},
@@ -174,6 +176,11 @@ export default class Employee extends React.Component{
             }).then(response=>response.json()).then(data=>{
                 if(data.status==="OK"){
                     this.setState({alertUser:"Cerere inregistrata"})
+                    let vacationsCopy = [...this.state.vacationDaysRequested]
+                    vacationsCopy.forEach(element=>{
+                        element.disabled=true
+                    })
+                    this.setState({vacationDaysRequested: vacationsCopy})
                 }else{
                     this.setState({alertUser:"Ceva nu a functionat"})
                 }                
@@ -235,7 +242,7 @@ export default class Employee extends React.Component{
     //month starts with 0
     parseDate=(date)=>{
         let theDate = date.split('/')    
-        return `${theDate[0]}/${parseInt(theDate[1])+1}/${theDate[2]}`
+        return `${theDate[0]}/${parseInt(theDate[1])}/${theDate[2]}`
     }
 
     updateEmployeeSalaries=()=>{
@@ -284,7 +291,7 @@ export default class Employee extends React.Component{
                     <div style={{width:"50%", paddingRight:'10px'}}>
                         <div>
                             <h4>{this.state.first_name} {this.state.last_name}</h4>
-                            <h5 id="employee-title" style={{fontWeight:'300'}}>{this.state.job_name}</h5>
+                            <h5 id="employee-title" style={{fontWeight:'300'}}>{this.state.job_name}</h5>                            
                             <div>
                                 <ul id="employee-info">
                                     <li><b>Nume:</b> {this.state.first_name}</li>
@@ -295,13 +302,14 @@ export default class Employee extends React.Component{
                                     <li><b>Data angajarii:</b> {this.state.registration_date}</li>
                                     <li><b>Zile concediu:</b> {this.state.availableVacationDays}</li>
                                 </ul>
-                            </div>                            
+                            </div> 
+                            <button className='btn btn-light' type="button" onClick={()=>{this.setState({editWindow:true})}} title="Editare angajat" ><div className="inner-button-content"><span style={{fontSize:'18px'}} className="material-icons-outlined">edit</span>Editare</div></button>                           
                         </div>
                     </div>
                     <div style={{width:"50%", paddingLeft:'10px'}}>
-                        <div>
+                         <div class="form-floating">
+                            <textarea style={{height:'100%'}} rows="4" class="form-control" placeholder="Informatii" disabled={true} id="floatingTextarea2" value={this.state.emp_notes}></textarea>
                             <label>Note angajat</label>
-                            <textarea style={{height:'100%'}} rows="4" className="form-control" disabled={true} value={this.state.emp_notes}></textarea>
                         </div>
                     </div>
                 </div>
@@ -310,8 +318,8 @@ export default class Employee extends React.Component{
                             <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
                                 <h5>Salarii</h5>
                                 <div className="btn-group">                               
-                                    <button className='btn btn-light' type="button" onClick={()=>{this.setState({salaryWindow:true})}} title="Plata noua" ><div className="inner-button-content"><span className="material-icons-outlined">add</span></div></button>
-                                    <button className='btn btn-light' type="button" onClick={()=>{this.updateEmployeeSalaries()}} title="Reincarca" ><div className="inner-button-content"><span className="material-icons-outlined">refresh</span></div></button>
+                                    <button className='btn btn-light' type="button" onClick={()=>{this.setState({salaryWindow:true})}} title="Plata noua" ><div className="inner-button-content"><span style={{fontSize:'18px'}} className="material-icons-outlined">add</span></div></button>
+                                    <button className='btn btn-light' type="button" onClick={()=>{this.updateEmployeeSalaries()}} title="Reincarca" ><div className="inner-button-content"><span style={{fontSize:'18px'}} className="material-icons-outlined">refresh</span></div></button>
                                 </div>
                             </div>
                             <table className='table' id="salaries-table">
@@ -348,8 +356,8 @@ export default class Employee extends React.Component{
                                 <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
                                     <h5>Zile libere</h5>
                                     <div className="btn-group">                               
-                                        <button className='btn btn-light' type="button" onClick={()=>{this.setState({vacationDaysWindow:true})}} title="Cerere noua" ><div className="inner-button-content"><span className="material-icons-outlined">add</span></div></button>
-                                        <button className='btn btn-light' type="button" onClick={()=>{this.updateVacationDays()}}  title="Reincarca" ><div className="inner-button-content"><span className="material-icons-outlined">refresh</span></div></button>
+                                        <button className='btn btn-light' type="button" onClick={()=>{this.setState({vacationDaysWindow:true})}} title="Cerere noua" ><div className="inner-button-content"><span style={{fontSize:'18px'}} className="material-icons-outlined">add</span></div></button>
+                                        <button className='btn btn-light' type="button" onClick={()=>{this.updateVacationDays()}}  title="Reincarca" ><div className="inner-button-content"><span style={{fontSize:'18px'}} className="material-icons-outlined">refresh</span></div></button>
                                     </div>
                                 </div>
                                 <table className='table' id="vacation-days-table">
@@ -377,11 +385,14 @@ export default class Employee extends React.Component{
                 </div>
                 {this.state.salaryWindow &&
                     <div> 
-                        <div className="blur-overlap"></div>     
-                        <button type="button" className="action-close-window" onClick={()=>{this.setState({salaryWindow: false})}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
+                        <div className="blur-overlap"></div> 
                         <div className="overlapping-component-inner">
-                            <div className="row g-5 p-2">
-                                <div className="col-md-7 col-lg-6">
+                            <div className='overlapping-component-header'>
+                                <span>Inregistrare salariu</span>
+                                <button type="button" className="action-close-window" onClick={()=>{this.setState({salaryWindow: false})}}><span className="material-icons-outlined">close</span></button>
+                            </div>
+                            <div className="p-3" style={{display:'flex', flexDirection:'row'}}>
+                                <div className="col-md-7 col-lg-6 p-2">
                                     <h6>Informatii angajat</h6>
                                     <form onSubmit={this.handleSubmit}>
                                         <div className="row g-3">
@@ -430,7 +441,7 @@ export default class Employee extends React.Component{
                                         <button className="btn btn-light btn-sm mt-3" type="submit"><span class="action-button-label"><span class="material-icons-outlined">check</span>Salvare</span></button>
                                     </form>
                                 </div>
-                                <div className="col-md-5 col-lg-6 order-md-last">
+                                <div className="col-md-5 col-lg-6 order-md-last p-2">
                                     <ul className="list-group mb-3">
                                         {
                                             this.state.taxesPercentages.map(element=>(
@@ -462,10 +473,13 @@ export default class Employee extends React.Component{
                 }
                 {this.state.vacationDaysWindow &&
                     <div> 
-                        <div className="blur-overlap"></div>     
-                        <button type="button" className="action-close-window" onClick={()=>{this.setState({vacationDaysWindow: false})}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button>
+                        <div className="blur-overlap"></div> 
                         <div className="overlapping-component-inner">
-                            <form onSubmit={this.handleVacationForm} id="vacationDaysForm" style={{minWidth:'600px'}}>
+                            <div className='overlapping-component-header'>
+                                <span>Zile vacanta</span>
+                                <button type="button" className="action-close-window" onClick={()=>{this.setState({vacationDaysWindow: false})}}><span className="material-icons-outlined">close</span></button>
+                            </div>
+                            <form className="p-3" onSubmit={this.handleVacationForm} id="vacationDaysForm" style={{minWidth:'600px'}}>
                                 <div className="mb-3">                                    
                                     <div className="row">
                                         <div className="col-sm-4">
@@ -478,28 +492,42 @@ export default class Employee extends React.Component{
                                     {this.state.vacationDaysRequested.map((element, index)=>(
                                         <div key={index} className="row mb-1">
                                             <div className="col-sm-4">
-                                                <input type="date" className="form-control shadow-none" name="trip-start" id={`date-${index}`} min={`${dateString.year}-${dateString.month}-${dateString.day}`} value={element.date} onChange={this.handleVacationDaysInput}></input>
+                                                <input type="date" className="form-control shadow-none" name="trip-start" id={`date-${index}`} min={`${dateString.year}-${dateString.month}-${dateString.day}`} value={element.date} disabled={element.disabled}  onChange={this.handleVacationDaysInput}></input>
                                             </div>
                                             <div className="col-md-4">
                                                 <div style={{display:"flex", flexDirection:"row", alignItems:'center'}}>
-                                                    <select className="form-select shadow-none" id={`type-${index}`} value={element.type} onChange={this.handleVacationDaysInput}>
+                                                    <select className="form-select shadow-none" id={`type-${index}`} value={element.type} disabled={element.disabled} onChange={this.handleVacationDaysInput}>
                                                         <option value="vacation">Vacation</option>
                                                         <option value="medical">Medical</option>
                                                     </select>
                                                 </div>
                                             </div>                   
                                             <div className="col-md-4" style={{display:'flex', alignItems:'center', justifyContent:'flex-end'}}>  
-                                                <button type="button" title="Stergere" style={{float:"right"}} className="remove-product-button round-button" disabled={false} onClick={this.handleVacationDaysInput}><span className="material-icons-outlined">close</span></button>
+                                                <button type="button" title="Stergere" style={{float:"right"}} className="remove-product-button round-button" disabled={element.disabled} onClick={this.handleVacationDaysInput}><span className="material-icons-outlined">remove</span></button>
                                             </div>         
                                         </div>
                                     ))
                                     }                                
-                                </div>    
-                                <button type="button" onClick={this.newVacationDay} className="btn btn-light btn-sm" style={{marginRight: '5px'}}><span className="action-button-label"><span class="material-icons-outlined">add</span>Adauga zi</span></button>
-                                <button type="submit" className="btn btn-light btn-sm"><span className="action-button-label"><span class="material-icons-outlined">done</span>Inregistrare cerere</span></button>                                             
+                                </div> 
+                                <div class="btn-group" role="group">
+                                    <button type="button" title="Adauga zi" onClick={this.newVacationDay} className="btn btn-light btn-sm"><span className="action-button-label"><span class="material-icons-outlined">add</span></span></button>
+                                    <button type="submit" className="btn btn-light btn-sm"><span className="action-button-label"><span class="material-icons-outlined">done</span>Inregistrare</span></button>                                             
+                                </div>
                             </form>
                         </div>
                     </div>             
+                }
+                {this.state.editWindow &&
+                    <div> 
+                        <div className="blur-overlap"></div>
+                        <div className="overlapping-component-inner">
+                            <div className='overlapping-component-header'>
+                                <span>Editare angajat</span>
+                                <button type="button" className="action-close-window" onClick={()=>{this.setState({editWindow: false})}}><span className="material-icons-outlined">close</span></button>
+                            </div>
+                            <div className="p-3"><EmployeeForm employeeID={this.props.id}/></div>
+                        </div>              
+                    </div>
                 }
                <Snackbar text={this.state.alertUser} closeSnack={()=>{this.setState({alertUser:null})}}/>  
             </div>

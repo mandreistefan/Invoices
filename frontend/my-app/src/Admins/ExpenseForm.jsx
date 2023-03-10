@@ -114,33 +114,44 @@ let ExpenseForm = (props) =>{
 
     return (
         <div id="new-product-form">
-            <h6>Adaugare cheltuiala</h6>
-            <div className='form-row' ref={carlig}>
-                <div className="form-group col-3">            
-                    <label className="form-subsection-label" htmlFor="exp_name">Nume</label><br/>
-                    <input type="text" id="exp_name" name="exp_name" className="form-control shadow-none" onChange={changeFormData} value={arrayData.exp_name.value}/>
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <input type="text" id="exp_name" name="exp_name" className="form-control shadow-none" placeHolder="Nume" onChange={changeFormData} value={arrayData.exp_name.value}/>
+                    <label className="form-subsection-label" htmlFor="exp_name">Nume</label>
                 </div>
-                <div className="form-group col-1">   
-                    <label className="form-subsection-label" htmlFor="exp_sum">Suma</label><br/>
-                    <input type="text" id="exp_sum" name="exp_sum"  className="form-control shadow-none" onChange={changeFormData} value={arrayData.exp_sum.value}/>
+            </div>
+
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <input type="text" id="exp_sum" name="exp_sum"  className="form-control shadow-none" placeHolder="Suma" onChange={changeFormData} value={arrayData.exp_sum.value}/>
+                    <label className="form-subsection-label" htmlFor="exp_sum">Suma</label>
                 </div>
-                <div className="form-group col-5">  
-                    <label className="form-subsection-label" htmlFor="exp_description">Descriere</label><br/>
-                    <input type="text" id="exp_description" rows="2" name="exp_description"  className="form-control shadow-none" onChange={changeFormData} value={arrayData.exp_description.value}/>
+            </div>
+
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <input type="text" id="exp_description" rows="2" name="exp_description"  className="form-control shadow-none" placeHolder="Descriere" onChange={changeFormData} value={arrayData.exp_description.value}/>
+                    <label className="form-subsection-label" htmlFor="exp_description">Descriere</label>
                 </div>
-                <div className="form-group col-1">  
-                    <label className="form-subsection-label" htmlFor="exp_deduct">Deductibil</label><br/>                    
-                    <select className="form-control shadow-none" id="exp_deduct" name="exp_deduct" onChange={changeFormData} value={arrayData.exp_deduct.value}>
+            </div>
+
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <select className="form-control shadow-none" id="exp_deduct" name="exp_deduct" onChange={changeFormData} value={arrayData.exp_deduct.value} placeholder="Deductibil">
                         <option value="true">Da</option>
                         <option value="false">Nu</option>
                     </select>
-                </div>
-                <div className="form-group col-2">   
-                    <label className="form-subsection-label" htmlFor="exp_date">Data</label><br/>
-                    <input type="date" className="form-control shadow-none" id="end" name="trip-end" value={arrayData.exp_date.value} onChange={changeDate}></input>
+                    <label className="form-subsection-label" htmlFor="exp_deduct">Deductibil</label>
                 </div>
             </div>
-            <button className="btn btn-primary btn-light btn-sm" disabled={dataModified ? false : true} onClick={()=>{submitData()}}><span className="action-button-label"><span class="material-icons-outlined">check</span> SAVE</span></button>
+
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <input type="date" className="form-control shadow-none" id="end" name="trip-end" value={arrayData.exp_date.value} onChange={changeDate} placeHolder="Data"></input>
+                    <label className="form-subsection-label" htmlFor="exp_date">Data</label>
+                </div>
+            </div>
+            <button class="btn btn-light btn-sm" onClick={()=>{submitData()}} disabled={dataModified ? false : true}><span class="action-button-label"><span class="material-icons-outlined">check</span>Salvare</span></button>
             <Snackbar text={snackBarText} closeSnack={()=>{setSnackBarText(null)}}/>
         </div>
     )
