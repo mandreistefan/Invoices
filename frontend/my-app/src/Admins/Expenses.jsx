@@ -75,7 +75,8 @@ let Expenses=()=>{
         <div className="app-data-container">
             <div style={{overflowY:'scroll', maxHeight:'80vh'}} className="bordered-container">     
                 <div style={{padding:'10px'}}>
-                    <div className="bordered-container p-2">
+                    <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                        <h5 style={{margin:'0'}}>Cheltuieli</h5>
                         <div style={{display:'flex', justifyContent:"flex-start"}}>
                             <div style={{display:'flex', alignItems:'center', width:'fit-content', borderRadius:'6px', padding:'3px', marginRight:'5px'}}>
                                 <span title="Interval" style={{marginRight:'5px'}} className="material-icons-outlined">date_range</span>
@@ -86,7 +87,7 @@ let Expenses=()=>{
                         </div>
                     </div>   
                     <br></br>                     
-                    <div className="bordered-container">                       
+                    <div>                       
                         <table className='table'>
                             <thead>      
                                 <tr>

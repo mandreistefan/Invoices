@@ -66,7 +66,7 @@ let Products=()=>{
                 <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
                     <h5>Produse sablon</h5>
                     <div className="btn-group">                               
-                        <button className='btn btn-light' type="button" onClick={()=>{setaddproductWindow(true)}} title="Produs nou" ><div className="inner-button-content"><span className="material-icons-outlined">add</span>Produs nou</div></button>
+                        <button className='btn btn-light' type="button" onClick={()=>{setaddproductWindow(true)}} title="Adauga" ><div className="inner-button-content"><span className="material-icons-outlined">add</span>Adauga</div></button>
                         <button className='btn btn-light' type="button" onClick={()=>{fetchData()}}  title="Reincarca" ><div className="inner-button-content"><span className="material-icons-outlined">refresh</span></div></button>
                     </div>
                 </div>          

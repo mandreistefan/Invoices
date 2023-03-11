@@ -85,6 +85,7 @@ let InvoicesOverview = (props) =>{
         .then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 setAlertUser({text: "Factura setata ca finalizata"})
+                fetchData()
             }else if(data.status==="SERVER_ERROR"){
                 setAlertUser({text: "Baza de date nu poate fi accesata"})
             }else{
@@ -164,7 +165,7 @@ let InvoicesOverview = (props) =>{
                                         </thead>
                                         <tbody>
                                             {invoicesData.length>0 && invoicesData.map((element, index)=>(          
-                                                <tr>
+                                                <tr key={index}>
                                                     <td>{((queryFilter.page*10)-10) +index+1}</td>
                                                     <td><b>{element.client_first_name} {element.client_last_name}</b></td>
                                                     <td>{element.invoice_number}</td>

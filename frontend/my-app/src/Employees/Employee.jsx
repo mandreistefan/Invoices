@@ -49,45 +49,48 @@ export default class Employee extends React.Component{
     }
 
     componentDidMount(){
-
         if(this.state.id){
-            fetch(`http://localhost:3000/employee/${this.state.id}`).then(response=>response.json()).then(data=>{
-                if(data.status==="OK"){
-                    this.setState({
-                        first_name:data.data.info[0].emp_first_name, 
-                        last_name:data.data.info[0].emp_last_name,
-                        adress:data.data.info[0].emp_adress,
-                        identification_number:data.data.info[0].emp_ident_no,
-                        registration_date:this.normalDate(data.data.info[0].emp_date, true),
-                        active:data.data.info[0].emp_active ? true : false,
-                        job_name:data.data.info[0].emp_job_name,
-                        salary_gross:data.data.info[0].emp_cur_salary_gross,
-                        salaries:this.convertSalaries(data.data.salaries),
-                        vacationDays:this.convertVacations(data.data.vacationDays),
-                        emp_notes: data.data.info[0].emp_notes ? data.data.info[0].emp_notes : "",
-                        availableVacationDays: data.data.info[0].emp_vacation_days                        
-                    }) 
-                    if(!data.data.emp_tax){
-                        let taxesCopy = [...this.state.taxesPercentages]
-                        taxesCopy[2].value=0;
-                        this.setState({taxesPercentages: taxesCopy})                    
-                    }                    
-                    if(!data.data.emp_tax_cass){
-                        let taxesCopy = [...this.state.taxesPercentages]
-                        taxesCopy[2].value=0;
-                        this.setState({taxesPercentages: taxesCopy})                    
-                    }
-                    this.calculateNet()                   
-                }else{
-                    this.setState({alertUser:"Eroare"})
-                }
-            }).catch(error=>{
-                console.log(error)
-                this.setState({alertUser:"Eroare"})
-            })
+            this.fetchData()
         }
     }
 
+
+    fetchData=()=>{
+        fetch(`http://localhost:3000/employee/${this.state.id}`).then(response=>response.json()).then(data=>{
+            if(data.status==="OK"){
+                this.setState({
+                    first_name:data.data.info[0].emp_first_name, 
+                    last_name:data.data.info[0].emp_last_name,
+                    adress:data.data.info[0].emp_adress,
+                    identification_number:data.data.info[0].emp_ident_no,
+                    registration_date:this.normalDate(data.data.info[0].emp_date, true),
+                    active:data.data.info[0].emp_active ? true : false,
+                    job_name:data.data.info[0].emp_job_name,
+                    salary_gross:data.data.info[0].emp_cur_salary_gross,
+                    salaries:this.convertSalaries(data.data.salaries),
+                    vacationDays:this.convertVacations(data.data.vacationDays),
+                    emp_notes: data.data.info[0].emp_notes ? data.data.info[0].emp_notes : "",
+                    availableVacationDays: data.data.info[0].emp_vacation_days                        
+                }) 
+                if(data.data.info[0].emp_tax===0){
+                    let taxesCopy = [...this.state.taxesPercentages]
+                    taxesCopy[2].value=0;
+                    this.setState({taxesPercentages: taxesCopy})                    
+                }                    
+                if(data.data.info[0].emp_tax_cass===0){
+                    let taxesCopy = [...this.state.taxesPercentages]
+                    taxesCopy[2].value=0;
+                    this.setState({taxesPercentages: taxesCopy})                    
+                }
+                this.calculateNet()                   
+            }else{
+                this.setState({alertUser:"Eroare"})
+            }
+        }).catch(error=>{
+            console.log(error)
+            this.setState({alertUser:"Eroare"})
+        })
+    }
 
     convertSalaries=(salaries)=>{
 
@@ -143,6 +146,7 @@ export default class Employee extends React.Component{
         }).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 this.setState({alertUser:"Salariu inregistrat"})
+                this.updateEmployeeSalaries()
             }else{
                 if(data.data==="SALARY_EXISTS") this.setState({alertUser:"Exista o inregistrare pentru luna respectiva"})
             }
@@ -181,6 +185,9 @@ export default class Employee extends React.Component{
                         element.disabled=true
                     })
                     this.setState({vacationDaysRequested: vacationsCopy})
+                    document.getElementById("new-vacation-day-button").disabled=true
+                    document.getElementById("submit-vacation-day-button").disabled=true
+                    this.updateVacationDays()
                 }else{
                     this.setState({alertUser:"Ceva nu a functionat"})
                 }                
@@ -284,6 +291,7 @@ export default class Employee extends React.Component{
         })
     }
 
+
      render(){
         return(
             <div style={{padding:'16px'}}>
@@ -303,7 +311,10 @@ export default class Employee extends React.Component{
                                     <li><b>Zile concediu:</b> {this.state.availableVacationDays}</li>
                                 </ul>
                             </div> 
-                            <button className='btn btn-light' type="button" onClick={()=>{this.setState({editWindow:true})}} title="Editare angajat" ><div className="inner-button-content"><span style={{fontSize:'18px'}} className="material-icons-outlined">edit</span>Editare</div></button>                           
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <button className='btn btn-light' type="button" onClick={()=>{this.setState({editWindow:true})}} title="Editare angajat" ><div className="inner-button-content"><span style={{fontSize:'18px'}} className="material-icons-outlined">edit</span>Editare</div></button>                           
+                                <button className='btn btn-light' type="button" onClick={()=>{this.fetchData()}} title="Reactualizare" ><div className="inner-button-content"><span style={{fontSize:'18px'}} className="material-icons-outlined">refresh</span></div></button>                                               
+                            </div>
                         </div>
                     </div>
                     <div style={{width:"50%", paddingLeft:'10px'}}>
@@ -395,48 +406,58 @@ export default class Employee extends React.Component{
                                 <div className="col-md-7 col-lg-6 p-2">
                                     <h6>Informatii angajat</h6>
                                     <form onSubmit={this.handleSubmit}>
-                                        <div className="row g-3">
-                                            <div className="col-sm-6">
-                                                <label for="firstName" className="form-label">Nume</label>
-                                                <input type="text" className="form-control" id="firstName" placeholder="" value={this.state.first_name} disabled={true} required=""></input>
+                                        <div class="row g-2">
+                                            <div class="col-md">
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" placeholder="Nume" className="form-control" id="firstName" value={this.state.first_name} disabled={true} required=""></input>
+                                                    <label for="firstName" className="form-label">Nume</label>
+                                                </div>
                                             </div>
-                                            <div className="col-sm-6">
-                                                <label for="lastName" className="form-label">Prenume</label>
-                                                <input type="text" className="form-control" id="lastName" placeholder="" value={this.state.last_name} disabled={true} required=""></input>
+                                            <div class="col-md">
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" className="form-control" id="lastName" placeholder="Prenume" value={this.state.last_name} disabled={true} required=""></input>
+                                                    <label for="lastName" className="form-label">Prenume</label>
+                                                </div>
+                                            </div>
+                                        </div>      
+                                        <div className="row g-2">
+                                            <div className="col-md">
+                                                <div class="form-floating mb-3">                                                    
+                                                    <select className="form-select" placeholder="Luna" id="paid_for" required="" onChange={this.handleMonthChange}>
+                                                        <option value="1">Ianuarie</option> 
+                                                        <option value="2">Februarie</option>
+                                                        <option value="3">Martie</option>
+                                                        <option value="4">Aprilie</option>
+                                                        <option value="5">Mai</option>
+                                                        <option value="6">Iunie</option>   
+                                                        <option value="7">Iulie</option> 
+                                                        <option value="8">August</option>
+                                                        <option value="9">Septembrie</option>
+                                                        <option value="10">Octombrie</option>
+                                                        <option value="11">Noiembrie</option>
+                                                        <option value="12">Decembrie</option> 
+                                                    </select>
+                                                    <label for="paid_for" className="form-label">Luna</label>
+                                                </div>
+                                            </div>
+                                            <div className="col-md">
+                                                <div class="form-floating mb-3">                                                     
+                                                    <input type="text" className="form-control" id="paid_for_year" placeholder="An" value={this.state.salaryYear} onChange={this.handleYearChange}></input>
+                                                    <label for="paid_for_year" className="form-label">Anul</label>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div className="row g-3">
-                                            <div className="col-sm-12">
-                                                <label for="cnp" className="form-label">CNP</label>
-                                                <input type="text" className="form-control" id="cnp" placeholder="" value={this.state.identification_number} disabled={true} required=""></input>
-                                            </div>   
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-md-5">
-                                                <label for="paid_for" className="form-label">Luna</label>
-                                                <select className="form-select" id="paid_for" required="" onChange={this.handleMonthChange}>
-                                                    <option value="1">Ianuarie</option> 
-                                                    <option value="2">Februarie</option>
-                                                    <option value="3">Martie</option>
-                                                    <option value="4">Aprilie</option>
-                                                    <option value="5">Mai</option>
-                                                    <option value="6">Iunie</option>   
-                                                    <option value="7">Iulie</option> 
-                                                    <option value="8">August</option>
-                                                    <option value="9">Septembrie</option>
-                                                    <option value="10">Octombrie</option>
-                                                    <option value="11">Noiembrie</option>
-                                                    <option value="12">Decembrie</option> 
-                                                </select>
-                                            </div>
-                                            <div className="col-md-5">
-                                                <label for="paid_for_year" className="form-label">Anul</label>
-                                                <input type="text" className="form-control" id="paid_for_year" value={this.state.salaryYear} onChange={this.handleYearChange}></input>
+                                        <div className="col-sm-12">
+                                            <div class="form-floating mb-3">                                                 
+                                                <input type="text" className="form-control" id="bankref" placeholder="ID bancar"></input>
+                                                <label for="bankref" className="form-label">ID tranzactie bancara</label>
                                             </div>
                                         </div>
-                                        <div className="col-sm-6">
-                                            <label for="bankref" className="form-label">ID tranzactie bancara</label>
-                                            <input type="text" className="form-control" id="bankref" placeholder=""></input>
+                                        <div className="col-sm-12">
+                                            <div class="form-floating mb-3">                                                 
+                                                <input type="text" disabled={true} value={`${this.state.salary_gross} RON`} className="form-control" id="salariu_brut" placeholder="Salariu de baza"></input>
+                                                <label for="bankref" className="form-label">Salariu de baza</label>
+                                            </div>
                                         </div>
                                         <button className="btn btn-light btn-sm mt-3" type="submit"><span class="action-button-label"><span class="material-icons-outlined">check</span>Salvare</span></button>
                                     </form>
@@ -510,8 +531,8 @@ export default class Employee extends React.Component{
                                     }                                
                                 </div> 
                                 <div class="btn-group" role="group">
-                                    <button type="button" title="Adauga zi" onClick={this.newVacationDay} className="btn btn-light btn-sm"><span className="action-button-label"><span class="material-icons-outlined">add</span></span></button>
-                                    <button type="submit" className="btn btn-light btn-sm"><span className="action-button-label"><span class="material-icons-outlined">done</span>Inregistrare</span></button>                                             
+                                    <button type="button" id="new-vacation-day-button" title="Adauga zi" onClick={this.newVacationDay} className="btn btn-light btn-sm"><span className="action-button-label"><span class="material-icons-outlined">add</span></span></button>
+                                    <button type="submit" id="submit-vacation-day-button" className="btn btn-light btn-sm"><span className="action-button-label"><span class="material-icons-outlined">done</span>Inregistrare</span></button>                                             
                                 </div>
                             </form>
                         </div>
@@ -525,7 +546,7 @@ export default class Employee extends React.Component{
                                 <span>Editare angajat</span>
                                 <button type="button" className="action-close-window" onClick={()=>{this.setState({editWindow: false})}}><span className="material-icons-outlined">close</span></button>
                             </div>
-                            <div className="p-3"><EmployeeForm employeeID={this.props.id}/></div>
+                            <div className="p-3"><EmployeeForm refreshParent={this.fetchData} employeeID={this.props.id}/></div>
                         </div>              
                     </div>
                 }

@@ -213,37 +213,37 @@ let ClientForm = (props)=>{
                 <div class="row g-2">
                     <div class="col-md">
                         <div class="form-floating mb-3">
-                            <input type="text" className={data.client_first_name.invalid ? "form-control is-invalid" : "form-control"} id="client_first_name" name="client_first_name" placeholder="Nume" onChange={changeFormData} value={data.client_first_name.value} disabled={fieldsDisabled}></input>
+                            <input type="text" className={data.client_first_name.invalid ? "form-control shadow-none is-invalid" : "form-control shadow-none"} id="client_first_name" name="client_first_name" placeholder="Nume" onChange={changeFormData} value={data.client_first_name.value} disabled={fieldsDisabled}></input>
                             <label for="client_first_name">Nume</label>
                         </div>
                     </div>
                     <div class="col-md">
                         <div class="form-floating mb-3">
-                            <input type="text" className={data.client_last_name.invalid ? "form-control is-invalid" : "form-control"} id="client_last_name" name="client_last_name" placeholder="Prenume" onChange={changeFormData} value={data.client_last_name.value} disabled={fieldsDisabled}></input>
+                            <input type="text" className={data.client_last_name.invalid ? "form-control shadow-none is-invalid" : "form-control shadow-none"} id="client_last_name" name="client_last_name" placeholder="Prenume" onChange={changeFormData} value={data.client_last_name.value} disabled={fieldsDisabled}></input>
                             <label for="client_last_name">Prenume</label>
                         </div>
                     </div>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="text" className={data.client_phone.invalid ? "form-control is-invalid" : "form-control"} id="client_phone" name="client_phone" placeholder="Telefon" onChange={changeFormData} value={data.client_phone.value} disabled={fieldsDisabled}></input>
+                    <input type="text" className={data.client_phone.invalid ? "form-control shadow-none is-invalid" : "form-control shadow-none"} id="client_phone" name="client_phone" placeholder="Telefon" onChange={changeFormData} value={data.client_phone.value} disabled={fieldsDisabled}></input>
                     <label for="client_phone">Telefon</label>
                 </div>
 
                 <div class="form-floating mb-3">
-                    <input type="email" className={data.client_email.invalid ? "form-control is-invalid" : "form-control"} id="client_email" name="client_email" placeholder="Mail" onChange={changeFormData} value={data.client_email.value} disabled={fieldsDisabled}></input>
+                    <input type="email" className={data.client_email.invalid ? "form-control shadow-none is-invalid" : "form-control shadow-none"} id="client_email" name="client_email" placeholder="Mail" onChange={changeFormData} value={data.client_email.value} disabled={fieldsDisabled}></input>
                     <label for="client_email">Email</label>
                 </div>
 
                 <div class="row g-2">
                     <div class="col-md">
                         <div class="form-floating mb-3">
-                            <input type="text" className={data.client_county.invalid ? "form-control is-invalid" : "form-control"} id="client_county" name="client_county" placeholder="Judet" onChange={changeFormData} value={data.client_county.value} disabled={fieldsDisabled}></input>
+                            <input type="text" className={data.client_county.invalid ? "form-control shadow-none is-invalid" : "form-control shadow-none"} id="client_county" name="client_county" placeholder="Judet" onChange={changeFormData} value={data.client_county.value} disabled={fieldsDisabled}></input>
                             <label for="client_county">Judet</label>
                         </div>
                     </div>
                     <div class="col-md">
                         <div class="form-floating mb-3">
-                            <input type="text" className={data.client_city.invalid ? "form-control is-invalid" : "form-control"} id="client_city" name="client_city" placeholder="Oras" onChange={changeFormData} value={data.client_city.value} disabled={fieldsDisabled}></input>
+                            <input type="text" className={data.client_city.invalid ? "form-control shadow-none is-invalid" : "form-control shadow-none"} id="client_city" name="client_city" placeholder="Oras" onChange={changeFormData} value={data.client_city.value} disabled={fieldsDisabled}></input>
                             <label for="client_city">Oras</label>
                         </div>
                     </div>
@@ -252,24 +252,24 @@ let ClientForm = (props)=>{
                 <div class="row g-2">
                     <div class="col-md">
                         <div class="form-floating mb-3">
-                            <input type="text" className={data.client_street.invalid ? "form-control is-invalid" : "form-control"} id="client_street" name="client_street" placeholder="Strada" onChange={changeFormData} value={data.client_street.value} disabled={fieldsDisabled}></input>
+                            <input type="text" className={data.client_street.invalid ? "form-control shadow-none is-invalid" : "form-control shadow-none"} id="client_street" name="client_street" placeholder="Strada" onChange={changeFormData} value={data.client_street.value} disabled={fieldsDisabled}></input>
                             <label for="client_street">Strada</label>
                         </div>
                     </div>
                     <div class="col-md">
                         <div class="form-floating mb-3">
-                            <input type="text" className={data.client_adress_number.invalid ? "form-control is-invalid" : "form-control"} id="client_adress_number" name="client_adress_number" placeholder="Numar" onChange={changeFormData} value={data.client_adress_number.value} disabled={fieldsDisabled}></input>
+                            <input type="text" className={data.client_adress_number.invalid ? "form-control shadow-none is-invalid" : "form-control shadow-none"} id="client_adress_number" name="client_adress_number" placeholder="Numar" onChange={changeFormData} value={data.client_adress_number.value} disabled={fieldsDisabled}></input>
                             <label for="client_adress_number">Numar</label>
                         </div>
                     </div>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="text" className={data.client_zip.invalid ? "form-control is-invalid" : "form-control"} id="client_zip" name="client_zip" placeholder="Numar" onChange={changeFormData} value={data.client_zip.value} disabled={fieldsDisabled}></input>
+                    <input type="text" className={data.client_zip.invalid ? "form-control shadow-none is-invalid" : "form-control shadow-none"} id="client_zip" name="client_zip" placeholder="Numar" onChange={changeFormData} value={data.client_zip.value} disabled={fieldsDisabled}></input>
                     <label for="client_zip">ZIP</label>
                 </div>
 
                 <div class="form-floating mb-3">
-                    <textarea className={data.client_notes.invalid ? "form-control is-invalid" : "form-control"} id="client_notes" name="client_notes" placeholder="Informatii aditionale" onChange={changeFormData} value={data.client_notes.value} disabled={fieldsDisabled}></textarea>
+                    <textarea className={data.client_notes.invalid ? "form-control shadow-none is-invalid" : "form-control shadow-none"} id="client_notes" name="client_notes" placeholder="Informatii aditionale" onChange={changeFormData} value={data.client_notes.value} disabled={fieldsDisabled}></textarea>
                     <label for="client_notes">Informatii aditionale</label>
                 </div>
 

@@ -134,6 +134,7 @@ let EmployeeForm = (props)=>{
         .then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 setAlertUser({text:"Angajat actualizat"})
+                if(props.refreshParent) props.refreshParent()
             }else if(data.status==="SERVER_ERROR"){
                 setAlertUser({text:"Baza de date nu poate fi accesata"})
             }else{

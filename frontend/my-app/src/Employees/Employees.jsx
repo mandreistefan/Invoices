@@ -77,6 +77,13 @@ let Employees=(props)=>{
         fetchData()
     }
 
+    let closeEmployee=()=>{
+        //close the window
+        setActive(null)
+        //refetch
+        fetchData()
+    }
+
     return(
         <div className="app-data-container">
             {employees&&                       
@@ -126,8 +133,8 @@ let Employees=(props)=>{
                         </div>}
                         {activeEmployee&&
                             <div className='overview-container bordered-container' style={{maxHeight:'80vh', overflowY:'scroll'}}> 
-                                <button style={{border:'none', borderRadius:'6px', display:'flex', alignItems:'center', margin:'10px'}} onClick={()=>{setActive(null)}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>     
-                                <Employee id={activeEmployee}/>
+                                <button style={{border:'none', borderRadius:'6px', display:'flex', alignItems:'center', margin:'10px'}} onClick={()=>{closeEmployee()}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>     
+                                <Employee id={activeEmployee} refreshParent={fetchData}/>
                             </div>    
                         }
                     </div>

@@ -19,8 +19,8 @@ let SideNavigation = (props) =>{
         },
         {   name:"DIVERSE",
             elements:[
-                {id:8, name: "products", displayName:'Predefinite', icon:'', path:'/products'},
-                {id:9, name: "expenses", displayName:'Cheltuieli', icon:'', path:'/expenses'}            
+                {id:8, name: "products", displayName:'Predefinite', icon:'folder_copy', path:'/products'},
+                {id:9, name: "expenses", displayName:'Cheltuieli', icon:'monetization_on', path:'/expenses'}            
             ]
         }
     ]

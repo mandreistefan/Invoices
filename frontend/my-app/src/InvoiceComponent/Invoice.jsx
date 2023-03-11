@@ -392,8 +392,8 @@ export default class Invoice extends React.Component{
                             <div style={{display:'flex', justifyContent:'space-between', marginBottom:'10px'}}>
                                 <h6>Produse</h6>
                                 <div class="btn-group" role="group">
-                                    <button title="Rand nou" type="button" className="btn btn-light btn-sm" disabled={(this.state.invoice_server_status==="finalised") ? true : false} onClick={this.addNewRow}><span className="action-button-label"><span style={{fontSize:'18px'}} className="material-icons-outlined">add</span></span></button>
-                                    <button title="Predefinite" type="button" className="btn btn-light btn-sm" disabled={(this.state.invoice_server_status==="finalised") ? true : false} onClick={()=>{this.setState({predefinedList: true})}}><span className="action-button-label"><span style={{fontSize:'18px'}} className="material-icons-outlined">apps</span></span></button>
+                                    <button title="Rand nou" type="button" className="btn btn-light btn-sm" disabled={(this.state.invoice_status==="finalised") ? true : false} onClick={this.addNewRow}><span className="action-button-label"><span style={{fontSize:'18px'}} className="material-icons-outlined">add</span></span></button>
+                                    <button title="Predefinite" type="button" className="btn btn-light btn-sm" disabled={(this.state.invoice_status==="finalised") ? true : false} onClick={()=>{this.setState({predefinedList: true})}}><span className="action-button-label"><span style={{fontSize:'18px'}} className="material-icons-outlined">apps</span></span></button>
                                 </div>
                             </div>
                             <div className="billing-products-body">
