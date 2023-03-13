@@ -75,106 +75,77 @@ let Financial = (props) =>{
                 </div>             
             </div>
             {financialData ?
-            <div className='grid-container'>
-                <div className="grid-row" style={{height:'325px'}}>
-                    <div className="col-4 p-2">
-                        <div style={{backgroundColor:'white'}} className="bordered-container  p-2">
-                            <div style={{display:'flex', flexDirection:'row', alignItems:'center', marginBottom:'5px'}} className="p-1">                
-                                <span className="material-icons-outlined">payments</span>
-                                <h5 style={{margin:'0',marginLeft:'5px'}}>Total</h5>
-                            </div>
-                            <table style={{width:'100%'}} className="table">
-                                <tbody>
-                                    <tr className="table-secondary" style={{borderRadius:'6px', fontWeight:'600'}}>
-                                        <td className="col-6">Venituri</td>
-                                        <td style={{textAlign:'right'}}>{parseFloat(financialData.total).toFixed(2)} RON</td>
-                                    </tr>
-                                    <tr>
-                                        <td cclassName="col-6">Cheltuieli</td>
-                                        <td style={{textAlign:'right'}}>- {parseFloat(financialData.total_exp).toFixed(2)} RON</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="col-6">Salarii</td>
-                                        <td style={{textAlign:'right'}}>- {parseFloat(financialData.salaries).toFixed(2)} RON</td>
-                                    </tr>
-                                    <tr style={{fontWeight:'600'}}>
-                                        <td className="col-6">Profit brut</td>
-                                        <td style={{textAlign:'right'}}>{parseFloat(financialData.total - financialData.total_exp - financialData.salaries).toFixed(2)} RON</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="col-6">Taxa profit</td>
-                                        <td style={{textAlign:'right'}}>- {taxes.profitTax} RON</td>
-                                    </tr>
-                                    <tr style={{fontWeight:'600'}} className="table-success">
-                                        <td className="col-6">Profit net</td>
-                                        <td style={{textAlign:'right'}}> {parseFloat(financialData.total - financialData.total_exp - financialData.salaries - taxes.profitTax).toFixed(2)} RON</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+            <div className='financial-grid'>
+                <div class="grid-container">
+                    <div class="card text-center">
+                        <div class="card-header">
+                            <span style={{color:'gray'}}  className="material-icons-outlined p-1">insights</span>Sume incasate
+                        </div>
+                        <div class="card-body">
+                            <FinancialChart data={chartData} plottedFor={chartTitle}/>
+                        </div>
+                        <div class="card-footer text-muted">
+                            Valori lunare ale facturilor incasate
                         </div>
                     </div>
-                    <div className="col-4 p-2">
-                        <div className='row' style={{height:'50%'}}>
-                            <div className="col-6">
-                                <div className="bordered-container financial-square p-2">
+                    <div class="grid-item">
+                        <div class="grid-container">
+                            <div class="grid-item">
+                                <div class="card text-center">
+                                    <div class="card-header">
+                                        <span style={{color:'gray'}}  className="material-icons-outlined p-1">donut_small</span>Cheltuieli
+                                    </div>
+                                    <div class="card-body">
+                                        <PieChart data={pieChartData} plottedFor={chartTitle}/>
+                                    </div>
+                                    <div class="card-footer text-muted">
+                                        Impartire cheltuieli, procentual
+                                    </div>
+                                </div>
+                            </div> 
+                        </div>
+                    </div>
+                    <div class="grid-item">
+                        <div class="grid-container">
+                            <div class="grid-item">
+                                <div className='financial-square'>
                                     <span style={{color:'gray'}}  className="material-icons-outlined p-1">payments</span>
+                                    <div className="p-1">                                
+                                        <span style={{color:'gray', fontWeight:'500'}}>Total incasat</span>
+                                        <span style={{fontSize:'32px', fontWeight:'600'}}>{parseFloat(financialData.total)} RON</span>
+                                    </div>                                    
+                                </div>        
+                            </div>  
+                            <div class="grid-item">
+                                <div className='financial-square'>
+                                    <span style={{color:'gray'}} className="material-icons-outlined">calculate</span>                                    
+                                    <div className="p-1"> 
+                                        <span style={{color:'gray', fontWeight:'500'}}>Valoare medie lunara</span>
+                                        <span style={{fontSize:'32px', fontWeight:'600'}}>{parseFloat(financialData.avg_per_step).toFixed(2)} RON</span>
+                                    </div>                                    
+                                </div>
+                            </div>
+                            <div class="grid-item">
+                                <div className='financial-square'>
+                                    <span style={{color:'gray'}} className="material-icons-outlined p-1">calculate</span>
+                                    <div className="p-1">                                
+                                        <span style={{color:'gray', fontWeight:'500'}}>Valoare medie factura</span>
+                                        <span style={{fontSize:'32px', fontWeight:'600'}}>{parseFloat(financialData.avg_per_invoice).toFixed(2)} RON</span>
+                                    </div>                                    
+                                </div>                    
+                            </div>
+                            <div class="grid-item">
+                                <div className='financial-square'>
+                                    <span style={{color:'gray'}}  className="material-icons-outlined p-1">receipt</span>
                                     <div className="p-1">                                
                                         <span style={{color:'gray', fontWeight:'500'}}>Numar facturi</span>
                                         <span style={{fontSize:'32px', fontWeight:'600'}}>{parseFloat(financialData.total_number_invoices)}</span>
                                     </div>                                    
-                                </div>
-                            </div>
-                            <div className="col-6">
-                                <div className="bordered-container financial-square p-2">
-                                    <span style={{color:'gray'}} className="material-icons-outlined p-1">money</span>
-                                    <div className="p-1">                                
-                                        <span style={{color:'gray', fontWeight:'500'}}>Valoare medie factura</span>
-                                        <span style={{fontSize:'32px', fontWeight:'600'}}>{parseFloat(financialData.avg_per_invoice).toFixed(2)}</span>
-                                    </div>                                    
-                                </div>
-                            </div>
-                        </div>
-                        <div className='row' style={{height:'50%'}}>
-                            <div className="col-6">
-                                <div className="bordered-container financial-square p-2">
-                                    <span style={{color:'gray'}} className="material-icons-outlined">money</span>                                    
-                                    <div className="p-1"> 
-                                        <span style={{color:'gray', fontWeight:'500'}}>Valoare medie lunara</span>
-                                        <span style={{fontSize:'32px', fontWeight:'600'}}>{parseFloat(financialData.avg_per_step).toFixed(2)}</span>
-                                    </div>                                    
-                                </div>
-                            </div>
+                                </div>                    
+                            </div> 
                         </div>
                     </div>
-                </div>
-                <div className="grid-row" style={{height:'fit-content'}}>
-                    <div className="col-6 p-2">
-                        <div style={{backgroundColor:'white'}} className="bordered-container p-2">
-                            <div style={{display:'flex', flexDirection:'row', alignItems:'center'}}  className="p-1">                
-                                <span className="material-icons-outlined">timeline</span>
-                                <h5 style={{margin:'0',marginLeft:'5px'}}>Incasari</h5>
-                            </div>
-                            <div>
-                                <div id="financial-chart">
-                                    <FinancialChart data={chartData} plottedFor={chartTitle}/>             
-                                </div>  
-                            </div>  
-                        </div>
-                    </div>
-                    <div className="col-3 p-2">
-                        <div style={{backgroundColor:'white'}} className="bordered-container p-2">
-                            <div style={{display:'flex', flexDirection:'row', alignItems:'center'}}  className="p-1">                
-                                <span className="material-icons-outlined">timeline</span>
-                                <h5 style={{margin:'0',marginLeft:'5px'}}>Impartire venituri</h5>
-                            </div>
-                            <div>
-                                <div id="financial-chart" style={{width:"100%"}}>
-                                    <PieChart data={pieChartData} plottedFor={chartTitle}/>             
-                                </div>  
-                            </div>  
-                        </div>
-                    </div>  
-                </div>
+                </div>    
             </div>:"Nu exista date"}
             <Snackbar text={alertUser.text} closeSnack={()=>{setUserAlert({text:null})}}/>         
         </div>

@@ -43,7 +43,7 @@ let PieChart=(props)=>{
 
     return(
         <div key={props.plottedFor}>
-            <Doughnut data={data} options={options} style={{maxHeight:'185px'}}/>            
+            <Doughnut data={data} options={options}/>            
                 {data.datasets[0].data.length>0&&
                     <table className='table'>
                         <tbody>

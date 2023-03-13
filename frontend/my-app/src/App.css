@@ -1003,22 +1003,25 @@ input[type=date]{
   grid-template-columns: 85% 15%;
 }
 
-.grid-row{
-  display: flex;
-  justify-content: flex-start;
-}
-
-.grid-container > .grid-row > div{
+.card{
   height: 100%;
 }
 
-.grid-container > .grid-row > div > div{
+.financial-grid{
+  margin-top:25px;
+  width: 100%;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  column-gap: 10px;
+  row-gap: 10px;
   height: 100%;
 }
 
-.grid-container > .grid-row > div > div > ul{
-  max-height: 250px;
-  overflow-y: scroll;
+.grid-item {
+  height: 100%;
 }
 
 #databaseSelector{
@@ -1031,10 +1034,22 @@ input[type=date]{
   background-color:white;
   height: 100%;
   display: flex;
-  justify-content: row;
+  justify-content: flex-start;
+  border-radius: 16px;
+  padding: 16px;
+  height: 100%;
 }
 
 .financial-square > div{
   display: inherit;
   flex-direction: column;
+}
+
+.card-header, .card-footer{
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: gray;
+  font-weight: 500;
 }
