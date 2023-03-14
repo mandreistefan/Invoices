@@ -60,7 +60,9 @@ let Clients = (props) =>{
     let deleteClient=(cliendID)=>{
         let client = cliendID
         if(!client) client = cliendID
-        //fetches all clients
+
+        if(window.confirm("Arhivati client?") === false) return false
+
         fetch(`http://localhost:3000/clients`,
         {
             method:"DELETE",
@@ -135,7 +137,7 @@ let Clients = (props) =>{
                                                 <td><div style={{display:'flex', alignItems:'center'}}>{element.client_type ? element.client_type==="pers" ? <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>person</span>Persoana fizica</span> : <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>store</span>Firma</span> : "NA"}</div></td> 
                                                 <td>{element.client_county}, {element.client_city}, {element.client_street}, {element.client_adress_number}, {element.client_zip}</td>                                          
                                                 <td className="table-actions-container">
-                                                    <button title="Arhiveaza client" onClick={()=>{deleteClient(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
+                                                    <button title="Arhiveaza client" onClick={()=>{deleteClient(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined text-danger">delete</span></div></button>
                                                     <button  className='btn-light' title="Factureaza client" onClick={()=>{invoiceThisClient(element)}}><div className="inner-button-content"><span className="material-icons-outlined">library_add</span></div></button>
                                                     <button title="Deschide client" onClick={()=>{setActive(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span></div></button>
                                                 </td>

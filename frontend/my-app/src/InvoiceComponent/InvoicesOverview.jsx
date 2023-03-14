@@ -32,7 +32,10 @@ let InvoicesOverview = (props) =>{
             headers: { 'Content-Type': 'application/json' },
         })
         .then(response=>response.json()).then(data=>{      
-            if(data.status==="OK"){
+            if(data.status==="OK"){                
+                data.data.forEach(element => {
+                    element.expanded = false
+                });
                 invoicesDataSet(data.data)
                 setNOE(data.recordsNumber)
                 //setActiveInvoice(data.data[0].invoice_number)
@@ -56,6 +59,9 @@ let InvoicesOverview = (props) =>{
     let deleteInvoice = (invoiceID) =>{
         let invoice = invoiceID
         if(!invoice) invoice = activeInvoice
+
+        if(window.confirm("Arhivati factura?") === false) return false
+
         fetch("http://localhost:3000/invoices",
         {
             method:"DELETE",
@@ -113,8 +119,8 @@ let InvoicesOverview = (props) =>{
         setFilter({...queryFilter, page:pageNumber, step:step})
     }
 
-    let openInvoice=()=>{
-        window.open(`http://localhost:3001/generateInvoice/${activeInvoice}`).focus();
+    let openInvoice=(invoiceID)=>{
+        window.open(`http://localhost:3001/generateInvoice/${invoiceID}`).focus();
     }
 
     function handleSearchSubmit(event){
@@ -133,12 +139,12 @@ let InvoicesOverview = (props) =>{
     return(
         <div className="app-data-container">  
                 {invoicesData &&    
-                <div className="bordered-container p-3" >  
+                <div className="bordered-container p-3">                    
                     <div className="" style={{width:'100%'}}>
                         {!activeInvoice &&
-                            <div>           
+                            <div>   
                                 <div style={{marginBottom:'25px', display:'flex', justifyContent:'flex-start', alignItems:'center'}}>
-                                    <span class="material-icons-outlined">receipt_long</span>
+                                    <span className="material-icons-outlined">receipt_long</span>
                                     <span style={{fontSize:'18px', fontWeight:'600'}}>Facturi</span>
                                     <form onSubmit={handleSearchSubmit} style={{marginLeft:'10px'}}  className="search-form" id="search-form" name="search-form">
                                         <div className="search-form-container"> 
@@ -173,21 +179,22 @@ let InvoicesOverview = (props) =>{
                                                     <td>{simpleDate(element.invoice_date)}</td>   
                                                     <td><b>{element.invoice_total_sum} RON</b></td>                                          
                                                     <td className="table-actions-container">
-                                                        <button title="Arhiveaza factura" onClick={()=>{deleteInvoice(element.invoice_number)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
-                                                        {element.invoice_status!=="finalised" && <button title="Seteaza ca platita" onClick={()=>{setInvoiceFinalised(element.invoice_number)}}><div class="inner-button-content"><span class="material-icons-outlined">task_alt</span></div></button>}
-                                                        <button title="Deschide factura" onClick={()=>{setActiveInvoice(element.invoice_number)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span></div></button>
+                                                        <button title="Arhiveaza factura" onClick={()=>{deleteInvoice(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined text-danger">delete</span></div></button>
+                                                        {element.invoice_status!=="finalised" && <button title="Seteaza ca platita" onClick={()=>{setInvoiceFinalised(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">task_alt</span></div></button>}
+                                                        <button title="Deschide factura" onClick={()=>{setActiveInvoice(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">open_in_new</span></div></button>
+                                                        <button title="Genereaza" onClick={()=>{openInvoice(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">file_open</span></div></button>
                                                     </td>
                                                 </tr>    
                                             ))}
                                         </tbody>  
                                     </table>
                                     <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>
-                                </div>
+                                </div>                                
                             </div>  
                         } 
                         {activeInvoice &&
                             <div className='overview-container bordered-container'>
-                                <button style={{border:'none', borderRadius:'6px', display:'flex', alignItems:'center', margin:'10px'}} onClick={()=>{setActiveInvoice(null)}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>
+                                <button style={{border:'none', borderRadius:'6px', display:'flex', alignItems:'center', margin:'10px'}} onClick={()=>{setActiveInvoice(null)}}><span className="material-icons-outlined">arrow_back</span>Inchide</button>
                                 <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
                                     <div style={{display:'inherit', alignItems:'center'}}><span style={{fontSize:'24px'}}>Factura numarul {activeInvoice}</span></div>                                                        
                                 </div>

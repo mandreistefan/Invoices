@@ -55,6 +55,9 @@ let Employees=(props)=>{
     }
 
     function deleteEmployee(){
+
+        if(window.confirm("Arhivati angajat?") === false) return false
+
         fetch(`http://localhost:3000/employee/${activeEmployee}`, {
             method:"DELETE",
             headers: { 'Content-Type': 'application/json' }
@@ -131,7 +134,7 @@ let Employees=(props)=>{
                                                 <td>{element.emp_job_name}</td> 
                                                 <td>{element.emp_active ? <span class="material-icons-outlined">task_alt</span> : <span class="material-icons-outlined">cancel</span>}</td>                                          
                                                 <td className="table-actions-container">
-                                                    <button title="Arhiveaza angajat" onClick={()=>{deleteEmployee(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
+                                                    <button title="Arhiveaza angajat" onClick={()=>{deleteEmployee(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined  text-danger">delete</span></div></button>
                                                     <button title="Deschide angajat" onClick={()=>{setActiveEmployee(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span></div></button>
                                                 </td>
                                             </tr>    
