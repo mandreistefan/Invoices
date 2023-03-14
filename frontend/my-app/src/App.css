@@ -886,9 +886,53 @@ input[type=date]{
   cursor: pointer;  
 }
 
+.pagination-container{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pagination-container > div> button{
+  width: 24px;
+  height: 24px;
+  border:none;
+  background-color: transparent;
+  color:var(--navActive);
+  padding: 0;
+}
+
+.pagination-container > div> button:hover{
+  border: none;
+}
+
+.pagination-container > div> button:disabled{
+  background-color: transparent;
+  color:gray;
+  border: none;
+}
+
 .page-navigation{
-  max-width: 200px;
-  margin: 10px;
+  width: 100%;
+  margin:5px;
+}
+
+.page-link{
+  border: none;
+  font-weight: 400;
+}
+
+.page-link:hover{
+  font-weight: 600;
+  color: black;
+  background-color: transparent;
+}
+
+.page-item.active > .page-link{
+  background-color: var(--navActive)!important;
+  color: white;
+  font-weight: 600;
+  border-radius: 6px;
 }
 
 #new-invoice-container{

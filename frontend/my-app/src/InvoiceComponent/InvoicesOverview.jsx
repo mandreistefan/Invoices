@@ -12,21 +12,19 @@ let InvoicesOverview = (props) =>{
     let [activeInvoice, setActiveInvoice] = useState(null)
     let [alertUser, setAlertUser] = useState({text: null})
     let [numberOfElements, setNOE] = useState(null)
-    let [newInvoiceWindow, setnewInvoiceWindow] = useState(false)
-    let [queryFilter, setFilter] = useState({filter: props.queryFilterBy ? props.queryFilterBy : defaultFilter.filter, filterBy: props.queryFilterData ? props.queryFilterData : defaultFilter.filterBy, page:1})
+    let [queryFilter, setFilter] = useState({filter: props.queryFilterBy ? props.queryFilterBy : defaultFilter.filter, filterBy: props.queryFilterData ? props.queryFilterData : defaultFilter.filterBy, page:1, step:10})
 
     //refecth on page change or when the query parameters change (ex. when a search is attempted)
     useEffect(()=>{
         fetchData()
-    },[queryFilter])
+    },[queryFilter.page, queryFilter.step])
 
     /**
      * Fetches data
      */
     let fetchData=()=>{
         //fetches all data
-        let fetcher;
-        fetcher = `http://localhost:3000/invoices?target=invoices&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}`
+        let fetcher = `http://localhost:3000/invoices?target=invoices&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}&step=${queryFilter.step}`
         
         fetch(fetcher,
         {
@@ -111,8 +109,8 @@ let InvoicesOverview = (props) =>{
 
 
 
-    let changePage=(pageNumber)=>{
-        setFilter({...queryFilter, page:pageNumber})
+    let changePage=(pageNumber, step)=>{
+        setFilter({...queryFilter, page:pageNumber, step:step})
     }
 
     let openInvoice=()=>{

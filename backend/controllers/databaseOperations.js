@@ -46,19 +46,22 @@ try{
 async function getClients(querryObject){    
     if(querryObject.page>1) offSet = (querryObject.page-1) * queryStep
     let queryStatement;
+    let step = 10
+    if(querryObject.step) step = querryObject.step
+    console.log(querryObject)
     if(querryObject.filter==="search" && querryObject.filterBy.length===0) return ({status:"NO_DATA", data:null})
     switch(querryObject.filter){
         case "id":
             queryStatement=`SELECT * FROM clients WHERE id='${querryObject.filterBy}' ORDER by id desc`;
             break;
         case "all":
-            queryStatement=`SELECT * FROM clients  ORDER by id desc LIMIT ${queryStep} OFFSET ${queryStep*querryObject.page}`;
+            queryStatement=`SELECT * FROM clients  ORDER by id desc LIMIT ${step} OFFSET ${step*querryObject.page}`;
             break;
         case "search":
-            queryStatement=`SELECT * FROM clients WHERE id IN (${querryObject.filterBy})  ORDER by id desc LIMIT ${queryStep} OFFSET ${queryStep*querryObject.page}`
+            queryStatement=`SELECT * FROM clients WHERE id IN (${querryObject.filterBy}) ORDER by id desc`
             break
         default:
-            queryStatement=`SELECT * FROM clients ORDER by id desc LIMIT ${queryStep} OFFSET ${queryStep*querryObject.page}`;
+            queryStatement=`SELECT * FROM clients ORDER by id desc LIMIT ${step} OFFSET ${step*querryObject.page}`;
     }        
     return new Promise((resolve,reject)=>{
         connection.query(queryStatement, function(error,result){
@@ -66,7 +69,7 @@ async function getClients(querryObject){
                 console.log(`An error occured: ${error}`)
                 reject("ERROR")
             }
-            console.log(result)
+            console.log(queryStatement)
             if(result.length>0){
                 resolve({
                     status: "OK",
@@ -233,29 +236,30 @@ async function addInvoice(data){
 
 async function getInvoices(querryObject){
     if(querryObject.page>1) offSet = (querryObject.page-1) * queryStep
-    let querry;    
+    let step = 10
     if(querryObject.filter==="search" && querryObject.filterBy.length===0) return ({status:"NO_DATA", data:null})
+    if(querryObject.step) step=querryObject.step
     switch(querryObject.filter){
         case "all":
-            querry=`SELECT * FROM ${querryObject.target} ORDER BY invoice_number DESC LIMIT ${queryStep} OFFSET ${queryStep*querryObject.page}`
+            querry=`SELECT * FROM ${querryObject.target} ORDER BY invoice_number DESC LIMIT ${step} OFFSET ${step*querryObject.page}`
             break
         case "clientID":
-            querry=`SELECT * FROM ${querryObject.target} WHERE customer_id=${querryObject.filterBy} LIMIT ${queryStep} OFFSET ${queryStep*querryObject.page}`
+            querry=`SELECT * FROM ${querryObject.target} WHERE customer_id=${querryObject.filterBy} LIMIT ${step} OFFSET ${step*querryObject.page}`
             break;
         case "invoiceID":
             querry=`SELECT * FROM ${querryObject.target} WHERE invoice_number=${querryObject.filterBy}`
             break;
         case "recID":
-            querry=`SELECT * FROM ${querryObject.target} WHERE rec_number=${querryObject.filterBy} LIMIT ${queryStep} OFFSET ${queryStep*querryObject.page}`
+            querry=`SELECT * FROM ${querryObject.target} WHERE rec_number=${querryObject.filterBy} LIMIT ${step} OFFSET ${step*querryObject.page}`
             break;
         case "active":
-            querry=`SELECT * FROM ${querryObject.target} WHERE invoice_active=${querryObject.filterBy} LIMIT ${queryStep} OFFSET ${queryStep*querryObject.page}`
+            querry=`SELECT * FROM ${querryObject.target} WHERE invoice_active=${querryObject.filterBy} LIMIT ${step} OFFSET ${step*querryObject.page}`
             break;
         case "search":
-            querry=`SELECT * FROM invoices WHERE invoice_number in (${querryObject.filterBy}) order by invoice_number DESC LIMIT ${queryStep} OFFSET ${queryStep*querryObject.page}`
+            querry=`SELECT * FROM invoices WHERE invoice_number in (${querryObject.filterBy}) order by invoice_number DESC LIMIT ${step} OFFSET ${step*querryObject.page}`
             break
         default:
-            querry=`SELECT * FROM ${querryObject.target} LIMIT ${queryStep} OFFSET ${queryStep*querryObject.page}`
+            querry=`SELECT * FROM ${querryObject.target} LIMIT ${step} OFFSET ${step*querryObject.page}`
             break
     }
 
@@ -1220,12 +1224,13 @@ function deleteExpense(id){
  */
 
 function getEmployees(queryObject){
-    if(queryObject.page>1) offSet = (queryObject.page-1) * queryStep
+    let step = 10;
+    if(queryObject.step) step = queryObject.step
     if(queryObject.filter==="search" && queryObject.filterBy.length===0) return ({status:"NO_DATA", data:null})
     let querry;    
     switch(queryObject.filter){
         case "all":
-            querry=`SELECT * FROM employees ORDER BY id DESC LIMIT ${queryStep} OFFSET ${queryStep*queryObject.page}`
+            querry=`SELECT * FROM employees ORDER BY id DESC LIMIT ${step} OFFSET ${step*queryObject.page}`
             break
         case "id":
             querry=`SELECT * FROM employees WHERE id=${queryObject.filterBy}`
@@ -1237,7 +1242,6 @@ function getEmployees(queryObject){
             querry=`SELECT * FROM employees`
             break
     }
-    console.log(querry)
     return new Promise((resolve, reject)=>{
         connection.query(querry, function(err, result){
             if(err){

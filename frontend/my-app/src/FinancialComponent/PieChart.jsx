@@ -48,7 +48,7 @@ let PieChart=(props)=>{
                     <table className='table'>
                         <tbody>
                         {data.labels.map((element, index)=>(
-                            <tr>
+                            <tr key={index}>
                                 <td className="col-6"><span class="badge" style={{backgroundColor:data.datasets[0].borderColor[index]}}>{element}</span></td>
                                 <td className="col-6" style={{textAlign:'right', fontWeight:'500'}}>{data.datasets[0].data[index].toFixed(2)}%</td>
                             </tr>

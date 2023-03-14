@@ -1,4 +1,4 @@
-import React from "react";
+import {useEffect, useState} from "react";
 
 /**
  * Renders pagination
@@ -10,52 +10,80 @@ let PageNavigation=(props)=>{
 
     const step=10
 
-    let [pagination, setPagination] = React.useState({
+    let [pagination, setPagination] = useState({
         currentPage: 1,
-        numberOfPages: 1
+        numberOfPages: 1,
+        pages:[],
+        step:10
     })
 
-    let [pages, setPages] = React.useState([])
-
-    //based on number of total elements, set the pages
-    let numberOfPages=(itemsNumber)=>{
-        let numberOfPages = itemsNumber%step>0 ? parseInt(itemsNumber/step+1) : parseInt(itemsNumber/step)
-        buildPagesArray(numberOfPages)
-        return numberOfPages
-    }
-
-    //the 123..N pages array
-    let buildPagesArray=(numberOfPages)=>{
-        let pages=[]
-        for(let i=1; i<=numberOfPages; i++){
-            pages.push(<li key={i} className={pagination.currentPage===i ? "page-item disabled" : "page-item"}><div className="page-link" onClick={()=>{changePage(i)}}>{i}</div></li>)
-        }
-        setPages(pages)
-    }
-
     let changePage=(pageNumber)=>{
-        let shallowCopy = pagination
+        let shallowCopy = {...pagination}
         //change the pageNumber in the shallow copy
         shallowCopy.currentPage=pageNumber
         //overwrite the data
         setPagination(shallowCopy)
-        //call the props function; should re-fetch data based on the new page number
-        props.changePage(pageNumber)
+    }
+
+    let changeStep=(event)=>{
+        let shallowCopy = {...pagination}
+        let pagesNumber = props.numberOfItems%event.target.value>0 ? parseInt(props.numberOfItems/event.target.value+1) : parseInt(props.numberOfItems/event.target.value)
+        shallowCopy.step = event.target.value
+        shallowCopy.numberOfPages = pagesNumber
+        shallowCopy.pages = arrayOfIndexes(pagesNumber)
+        if(pagination.currentPage > pagesNumber) shallowCopy.currentPage=pagesNumber
+        setPagination(shallowCopy)
     }
     
-    React.useEffect(()=>{
+    function arrayOfIndexes(limit){
+        let anArray=[]
+        for(let i=1; i<=limit; i++){
+            anArray.push(i)
+        }
+        return anArray
+    }
+
+    useEffect(()=>{
+        let pagesNumber = props.numberOfItems%step>0 ? parseInt(props.numberOfItems/step+1) : parseInt(props.numberOfItems/step)
         setPagination({
             currentPage: pagination.currentPage || 1, 
-            numberOfPages: numberOfPages(props.numberOfItems)
+            numberOfPages: pagesNumber,
+            pages: arrayOfIndexes(pagesNumber),
+            step: props.step ? props.step : pagination.step
         })
-    },[props.numberOfItems, pagination.currentPage])
+    },[])
 
-    return(
-        <nav key={props.numberOfItems} className='page-navigation' aria-label="Navigation">
-            <ul className="pagination">
-                {pages}
-            </ul>
-        </nav>
+    useEffect(()=>{
+        props.changePage(pagination.currentPage, pagination.step)
+    },[pagination.currentPage, pagination.step])
+
+    return(   
+            <div className='pagination-container' key={pagination.currentPage}>
+                    <div style={{display:'inherit', justifyContent:'flex-start', alignItems:'center'}}>
+                        <span>Show</span>
+                        <select class="form-select" id="pagination" name="pagination" className="m-2" onChange={changeStep} value={pagination.step}>
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                        </select>
+                        <span>elements</span>
+                    </div>
+                <div style={{display:'inherit', justifyContent:'flex-start', alignItems:'center'}}>
+                    <button className="" disabled={parseInt(pagination.currentPage)<2 ? true : false} onClick={()=>{setPagination({...pagination, currentPage:1})}}><span class="material-icons-outlined">first_page</span></button>
+                    <button className="" disabled={parseInt(pagination.currentPage)<2 ? true : false} onClick={()=>{setPagination({...pagination, currentPage:pagination.currentPage-1})}}><span class="material-icons-outlined">arrow_back</span></button>
+                    <nav key={props.numberOfItems} className='page-navigation' aria-label="Navigation">
+                        {pagination.pages!==[]&&
+                        <ul className="pagination">
+                            {pagination.pages.map((element, i)=>(
+                                <li key={element} className={pagination.currentPage===element ? "page-item active" : "page-item"}><div className="page-link" onClick={()=>{changePage(element)}}>{element}</div></li>
+                            ))}
+                        </ul>
+                    }
+                    </nav>
+                    <button className=""  disabled={pagination.currentPage===pagination.numberOfPages ? true : false} onClick={()=>{setPagination({...pagination, currentPage:pagination.currentPage+1})}}><span class="material-icons-outlined">arrow_forward</span></button>
+                    <button className="" disabled={pagination.currentPage===pagination.numberOfPages ? true : false} onClick={()=>{setPagination({...pagination, currentPage:pagination.numberOfPages})}}><span class="material-icons-outlined">last_page</span></button>
+                </div>
+            </div>
+        
     )
 
 }

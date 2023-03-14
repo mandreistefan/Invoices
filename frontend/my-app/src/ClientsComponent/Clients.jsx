@@ -19,21 +19,21 @@ let Clients = (props) =>{
     //new client form
     let [newClientWindow, showonewClientWindow] = useState(false)
     //used to fetch data
-    let [queryFilter, setFilter]=useState({filter: props.queryFilterBy ? props.queryFilterBy : defaultFilter.filter, filterBy: props.queryFilterData ? props.queryFilterData : defaultFilter.filterBy, page:1})
+    let [queryFilter, setFilter]=useState({filter: props.queryFilterBy ? props.queryFilterBy : defaultFilter.filter, filterBy: props.queryFilterData ? props.queryFilterData : defaultFilter.filterBy, page:1, step:10})
     //new ivoice for him
     let [invoiceClient, invoiceThisClient] = useState(null)
 
 
     useEffect(()=>{
         fetchClients()
-    },[queryFilter])
+    },[queryFilter.page, queryFilter.step])
 
     /**
      * fetchesClients
      */
     let fetchClients=()=>{
         //fetches all clients
-        fetch(`http://localhost:3000/clients?&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}`,
+        fetch(`http://localhost:3000/clients?&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}&step=${queryFilter.step}`,
         {
             method:"GET",
             headers: { 'Content-Type': 'application/json' }
@@ -79,8 +79,8 @@ let Clients = (props) =>{
         })
     }
 
-    let changePage=(pageNumber)=>{
-        setFilter({...queryFilter, page:pageNumber})
+    let changePage=(pageNumber, step)=>{
+        setFilter({...queryFilter, page:pageNumber, step:step})
     }
 
     function handleSearchSubmit(event){
@@ -93,7 +93,7 @@ let Clients = (props) =>{
 
     let resetSearch=()=>{
         document.getElementById("searchinput").value=""
-        setFilter({...queryFilter, filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
+        setFilter({...queryFilter, filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page, step: 10})
     }
 
     return(
@@ -133,7 +133,7 @@ let Clients = (props) =>{
                                                 <td><div style={{display:'flex', alignItems:'center'}}>{element.client_type ? element.client_type==="pers" ? <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>person</span>Persoana fizica</span> : <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>store</span>Firma</span> : "NA"}</div></td> 
                                                 <td>{element.client_county}, {element.client_city}, {element.client_street}, {element.client_adress_number}, {element.client_zip}</td>                                          
                                                 <td className="table-actions-container">
-                                                    <button title="Arhiveaza factura" onClick={()=>{deleteClient(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
+                                                    <button title="Arhiveaza client" onClick={()=>{deleteClient(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
                                                     <button  className='btn-light' title="Factureaza client" onClick={()=>{invoiceThisClient(element)}}><div className="inner-button-content"><span className="material-icons-outlined">library_add</span></div></button>
                                                     <button title="Deschide client" onClick={()=>{setActive(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span></div></button>
                                                 </td>

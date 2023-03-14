@@ -9,9 +9,11 @@ app.get('/employees',(req,res)=>{
     if(req.query.filter) filterObject.filter=req.query.filter
     if(req.query.filterBy) filterObject.filterBy=req.query.filterBy
     if(req.query.page) filterObject.page=req.query.page
+    if(req.query.step) filterObject.step=req.query.step
     getEmployees(filterObject).then(data=>{
         res.send({
             status:data.status,
+            recordsNumber: data.totalRecordsNumber,
             data:data.data
         })
     }).catch(error=>{

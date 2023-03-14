@@ -2,29 +2,32 @@ import {useState, useEffect} from "react";
 import Snackbar from '../Snackbar/Snackbar.jsx'
 import Employee from './Employee.jsx'
 import EmployeeForm from './EmployeeForm.jsx'
+import PageNavigation from "../PageNavigation.jsx";
 
 let Employees=(props)=>{
 
-    const defaultFilter={filter:"all", filterBy:"", page:1}
+    const defaultFilter={filter:"all", filterBy:"", page:1, step:10}
 
     //local storage
     //if(!localStorage.getItem('activeEmployee')) localStorage.setItem('activeEmployee', "")
 
     let [employees, setEmployees] = useState([])
-    let [queryFilter, setFilter] = useState({filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
+    let [queryFilter, setFilter] = useState({filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page, step:defaultFilter.step})
     let [activeEmployee, setActive] = useState("")
     let [alertUser, setAlertUser] = useState(null)
     let [addEmployeeWindow, showaddEmployeeWindow] = useState(false)
     let [editEmployeeWindow, setEditableEmployee] = useState(false)
+    let [numberOfElements, setNOE] = useState(null)
 
     useEffect(()=>{
         fetchData()        
-    },[queryFilter.page])
+    },[queryFilter.page, queryFilter.step])
 
     function fetchData(){
-        fetch(`http://localhost:3000/employees?filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}`).then(response=>response.json()).then(data=>{
+        fetch(`http://localhost:3000/employees?filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}&step=${queryFilter.step}`).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 setEmployees(data.data)
+                setNOE(data.recordsNumber)
             }else if(data.status==="NO_DATA"){
                 setAlertUser("Nu sunt date")
             }            
@@ -83,6 +86,10 @@ let Employees=(props)=>{
         //refetch
         fetchData()
     }
+    
+    let changePage=(pageNumber, step)=>{
+        setFilter({...queryFilter, page:pageNumber, step:step})
+    }
 
     return(
         <div className="app-data-container">
@@ -130,6 +137,7 @@ let Employees=(props)=>{
                                     </tbody>  
                                 </table>
                             </div>
+                            <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>
                         </div>}
                         {activeEmployee&&
                             <div className='overview-container bordered-container' style={{maxHeight:'80vh', overflowY:'scroll'}}> 
