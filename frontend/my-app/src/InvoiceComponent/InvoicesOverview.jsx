@@ -137,8 +137,10 @@ let InvoicesOverview = (props) =>{
                     <div className="" style={{width:'100%'}}>
                         {!activeInvoice &&
                             <div>           
-                                <div style={{marginBottom:'25px'}}>
-                                    <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
+                                <div style={{marginBottom:'25px', display:'flex', justifyContent:'flex-start', alignItems:'center'}}>
+                                    <span class="material-icons-outlined">receipt_long</span>
+                                    <span style={{fontSize:'18px', fontWeight:'600'}}>Facturi</span>
+                                    <form onSubmit={handleSearchSubmit} style={{marginLeft:'10px'}}  className="search-form" id="search-form" name="search-form">
                                         <div className="search-form-container"> 
                                             <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
                                             <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>

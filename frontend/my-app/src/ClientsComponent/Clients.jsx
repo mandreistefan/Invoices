@@ -102,13 +102,15 @@ let Clients = (props) =>{
                     <div className="bordered-container p-3" style={{width:'100%'}}>
                         {!activeClient&&  
                         <div>    
-                            <div style={{marginBottom:'25px'}}>
-                                <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
+                            <div style={{marginBottom:'25px', display:'flex', justifyContent:'flex-start', alignItems:'center'}}>
+                                <span class="material-icons-outlined">account_circle</span>
+                                <span style={{fontSize:'18px', fontWeight:'600'}}>Clienti</span>
+                                <form onSubmit={handleSearchSubmit} style={{marginLeft:'10px'}} id="search-form" name="search-form">
                                     <div className="search-form-container"> 
                                         <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
                                         <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>
                                         <div className="search-header-buttons-container">                               
-                                            <button type="button" className='no-backgroud-button' title="Client nou" onClick={()=>{showonewClientWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span>Client nou</div></button>
+                                            <button type="button" className='no-backgroud-button' title="Client nou" onClick={()=>{showonewClientWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span></div></button>
                                             <button type="button" className='btn-danger' title="Reincarca date"  onClick={()=>{resetSearch()}}><div className="inner-button-content"><span className="material-icons-outlined" >refresh</span></div></button>
                                         </div>                                                     
                                     </div>

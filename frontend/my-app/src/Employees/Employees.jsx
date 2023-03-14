@@ -98,7 +98,9 @@ let Employees=(props)=>{
                     <div className="" style={{width:'100%'}}>
                         {!activeEmployee &&
                         <div>
-                            <div style={{marginBottom:'25px'}}>
+                            <div style={{marginBottom:'25px', display:'flex', justifyContent:'flex-start', alignItems:'center'}}>
+                                <span class="material-icons-outlined">group</span>
+                                <span style={{fontSize:'18px', fontWeight:'600'}}>Employees</span>
                                 <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
                                     <div className="search-form-container"> 
                                         <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
