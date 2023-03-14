@@ -62,6 +62,21 @@ table >tbody> tr:hover{
 .new-invoice-table > tbody > tr > td > input{
   border: none;
   border-radius: 0;
+  border-bottom: 1px solid white;
+}
+
+.new-invoice-table > tbody > tr > td > input:focus{
+  border-bottom: 1px solid black;
+}
+
+.new-invoice-table > tbody > tr > td > textarea{
+  border: none;
+  border-radius: 0;
+  border-bottom: 1px solid white;
+}
+
+.new-invoice-table > tbody > tr > td > textarea:focus{
+  border-bottom: 1px solid black;
 }
 
 .new-invoice-table > tbody > tr > td{
@@ -933,6 +948,7 @@ input[type=date]{
   color: white;
   font-weight: 600;
   border-radius: 6px;
+  z-index:auto;
 }
 
 #new-invoice-container{
