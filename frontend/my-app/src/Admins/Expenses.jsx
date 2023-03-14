@@ -71,6 +71,19 @@ let Expenses=()=>{
         fetchData()
     }
 
+    let expenseTypeIcon=(type)=>{
+        switch(type){
+            case "tools":
+                return <span class="material-icons-outlined" title="Unelte">construction</span>
+            case "administrative":
+                return <span class="material-icons-outlined" title="Administrative">description</span>
+            case "transport":
+                return <span class="material-icons-outlined" title="Transport">directions_car</span>
+            default:
+                return <span class="material-icons-outlined" title="Nu exista">info</span>
+        }
+    }
+
     return(
         <div className="app-data-container">
             <div style={{overflowY:'scroll', maxHeight:'80vh'}} className="bordered-container">     
@@ -95,6 +108,7 @@ let Expenses=()=>{
                                     <td>Nume</td>
                                     <td>Suma</td>
                                     <td>Descriere</td>
+                                    <td>Tip</td>
                                     <td>Data</td>
                                     <td>Deductibil</td>
                                     <td></td>
@@ -108,6 +122,7 @@ let Expenses=()=>{
                                             <td>{element.exp_name}</td>
                                             <td>{element.exp_sum}</td>
                                             <td>{element.exp_description}</td>
+                                            <td>{expenseTypeIcon(element.exp_type)}</td>
                                             <td>{prettyDate(element.exp_date)}</td>
                                             <td>{element.exp_deduct ? <span title="Deductibil" className="material-icons-outlined">check_circle</span> : <span title="Non-deductibil" className="material-icons-outlined">cancel</span>}</td>
                                             <td className="table-actions-container">

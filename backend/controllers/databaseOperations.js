@@ -1060,7 +1060,9 @@ function changeDatabase(databaseName){
  */
 
 function getExpenses(filterObject, getAll){
+
     let querryToBeExec = `SELECT * FROM expenses WHERE exp_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND exp_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" order by id`
+    
     if(!getAll) querryToBeExec = `SELECT * FROM expenses WHERE exp_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND exp_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" AND exp_deduct='1' order by id`
     return new Promise((resolve, reject)=>{  
         connection.query(querryToBeExec, function(error, result){
@@ -1084,7 +1086,7 @@ function getExpenses(filterObject, getAll){
 
 function addExpense(object){
     return new Promise((resolve, reject)=>{       
-        connection.query(`INSERT INTO expenses(exp_name, exp_sum, exp_description, exp_date, exp_deduct) VALUES ('${object.exp_name}', '${object.exp_sum}', '${object.exp_description}','${object.exp_date}','${object.exp_deduct ? 1 : 0}')`, function(error, result){
+        connection.query(`INSERT INTO expenses(exp_name, exp_sum, exp_description, exp_date, exp_deduct, exp_type) VALUES ('${object.exp_name}', '${object.exp_sum}', '${object.exp_description}','${object.exp_date}','${object.exp_deduct ? 1 : 0}', '${object.exp_type}')`, function(error, result){
             if(error){
                 console.log(error)
                 reject({status:"ERROR"})

@@ -11,11 +11,11 @@ let ExpenseForm = (props) =>{
         exp_sum: {value: 0, modified:false}, 
         exp_description: {value: "", modified:false}, 
         exp_deduct: {value:true, modified:false},
-        exp_date: {value: currentDate, modified:false}
+        exp_date: {value: currentDate, modified:false},
+        exp_type: {value: "tools", modified:false},
     })
     let [snackBarText, setSnackBarText] = React.useState(null)
     let [dataModified, setdataModified] = React.useState(false)
-    let carlig=React.useRef();
 
     //received some data as props
     React.useEffect(()=>{
@@ -49,25 +49,24 @@ let ExpenseForm = (props) =>{
 
         let sendData=({})
         let method;
-        //append the ID
-        sendData.id=arrayData.id
-        if(sendData.id==null){
-            //new entry, so send all the data
-            sendData.exp_name = arrayData.exp_name.value
-            sendData.exp_sum = arrayData.exp_sum.value
-            sendData.exp_description = arrayData.exp_description.value
-            sendData.exp_deduct = arrayData.exp_deduct.value
-            sendData.exp_date = arrayData.exp_date.value
+        let shallowCopy = {...arrayData}
+        if(arrayData.id==null){
+            delete shallowCopy.id
+            for (const [key, value] of Object.entries(shallowCopy)) {
+                sendData[key] = shallowCopy[key].value                              
+            }
             method="POST"
         }else{
             //edit, so send just the relevant data
-            if(arrayData.exp_name.modified) sendData.exp_name = arrayData.exp_name.value
-            if(arrayData.exp_sum.modified) sendData.exp_sum = arrayData.exp_sum.value
-            if(arrayData.exp_description.modified) sendData.exp_description = arrayData.exp_description.value
-            if(arrayData.exp_deduct.modified) sendData.exp_deduct = arrayData.exp_deduct.value
-            if(arrayData.exp_date.modified) sendData.exp_date = arrayData.exp_date.value
+            for (const [key, value] of Object.entries(shallowCopy)) {
+                if(shallowCopy[key].modified===true){
+                    sendData[key] = shallowCopy[key].value 
+                }                                             
+            }
             method="PUT"
         }   
+
+        if(sendData.length===0) return false
     
         //submit data
         fetch(`http://localhost:3000/expenses`, {
@@ -85,14 +84,12 @@ let ExpenseForm = (props) =>{
             }else{
                 setSnackBarText("An error ocurred")
             }
-            setData({
-                id:null, 
-                exp_name: {value:"", modified:false}, 
-                exp_sum: {value: 0, modified:false}, 
-                exp_description: {value: "", modified:false}, 
-                exp_deduct:{value:true, modified:false},
-                exp_date: {value: `${currentDate.getFullYear()}-${currentDate.getMonth()+1>9 ? currentDate.getMonth()+1 : "0"(currentDate.getMonth()+1)}-${currentDate.getDate()}`, modified:false}
-            })
+
+            for (const [key, value] of Object.entries(shallowCopy)) {
+                if(shallowCopy[key].modified===true) shallowCopy[key].modified=false                                            
+            }
+            shallowCopy.id = data.data.data
+            setData(shallowCopy)
         })
 
     }
@@ -142,6 +139,17 @@ let ExpenseForm = (props) =>{
                         <option value="false">Nu</option>
                     </select>
                     <label className="form-subsection-label" htmlFor="exp_deduct">Deductibil</label>
+                </div>
+            </div>
+
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <select className="form-control shadow-none" id="exp_type" name="exp_type" onChange={changeFormData} value={arrayData.exp_type.value} placeholder="Tip">
+                        <option value="tools">Unelte</option>
+                        <option value="transport">Transport</option>
+                        <option value="administrative">Administrative</option>
+                    </select>
+                    <label className="form-subsection-label" htmlFor="exp_type">Tip</label>
                 </div>
             </div>
 

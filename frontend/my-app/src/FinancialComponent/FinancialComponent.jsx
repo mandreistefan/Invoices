@@ -12,6 +12,7 @@ let Financial = (props) =>{
     let [chartTitle, setChartTile] = useState("Current year")
     let [chartData, setChartData] = useState([{month:8, year:2022, total:0}, {month:9, year:2022, total:0}])
     let [pieChartData, setPieChartData] = useState([{label:"Salarii", value:"60"}, {label:"Cheltuieli", value:"20"}, {label:"Profit", value:"20"}])
+    let [expensesPie, setExpensesPie]= useState([{label:"Unelte", value:"60"}, {label:"Adminsitrative", value:"20"}, {label:"Transport", value:"20"}])
     let currentDate = new Date()
     let [dateInterval, setInterval] = useState({
         start: `${currentDate.getFullYear()}-01-01`,
@@ -42,6 +43,11 @@ let Financial = (props) =>{
                 pieChartData[1].value = data.data.expensesPercentIncome
                 pieChartData[2].value = data.data.profitPercentIncome
                 setPieChartData(pieChartShallow)
+                let pieExpensesChartShallow = expensesPie
+                pieExpensesChartShallow[0].value = data.data.expensesCategories.tools.percentage
+                pieExpensesChartShallow[1].value = data.data.expensesCategories.administrative.percentage
+                pieExpensesChartShallow[2].value = data.data.expensesCategories.transport.percentage
+                setExpensesPie(pieExpensesChartShallow)
                 delete data.data.salariesPercentIncome
                 delete data.data.expensesPercentIncome
                 delete data.data.profitPercentIncome
@@ -99,10 +105,23 @@ let Financial = (props) =>{
                                         <PieChart data={pieChartData} plottedFor={chartTitle}/>
                                     </div>
                                     <div class="card-footer text-muted">
-                                        Impartire cheltuieli, procentual
+                                        Impartire venituri, procentual
                                     </div>
                                 </div>
                             </div> 
+                            <div class="grid-item">
+                                <div class="card text-center">
+                                    <div class="card-header">
+                                        <span style={{color:'gray'}}  className="material-icons-outlined p-1">donut_small</span>Cheltuieli
+                                    </div>
+                                    <div class="card-body">
+                                        <PieChart data={expensesPie} plottedFor={chartTitle}/>
+                                    </div>
+                                    <div class="card-footer text-muted">
+                                        Impartire cheltuieli, procentual
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="grid-item">

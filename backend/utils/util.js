@@ -282,7 +282,9 @@ function processFinancial(data, expenses, interval, salaries){
     //default values
     let returnObj={total:0, total_gross:0, total_number_invoices:1, avg_per_invoice:0, avg_per_step:0, total_salaries:0, periodicalData:null, productNames:null, productsDescriptions:null}
     //step
-    let startYear, endYear, startMonth, endMonth, noMonths=0, productNamesArr=[], productDescriptionArr=[]
+    let startYear, endYear, startMonth, endMonth, noMonths=0, productNamesArr=[]
+
+    let expensesCategories = {tools:{value:0, percentage: 0}, administrative:{value:0, percentage: 0}, transport:{value:0, percentage: 0}, default: {value: 0, percentage: 0}}
 
     startYear = interval.startYear.indexOf(0)==="0" ? parseInt(interval.startYear.substring(1,1)) : parseInt(interval.startYear)
     endYear = interval.endYear.indexOf(0)==="0" ? parseInt(interval.endYear.substring(1,1)) : parseInt(interval.endYear)
@@ -309,8 +311,13 @@ function processFinancial(data, expenses, interval, salaries){
     let totalExpenses=0
     //calculate total expenses
     expenses.forEach(element=>{
+        element.exp_type ? expensesCategories[element.exp_type].value=expensesCategories[element.exp_type].value+element.exp_sum : expensesCategories.default.value=expensesCategories.default.value+element.exp_sum
         totalExpenses=totalExpenses+element.exp_sum
     })
+
+    for(const[key, value] of Object.entries(expensesCategories)){
+        expensesCategories[key].percentage = (expensesCategories[key].value * 100) / totalExpenses
+    }
 
     //process data - calculate totals and data for the graph
     data.forEach((element, index)=>{
@@ -337,12 +344,6 @@ function processFinancial(data, expenses, interval, salaries){
         //products names
         productNamesArr.push({name:element.product_name, invoice: element.invoice_number})
         
-        //product descriptions
-        if(element.product_description!==null){
-            element.product_description.split(",").forEach(descriptionElement=>{
-                descriptionElement[0]===" " ? productDescriptionArr.push({name: descriptionElement.substring(1, descriptionElement.length), invoice:element.invoice_number}) : productDescriptionArr.push({name: descriptionElement, invoice:element.invoice_number})            
-            })
-        }
     })  
 
     //forEach finished, some data is in stepSum
@@ -386,14 +387,13 @@ function processFinancial(data, expenses, interval, salaries){
     }
 
     returnObj.total_exp=totalExpenses
+    returnObj.expensesCategories = expensesCategories
     returnObj.avg_per_invoice=returnObj.total/returnObj.total_number_invoices
     returnObj.periodicalData=arr2
     returnObj.avg_per_step=returnObj.total / noMonths
     returnObj.productNames=productNamesArr
-    returnObj.productsDescriptions=productDescriptionArr
     returnObj.salaries=salaries_total
     returnObj.total_gross=returnObj.total-totalExpenses-salaries_total
-
     returnObj.salariesPercentIncome = ((salaries_total*100)/returnObj.total)
     returnObj.expensesPercentIncome = ((totalExpenses*100)/returnObj.total)
     returnObj.profitPercentIncome = parseFloat(100 - returnObj.salariesPercentIncome - returnObj.expensesPercentIncome)
