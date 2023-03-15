@@ -1,0 +1,2 @@
+"id","emp_first_name","emp_last_name","emp_adress","emp_ident_no","emp_phone","emp_date","emp_active","emp_job_name","emp_cur_salary_gross","emp_tax","emp_tax_cass","emp_cur_salary_net","emp_notes","emp_vacation_days"
+1,"Slabu","Dorinel","Costache Negri, G8, sc. A, ap. 11","1720227040085","0729578894","2022-12-26T22:00:00.000Z",1,"Administrator",4000,0,0,3000,"",20

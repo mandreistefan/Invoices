@@ -280,9 +280,9 @@ function parsePeriod(dataArray){
 //calculates the total sum and tax for all data in a timespan
 function processFinancial(data, expenses, interval, salaries){
     //default values
-    let returnObj={total:0, total_gross:0, total_number_invoices:1, avg_per_invoice:0, avg_per_step:0, total_salaries:0, periodicalData:null, productNames:null, productsDescriptions:null}
+    let returnObj={total:0, total_gross:0, total_number_invoices:1, avg_per_invoice:0, avg_per_step:0, periodicalData:null, productsDescriptions:null}
     //step
-    let startYear, endYear, startMonth, endMonth, noMonths=0, productNamesArr=[]
+    let startYear, endYear, startMonth, endMonth, noMonths=0
 
     let expensesCategories = {tools:{value:0, percentage: 0}, administrative:{value:0, percentage: 0}, transport:{value:0, percentage: 0}, default: {value: 0, percentage: 0}}
 
@@ -340,9 +340,6 @@ function processFinancial(data, expenses, interval, salaries){
             returnObj.total_number_invoices=returnObj.total_number_invoices+1
             currentInvoice=element.invoice_number
         } 
-
-        //products names
-        productNamesArr.push({name:element.product_name, invoice: element.invoice_number})
         
     })  
 
@@ -386,12 +383,11 @@ function processFinancial(data, expenses, interval, salaries){
         })
     }
 
-    returnObj.total_exp=totalExpenses
+    returnObj.expenses=totalExpenses
     returnObj.expensesCategories = expensesCategories
     returnObj.avg_per_invoice=returnObj.total/returnObj.total_number_invoices
     returnObj.periodicalData=arr2
     returnObj.avg_per_step=returnObj.total / noMonths
-    returnObj.productNames=productNamesArr
     returnObj.salaries=salaries_total
     returnObj.total_gross=returnObj.total-totalExpenses-salaries_total
     returnObj.salariesPercentIncome = ((salaries_total*100)/returnObj.total)

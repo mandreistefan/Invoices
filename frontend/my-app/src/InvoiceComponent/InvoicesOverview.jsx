@@ -179,7 +179,7 @@ let InvoicesOverview = (props) =>{
                                                     <td>{simpleDate(element.invoice_date)}</td>   
                                                     <td><b>{element.invoice_total_sum} RON</b></td>                                          
                                                     <td className="table-actions-container">
-                                                        <button title="Arhiveaza factura" onClick={()=>{deleteInvoice(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined text-danger">delete</span></div></button>
+                                                        <button title="Arhiveaza factura" onClick={()=>{deleteInvoice(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">delete</span></div></button>
                                                         {element.invoice_status!=="finalised" && <button title="Seteaza ca platita" onClick={()=>{setInvoiceFinalised(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">task_alt</span></div></button>}
                                                         <button title="Deschide factura" onClick={()=>{setActiveInvoice(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">open_in_new</span></div></button>
                                                         <button title="Genereaza" onClick={()=>{openInvoice(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">file_open</span></div></button>

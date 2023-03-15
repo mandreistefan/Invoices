@@ -110,13 +110,13 @@ let Clients = (props) =>{
                                 <form onSubmit={handleSearchSubmit} style={{marginLeft:'10px'}} id="search-form" name="search-form">
                                     <div className="search-form-container"> 
                                         <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
-                                        <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>
-                                        <div className="search-header-buttons-container">                               
-                                            <button type="button" className='no-backgroud-button' title="Client nou" onClick={()=>{showonewClientWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span></div></button>
-                                            <button type="button" className='btn-danger' title="Reincarca date"  onClick={()=>{resetSearch()}}><div className="inner-button-content"><span className="material-icons-outlined" >refresh</span></div></button>
-                                        </div>                                                     
+                                        <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>                                                   
                                     </div>
                                 </form>
+                                <div className="btn-group">                               
+                                    <button type="button" className='btn btn-light btn-sm' title="Client nou" onClick={()=>{showonewClientWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span></div></button>
+                                    <button type="button" className='btn btn-light btn-sm' title="Reincarca date"  onClick={()=>{resetSearch()}}><div className="inner-button-content"><span className="material-icons-outlined" >refresh</span></div></button>
+                                </div>  
                             </div> 
                             <div style={{overflowY:'scroll', maxHeight:'80vh'}}>
                                 <table className="table" id="invoices-table">
@@ -137,7 +137,7 @@ let Clients = (props) =>{
                                                 <td><div style={{display:'flex', alignItems:'center'}}>{element.client_type ? element.client_type==="pers" ? <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>person</span>Persoana fizica</span> : <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>store</span>Firma</span> : "NA"}</div></td> 
                                                 <td>{element.client_county}, {element.client_city}, {element.client_street}, {element.client_adress_number}, {element.client_zip}</td>                                          
                                                 <td className="table-actions-container">
-                                                    <button title="Arhiveaza client" onClick={()=>{deleteClient(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined text-danger">delete</span></div></button>
+                                                    <button title="Arhiveaza client" onClick={()=>{deleteClient(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
                                                     <button  className='btn-light' title="Factureaza client" onClick={()=>{invoiceThisClient(element)}}><div className="inner-button-content"><span className="material-icons-outlined">library_add</span></div></button>
                                                     <button title="Deschide client" onClick={()=>{setActive(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span></div></button>
                                                 </td>

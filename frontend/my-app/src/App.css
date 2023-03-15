@@ -949,8 +949,8 @@ input[type=date]{
 }
 
 .page-item.active > .page-link{
-  background-color: var(--navActive)!important;
-  color: white;
+  background-color: transparent;
+  color: var(--navActive);
   font-weight: 600;
   border-radius: 6px;
   z-index:auto;
@@ -1082,11 +1082,11 @@ input[type=date]{
   grid-template-columns: 50% 50%;
   column-gap: 10px;
   row-gap: 10px;
-  height: 100%;
+  height: 350px;
 }
 
 .grid-item {
-  height: 100%;
+
 }
 
 #databaseSelector{

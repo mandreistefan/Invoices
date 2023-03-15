@@ -1639,6 +1639,178 @@ function removePredefinedProduct(productID){
     })
 }
 
+/**
+ * Exports the DB as multiple CSV files
+ * @returns {Promise<Array>} An array containing an OK for each succesfull export
+ */
+
+async function exportData(){
+    //create the directory if not existing
+    if (!fs.existsSync('./exports')){
+        fs.mkdirSync('./exports');
+    }
+    let jsonData, json2csvParser, csv;
+    let exportInvoices = new Promise((resolve, reject)=>{
+        connection.query(`SELECT * FROM invoices`, function(error, data, fields) {
+            if(data.length>0){
+                jsonData = JSON.parse(JSON.stringify(data));
+                json2csvParser = new Json2csvParser({ header: true});
+                csv = json2csvParser.parse(jsonData);
+            }else{
+                //no data means there is nothing to export; resolve and end execution
+                resolve("NO_DATA")
+                return false
+            }
+            if(error){
+                reject("ERROR")
+                return false
+            }
+            fs.writeFile("./exports/invoices.csv", csv, function(error) {
+              if (error) reject("ERROR")
+              console.log("invoices.csv generated");
+              resolve("OK")
+            });
+        });
+    })
+    let exportBilledProjects = new Promise((resolve, reject)=>{
+        connection.query("SELECT * FROM invoices_billed_products", function(error, data, fields) {
+            if(data.length>0){
+                jsonData = JSON.parse(JSON.stringify(data));
+                json2csvParser = new Json2csvParser({ header: true});
+                csv = json2csvParser.parse(jsonData);
+            }else{
+                //no data means there is nothing to export; resolve and end execution
+                resolve("NO_DATA")
+                return false
+            }
+            if(error){
+                reject("ERROR")
+                return false
+            }
+            fs.writeFile("./exports/invoices_billed_products.csv", csv, function(error) {
+              if (error) reject("ERROR")
+              console.log("invoices_billed_products.csv generated");
+              resolve("OK")
+            });
+        });
+    })
+
+    let clients = new Promise((resolve, reject)=>{
+        connection.query("SELECT * FROM clients", function(error, data, fields) {
+            if(data.length>0){
+                jsonData = JSON.parse(JSON.stringify(data));
+                json2csvParser = new Json2csvParser({ header: true});
+                csv = json2csvParser.parse(jsonData);
+            }else{
+                //no data means there is nothing to export; resolve and end execution
+                resolve("NO_DATA")
+                return false
+            }
+            if(error){
+                reject("ERROR")
+                return false
+            }
+            fs.writeFile("./exports/clients.csv", csv, function(error) {
+                if (error) reject("ERROR")
+              console.log("clients.csv generated");
+              resolve("OK")
+            });
+        });
+    })
+    let expenses = new Promise((resolve, reject)=>{
+        connection.query("SELECT * FROM expenses", function(error, data, fields) {
+            if(data.length>0){
+                jsonData = JSON.parse(JSON.stringify(data));
+                json2csvParser = new Json2csvParser({ header: true});
+                csv = json2csvParser.parse(jsonData);
+            }else{
+                //no data means there is nothing to export; resolve and end execution
+                resolve("NO_DATA")
+                return false
+            }
+            if(error){
+                reject("ERROR")
+                return false
+            }
+            fs.writeFile("./exports/expenses.csv", csv, function(error) {
+              if (error) reject("ERROR")
+              console.log("expenses.csv generated");
+              resolve("OK")
+            });
+        });
+    })
+    let employees = new Promise((resolve, reject)=>{
+        connection.query("SELECT * FROM employees", function(error, data, fields) {
+            if(data.length>0){
+                jsonData = JSON.parse(JSON.stringify(data));
+                json2csvParser = new Json2csvParser({ header: true});
+                csv = json2csvParser.parse(jsonData);
+            }else{
+                //no data means there is nothing to export; resolve and end execution
+                resolve("NO_DATA")
+                return false
+            }
+            if(error){
+                reject("ERROR")
+                return false
+            }
+            fs.writeFile("./exports/employees.csv", csv, function(error) {
+              if (error) reject("ERROR")
+              console.log("employees.csv generated");
+              resolve("OK")
+            });
+        });
+    })
+
+    let emp_sal = new Promise((resolve, reject)=>{
+        connection.query("SELECT * FROM employees_salaries", function(error, data, fields) {
+            if(data.length>0){
+                jsonData = JSON.parse(JSON.stringify(data));
+                json2csvParser = new Json2csvParser({ header: true});
+                csv = json2csvParser.parse(jsonData);
+            }else{
+                //no data means there is nothing to export; resolve and end execution
+                resolve("NO_DATA")
+                return false
+            }
+            if(error){
+                reject("ERROR")
+                return false
+            }
+            fs.writeFile("./exports/employees_salaries.csv", csv, function(error) {
+                if (error) reject("ERROR")
+              console.log("employees_salaries.csv generated");
+              resolve("OK")
+            });
+        });
+    })
+
+    let emp_vac = new Promise((resolve, reject)=>{
+        connection.query("SELECT * FROM employees_vacation", function(error, data, fields) {
+            if(data.length>0){
+                jsonData = JSON.parse(JSON.stringify(data));
+                json2csvParser = new Json2csvParser({ header: true});
+                csv = json2csvParser.parse(jsonData);
+            }else{
+                //no data means there is nothing to export; resolve and end execution
+                resolve("NO_DATA")
+                return false
+            }
+            if(error){
+                reject("ERROR")
+                return false
+            }
+            fs.writeFile("./exports/employees_vacation.csv", csv, function(error) {
+              if (error) reject("ERROR")
+              console.log("employees_vacation.csv generated");
+              resolve("OK")
+            });
+        });
+    })
+    //chain data
+    return await Promise.all([exportInvoices, exportBilledProjects, clients, expenses, employees, emp_sal, emp_vac])    
+}
+
 module.exports ={
     getClients:getClients,
     addClient:addClient,
@@ -1668,5 +1840,6 @@ module.exports ={
     getProductInvoice:getProductInvoice,
     updateInvoiceTotals:updateInvoiceTotals,
     registerBilledProducts: registerBilledProducts,
-    getRecordsNumber:getRecordsNumber, getDBinfo:getDBinfo, changeDatabase, getExpenses,addExpense, deleteExpense, searchDatabase, getEmployees, addEmployee, editEmployee, hasSalaryOnDate, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeInfo, archiveEmployee, deleteEmployee, removePredefinedProduct
+    getRecordsNumber:getRecordsNumber, getDBinfo:getDBinfo, changeDatabase, getExpenses,addExpense, deleteExpense, searchDatabase, getEmployees, addEmployee, editEmployee, hasSalaryOnDate, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeInfo, archiveEmployee, deleteEmployee, removePredefinedProduct,
+    exportData
 }

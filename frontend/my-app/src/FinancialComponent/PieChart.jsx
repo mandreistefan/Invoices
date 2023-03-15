@@ -44,17 +44,10 @@ let PieChart=(props)=>{
     return(
         <div key={props.plottedFor}>
             <Doughnut data={data} options={options}/>            
-                {data.datasets[0].data.length>0&&
-                    <table className='table'>
-                        <tbody>
-                        {data.labels.map((element, index)=>(
-                            <tr key={index}>
-                                <td className="col-6"><span class="badge" style={{backgroundColor:data.datasets[0].borderColor[index]}}>{element}</span></td>
-                                <td className="col-6" style={{textAlign:'right', fontWeight:'500'}}>{data.datasets[0].data[index].toFixed(2)}%</td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
+                {data.datasets[0].data.length>0&&   
+                    data.labels.map((element, index)=>(
+                        <span className="badge m-2" style={{backgroundColor:data.datasets[0].borderColor[index]}}>{element} {data.datasets[0].data[index].toFixed(2)}%</span>
+                    ))   
                 }                
         </div>
     )

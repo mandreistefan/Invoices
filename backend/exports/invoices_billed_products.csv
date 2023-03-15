@@ -1,0 +1,5 @@
+"id","invoiceID","product_id","product_name","product_mu","product_quantity","product_tax_pr","total_tax","product_price","total_price","product_description"
+2,1,,"Renovare acoperis","1",1,0,0,4000,4000,"Demontat tigla veche, Scos rigle vechi, Batut asteriala, Montat carton, Montat sindrila bituminoasa, Reparat cosuri"
+3,2,,"Renovare plafoane","1",1,0,0,2500,2500,"Scoatere lut dintre grinzi, Montat izolatie de vata bazaltica"
+4,3,,"Renovare","1",1,0,0,6500,6500,"Daramat perete de caramida, facut fier si cofraj pentru o grinda si doi stalpi, turnat beton"
+5,4,,"Renovare","1",1,0,0,6000,6000,"Daramare cos, scos dusumea camera1 + hol, carat pamant afara"

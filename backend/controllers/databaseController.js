@@ -532,6 +532,10 @@ async function getEmployeeOverview(employeeID){
     }
 }
 
+async function exportData(filterObject){
+    return await databaseOperations.exportData()
+}
+
 module.exports={ 
     fetchClients:fetchClients,
     addInvoice:addInvoice,
@@ -551,5 +555,6 @@ module.exports={
     getExpenses:getExpenses,
     addExpense:addExpense,
     deleteExpense,
-    getEmployees, addEmployee, editEmployee, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeOverview, archiveEmployee, deletePredefinedProduct
+    getEmployees, addEmployee, editEmployee, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeOverview, archiveEmployee, deletePredefinedProduct, 
+    exportData
 }

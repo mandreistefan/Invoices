@@ -98,7 +98,7 @@ let Products=()=>{
                                         <td>{element.pp_tax}%</td>
                                         <td>{element.pp_description}</td>
                                         <td className="table-actions-container">                            
-                                            <button title="Sterge produs" onClick={()=>{deleteProduct(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined text-danger">delete</span></div></button>
+                                            <button title="Sterge produs" onClick={()=>{deleteProduct(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
                                         </td>
                                     </tr>
                                 )):"Nu exista produse"
