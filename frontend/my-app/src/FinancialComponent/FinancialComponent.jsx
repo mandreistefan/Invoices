@@ -99,7 +99,7 @@ let Financial = (props) =>{
                     <button title={tableDisplay ? 'Vezi grafic' : 'Vezi tabel'} className="btn btn-light" onClick={()=>{setDisplay(!tableDisplay)}}><div className="inner-button-content"><span className="material-icons-outlined">{tableDisplay ? 'grid_view' : 'table_rows'} </span></div></button>    
                     <button title="Export date" className="btn btn-light" onClick={()=>{exportData()}}><div className="inner-button-content"><span className="material-icons-outlined">file_download</span>Export</div></button>                    
                 </div>
-               </div>
+            </div>
             {financialData ?
             <div className='financial-grid'>
                 {tableDisplay===false&&

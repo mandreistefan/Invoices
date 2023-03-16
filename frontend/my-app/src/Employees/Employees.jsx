@@ -115,7 +115,7 @@ let Employees=(props)=>{
                                     </div>
                                 </form>
                             </div>  
-                            <div style={{overflowY:'scroll', maxHeight:'80vh'}} className='bordered-container'>
+                            <div style={{overflowY:'scroll', maxHeight:'80vh'}}>
                                 <table className="table" id="invoices-table">
                                     <thead>
                                         <tr>

@@ -48,7 +48,6 @@ async function getClients(querryObject){
     let queryStatement;
     let step = 10
     if(querryObject.step) step = querryObject.step
-    console.log(querryObject)
     if(querryObject.filter==="search" && querryObject.filterBy.length===0) return ({status:"NO_DATA", data:null})
     switch(querryObject.filter){
         case "id":
@@ -69,7 +68,6 @@ async function getClients(querryObject){
                 console.log(`An error occured: ${error}`)
                 reject("ERROR")
             }
-            console.log(queryStatement)
             if(result.length>0){
                 resolve({
                     status: "OK",

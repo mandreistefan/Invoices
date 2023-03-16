@@ -13,7 +13,7 @@ import {Route, createBrowserRouter, RouterProvider, createRoutesFromElements, cr
 let App =()=> {
 
   let router;
-
+  
   //Electron env
   if(navigator.userAgent.indexOf('Electron')>-1){
     router=createHashRouter(

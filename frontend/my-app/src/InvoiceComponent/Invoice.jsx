@@ -4,7 +4,7 @@ import Snackbar from '../Snackbar/Snackbar.jsx'
 import PredefinedProducts from '../Admins/ExistingProducts.jsx'
 
 export default class Invoice extends React.Component{
-    
+       
     //set the elements we will be working with
     constructor(props) {
         super(props);
@@ -32,7 +32,7 @@ export default class Invoice extends React.Component{
             dataModified: false, 
             showClientInfo: false,
             showBilledProducts: true
-        };
+        };        
     }
 
     //let's check for some invoice data
@@ -373,7 +373,7 @@ export default class Invoice extends React.Component{
 
     generateInvoice = () =>{
         let activeInvoice = this.state.invoiceID
-        window.open(`http://localhost:3001/generateInvoice/${activeInvoice}`).focus();
+        window.open(`http://localhost:${window.navigator.userAgent==="ElectronApp" ? "3000" : "3001"}/generateInvoice/${activeInvoice}`).focus();
     }
 
     render()
