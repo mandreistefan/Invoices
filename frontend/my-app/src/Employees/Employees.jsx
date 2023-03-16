@@ -21,7 +21,7 @@ let Employees=(props)=>{
 
     useEffect(()=>{
         fetchData()        
-    },[queryFilter.page, queryFilter.step])
+    },[queryFilter.page, queryFilter.step, queryFilter.filterBy])
 
     function fetchData(){
         fetch(`http://localhost:3000/employees?filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}&step=${queryFilter.step}`).then(response=>response.json()).then(data=>{
@@ -101,19 +101,21 @@ let Employees=(props)=>{
                     <div className="" style={{width:'100%'}}>
                         {!activeEmployee &&
                         <div>
-                            <div style={{marginBottom:'25px', display:'flex', justifyContent:'flex-start', alignItems:'center'}}>
-                                <span class="material-icons-outlined">group</span>
-                                <span style={{fontSize:'18px', fontWeight:'600'}}>Employees</span>
-                                <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
-                                    <div className="search-form-container"> 
-                                        <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
-                                        <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>
-                                        <div className="search-header-buttons-container">                               
-                                            <button type="button" className='no-background-button' title="Angajat nou" onClick={()=>{showaddEmployeeWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span></div></button>
-                                            <button type="button" className='btn-danger' title="Reincarca date"  onClick={()=>{resetSearch()}}><div className="inner-button-content"><span className="material-icons-outlined" >refresh</span></div></button>
-                                        </div>                                                     
-                                    </div>
-                                </form>
+                            <div style={{marginBottom:'25px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                                <div style={{display:'inherit', justifyContent:'flex-start', alignItems:'center'}}>
+                                    <span class="material-icons-outlined">group</span>
+                                    <span style={{fontSize:'18px', fontWeight:'600'}}>Employees</span>
+                                    <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
+                                        <div className="search-form-container"> 
+                                            <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
+                                            <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>                                                    
+                                        </div> 
+                                    </form>
+                                </div>
+                                <div className="btn-group">                               
+                                    <button type="button" className='btn btn-light btn-sm' title="Angajat nou" onClick={()=>{showaddEmployeeWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span></div></button>
+                                    <button type="button" className='btn btn-light btn-sm' title="Reincarca date"  onClick={()=>{resetSearch()}}><div className="inner-button-content"><span className="material-icons-outlined" >refresh</span></div></button>
+                                </div> 
                             </div>  
                             <div style={{overflowY:'scroll', maxHeight:'80vh'}}>
                                 <table className="table" id="invoices-table">

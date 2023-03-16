@@ -17,7 +17,7 @@ let InvoicesOverview = (props) =>{
     //refecth on page change or when the query parameters change (ex. when a search is attempted)
     useEffect(()=>{
         fetchData()
-    },[queryFilter.page, queryFilter.step])
+    },[queryFilter.page, queryFilter.step, queryFilter.filterBy])
 
     /**
      * Fetches data

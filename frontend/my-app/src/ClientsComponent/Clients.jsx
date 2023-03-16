@@ -26,7 +26,7 @@ let Clients = (props) =>{
 
     useEffect(()=>{
         fetchClients()
-    },[queryFilter.page, queryFilter.step])
+    },[queryFilter.page, queryFilter.step, queryFilter.filterBy])
 
     /**
      * fetchesClients
@@ -88,6 +88,7 @@ let Clients = (props) =>{
     function handleSearchSubmit(event){
         event.preventDefault()
         let searchTerm = event.target.searchinput.value
+        console.log(searchTerm)
         if(searchTerm.length==0) return false
         let searchTermStringified = searchTerm.replaceAll(" ", "+")
         setFilter({...queryFilter, filter:"search", filterBy:searchTermStringified})
