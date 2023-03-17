@@ -1484,7 +1484,12 @@ async function exportData(){
     }
     let jsonData, json2csvParser, csv;
     let exportInvoices = new Promise((resolve, reject)=>{
-        connection.query(`SELECT * FROM invoices`, function(error, data, fields) {
+        connection.query(`SELECT invoice_number, invoice_status, invoice_pay_method, invoice_bank_ref, rec_number, customer_id, client_type, client_fiscal_1, client_fiscal_2, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_phone, client_email, DATE_FORMAT(invoice_date, '%y-%c-%d %H:%m:%s.%f') as invoice_date, invoice_tax, invoice_total_sum FROM invoices`, function(error, data, fields) {
+            if(error){
+                console.log(error)
+                reject("ERROR")
+                return false
+            }
             if(data.length>0){
                 jsonData = JSON.parse(JSON.stringify(data));
                 json2csvParser = new Json2csvParser({ header: true});
@@ -1492,10 +1497,6 @@ async function exportData(){
             }else{
                 //no data means there is nothing to export; resolve and end execution
                 resolve("NO_DATA")
-                return false
-            }
-            if(error){
-                reject("ERROR")
                 return false
             }
             fs.writeFile("./exports/invoices.csv", csv, function(error) {
@@ -1507,6 +1508,11 @@ async function exportData(){
     })
     let exportBilledProjects = new Promise((resolve, reject)=>{
         connection.query("SELECT * FROM invoices_billed_products", function(error, data, fields) {
+            if(error){
+                console.log(error)
+                reject("ERROR")
+                return false
+            }
             if(data.length>0){
                 jsonData = JSON.parse(JSON.stringify(data));
                 json2csvParser = new Json2csvParser({ header: true});
@@ -1514,10 +1520,6 @@ async function exportData(){
             }else{
                 //no data means there is nothing to export; resolve and end execution
                 resolve("NO_DATA")
-                return false
-            }
-            if(error){
-                reject("ERROR")
                 return false
             }
             fs.writeFile("./exports/invoices_billed_products.csv", csv, function(error) {
@@ -1530,6 +1532,11 @@ async function exportData(){
 
     let clients = new Promise((resolve, reject)=>{
         connection.query("SELECT * FROM clients", function(error, data, fields) {
+            if(error){
+                console.log(error)
+                reject("ERROR")
+                return false
+            }
             if(data.length>0){
                 jsonData = JSON.parse(JSON.stringify(data));
                 json2csvParser = new Json2csvParser({ header: true});
@@ -1537,10 +1544,6 @@ async function exportData(){
             }else{
                 //no data means there is nothing to export; resolve and end execution
                 resolve("NO_DATA")
-                return false
-            }
-            if(error){
-                reject("ERROR")
                 return false
             }
             fs.writeFile("./exports/clients.csv", csv, function(error) {
@@ -1551,7 +1554,12 @@ async function exportData(){
         });
     })
     let expenses = new Promise((resolve, reject)=>{
-        connection.query("SELECT * FROM expenses", function(error, data, fields) {
+        connection.query("SELECT id, exp_name, exp_sum, exp_description, DATE_FORMAT(exp_date, '%y-%c-%d %H:%m:%s.%f') as exp_date, exp_deduct FROM expenses", function(error, data, fields) {
+            if(error){
+                console.log(error)
+                reject("ERROR")
+                return false
+            }
             if(data.length>0){
                 jsonData = JSON.parse(JSON.stringify(data));
                 json2csvParser = new Json2csvParser({ header: true});
@@ -1559,10 +1567,6 @@ async function exportData(){
             }else{
                 //no data means there is nothing to export; resolve and end execution
                 resolve("NO_DATA")
-                return false
-            }
-            if(error){
-                reject("ERROR")
                 return false
             }
             fs.writeFile("./exports/expenses.csv", csv, function(error) {
@@ -1573,7 +1577,12 @@ async function exportData(){
         });
     })
     let employees = new Promise((resolve, reject)=>{
-        connection.query("SELECT * FROM employees", function(error, data, fields) {
+        connection.query("SELECT id,emp_first_name,emp_last_name,emp_adress,emp_ident_no,emp_phone, DATE_FORMAT(emp_date, '%y-%c-%d %H:%m:%s.%f') as emp_date ,emp_active,emp_job_name,emp_cur_salary_gross,emp_tax,emp_tax_cass,emp_cur_salary_net,emp_notes,emp_vacation_days FROM employees", function(error, data, fields) {
+            if(error){
+                console.log(error)
+                reject("ERROR")
+                return false
+            }
             if(data.length>0){
                 jsonData = JSON.parse(JSON.stringify(data));
                 json2csvParser = new Json2csvParser({ header: true});
@@ -1581,10 +1590,6 @@ async function exportData(){
             }else{
                 //no data means there is nothing to export; resolve and end execution
                 resolve("NO_DATA")
-                return false
-            }
-            if(error){
-                reject("ERROR")
                 return false
             }
             fs.writeFile("./exports/employees.csv", csv, function(error) {
@@ -1596,7 +1601,12 @@ async function exportData(){
     })
 
     let emp_sal = new Promise((resolve, reject)=>{
-        connection.query("SELECT * FROM employees_salaries", function(error, data, fields) {
+        connection.query("SELECT id, DATE_FORMAT(paid_on, '%y-%c-%d %H:%m:%s.%f') as paid_on, sum_gross, sum_net, tax_cas, tax_cass, tax_income, tax_cm, paid_to, salary_month, salary_year, comments, bank_ref from employees_salaries", function(error, data, fields) {
+            if(error){
+                console.log(error)
+                reject("ERROR")
+                return false
+            }
             if(data.length>0){
                 jsonData = JSON.parse(JSON.stringify(data));
                 json2csvParser = new Json2csvParser({ header: true});
@@ -1604,10 +1614,6 @@ async function exportData(){
             }else{
                 //no data means there is nothing to export; resolve and end execution
                 resolve("NO_DATA")
-                return false
-            }
-            if(error){
-                reject("ERROR")
                 return false
             }
             fs.writeFile("./exports/employees_salaries.csv", csv, function(error) {
@@ -1619,7 +1625,12 @@ async function exportData(){
     })
 
     let emp_vac = new Promise((resolve, reject)=>{
-        connection.query("SELECT * FROM employees_vacation", function(error, data, fields) {
+        connection.query("SELECT id, employee_id, DATE_FORMAT(vacation_date, '%y-%c-%d %H:%m:%s.%f') as vacation_date, vacation_type, DATE_FORMAT(date, '%y-%c-%d %H:%m:%s.%f') as date, status FROM employees_vacation", function(error, data, fields) {
+            if(error){
+                console.log(error)
+                reject("ERROR")
+                return false
+            }
             if(data.length>0){
                 jsonData = JSON.parse(JSON.stringify(data));
                 json2csvParser = new Json2csvParser({ header: true});
@@ -1627,10 +1638,6 @@ async function exportData(){
             }else{
                 //no data means there is nothing to export; resolve and end execution
                 resolve("NO_DATA")
-                return false
-            }
-            if(error){
-                reject("ERROR")
                 return false
             }
             fs.writeFile("./exports/employees_vacation.csv", csv, function(error) {
