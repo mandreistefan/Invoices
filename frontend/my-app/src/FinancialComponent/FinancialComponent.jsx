@@ -102,7 +102,7 @@ let Financial = (props) =>{
             </div>
             {financialData ?
             <div className='financial-grid'>
-                {tableDisplay===false&&
+                {tableDisplay===false && financialData.total > 0 &&
                 <div className="">
                     <div className='row' style={{marginBottom:'24px'}}>
                         <div className="col-6">
@@ -176,7 +176,7 @@ let Financial = (props) =>{
                     </div>
                 </div> 
             }   
-            {tableDisplay===true&&
+            {tableDisplay===true && financialData.total > 0 &&
             <div>
                 <div className='bordered-container mb-3'>
                     <h5 className="p-3">Total</h5>

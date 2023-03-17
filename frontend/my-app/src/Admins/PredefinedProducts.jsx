@@ -65,7 +65,7 @@ let Products=()=>{
 
     return(
         <div className="app-data-container">  
-            <div className="bordered-container" style={{marginTop:'25px'}}>  
+            <div className="bordered-container">  
                 <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
                     <h5>Produse sablon</h5>
                     <div className="btn-group">                               
@@ -88,7 +88,7 @@ let Products=()=>{
                                 </tr>
                             </thead>                     
                             <tbody className='clients-table-body app-data-table-body'>
-                            {predefinedProducts.length>0 ? 
+                            {predefinedProducts.length>0 && 
                                 predefinedProducts.map((element, index)=>(
                                     <tr key={index} className='clients-table-row app-data-table-row'>
                                         <td>{index+1}</td>
@@ -101,10 +101,11 @@ let Products=()=>{
                                             <button title="Sterge produs" onClick={()=>{deleteProduct(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
                                         </td>
                                     </tr>
-                                )):"Nu exista produse"
+                                ))
                             }
                             </tbody>
                         </table>
+                        {predefinedProducts.length===0 && <h6>Nu exista produse</h6>}
                         {productProps!=null &&
                             <div> 
                                 <div className="blur-overlap"></div>    

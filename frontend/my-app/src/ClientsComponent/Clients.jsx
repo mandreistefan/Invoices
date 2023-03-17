@@ -88,7 +88,6 @@ let Clients = (props) =>{
     function handleSearchSubmit(event){
         event.preventDefault()
         let searchTerm = event.target.searchinput.value
-        console.log(searchTerm)
         if(searchTerm.length==0) return false
         let searchTermStringified = searchTerm.replaceAll(" ", "+")
         setFilter({...queryFilter, filter:"search", filterBy:searchTermStringified})
@@ -101,7 +100,7 @@ let Clients = (props) =>{
 
     return(
             <div>
-                {allClients &&       
+      
                     <div className="bordered-container p-3" style={{width:'100%'}}>
                         {!activeClient&&  
                         <div>    
@@ -133,7 +132,7 @@ let Clients = (props) =>{
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {allClients.length>0 && allClients.map((element, index)=>(          
+                                        {allClients && allClients.map((element, index)=>(          
                                             <tr key={index}>
                                                 <td>{index+1}</td>
                                                 <td><b>{element.client_first_name} {element.client_last_name}</b></td>
@@ -159,7 +158,7 @@ let Clients = (props) =>{
                             </div>
                         }
                     </div>                             
-                }
+                
                 {newClientWindow&&
                     <div>
                         <div className="blur-overlap"></div>

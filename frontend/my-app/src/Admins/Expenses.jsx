@@ -135,7 +135,8 @@ let Expenses=()=>{
                                     ))
                                 }
                             </tbody>
-                        </table> 
+                        </table>
+                        {expenses.length===0 && <h6>Nu exista cheltuieli</h6>} 
                     </div>                  
                 </div>
                 {addexpensesWindow&&

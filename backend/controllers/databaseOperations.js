@@ -3,6 +3,7 @@ const utile = require('../utils/util.js')
 const Json2csvParser = require("json2csv").Parser;
 const fs = require("fs");
 const { resolve } = require('path');
+const { getDate } = require('date-fns');
 
 const testDB = "invoicemanager"
 const liveDB = "baza_date_facturi"
@@ -13,7 +14,7 @@ let offSet = 0
 const connection=mysql.createConnection({
     host:"localhost",
     user:"root",
-    password:"",
+    password:"root",
     database:"invoicemanager"
 })
 
@@ -35,6 +36,11 @@ try{
     console.log(`${error}`)
     connection.destroy()
     return false
+}
+
+function currentDate(){
+    let date = new Date()
+    return(`${date.getFullYear()}-${(date.getMonth()+1)<10 ? "0"+(date.getMonth()+1) : (date.getMonth()+1)}-${date.getDate()<10 ? "0"+date.getDate() : date.getDate()}`)
 }
 
 /**
@@ -125,7 +131,7 @@ function createNewInvoice(data)
         if(data.clientID){
             querryToBeExecuted = `INSERT INTO invoices(client_type, client_fiscal_1, client_fiscal_2, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_phone, client_email, customer_id, invoice_status, invoice_pay_method, invoice_bank_ref) SELECT client_type, client_fiscal_1, client_fiscal_2, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_phone, client_email,  '${data.clientID}', 'draft', '${data.invoice_pay_method}', '${data.invoice_bank_ref}' FROM clients WHERE id='${data.clientID}'` 
         }else{
-            querryToBeExecuted = `INSERT INTO invoices(client_type, client_fiscal_1, client_fiscal_2, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_phone, client_email, invoice_status, invoice_pay_method, invoice_bank_ref) VALUES ('${data.client_type}', '${data.client_fiscal_1}', '${data.client_fiscal_2}', '${data.client_first_name}', '${data.client_last_name}', '${data.client_county}', '${data.client_city}', '${data.client_street}', '${data.client_adress_number}', '${data.client_zip}', '${data.client_phone}', '${data.client_email}', 'draft', '${data.invoice_pay_method}', '${data.invoice_bank_ref}')`
+            querryToBeExecuted = `INSERT INTO invoices(client_type, client_fiscal_1, client_fiscal_2, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_phone, client_email, invoice_status, invoice_pay_method, invoice_bank_ref, invoice_date) VALUES ('${data.client_type}', '${data.client_fiscal_1}', '${data.client_fiscal_2}', '${data.client_first_name}', '${data.client_last_name}', '${data.client_county}', '${data.client_city}', '${data.client_street}', '${data.client_adress_number}', '${data.client_zip}', '${data.client_phone}', '${data.client_email}', 'draft', '${data.invoice_pay_method}', '${data.invoice_bank_ref}', ${currentDate()})`
         }  
 
         connection.query(querryToBeExecuted, function(error, result){
@@ -254,7 +260,7 @@ async function getInvoices(querryObject){
             querry=`SELECT * FROM ${querryObject.target} WHERE invoice_active=${querryObject.filterBy} LIMIT ${step} OFFSET ${step*querryObject.page}`
             break;
         case "search":
-            querry=`SELECT * FROM invoices WHERE invoice_number in (${querryObject.filterBy}) order by invoice_number DESC LIMIT ${step} OFFSET ${step*querryObject.page}`
+            querry=`SELECT * FROM invoices WHERE invoice_number in (${querryObject.filterBy}) order by invoice_number`
             break
         default:
             querry=`SELECT * FROM ${querryObject.target} LIMIT ${step} OFFSET ${step*querryObject.page}`
@@ -294,7 +300,7 @@ async function getInvoices(querryObject){
 function archiveClientData(clientID){
     return new Promise((resolve, reject)=>{
         try{
-            connection.query(`INSERT INTO clients_archived(id, client_type, client_fiscal_1, client_fiscal_2, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_billing_adress, client_phone, client_email, client_notes, client_gui_color) select * from clients where id='${clientID}'`, function(err, result){
+            connection.query(`INSERT INTO clients_archived(id, client_type, client_fiscal_1, client_fiscal_2, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_phone, client_email, client_notes, client_gui_color) select * from clients where id='${clientID}'`, function(err, result){
                 if(err){
                     reject({
                         status:"ERROR",
@@ -505,142 +511,6 @@ function editClient(data){
     })
 }
 
-function createRecurrentBill(clientID, recurrencyType, recurrencyDate){
-
-    switch (recurrencyType){
-        case "monthly-billing":
-            querry=`INSERT INTO invoices_recurrent(client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, customer_id, invoice_recurrency, invoice_re_mo_date) SELECT client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, '${clientID}', '${recurrencyType}', '${recurrencyDate}' FROM clients WHERE id=${clientID}`
-            break;
-        case "yearly-billing":
-            querry=`INSERT INTO invoices_recurrent(client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, customer_id, invoice_recurrency, invoice_re_y_date) SELECT client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, '${clientID}', '${recurrencyType}', '${recurrencyDate}' FROM clients WHERE id=${clientID}`
-            break;
-        }
-
-    return new Promise((resolve, reject)=>{
-        connection.query(querry, function(error, result){
-            if(error){
-                console.log(error)
-                reject({
-                    status:"ERROR",
-                    data: "ERROR in creating recurrent schema"
-                })
-            }
-            
-            if(result.insertId){
-                resolve({
-                    status:"OK",
-                    data: result.insertId 
-                })
-            }else{
-                resolve({
-                    status:"FAILED",
-                    data: null
-                })
-            }
-            
-        })
-    })
-}
-
-function registerProductsToRecBill(invoiceID, billedProductsArray){
-
-    let total_tax=0
-    let curent_element_tax=0;
-    //don't want to modify the original array
-    let arr_copy=[]
-
-    billedProductsArray.forEach(element => {
-        curent_element_tax=utile.calculateTax(element.data[2], element.data[3], element.data[5])
-        element.data[4]=curent_element_tax;        
-        arr_copy.push([element.id, element.data[0], element.data[1], element.data[2], element.data[3], element.data[4], element.data[5], invoiceID, (parseFloat(element.data[2])*parseFloat(element.data[5]))])
-        total_tax=total_tax+curent_element_tax;
-    });
-
-    return new Promise((resolve, reject)=>{
-        connection.query(`INSERT INTO invoices_recurrent_products (product_id, product_name, product_mu, product_quantity, product_tax_pr, total_tax, product_price, invoiceID, total_price) VALUES ?`, [arr_copy], function(err, result) {
-            if(err){
-                console.log(err)
-                reject({
-                    status:"ERROR",
-                    data:"ERROR when inserting billed products"
-                })
-            }
-            if(result.insertId>0){
-                resolve({
-                    status:"OK",
-                    data:total_tax
-                })
-            }else{
-                resolve({
-                    status: "FAILED",
-                    data: null
-                })
-            }            
-        });
-    })    
-}
-
-function retrieveRecurrentProducts(invoiceID){
-    return new Promise((resolve, reject)=>{
-        connection.query(`SELECT * FROM invoices_recurrent_products WHERE invoiceID=${invoiceID}`, function(err, result) {
-            if(err){
-                console.log(err)
-                reject({
-                    status:"ERROR",
-                    data:"ERROR when retrieving billed products"
-                })
-            }
-            resolve({
-                status:"OK",
-                data:result
-            })        
-        });
-    })
-}
-
-function createRecurrentBillSchema(clientID, recurrencyType, recurrencyDate, products){
-    return new Promise((resolve, reject)=>{
-        createRecurrentBill(clientID, recurrencyType, recurrencyDate)
-        .then(data=>{
-            if(data.status==="OK"){
-                let recInvoiceSchema = data.data;
-                registerProductsToRecBill(recInvoiceSchema, products).then(data=>{
-                    if(data.status==="OK"){
-                        resolve({
-                            status:"OK",
-                            data:recInvoiceSchema
-                        })
-                    }else{
-                        resolve({
-                            status: "FAILED",
-                            data: null
-                        })
-                    }
-                })
-                .catch(error=>{
-                    console.log(error)
-                    reject({
-                        status: "ERROR",
-                        data: "ERROR in registering products to a recurrent schema"
-                    })
-                })
-            }else{
-                reject({
-                    status: "FAILED",
-                    data: "FAILED creating recurrent bill schema"
-                })
-            }
-        })
-        .catch(error=>{
-            console.log(error)
-            reject({
-                status:"ERROR",
-                data: "ERROR in creating recurrent schema"
-            })
-        })
-    })
-}
-
 function linkInvoiceToRecSchema(rec, inv){
     connection.query(`UPDATE invoices SET rec_number=${rec} WHERE invoice_number=${inv}`, function(error, result){
         if(error){
@@ -769,41 +639,6 @@ function getActiveRecurrentInvoices(date){
     })
 }
 
-function setBillingdates(nextInvoice, lastInvoice, reccurent_schema){
-    return new Promise((resolve, reject)=>{
-        connection.query(`UPDATE invoices_recurrent SET next_invoice_date='${nextInvoice}', last_invoice_date='${lastInvoice}' WHERE rec_number='${reccurent_schema}'`, function(error, result){
-            if(error){
-                console.log(error)
-                reject({
-                    status:"ERROR",
-                    data:"ERROR"
-                })
-           }
-           resolve({
-                status:"OK",
-                data:null
-           })
-        })
-    })
-}
-
-function getRecurrentInvoiceProducts(invoiceID){
-    return new Promise((resolve, reject)=>{
-        connection.query(`SELECT * FROM invoices_recurrent_products irp left join predefined_products pp on pp.id=irp.product_id  WHERE invoiceID='${invoiceID}'`, function(error, result){
-            if(error){
-                console.log(error)
-                reject({
-                    status:"ERROR",
-                    data:"ERROR"
-                })
-           }
-           resolve({
-                status:"OK",
-                data:result
-           })
-        })
-    })
-}
 
 /**
  * Gets all predefined products
@@ -1281,7 +1116,7 @@ function getEmployees(queryObject){
 
 function addEmployee(data){
     return new Promise((resolve, reject)=>{
-        connection.query(`INSERT INTO employees(emp_first_name, emp_last_name, emp_adress, emp_ident_no, emp_job_name, emp_cur_salary_gross, emp_cur_salary_net, emp_tax, emp_notes, emp_phone) VALUES ('${data.emp_first_name}', '${data.emp_last_name}', '${data.emp_adress}', '${data.emp_ident_no}', '${data.emp_job_name}', '${data.emp_cur_salary_gross}', '${data.emp_cur_salary_net}', '${data.emp_tax}', '${data.emp_notes}', '${data.emp_phone}')`, function(error, result){
+        connection.query(`INSERT INTO employees(emp_first_name, emp_last_name, emp_adress, emp_ident_no, emp_job_name, emp_cur_salary_gross, emp_cur_salary_net, emp_tax, emp_notes, emp_phone, emp_date) VALUES ('${data.emp_first_name}', '${data.emp_last_name}', '${data.emp_adress}', '${data.emp_ident_no}', '${data.emp_job_name}', '${data.emp_cur_salary_gross}', '${data.emp_cur_salary_net}', '${data.emp_tax}', '${data.emp_notes}', '${data.emp_phone}', '${currentDate()}')`, function(error, result){
             if(error){
                 console.log(error)
                 reject({status:"ERROR"})
@@ -1821,16 +1656,12 @@ module.exports ={
     fetchInvoiceSummary: fetchInvoiceSummary,
     fetchBilledProducts: fetchBilledProducts,
     editClient:editClient,
-    createRecurrentBillSchema: createRecurrentBillSchema,
     linkInvoiceToRecSchema: linkInvoiceToRecSchema,
     getRecInfo:getRecInfo,
     getFinancialData: getFinancialData,
     checkInvoiceStatus:checkInvoiceStatus,
     updateInvoice: updateInvoice,
     getActiveRecurrentInvoices: getActiveRecurrentInvoices,
-    setBillingdates:setBillingdates,
-    retrieveRecurrentProducts:retrieveRecurrentProducts,
-    getRecurrentInvoiceProducts:getRecurrentInvoiceProducts,
     getPredefinedProducts: getPredefinedProducts, getProductInfo,
     registerProduct:registerProduct,
     editPredefinedProduct:editPredefinedProduct,

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 06, 2023 at 06:10 PM
+-- Generation Time: Mar 17, 2023 at 06:59 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.5
 
@@ -14,8 +14,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `invoicemanager`
 --
-CREATE DATABASE IF NOT EXISTS `invoicemanager` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE `invoicemanager`;
 
 -- --------------------------------------------------------
 
@@ -23,7 +21,6 @@ USE `invoicemanager`;
 -- Table structure for table `clients`
 --
 
-DROP TABLE IF EXISTS `clients`;
 CREATE TABLE `clients` (
   `id` int(11) NOT NULL,
   `client_type` varchar(4) NOT NULL DEFAULT 'pers',
@@ -36,11 +33,9 @@ CREATE TABLE `clients` (
   `client_street` varchar(20) NOT NULL,
   `client_adress_number` varchar(20) NOT NULL,
   `client_zip` varchar(20) NOT NULL,
-  `client_billing_adress` varchar(50) NOT NULL,
-  `client_phone` varchar(15) NOT NULL,
-  `client_email` varchar(25) NOT NULL,
-  `client_notes` text NOT NULL,
-  `client_gui_color` varchar(7) NOT NULL
+  `client_phone` varchar(15) DEFAULT NULL,
+  `client_email` varchar(50) DEFAULT NULL,
+  `client_notes` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -49,7 +44,6 @@ CREATE TABLE `clients` (
 -- Table structure for table `clients_archived`
 --
 
-DROP TABLE IF EXISTS `clients_archived`;
 CREATE TABLE `clients_archived` (
   `id` int(11) NOT NULL,
   `client_type` varchar(4) NOT NULL DEFAULT 'pers',
@@ -62,11 +56,9 @@ CREATE TABLE `clients_archived` (
   `client_street` varchar(20) NOT NULL,
   `client_adress_number` varchar(20) NOT NULL,
   `client_zip` varchar(20) NOT NULL,
-  `client_billing_adress` varchar(50) NOT NULL,
   `client_phone` varchar(15) NOT NULL,
   `client_email` varchar(25) NOT NULL,
-  `client_notes` text NOT NULL,
-  `client_gui_color` varchar(7) NOT NULL
+  `client_notes` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -75,7 +67,6 @@ CREATE TABLE `clients_archived` (
 -- Table structure for table `employees`
 --
 
-DROP TABLE IF EXISTS `employees`;
 CREATE TABLE `employees` (
   `id` int(11) NOT NULL,
   `emp_first_name` text NOT NULL,
@@ -83,14 +74,14 @@ CREATE TABLE `employees` (
   `emp_adress` varchar(150) NOT NULL,
   `emp_ident_no` varchar(15) NOT NULL,
   `emp_phone` varchar(10) NOT NULL,
-  `emp_date` date NOT NULL DEFAULT current_timestamp(),
+  `emp_date` date NOT NULL DEFAULT "2023-01-01",
   `emp_active` tinyint(1) NOT NULL DEFAULT 1,
   `emp_job_name` varchar(50) NOT NULL,
   `emp_cur_salary_gross` float NOT NULL,
   `emp_tax` tinyint(1) NOT NULL DEFAULT 0,
   `emp_tax_cass` tinyint(1) NOT NULL DEFAULT 0,
   `emp_cur_salary_net` float NOT NULL,
-  `emp_notes` text NOT NULL,
+  `emp_notes` text DEFAULT NULL,
   `emp_vacation_days` int(11) NOT NULL DEFAULT 20
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -100,7 +91,6 @@ CREATE TABLE `employees` (
 -- Table structure for table `employees_archived`
 --
 
-DROP TABLE IF EXISTS `employees_archived`;
 CREATE TABLE `employees_archived` (
   `id` int(11) NOT NULL,
   `emp_first_name` text NOT NULL,
@@ -108,7 +98,7 @@ CREATE TABLE `employees_archived` (
   `emp_adress` varchar(150) NOT NULL,
   `emp_ident_no` varchar(15) NOT NULL,
   `emp_phone` varchar(10) NOT NULL,
-  `emp_date` date NOT NULL DEFAULT current_timestamp(),
+  `emp_date` date NOT NULL DEFAULT "2023-01-01",
   `emp_active` tinyint(1) NOT NULL DEFAULT 1,
   `emp_job_name` varchar(50) NOT NULL,
   `emp_cur_salary_gross` float NOT NULL,
@@ -123,10 +113,9 @@ CREATE TABLE `employees_archived` (
 -- Table structure for table `employees_salaries`
 --
 
-DROP TABLE IF EXISTS `employees_salaries`;
 CREATE TABLE `employees_salaries` (
   `id` int(11) NOT NULL,
-  `paid_on` date NOT NULL DEFAULT current_timestamp(),
+  `paid_on` date NOT NULL DEFAULT "2023-01-01",
   `sum_gross` float NOT NULL,
   `sum_net` float NOT NULL,
   `tax_cas` float NOT NULL,
@@ -136,8 +125,8 @@ CREATE TABLE `employees_salaries` (
   `paid_to` int(11) NOT NULL,
   `salary_month` int(2) NOT NULL,
   `salary_year` int(4) NOT NULL,
-  `comments` varchar(250) NOT NULL,
-  `bank_ref` varchar(25) NOT NULL
+  `comments` varchar(250) DEFAULT NULL,
+  `bank_ref` varchar(25) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -146,14 +135,13 @@ CREATE TABLE `employees_salaries` (
 -- Table structure for table `employees_vacation`
 --
 
-DROP TABLE IF EXISTS `employees_vacation`;
 CREATE TABLE `employees_vacation` (
   `id` int(11) NOT NULL,
   `employee_id` int(11) NOT NULL,
   `vacation_date` date NOT NULL,
   `vacation_type` varchar(10) NOT NULL,
-  `date` date NOT NULL DEFAULT current_timestamp(),
-  `status` text NOT NULL DEFAULT 'approved'
+  `date` date NOT NULL DEFAULT "2023-01-01",
+  `status` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -162,12 +150,12 @@ CREATE TABLE `employees_vacation` (
 -- Table structure for table `expenses`
 --
 
-DROP TABLE IF EXISTS `expenses`;
 CREATE TABLE `expenses` (
   `id` int(11) NOT NULL,
   `exp_name` varchar(50) NOT NULL,
   `exp_sum` float NOT NULL,
   `exp_description` text NOT NULL,
+  `exp_type` varchar(15) NOT NULL,
   `exp_date` date NOT NULL,
   `exp_deduct` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -178,7 +166,6 @@ CREATE TABLE `expenses` (
 -- Table structure for table `invoices`
 --
 
-DROP TABLE IF EXISTS `invoices`;
 CREATE TABLE `invoices` (
   `invoice_number` int(11) NOT NULL,
   `invoice_status` varchar(10) NOT NULL DEFAULT 'draft',
@@ -197,10 +184,10 @@ CREATE TABLE `invoices` (
   `client_adress_number` varchar(20) NOT NULL,
   `client_zip` varchar(20) NOT NULL,
   `client_phone` varchar(10) NOT NULL,
-  `client_email` varchar(25) NOT NULL,
-  `invoice_date` date NOT NULL DEFAULT current_timestamp(),
-  `invoice_tax` float NOT NULL,
-  `invoice_total_sum` float NOT NULL
+  `client_email` varchar(50) NOT NULL,
+  `invoice_date` date NOT NULL DEFAULT "2023-01-01",
+  `invoice_tax` float DEFAULT '0',
+  `invoice_total_sum` float DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -209,7 +196,6 @@ CREATE TABLE `invoices` (
 -- Table structure for table `invoices_archived`
 --
 
-DROP TABLE IF EXISTS `invoices_archived`;
 CREATE TABLE `invoices_archived` (
   `invoice_number` int(11) NOT NULL,
   `invoice_status` varchar(10) NOT NULL DEFAULT 'draft',
@@ -229,7 +215,7 @@ CREATE TABLE `invoices_archived` (
   `client_zip` varchar(20) NOT NULL,
   `client_phone` varchar(10) NOT NULL,
   `client_email` varchar(25) NOT NULL,
-  `invoice_date` date NOT NULL DEFAULT current_timestamp(),
+  `invoice_date` date NOT NULL DEFAULT "2023-01-01",
   `invoice_tax` float NOT NULL,
   `invoice_total_sum` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -240,7 +226,6 @@ CREATE TABLE `invoices_archived` (
 -- Table structure for table `invoices_billed_products`
 --
 
-DROP TABLE IF EXISTS `invoices_billed_products`;
 CREATE TABLE `invoices_billed_products` (
   `id` int(11) NOT NULL,
   `invoiceID` int(10) NOT NULL,
@@ -261,7 +246,6 @@ CREATE TABLE `invoices_billed_products` (
 -- Table structure for table `invoices_recurrent`
 --
 
-DROP TABLE IF EXISTS `invoices_recurrent`;
 CREATE TABLE `invoices_recurrent` (
   `rec_number` int(11) NOT NULL,
   `customer_id` int(11) NOT NULL,
@@ -273,12 +257,12 @@ CREATE TABLE `invoices_recurrent` (
   `client_adress_number` varchar(20) NOT NULL,
   `client_zip` varchar(20) NOT NULL,
   `client_billing_adress` varchar(25) NOT NULL,
-  `recurrency_creation_date` date NOT NULL DEFAULT current_timestamp(),
+  `recurrency_creation_date` date NOT NULL DEFAULT "2023-01-01",
   `invoice_recurrency` varchar(15) NOT NULL,
   `invoice_re_mo_date` date DEFAULT NULL,
   `invoice_re_y_date` date DEFAULT NULL,
   `invoice_total_sum` float NOT NULL,
-  `next_invoice_date` date NOT NULL DEFAULT current_timestamp(),
+  `next_invoice_date` date NOT NULL DEFAULT "2023-01-01",
   `last_invoice_date` date DEFAULT NULL,
   `invoice_active` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -289,7 +273,6 @@ CREATE TABLE `invoices_recurrent` (
 -- Table structure for table `invoices_recurrent_products`
 --
 
-DROP TABLE IF EXISTS `invoices_recurrent_products`;
 CREATE TABLE `invoices_recurrent_products` (
   `id` int(11) NOT NULL,
   `invoiceID` int(10) NOT NULL,
@@ -309,7 +292,6 @@ CREATE TABLE `invoices_recurrent_products` (
 -- Table structure for table `predefined_products`
 --
 
-DROP TABLE IF EXISTS `predefined_products`;
 CREATE TABLE `predefined_products` (
   `id` int(5) NOT NULL,
   `pp_name` varchar(25) NOT NULL,

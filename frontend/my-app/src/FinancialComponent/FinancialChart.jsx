@@ -54,12 +54,14 @@ let FinanchialChart=(props)=>{
             shallowCopy.labels=labels
             //data array
             shallowCopy.datasets[0].data=dataArray
-            setData(shallowCopy)            
+            setData(shallowCopy)         
         }
     },[props])
 
     return(
-        <Line key={props.plottedFor} options={options} data={data}/>
+        <div>
+            <Line key={props.plottedFor} options={options} data={data}/>
+        </div>        
     )
     
 }

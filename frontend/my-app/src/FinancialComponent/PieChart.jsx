@@ -33,7 +33,7 @@ let PieChart=(props)=>{
             //decoding the data
             props.data.forEach(element=>{
                 labels.push(element.label)
-                dataArray.push(element.value)
+                if(element.value!==null) dataArray.push(element.value)
             })
             shallowCopy.labels=labels
             shallowCopy.datasets[0].data=dataArray
@@ -44,11 +44,12 @@ let PieChart=(props)=>{
     return(
         <div key={props.plottedFor}>
             <Doughnut data={data} options={options}/>            
-                {data.datasets[0].data.length>0&&   
-                    data.labels.map((element, index)=>(
-                        <span className="badge m-2" style={{backgroundColor:data.datasets[0].borderColor[index]}}>{element} {data.datasets[0].data[index].toFixed(2)}%</span>
-                    ))   
-                }                
+            {data.datasets[0].data.length>0&&   
+                data.labels.map((element, index)=>(
+                    <span className="badge m-2" style={{backgroundColor:data.datasets[0].borderColor[index]}}>{element} {data.datasets[0].data[index].toFixed(2)}%</span>
+                ))   
+            }   
+            {data.datasets[0].data.length===0 && <h6>Nu exista date</h6>}             
         </div>
     )
 }

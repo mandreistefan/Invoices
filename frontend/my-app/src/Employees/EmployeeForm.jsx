@@ -67,6 +67,13 @@ let EmployeeForm = (props)=>{
                     return true
                 }
                 return false
+            case "emp_cur_salary_gross":
+                //only numbers
+                if(validNumber.test(what)){
+                    setTheData({...data,[where]:what})
+                    return true
+                }
+                return false
             default:
                 setTheData({...data,[where]:what})
                 return true
