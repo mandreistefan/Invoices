@@ -129,7 +129,7 @@ let Expenses=()=>{
                                             <td>{prettyDate(element.exp_date)}</td>
                                             <td>{element.exp_deduct ? <span title="Deductibil" className="material-icons-outlined">check_circle</span> : <span title="Non-deductibil" className="material-icons-outlined">cancel</span>}</td>
                                             <td className="table-actions-container">
-                                                <button title="Sterge" onClick={()=>{deleteExpense(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined text-danger">delete</span></div></button>
+                                                <button title="Sterge" onClick={()=>{deleteExpense(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
                                             </td>   
                                         </tr>
                                     ))

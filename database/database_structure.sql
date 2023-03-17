@@ -74,7 +74,7 @@ CREATE TABLE `employees` (
   `emp_adress` varchar(150) NOT NULL,
   `emp_ident_no` varchar(15) NOT NULL,
   `emp_phone` varchar(10) NOT NULL,
-  `emp_date` date NOT NULL DEFAULT "2023-01-01",
+  `emp_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `emp_active` tinyint(1) NOT NULL DEFAULT 1,
   `emp_job_name` varchar(50) NOT NULL,
   `emp_cur_salary_gross` float NOT NULL,
@@ -98,7 +98,7 @@ CREATE TABLE `employees_archived` (
   `emp_adress` varchar(150) NOT NULL,
   `emp_ident_no` varchar(15) NOT NULL,
   `emp_phone` varchar(10) NOT NULL,
-  `emp_date` date NOT NULL DEFAULT "2023-01-01",
+  `emp_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `emp_active` tinyint(1) NOT NULL DEFAULT 1,
   `emp_job_name` varchar(50) NOT NULL,
   `emp_cur_salary_gross` float NOT NULL,
@@ -115,7 +115,7 @@ CREATE TABLE `employees_archived` (
 
 CREATE TABLE `employees_salaries` (
   `id` int(11) NOT NULL,
-  `paid_on` date NOT NULL DEFAULT "2023-01-01",
+  `paid_on` timestamp DEFAULT CURRENT_TIMESTAMP,
   `sum_gross` float NOT NULL,
   `sum_net` float NOT NULL,
   `tax_cas` float NOT NULL,
@@ -140,7 +140,7 @@ CREATE TABLE `employees_vacation` (
   `employee_id` int(11) NOT NULL,
   `vacation_date` date NOT NULL,
   `vacation_type` varchar(10) NOT NULL,
-  `date` date NOT NULL DEFAULT "2023-01-01",
+  `date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `status` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -185,7 +185,7 @@ CREATE TABLE `invoices` (
   `client_zip` varchar(20) NOT NULL,
   `client_phone` varchar(10) NOT NULL,
   `client_email` varchar(50) NOT NULL,
-  `invoice_date` date NOT NULL DEFAULT "2023-01-01",
+  `invoice_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `invoice_tax` float DEFAULT '0',
   `invoice_total_sum` float DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -214,8 +214,8 @@ CREATE TABLE `invoices_archived` (
   `client_adress_number` varchar(20) NOT NULL,
   `client_zip` varchar(20) NOT NULL,
   `client_phone` varchar(10) NOT NULL,
-  `client_email` varchar(25) NOT NULL,
-  `invoice_date` date NOT NULL DEFAULT "2023-01-01",
+  `client_email` varchar(50) NOT NULL,
+  `invoice_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `invoice_tax` float NOT NULL,
   `invoice_total_sum` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
