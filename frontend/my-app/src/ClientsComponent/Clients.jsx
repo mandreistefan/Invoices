@@ -4,6 +4,7 @@ import Snackbar from '../Snackbar/Snackbar.jsx'
 import PageNavigation from '../PageNavigation.jsx'
 import Invoice from '../InvoiceComponent/Invoice.jsx';
 import SmallMenu from '../SmallMenu/SmallMenu.jsx';
+import Header from '../Header.jsx';
 
 let Clients = (props) =>{
 
@@ -85,17 +86,12 @@ let Clients = (props) =>{
         setFilter({...queryFilter, page:pageNumber, step:step})
     }
 
-    function handleSearchSubmit(event){
-        event.preventDefault()
-        let searchTerm = event.target.searchinput.value
-        if(searchTerm.length==0) return false
-        let searchTermStringified = searchTerm.replaceAll(" ", "+")
+    function handleSearchSubmit(searchTermStringified){
         setFilter({...queryFilter, filter:"search", filterBy:searchTermStringified})
     }
 
-    let resetSearch=()=>{
-        document.getElementById("searchinput").value=""
-        setFilter({...queryFilter, filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page, step: 10})
+    let refreshData=()=>{        
+        setFilter({...queryFilter, filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
     }
 
     return(
@@ -103,23 +99,8 @@ let Clients = (props) =>{
       
                     <div className="bordered-container p-3" style={{width:'100%'}}>
                         {!activeClient&&  
-                        <div>    
-                            <div style={{marginBottom:'25px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-                                <div style={{display:'inherit', justifyContent:'flex-start', alignItems:'center'}}>
-                                    <span class="material-icons-outlined">account_circle</span>
-                                    <span style={{fontSize:'18px', fontWeight:'600'}}>Clienti</span>
-                                    <form onSubmit={handleSearchSubmit} style={{marginLeft:'10px'}} id="search-form" name="search-form">
-                                        <div className="search-form-container"> 
-                                            <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
-                                            <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>                                                   
-                                        </div>
-                                    </form>
-                                </div>
-                                <div className="btn-group">                               
-                                    <button type="button" className='btn btn-light btn-sm' title="Client nou" onClick={()=>{showonewClientWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span></div></button>
-                                    <button type="button" className='btn btn-light btn-sm' title="Reincarca date"  onClick={()=>{resetSearch()}}><div className="inner-button-content"><span className="material-icons-outlined" >refresh</span></div></button>
-                                </div>  
-                            </div> 
+                        <div>   
+                            <Header title="Clients" icon="account_circle" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[{title:"Client nou", action:()=>{showonewClientWindow(true)}, icon:"add", name:""}]}/>
                             <div style={{overflowY:'scroll', maxHeight:'80vh'}}>
                                 <table className="table" id="invoices-table">
                                     <thead>

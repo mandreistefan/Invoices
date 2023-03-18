@@ -3,6 +3,7 @@ import './Invoices.css'
 import Snackbar from '../Snackbar/Snackbar.jsx'
 import PageNavigation from '../PageNavigation.jsx'
 import Invoice from './Invoice'
+import Header from '../Header';
 
 let InvoicesOverview = (props) =>{
 
@@ -123,16 +124,11 @@ let InvoicesOverview = (props) =>{
         window.open(`http://localhost:${window.navigator.userAgent==="ElectronApp" ? "3000" : "3001"}/generateInvoice/${invoiceID}`).focus();
     }
 
-    function handleSearchSubmit(event){
-        event.preventDefault()
-        let searchTerm = event.target.searchinput.value
-        if(searchTerm.length===0) return false
-        let searchTermStringified = searchTerm.replaceAll(" ", "+")
+    function handleSearchSubmit(searchTermStringified){
         setFilter({...queryFilter, filter:"search", filterBy:searchTermStringified})
     }
 
-    let resetSearch=()=>{
-        document.getElementById("searchinput").value=""
+    let refreshData=()=>{        
         setFilter({...queryFilter, filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
     }
 
@@ -142,23 +138,8 @@ let InvoicesOverview = (props) =>{
                 <div className="bordered-container p-3">                    
                     <div className="" style={{width:'100%'}}>
                         {!activeInvoice &&
-                            <div>   
-                                <div style={{marginBottom:'25px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-                                    <div style={{display:'inherit', justifyContent:'flex-start', alignItems:'center'}}>
-                                        <span className="material-icons-outlined">receipt_long</span>
-                                        <span style={{fontSize:'18px', fontWeight:'600'}}>Facturi</span>    
-                                        <form onSubmit={handleSearchSubmit} style={{marginLeft:'10px'}}  className="search-form" id="search-form" name="search-form">
-                                            <div className="search-form-container"> 
-                                                <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
-                                                <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>                                                 
-                                            </div>
-                                        </form>
-                                    </div>
-                                    <div className="btn-group">                               
-                                        <button type="button" className='btn btn-light btn-sm' title="Reincarca date"  onClick={()=>{resetSearch()}}><div className="inner-button-content"><span className="material-icons-outlined" >refresh</span></div></button>
-                                    </div> 
-                                </div>
- 
+                            <div> 
+                                <Header title="Facturi" icon="receipt_long" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[]}/>    
                                 <div style={{overflowY:'scroll', maxHeight:'80vh'}}>
                                     <table className="table" id="invoices-table">
                                         <thead>
