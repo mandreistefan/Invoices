@@ -98,13 +98,11 @@ let Employees=(props)=>{
     return(
         <div className="app-data-container">
             {employees&&                       
-                <div className="bordered-container p-3">
+                <div>
                     <div className="" style={{width:'100%'}}>
                         {!activeEmployee &&
-                        <div>
-                            
-                            <Header title="Angajati" icon="group" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[{title:"Angajat nou", action:()=>{showaddEmployeeWindow(true)}, icon:"add", name:""}]}/>    
-
+                        <div className="bordered-container">                        
+                            <Header title="Angajati" icon="group" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[{title:"Angajat nou", action:()=>{showaddEmployeeWindow(true)}, icon:"add", name:"Angajat nou"}]}/>    
                             <div style={{overflowY:'scroll', maxHeight:'80vh'}}>
                                 <table className="table" id="invoices-table">
                                     <thead>
@@ -135,8 +133,8 @@ let Employees=(props)=>{
                             <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>
                         </div>}
                         {activeEmployee&&
-                            <div className='overview-container bordered-container' style={{maxHeight:'80vh', overflowY:'scroll'}}> 
-                                <button style={{border:'none', borderRadius:'6px', display:'flex', alignItems:'center', margin:'10px'}} onClick={()=>{closeEmployee()}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>     
+                            <div style={{maxHeight:'90vh', overflowY:'scroll'}}> 
+                                <button className="outline-mint-button" style={{marginLeft:'16px'}} onClick={()=>{closeEmployee()}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>     
                                 <Employee id={activeEmployee} refreshParent={fetchData}/>
                             </div>    
                         }

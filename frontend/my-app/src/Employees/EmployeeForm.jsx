@@ -54,6 +54,9 @@ let EmployeeForm = (props)=>{
         let validNumber = new RegExp(/^\d*\.?\d*$/);
         switch(who){
             case "emp_phone":
+                if(what.length>10){
+                    return false
+                }
                 //only numbers
                 if(validNumber.test(what)){
                     setTheData({...data,[where]:what})
@@ -85,9 +88,10 @@ let EmployeeForm = (props)=>{
         let elementTrigger = `${event.target.name}`;
         if(validateInput(elementTrigger, event.target.value)){
             if(data[elementTrigger].modified===false) data[elementTrigger].modified = true
-            data[elementTrigger].value=event.target.value        
-            setTheData(shallowCopy) 
-        }   
+            data[elementTrigger].value=event.target.value  
+            setTheData(shallowCopy)          
+        }
+        
     }
 
     //register a new employee
@@ -100,6 +104,9 @@ let EmployeeForm = (props)=>{
                 }   
                 dataToBeSent[key] = shallowCopy[key].value  
             }
+
+            if(dataToBeSent.length===0) return false
+
             fetch(`http://localhost:3000/employees`, {
                 method:"POST",
                 headers: { 'Content-Type': 'application/json' },
@@ -163,46 +170,45 @@ let EmployeeForm = (props)=>{
 
     return(            
         <div className={(props.isSubmitable===true) ? "form-container" : ""}> 
-            <h6>Date angajat</h6>
             <div class="row g-2   mb-3">
                 <div class="col-md">
                     <div class="form-floating">
-                        <input type="text"  placeholder="Name" id="emp_first_name" name="emp_first_name" disabled={(fieldsDisabled===false) ?  true: false} className={data.emp_first_name.invalid ? "form-control shadow-none invalid-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_first_name.value}/>
+                        <input type="text"  placeholder="Name" id="emp_first_name" name="emp_first_name" disabled={(fieldsDisabled===false) ?  true: false} className={data.emp_first_name.invalid ? "form-control shadow-none invalid-data" : data.emp_first_name.modified ? "form-control shadow-none modified-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_first_name.value}/>
                         <label htmlFor="floatingInputGrid">Nume</label>
                     </div>
                 </div>
                 <div class="col-md">
                     <div class="form-floating">
-                        <input type="text"  placeholder="Prenume" id="emp_last_name" name="emp_last_name" disabled={(fieldsDisabled===false) ?  true: false} className={data.emp_last_name.invalid  ? "form-control shadow-none invalid-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_last_name.value}/>
+                        <input type="text"  placeholder="Prenume" id="emp_last_name" name="emp_last_name" disabled={(fieldsDisabled===false) ?  true: false} className={data.emp_last_name.invalid  ? "form-control shadow-none invalid-data" :  data.emp_last_name.modified ? "form-control shadow-none modified-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_last_name.value}/>
                         <label htmlFor="floatingInputGrid">Prenume</label>
                     </div>
                 </div>
             </div>
 
             <div class="form-floating  mb-3">
-                <input type="text"  placeholder="Prenume" id="emp_phone" name="emp_phone" disabled={(fieldsDisabled===false) ?  true: false} className={data.emp_phone.invalid  ? "form-control shadow-none invalid-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_phone.value}/>
+                <input type="text"  placeholder="Prenume" id="emp_phone" name="emp_phone" disabled={(fieldsDisabled===false) ?  true: false} className={data.emp_phone.invalid  ? "form-control shadow-none invalid-data" :  data.emp_phone.modified ? "form-control shadow-none modified-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_phone.value}/>
                 <label htmlFor="floatingInputGrid">Telefon</label>
             </div>
 
             <div class="form-floating  mb-3">
-                <input type="text"  placeholder="CNP" id="emp_ident_no" name="emp_ident_no" disabled={(fieldsDisabled===false) ?  true: false} className={data.emp_ident_no.invalid  ? "form-control shadow-none invalid-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_ident_no.value}/>
+                <input type="text"  placeholder="CNP" id="emp_ident_no" name="emp_ident_no" disabled={(fieldsDisabled===false) ?  true: false} className={data.emp_ident_no.invalid  ? "form-control shadow-none invalid-data" :  data.emp_ident_no.modified ? "form-control shadow-none modified-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_ident_no.value}/>
                 <label htmlFor="floatingInputGrid">CNP</label>
             </div>
 
             <div class="form-floating  mb-3">
-                <input type="text"  placeholder="Adresa" id="emp_adress" name="emp_adress" disabled={(fieldsDisabled===false) ?  true: false} className={data.emp_adress.invalid ? "form-control shadow-none invalid-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_adress.value}/>
+                <input type="text"  placeholder="Adresa" id="emp_adress" name="emp_adress" disabled={(fieldsDisabled===false) ?  true: false} className={data.emp_adress.invalid ? "form-control shadow-none invalid-data" :  data.emp_adress.modified ? "form-control shadow-none modified-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_adress.value}/>
                 <label htmlFor="floatingInputGrid">Adresa</label>
             </div>
 
             <div class="form-floating  mb-3">
-                <input type="text"  placeholder="Incadrare" id="emp_job_name" name="emp_job_name" disabled={(fieldsDisabled===false) ?  true: false} className={data.emp_job_name.invalid ? "form-control shadow-none invalid-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_job_name.value}/>
+                <input type="text"  placeholder="Incadrare" id="emp_job_name" name="emp_job_name" disabled={(fieldsDisabled===false) ?  true: false} className={data.emp_job_name.invalid ? "form-control shadow-none invalid-data" :  data.emp_job_name.modified ? "form-control shadow-none modified-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_job_name.value}/>
                 <label htmlFor="floatingInputGrid">Incadrare</label>
             </div>
 
             <div class="row g-2">
                 <div class="col-md">            
                     <div class="form-floating">
-                        <input type="text"  placeholder="Salariu brut" id="emp_cur_salary_gross" name="emp_cur_salary_gross" disabled={(fieldsDisabled===false) ?  true: false} className={data.emp_cur_salary_gross.invalid ? "form-control shadow-none invalid-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_cur_salary_gross.value}/>
+                        <input type="text"  placeholder="Salariu brut" id="emp_cur_salary_gross" name="emp_cur_salary_gross" disabled={(fieldsDisabled===false) ?  true: false} className={data.emp_cur_salary_gross.invalid ? "form-control shadow-none invalid-data" :  data.emp_cur_salary_gross.modified ? "form-control shadow-none modified-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_cur_salary_gross.value}/>
                         <label htmlFor="floatingInputGrid">Salariu brut</label>
                     </div>
                 </div>
@@ -218,7 +224,7 @@ let EmployeeForm = (props)=>{
             </div>
 
             <div class="form-floating  mb-3">
-                <textarea rows="4" placeholder="Salariu brut" id="emp_notes" name="emp_notes" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("emp_first_name") ? "form-control shadow-none invalid-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_notes.value}/>
+                <textarea rows="4" placeholder="Salariu brut" id="emp_notes" name="emp_notes" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("emp_first_name") ? "form-control shadow-none invalid-data" :  data.emp_notes.modified ? "form-control shadow-none modified-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_notes.value}/>
                 <label htmlFor="emp_notes">Informatii aditionale</label>
             </div>
             <button className="btn btn-light" onClick={()=>{submitemployeeData()}} type="button" title="Editare angajat"><div class="inner-button-content"><span class="material-icons-outlined" style={{fontSize: '18px'}}>save</span>Salvare</div></button>

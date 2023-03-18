@@ -7,6 +7,7 @@
   --navBackground: #313a46;
   --navActive: #3eb489;
   --navColor: #8391a2;
+  --borderRadius: 16px;
 }
 
 
@@ -15,6 +16,7 @@ body{
   --font-family-sans-serif: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
   --font-family-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
   font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  /**font-family: "Poppins", sans-serif;*/
 }
 
 .app-content{
@@ -49,7 +51,9 @@ table >tbody> tr:hover{
   border-bottom: 1px solid lightgray;
   font-size:15px;
   font-weight: 300 !important;
-  color:black;
+  /*color:black;*/
+  background-color: #313a46;
+  color:white;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
 }
@@ -213,7 +217,7 @@ td{
 }
 
 .overlapping-component-inner{
-  border-radius: 8px;
+  border-radius: var(--borderRadius);
   background-color: white;
   position: absolute;
   z-index:10;
@@ -481,6 +485,11 @@ box-shadow: 0px 0px 5px 0px #FF0000;
   margin-right: auto;
   height: fit-content;
   border-radius: 6px;
+}
+
+.modified-data{
+  border-color: var(--navActive);
+
 }
 
 .page-item{
@@ -911,6 +920,7 @@ input[type=date]{
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 20px;
 }
 
 .pagination-container > div> button{
@@ -992,7 +1002,7 @@ input[type=date]{
 
 .bordered-container{
   border: 1px solid lightgray;
-  border-radius: 6px;
+  border-radius: var(--borderRadius);
   box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
   max-height: 90vh;
   background-color: white;
@@ -1117,4 +1127,38 @@ input[type=date]{
   justify-content: center;
   color: gray;
   font-weight: 500;
+}
+
+.form-control:focus{
+  border-color: #ced4da;
+}
+
+.outline-mint-button{
+  border:1px solid var(--navActive);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  color:var(--navActive);
+  font-weight: 500;
+}
+
+.tabs{
+  display: grid;
+  grid-template-columns: auto auto auto;
+  background-color: white;
+  border-bottom: 1px solid lightgray;
+}
+
+.tab{
+  border: none;
+  border-bottom: 4px solid white;
+  background-color: transparent;
+  padding: 16px;
+  font-weight: 500;
+  color: gray;
+}
+
+.tab.active{
+  border-bottom: 4px solid var(--navActive);
+  color:var(--navActive);
 }

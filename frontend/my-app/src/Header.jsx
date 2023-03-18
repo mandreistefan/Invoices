@@ -6,6 +6,7 @@ import { useState, useEffect } from "react"
  * @param {*} props.iocn Icon of the header
  * @param {*} props.searchAction Action triggered when the search button is clicked
  * @param {*} props.buttons An array containing buttons: [{title:"", action:"", icon:"", name:""}]
+ * @param {*} props.hasSearch False, if no search option
  * @returns 
  */
 
@@ -18,7 +19,8 @@ let Header = (props) =>{
             title: props.title,
             icon: props.icon,
             searchAction: props.searchAction,
-            buttons:props.buttons
+            buttons:props.buttons,
+            hasSearch: props.hasSearch!==undefined ? props.hasSearch : true
         })
     },[])
 
@@ -31,32 +33,35 @@ let Header = (props) =>{
     }
 
     function refreshData(){
-        document.getElementById("searchinput").value=""
+        if(properties.hasSearch===true) document.getElementById("searchinput").value=""
         props.refreshData()
     }
 
     return(
         <div>
             {properties!==null &&
-            <div style={{marginBottom:'25px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-                <div style={{display:'inherit', justifyContent:'flex-start', alignItems:'center'}}>
-                    <span class="material-icons-outlined">{properties.icon}</span>
-                    <span style={{fontSize:'18px', fontWeight:'600'}}>{properties.title}</span>
-                    <form onSubmit={handleSearchSubmit} style={{marginLeft:'10px'}} id="search-form" name="search-form">
+            <div style={{display:'flex', flexDirection:'column'}}>
+                <div style={{display:'inherit', justifyContent:'space-between', padding:'20px', borderBottom:'1px solid lightgray'}}>
+                    <span style={{fontSize:'28px', fontWeight:'600'}}>{properties.title}</span> 
+                    <div className="btn-group">   
+                        {
+                            properties.buttons.length>0 && properties.buttons.map((element, index)=>(
+                                <button type="button" className='btn btn-light btn-sm' title={element.title} onClick={()=>{element.action()}}><div className="inner-button-content"><span className="material-icons-outlined">{element.icon}</span>{element.name}</div></button>   
+                            ))
+                        }  
+                        <button type="button" className='btn btn-light btn-sm' title="Reincarca datele" onClick={()=>{refreshData()}}><div className="inner-button-content"><span className="material-icons-outlined">refresh</span>Reincarca</div></button>                             
+                    </div> 
+                </div>
+                {properties.hasSearch===true && 
+                <div style={{display:'inherit', justifyContent:'flex-start', alignItems:'center', padding:'20px', backgroundColor:'#f8f9fa'}}> 
+                    <form onSubmit={handleSearchSubmit} style={{display:'inherit', justifyContent:'flex-start'}} id="search-form" name="search-form">
                         <div className="search-form-container"> 
                             <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
                             <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>                                                   
                         </div>
+                        <button className="btn btn-light btn-sm">Cauta</button>
                     </form>
-                </div>
-                <div className="btn-group">   
-                    {
-                        properties.buttons.length>0 && properties.buttons.map((element, index)=>(
-                            <button type="button" className='btn btn-light btn-sm' title={element.title} onClick={()=>{element.action()}}><div className="inner-button-content"><span className="material-icons-outlined">{element.icon}</span>{element.name}</div></button>   
-                        ))
-                    }  
-                    <button type="button" className='btn btn-light btn-sm' title="Reincarca datele" onClick={()=>{refreshData()}}><div className="inner-button-content"><span className="material-icons-outlined">refresh</span></div></button>                             
-                </div>  
+                </div>}
             </div>
             } 
         </div>

@@ -135,7 +135,7 @@ let InvoicesOverview = (props) =>{
     return(
         <div className="app-data-container">  
                 {invoicesData &&    
-                <div className="bordered-container p-3">                    
+                <div className="bordered-container">                    
                     <div className="" style={{width:'100%'}}>
                         {!activeInvoice &&
                             <div> 

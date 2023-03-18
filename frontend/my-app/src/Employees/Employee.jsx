@@ -1,6 +1,7 @@
 import React from "react";
 import Snackbar from '../Snackbar/Snackbar.jsx'
 import EmployeeForm from "./EmployeeForm.jsx";
+import Header from "../Header.jsx";
 
 //the current date
 const currentDate = new Date()
@@ -35,7 +36,7 @@ export default class Employee extends React.Component{
             vacationDaysWindow:false,
             vacationDaysRequested:[{date: `${dateString.year}-${dateString.month}-${dateString.day}`, type:"vacation", disabled:false}], 
             availableVacationDays:0,
-            editWindow: false,
+            windows:[{name:"Angajat", active: true}, {name:"Salarii", active:false}, {name:"Zile libere", active:false}],
             emp_notes: "" ,
             taxesPercentages: [
                 {name: "CAS", key:"CAS", description:"Asigurare sociale", value: 21.5},
@@ -291,206 +292,195 @@ export default class Employee extends React.Component{
         })
     }
 
+    switchTabs=(index)=>{
+        let shallowCopy = [...this.state.windows]
+        shallowCopy.forEach(element=>{
+            element.active=false
+        })
+        shallowCopy[index].active=true
+        this.setState({windows:shallowCopy})
+    }
 
      render(){
         return(
-            <div style={{padding:'16px'}}>
-                <div style={{display:'flex', alignItems:'center'}} className='bordered-container p-3'>
-                    <div style={{width:"50%", paddingRight:'10px'}}>
-                        <div>
-                            <h4>{this.state.first_name} {this.state.last_name}</h4>
-                            <h5 id="employee-title" style={{fontWeight:'300'}}>{this.state.job_name}</h5>                            
-                            <div>
-                                <ul id="employee-info">
-                                    <li><b>Nume:</b> {this.state.first_name}</li>
-                                    <li><b>Prenume:</b> {this.state.last_name}</li>
-                                    <li><b>Adresa:</b> {this.state.adress}</li>
-                                    <li><b>CNP:</b> {this.state.identification_number}</li>
-                                    <li><b>Salariu de baza:</b> {this.state.salary_gross} RON</li>
-                                    <li><b>Data angajarii:</b> {this.state.registration_date}</li>
-                                    <li><b>Zile concediu:</b> {this.state.availableVacationDays}</li>
-                                </ul>
-                            </div> 
-                            <div class="btn-group" role="group" aria-label="Basic example">
-                                <button className='btn btn-light' type="button" onClick={()=>{this.setState({editWindow:true})}} title="Editare angajat" ><div className="inner-button-content"><span style={{fontSize:'18px'}} className="material-icons-outlined">edit</span>Editare</div></button>                           
-                                <button className='btn btn-light' type="button" onClick={()=>{this.fetchData()}} title="Reactualizare" ><div className="inner-button-content"><span style={{fontSize:'18px'}} className="material-icons-outlined">refresh</span></div></button>                                               
-                            </div>
-                        </div>
-                    </div>
-                    <div style={{width:"50%", paddingLeft:'10px'}}>
-                         <div class="form-floating">
-                            <textarea style={{height:'100%'}} rows="4" class="form-control" placeholder="Informatii" disabled={true} id="floatingTextarea2" value={this.state.emp_notes}></textarea>
-                            <label>Note angajat</label>
-                        </div>
-                    </div>
+            <div style={{border:'1px solid lightgray'}}>
+                <div style={{display:'flex', alignItems:'center'}}>
+                    <div style={{backgroundColor:'white', width:'100%', padding:'20px', borderTopRightRadius:'16px', borderTopLeftRadius:'16px', borderBottom:'1px solid lightgray'}}>
+                        <h4>{this.state.first_name} {this.state.last_name}</h4>
+                        <h5 id="employee-title" style={{fontWeight:'300'}}>{this.state.job_name}</h5> 
+                        <small><b>Salariu de baza:</b> {this.state.salary_gross} RON</small><br/>
+                        <small><b>Data angajarii:</b> {this.state.registration_date}</small><br/>
+                        <small><b>Zile concediu:</b> {this.state.availableVacationDays}</small>
+                    </div>     
                 </div>
-                <div id="additional-employee-info-container">
-                    <div style={{width:'100%', marginBottom:'25px', marginTop:'25px', display:'flex', flexDirection:'column'}} className="bordered-container">  
-                            <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
-                                <h5>Salarii</h5>
-                                <div className="btn-group">                               
-                                    <button className='btn btn-light' type="button" onClick={()=>{this.setState({salaryWindow:true})}} title="Plata noua" ><div className="inner-button-content"><span style={{fontSize:'18px'}} className="material-icons-outlined">add</span></div></button>
-                                    <button className='btn btn-light' type="button" onClick={()=>{this.updateEmployeeSalaries()}} title="Reincarca" ><div className="inner-button-content"><span style={{fontSize:'18px'}} className="material-icons-outlined">refresh</span></div></button>
-                                </div>
-                            </div>
-                            <table className='table' id="salaries-table">
+                <div className="tabs">
+                    {this.state.windows.map((element, index)=>(
+                        <button onClick={()=>{this.switchTabs(index)}} className={element.active===true ? "tab active" : "tab"}>{element.name}</button>
+                    ))}
+                </div>
+                <div style={{backgroundColor:'white', borderBottomLeftRadius:'16px', borderBottomRightRadius:'16px'}}>
+                    <div style={{display: this.state.windows[0].active===true ? 'block' : 'none'}}>
+                        <div style={{padding:'20px', borderBottom:'1px solid lightgray'}}>
+                            <h4>Date angajat</h4>
+                        </div>
+                        <div style={{padding:'20px'}}>
+                            <EmployeeForm refreshParent={this.fetchData} employeeID={this.props.id}/>
+                        </div>
+                    </div>
+                    <div style={{display: this.state.windows[1].active===true ? 'block' : 'none'}}> 
+                        <Header title="Salarii" icon="account_circle" hasSearch="false" refreshData={this.updateEmployeeSalaries} buttons={[{title:"Salariu", action:()=>{this.setState({salaryWindow:true})}, icon:"add", name:"Salariu nou"}]}/>    
+                        <table className='table' id="salaries-table">
+                            <thead>
+                                <tr>
+                                    <td>Luna</td>
+                                    <td>Data</td>
+                                    <td>Brut</td>
+                                    <td>CAS</td>
+                                    <td>CASS</td>
+                                    <td>Venit</td>
+                                    <td>CM</td>
+                                    <td>Net</td>
+                                </tr>    
+                            </thead>
+                            <tbody>
+                                {this.state.salaries!=[] ? this.state.salaries.map((element, index)=>(
+                                    <tr key={index}>
+                                        <td><b>{element.month}</b></td>
+                                        <td>{element.date}</td>
+                                        <td><b>{element.gross}</b></td>
+                                        <td>{element.taxes.cas}</td>
+                                        <td>{element.taxes.cass}</td>
+                                        <td>{element.taxes.income}</td>
+                                        <td>{element.taxes.cm}</td>
+                                        <td><b>{element.net}</b></td>
+                                    </tr>
+                                )):"Nu exista inregistrari"}
+                            </tbody>
+                        </table>
+                    </div>                    
+                    <div style={{display: this.state.windows[2].active===true ? 'block' : 'none'}}>                        
+                        <div style={{width:'100%'}} >
+                            <Header title="Zile libere" icon="account_circle" hasSearch="false" refreshData={this.updateVacationDays} buttons={[{title:"Cerere noua", action:()=>{this.setState({vacationDaysWindow:true})}, icon:"add", name:"Cerere noua"}]}/>    
+                            <table className='table' id="vacation-days-table">
                                 <thead>
                                     <tr>
-                                        <td>Luna</td>
                                         <td>Data</td>
-                                        <td>Brut</td>
-                                        <td>CAS</td>
-                                        <td>CASS</td>
-                                        <td>Venit</td>
-                                        <td>CM</td>
-                                        <td>Net</td>
+                                        <td>Data inregistrare</td>
+                                        <td>Tip</td>
+                                        <td>Status</td>
                                     </tr>    
                                 </thead>
                                 <tbody>
-                                    {this.state.salaries!=[] ? this.state.salaries.map((element, index)=>(
+                                    {this.state.vacationDays.length>0 ? this.state.vacationDays.map((element,index)=>(
                                         <tr key={index}>
-                                            <td><b>{element.month}</b></td>
-                                            <td>{element.date}</td>
-                                            <td><b>{element.gross}</b></td>
-                                            <td>{element.taxes.cas}</td>
-                                            <td>{element.taxes.cass}</td>
-                                            <td>{element.taxes.income}</td>
-                                            <td>{element.taxes.cm}</td>
-                                            <td><b>{element.net}</b></td>
+                                            <td><b>{this.parseDate(element.date)}</b></td>
+                                            <td>{this.parseDate(element.registerDate)}</td>
+                                            <td>{element.type}</td>
+                                            <td><b>{element.status}</b></td>            
                                         </tr>
                                     )):"Nu exista inregistrari"}
                                 </tbody>
                             </table>
-                    </div>   
-                    <div style={{width:'100%', marginBottom:'25px', display:'flex', flexDirection:'row'}}>                        
-                            <div style={{width:'100%'}} className="bordered-container">
-                                <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
-                                    <h5>Zile libere</h5>
-                                    <div className="btn-group">                               
-                                        <button className='btn btn-light' type="button" onClick={()=>{this.setState({vacationDaysWindow:true})}} title="Cerere noua" ><div className="inner-button-content"><span style={{fontSize:'18px'}} className="material-icons-outlined">add</span></div></button>
-                                        <button className='btn btn-light' type="button" onClick={()=>{this.updateVacationDays()}}  title="Reincarca" ><div className="inner-button-content"><span style={{fontSize:'18px'}} className="material-icons-outlined">refresh</span></div></button>
+                        </div>
+                    </div>  
+                </div>                          
+                {this.state.salaryWindow===true &&
+                <div> 
+                    <div className="blur-overlap"></div> 
+                    <div className="overlapping-component-inner">
+                        <div className='overlapping-component-header'>
+                            <span>Inregistrare salariu</span>
+                            <button type="button" className="action-close-window" onClick={()=>{this.setState({salaryWindow: false})}}><span className="material-icons-outlined">close</span></button>
+                        </div>
+                        <div className="p-3" style={{display:'flex', flexDirection:'row'}}>
+                            <div className="col-md-7 col-lg-6 p-2">
+                                <h6>Informatii angajat</h6>
+                                <form onSubmit={this.handleSubmit}>
+                                    <div class="row g-2">
+                                        <div class="col-md">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" placeholder="Nume" className="form-control" id="firstName" value={this.state.first_name} disabled={true} required=""></input>
+                                                <label for="firstName" className="form-label">Nume</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" className="form-control" id="lastName" placeholder="Prenume" value={this.state.last_name} disabled={true} required=""></input>
+                                                <label for="lastName" className="form-label">Prenume</label>
+                                            </div>
+                                        </div>
+                                    </div>      
+                                    <div className="row g-2">
+                                        <div className="col-md">
+                                            <div class="form-floating mb-3">                                                    
+                                                <select className="form-select" placeholder="Luna" id="paid_for" required="" onChange={this.handleMonthChange}>
+                                                    <option value="1">Ianuarie</option> 
+                                                    <option value="2">Februarie</option>
+                                                    <option value="3">Martie</option>
+                                                    <option value="4">Aprilie</option>
+                                                    <option value="5">Mai</option>
+                                                    <option value="6">Iunie</option>   
+                                                    <option value="7">Iulie</option> 
+                                                    <option value="8">August</option>
+                                                    <option value="9">Septembrie</option>
+                                                    <option value="10">Octombrie</option>
+                                                    <option value="11">Noiembrie</option>
+                                                    <option value="12">Decembrie</option> 
+                                                </select>
+                                                <label for="paid_for" className="form-label">Luna</label>
+                                            </div>
+                                        </div>
+                                        <div className="col-md">
+                                            <div class="form-floating mb-3">                                                     
+                                                <input type="text" className="form-control" id="paid_for_year" placeholder="An" value={this.state.salaryYear} onChange={this.handleYearChange}></input>
+                                                <label for="paid_for_year" className="form-label">Anul</label>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <table className='table' id="vacation-days-table">
-                                    <thead>
-                                        <tr>
-                                            <td>Data</td>
-                                            <td>Data inregistrare</td>
-                                            <td>Tip</td>
-                                            <td>Status</td>
-                                        </tr>    
-                                    </thead>
-                                    <tbody>
-                                        {this.state.vacationDays.length>0 ? this.state.vacationDays.map((element,index)=>(
-                                            <tr key={index}>
-                                                <td><b>{this.parseDate(element.date)}</b></td>
-                                                <td>{this.parseDate(element.registerDate)}</td>
-                                                <td>{element.type}</td>
-                                                <td><b>{element.status}</b></td>            
-                                            </tr>
-                                        )):"Nu exista inregistrari"}
-                                    </tbody>
-                                </table>
-                            </div>
-                    </div>                            
-                </div>
-                {this.state.salaryWindow &&
-                    <div> 
-                        <div className="blur-overlap"></div> 
-                        <div className="overlapping-component-inner">
-                            <div className='overlapping-component-header'>
-                                <span>Inregistrare salariu</span>
-                                <button type="button" className="action-close-window" onClick={()=>{this.setState({salaryWindow: false})}}><span className="material-icons-outlined">close</span></button>
-                            </div>
-                            <div className="p-3" style={{display:'flex', flexDirection:'row'}}>
-                                <div className="col-md-7 col-lg-6 p-2">
-                                    <h6>Informatii angajat</h6>
-                                    <form onSubmit={this.handleSubmit}>
-                                        <div class="row g-2">
-                                            <div class="col-md">
-                                                <div class="form-floating mb-3">
-                                                    <input type="text" placeholder="Nume" className="form-control" id="firstName" value={this.state.first_name} disabled={true} required=""></input>
-                                                    <label for="firstName" className="form-label">Nume</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md">
-                                                <div class="form-floating mb-3">
-                                                    <input type="text" className="form-control" id="lastName" placeholder="Prenume" value={this.state.last_name} disabled={true} required=""></input>
-                                                    <label for="lastName" className="form-label">Prenume</label>
-                                                </div>
-                                            </div>
-                                        </div>      
-                                        <div className="row g-2">
-                                            <div className="col-md">
-                                                <div class="form-floating mb-3">                                                    
-                                                    <select className="form-select" placeholder="Luna" id="paid_for" required="" onChange={this.handleMonthChange}>
-                                                        <option value="1">Ianuarie</option> 
-                                                        <option value="2">Februarie</option>
-                                                        <option value="3">Martie</option>
-                                                        <option value="4">Aprilie</option>
-                                                        <option value="5">Mai</option>
-                                                        <option value="6">Iunie</option>   
-                                                        <option value="7">Iulie</option> 
-                                                        <option value="8">August</option>
-                                                        <option value="9">Septembrie</option>
-                                                        <option value="10">Octombrie</option>
-                                                        <option value="11">Noiembrie</option>
-                                                        <option value="12">Decembrie</option> 
-                                                    </select>
-                                                    <label for="paid_for" className="form-label">Luna</label>
-                                                </div>
-                                            </div>
-                                            <div className="col-md">
-                                                <div class="form-floating mb-3">                                                     
-                                                    <input type="text" className="form-control" id="paid_for_year" placeholder="An" value={this.state.salaryYear} onChange={this.handleYearChange}></input>
-                                                    <label for="paid_for_year" className="form-label">Anul</label>
-                                                </div>
-                                            </div>
+                                    <div className="col-sm-12">
+                                        <div class="form-floating mb-3">                                                 
+                                            <input type="text" className="form-control" id="bankref" placeholder="ID bancar"></input>
+                                            <label for="bankref" className="form-label">ID tranzactie bancara</label>
                                         </div>
-                                        <div className="col-sm-12">
-                                            <div class="form-floating mb-3">                                                 
-                                                <input type="text" className="form-control" id="bankref" placeholder="ID bancar"></input>
-                                                <label for="bankref" className="form-label">ID tranzactie bancara</label>
-                                            </div>
+                                    </div>
+                                    <div className="col-sm-12">
+                                        <div class="form-floating mb-3">                                                 
+                                            <input type="text" disabled={true} value={`${this.state.salary_gross} RON`} className="form-control" id="salariu_brut" placeholder="Salariu de baza"></input>
+                                            <label for="bankref" className="form-label">Salariu de baza</label>
                                         </div>
-                                        <div className="col-sm-12">
-                                            <div class="form-floating mb-3">                                                 
-                                                <input type="text" disabled={true} value={`${this.state.salary_gross} RON`} className="form-control" id="salariu_brut" placeholder="Salariu de baza"></input>
-                                                <label for="bankref" className="form-label">Salariu de baza</label>
-                                            </div>
-                                        </div>
-                                        <button className="btn btn-light btn-sm mt-3" type="submit"><span class="action-button-label"><span class="material-icons-outlined">check</span>Salvare</span></button>
-                                    </form>
-                                </div>
-                                <div className="col-md-5 col-lg-6 order-md-last p-2">
-                                    <ul className="list-group mb-3">
-                                        {
-                                            this.state.taxesPercentages.map(element=>(
-                                                <li className="list-group-item d-flex justify-content-between lh-sm">
-                                                <div>
-                                                    <h6 className="my-0">{element.key}</h6>
-                                                    <small className="text-muted">{element.description}</small><br/>
-                                                    <small className="text-muted"><b>{parseFloat(this.state.salary_gross/100)*parseFloat(element.value)} RON</b></small>
-                                                </div>
-                                                <div>
-                                                    <br/>
-                                                    <div class="input-group">                                                    
-                                                        <input type="text" className="form-control shadow-none" style={{width:'50px', padding:'2px'}} value={element.value} onChange={this.reacalculateTaxesWithThis} name={element.key}></input>
-                                                        <span class="input-group-text" style={{padding:'2px'}}>%</span>
-                                                    </div>                                                    
-                                                </div>  
-                                            </li> 
-                                            ))
-                                        }
-                                        <li className="list-group-item d-flex justify-content-between">
-                                            <span>Net</span>
-                                            <strong>{this.state.salary_net} RON</strong>
-                                        </li>                               
-                                    </ul>
-                                </div>
+                                    </div>
+                                    <button className="btn btn-light btn-sm mt-3" type="submit"><span class="action-button-label"><span class="material-icons-outlined">check</span>Salvare</span></button>
+                                </form>
                             </div>
-                        </div>              
-                    </div>                    
+                            <div className="col-md-5 col-lg-6 order-md-last p-2">
+                                <ul className="list-group mb-3">
+                                    {
+                                        this.state.taxesPercentages.map(element=>(
+                                            <li className="list-group-item d-flex justify-content-between lh-sm">
+                                            <div>
+                                                <h6 className="my-0">{element.key}</h6>
+                                                <small className="text-muted">{element.description}</small><br/>
+                                                <small className="text-muted"><b>{parseFloat(this.state.salary_gross/100)*parseFloat(element.value)} RON</b></small>
+                                            </div>
+                                            <div>
+                                                <br/>
+                                                <div class="input-group">                                                    
+                                                    <input type="text" className="form-control shadow-none" style={{width:'50px', padding:'2px'}} value={element.value} onChange={this.reacalculateTaxesWithThis} name={element.key}></input>
+                                                    <span class="input-group-text" style={{padding:'2px'}}>%</span>
+                                                </div>                                                    
+                                            </div>  
+                                        </li> 
+                                        ))
+                                    }
+                                    <li className="list-group-item d-flex justify-content-between">
+                                        <span>Net</span>
+                                        <strong>{this.state.salary_net} RON</strong>
+                                    </li>                               
+                                </ul>
+                            </div>
+                        </div>
+                    </div>              
+                </div>                    
                 }
                 {this.state.vacationDaysWindow &&
                     <div> 
@@ -537,18 +527,6 @@ export default class Employee extends React.Component{
                             </form>
                         </div>
                     </div>             
-                }
-                {this.state.editWindow &&
-                    <div> 
-                        <div className="blur-overlap"></div>
-                        <div className="overlapping-component-inner">
-                            <div className='overlapping-component-header'>
-                                <span>Editare angajat</span>
-                                <button type="button" className="action-close-window" onClick={()=>{this.setState({editWindow: false})}}><span className="material-icons-outlined">close</span></button>
-                            </div>
-                            <div className="p-3"><EmployeeForm refreshParent={this.fetchData} employeeID={this.props.id}/></div>
-                        </div>              
-                    </div>
                 }
                <Snackbar text={this.state.alertUser} closeSnack={()=>{this.setState({alertUser:null})}}/>  
             </div>

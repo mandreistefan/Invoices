@@ -97,10 +97,10 @@ let Clients = (props) =>{
     return(
             <div>
       
-                    <div className="bordered-container p-3" style={{width:'100%'}}>
+                    <div className="bordered-container" style={{width:'100%'}}>
                         {!activeClient&&  
                         <div>   
-                            <Header title="Clients" icon="account_circle" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[{title:"Client nou", action:()=>{showonewClientWindow(true)}, icon:"add", name:""}]}/>
+                            <Header title="Clienti" icon="account_circle" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[{title:"Client nou", action:()=>{showonewClientWindow(true)}, icon:"add", name:"Client nou"}]}/>
                             <div style={{overflowY:'scroll', maxHeight:'80vh'}}>
                                 <table className="table" id="invoices-table">
                                     <thead>
