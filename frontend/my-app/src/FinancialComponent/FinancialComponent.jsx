@@ -110,7 +110,7 @@ let Financial = (props) =>{
                                 <div className="card-header">
                                     <span style={{color:'gray'}}  className="material-icons-outlined p-1">insights</span>Valori lunare ale facturilor incasate
                                 </div>
-                                <div className="card-body">
+                                <div className="card-body" style={{display:'flex', alignItems:'center', width:'100%'}}>
                                     <FinancialChart data={chartData} plottedFor={chartTitle}/>
                                 </div>
                             </div>
@@ -136,7 +136,7 @@ let Financial = (props) =>{
                             </div>                     
                         </div> 
                     </div>         
-                    <div className="row">
+                    <div className="row" style={{marginBottom:'24px'}}>
                         <div className="col-3">
                             <div className='financial-square'>
                                 <span style={{color:'gray'}}  className="material-icons-outlined p-1">receipt</span>
@@ -151,16 +151,16 @@ let Financial = (props) =>{
                                 <span style={{color:'gray'}}  className="material-icons-outlined p-1">payments</span>
                                 <div className="p-1">                                
                                     <span style={{color:'gray', fontWeight:'500'}}>Total incasat</span>
-                                    <span style={{fontSize:'32px', fontWeight:'600'}}>{parseFloat(financialData.total)} RON</span>
+                                    <span style={{fontSize:'32px', fontWeight:'600', color:'#35b653'}}>{parseFloat(financialData.total)}</span><small>RON</small>
                                 </div>                                    
                             </div>        
                         </div>  
                         <div className="col-3">
                             <div className='financial-square'>
-                                <span style={{color:'gray'}} className="material-icons-outlined">calculate</span>                                    
+                                <span style={{color:'gray'}} className="material-icons-outlined p-1">calculate</span>                                    
                                 <div className="p-1"> 
                                     <span style={{color:'gray', fontWeight:'500'}}>Valoare medie lunara</span>
-                                    <span style={{fontSize:'32px', fontWeight:'600'}}>{parseFloat(financialData.avg_per_step).toFixed(2)} RON</span>
+                                    <span style={{fontSize:'32px', fontWeight:'600', color:'#0d6efd'}}>{parseFloat(financialData.avg_per_step).toFixed(2)}</span><small>RON</small>
                                 </div>                                    
                             </div>
                         </div>
@@ -169,10 +169,21 @@ let Financial = (props) =>{
                                 <span style={{color:'gray'}} className="material-icons-outlined p-1">calculate</span>
                                 <div className="p-1">                                
                                     <span style={{color:'gray', fontWeight:'500'}}>Valoare medie factura</span>
-                                    <span style={{fontSize:'32px', fontWeight:'600'}}>{parseFloat(financialData.avg_per_invoice).toFixed(2)} RON</span>
+                                    <span style={{fontSize:'32px', fontWeight:'600', color:'#0d6efd'}}>{parseFloat(financialData.avg_per_invoice).toFixed(2)}</span><small>RON</small>
                                 </div>                                    
                             </div>                    
                         </div>                 
+                    </div>
+                    <div className="row">
+                        <div className="col-3">
+                            <div className='financial-square'>
+                                <span style={{color:'gray'}}  className="material-icons-outlined p-1">money_off</span>
+                                <div className="p-1">                                
+                                    <span style={{color:'gray', fontWeight:'500'}}>Total cheltuieli</span>
+                                    <span style={{fontSize:'32px', fontWeight:'600', color:'#dc3545'}}>{parseFloat(financialData.expenses)}</span><small>RON</small>
+                                </div>                                    
+                            </div>                    
+                        </div>                     
                     </div>
                 </div> 
             }   

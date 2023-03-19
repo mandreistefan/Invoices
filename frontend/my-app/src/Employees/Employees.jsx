@@ -4,6 +4,7 @@ import Employee from './Employee.jsx'
 import EmployeeForm from './EmployeeForm.jsx'
 import PageNavigation from "../PageNavigation.jsx";
 import Header from "../Header.jsx";
+import SmallMenu from "../SmallMenu/SmallMenu.jsx";
 
 let Employees=(props)=>{
 
@@ -118,12 +119,11 @@ let Employees=(props)=>{
                                         {employees.length>0 && employees.map((element, index)=>(          
                                             <tr key={index}>
                                                 <td>{index+1}</td>
-                                                <td><b>{element.emp_first_name} {element.emp_last_name}</b></td>
+                                                <td>{element.emp_first_name} {element.emp_last_name}</td>
                                                 <td>{element.emp_job_name}</td> 
-                                                <td>{element.emp_active ? <div><span className="material-icons-outlined text-success">task_alt</span><span className="text-success"><strong>Activ</strong></span></div> : <div><span class="material-icons-outlined text-danger">cancel</span><span className="text-danger"><strong>Inactiv</strong></span></div>}</td>                                          
+                                                <td>{element.emp_active ? <div style={{display:"flex", alignItems:'center'}}><span className="material-icons-outlined text-success">task_alt</span><span className="text-success"><strong>Activ</strong></span></div> : <div><span class="material-icons-outlined text-danger">cancel</span><span className="text-danger"><strong>Inactiv</strong></span></div>}</td>                                          
                                                 <td className="table-actions-container">
-                                                    <button title="Arhiveaza angajat" onClick={()=>{deleteEmployee(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span>Sterge</div></button>
-                                                    <button title="Deschide angajat" onClick={()=>{setActiveEmployee(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span>Deschide</div></button>
+                                                    <SmallMenu buttons={[{title:"Deschide angajat", action:()=>{setActiveEmployee(element.id)}, name:"Deschide", icon:"file_open"}, {title:"Arhiveaza angajat", action:()=>{deleteEmployee(element.id)}, name:"Sterge", icon:"delete"}]}/>
                                                 </td>
                                             </tr>    
                                         ))}

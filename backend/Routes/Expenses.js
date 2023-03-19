@@ -22,7 +22,7 @@ app.get("/expenses",(req,res)=>{
     })
 })
 
-//create a new client
+//create a new expense
 app.post("/expenses",(req,res)=>{
     addExpense(req.body).then(data=>{
         if(data.status==="OK"){
@@ -36,12 +36,12 @@ app.post("/expenses",(req,res)=>{
     })
 })
 
-//update client
+//update expense
 app.put("/expenses", (req,res)=>{
     //NA
 })
 
-//archive a client
+//delete expense
 app.delete("/expenses", (req, res)=>{
     deleteExpense(req.body.id).then(data=>{
         res.send({status:data, data:null})

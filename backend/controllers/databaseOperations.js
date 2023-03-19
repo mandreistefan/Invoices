@@ -912,7 +912,7 @@ function changeDatabase(databaseName){
 
 function getExpenses(filterObject, getAll){
 
-    let querryToBeExec = `SELECT * FROM expenses WHERE exp_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND exp_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" order by id`
+    let querryToBeExec = `SELECT id, exp_name, exp_sum, exp_description, exp_type, DATE_FORMAT(exp_date, '%Y-%m-%d') as exp_date, exp_deduct FROM expenses WHERE exp_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND exp_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" order by id`
     
     if(!getAll) querryToBeExec = `SELECT * FROM expenses WHERE exp_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND exp_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" AND exp_deduct='1' order by id`
     return new Promise((resolve, reject)=>{  

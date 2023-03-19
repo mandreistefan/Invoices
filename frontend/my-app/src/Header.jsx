@@ -76,6 +76,7 @@ let Header = (props) =>{
                     </div> 
                 </div>
 
+                {(properties.hasSearch===true || properties.hasInterval===true) &&
                 <div style={{display:'inherit', justifyContent:'flex-start', alignItems:'center', padding:'20px', backgroundColor:'#f8f9fa'}}> 
                     {properties.hasInterval===true &&
                     <div style={{display:'flex', alignItems:'center', width:'fit-content', borderRadius:'6px', padding:'3px', marginRight:'5px'}}>
@@ -98,7 +99,7 @@ let Header = (props) =>{
                         </div>
                         <button style={{marginLeft:'10px'}} className="btn btn-light btn-sm mint-button">Cauta</button>
                     </form>} 
-                </div>
+                </div>}
             </div>
             } 
         </div>

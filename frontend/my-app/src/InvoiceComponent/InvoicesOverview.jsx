@@ -4,6 +4,7 @@ import Snackbar from '../Snackbar/Snackbar.jsx'
 import PageNavigation from '../PageNavigation.jsx'
 import Invoice from './Invoice'
 import Header from '../Header';
+import SmallMenu from '../SmallMenu/SmallMenu';
 
 let InvoicesOverview = (props) =>{
 
@@ -113,11 +114,11 @@ let InvoicesOverview = (props) =>{
 
     let setStatus = (status) =>{
         if(status==="draft"){
-            return (<span style={{display:'flex', alignItems:'center', width:'fit-content',fontWeight:'400'}}><span style={{marginRight:"3px", fontSize:'18px'}} className="material-icons-outlined">info</span></span>)
+            return (<span style={{display:'flex', alignItems:'center', width:'fit-content',fontWeight:'600'}} className="text-warning"><span style={{marginRight:"3px"}} className="material-icons-outlined">info</span>Draft</span>)
         }else if(status==="finalised"){
-            return (<span style={{display:'flex', alignItems:'center', width:'fit-content', fontWeight:'400'}}><span style={{marginRight:"3px", fontSize:'18px'}} className="material-icons-outlined">task_alt</span></span>)
+            return (<span style={{display:'flex', alignItems:'center', width:'fit-content', fontWeight:'600'}} className="text-success"><span style={{marginRight:"3px"}} className="material-icons-outlined">task_alt</span>Finalizat</span>)
         }else{
-            return (<span style={{display:'flex', alignItems:'center', width:'fit-content', fontWeight:'400'}}><span style={{marginRight:"3px", fontSize:'18px'}} className="material-icons-outlined">error</span></span>)
+            return (<span style={{display:'flex', alignItems:'center', width:'fit-content', fontWeight:'600'}} className="text-danger"><span style={{marginRight:"3px"}} className="material-icons-outlined">error</span>Eroare</span>)
         }
     }
 
@@ -141,13 +142,13 @@ let InvoicesOverview = (props) =>{
 
     return(
         <div className="app-data-container">  
-                {invoicesData &&    
-                <div className="bordered-container">                    
+                {invoicesData &&     
+                <div className="bordered-container" style={{display: activeInvoice===null ? "" : "none"}}>                    
                     <div className="" style={{width:'100%'}}>
                         {!activeInvoice &&
                             <div> 
                                 <Header title="Facturi" icon="receipt_long" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[]}/>    
-                                <div style={{overflowY:'scroll', maxHeight:'80vh'}}>
+                                <div style={{maxHeight:'80vh'}}>
                                     <table className="table" id="invoices-table">
                                         <thead>
                                             <tr>
@@ -164,36 +165,35 @@ let InvoicesOverview = (props) =>{
                                             {invoicesData.length>0 && invoicesData.map((element, index)=>(          
                                                 <tr key={index}>
                                                     <td>{((queryFilter.page*10)-10) +index+1}</td>
-                                                    <td><b>{element.client_first_name} {element.client_last_name}</b></td>
+                                                    <td>{element.client_first_name} {element.client_last_name}</td>
                                                     <td>{element.invoice_number}</td>
                                                     <td>{setStatus(element.invoice_status)}</td>
                                                     <td>{simpleDate(element.invoice_date)}</td>   
-                                                    <td><b>{element.invoice_total_sum} RON</b></td>                                          
-                                                    <td className="table-actions-container">
-                                                        <button title="Arhiveaza factura" onClick={()=>{deleteInvoice(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">delete</span>Sterge</div></button>
-                                                        {element.invoice_status!=="finalised" && <button title="Seteaza ca platita" onClick={()=>{setInvoiceFinalised(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">task_alt</span>Finalizeaza</div></button>}
-                                                        <button title="Deschide factura" onClick={()=>{setActiveInvoice(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">open_in_new</span>Deschide</div></button>
-                                                        <button title="Genereaza" onClick={()=>{openInvoice(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">file_open</span>Genereaza</div></button>
+                                                    <td>{element.invoice_total_sum} RON</td>                                          
+                                                    <td className="table-actions-container">                                                       
+                                                        {element.invoice_status!=="finalised" && <button title="Seteaza ca platita" onClick={()=>{setInvoiceFinalised(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">task_alt</span></div></button>}
+                                                        <SmallMenu buttons={[{title:"Genereaza factura", action:()=>{openInvoice(element.invoice_number)}, name:"Genereaza", icon:"file_open"}, {title:"Deschide factura", action:()=>{setActiveInvoice(element.invoice_number)}, name:"Deschide", icon:"open_in_new"}, {title:"Arhiveaza factura", action:()=>{deleteInvoice(element.invoice_number)}, name:"Sterge", icon:"delete"}]}/>
                                                     </td>
                                                 </tr>    
                                             ))}
                                         </tbody>  
-                                    </table>
+                                    </table>                                    
                                     <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>
                                 </div>                                
                             </div>  
                         } 
-                        {activeInvoice &&
-                            <div className='overview-container bordered-container'>
-                                <button style={{border:'none', borderRadius:'6px', display:'flex', alignItems:'center', margin:'10px'}} onClick={()=>{setActiveInvoice(null)}}><span className="material-icons-outlined">arrow_back</span>Inchide</button>
-                                <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
-                                    <div style={{display:'inherit', alignItems:'center'}}><span style={{fontSize:'24px'}}>Factura numarul {activeInvoice}</span></div>                                                        
-                                </div>
-                                <Invoice key={activeInvoice} invoiceID={activeInvoice}/>
-                        </div>}
                     </div>
-                </div>
-            }
+                </div>}
+                {activeInvoice &&
+                <div>
+                    <button className='outline-mint-button' style={{marginBottom:'10px'}} onClick={()=>{setActiveInvoice(null)}}><span className="material-icons-outlined">arrow_back</span>Inchide</button>
+                    <div className='overview-container bordered-container'>                                
+                        <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
+                            <div style={{display:'inherit', alignItems:'center'}}><span style={{fontSize:'24px'}}>Factura numarul {activeInvoice}</span></div>                                                        
+                        </div>
+                        <Invoice key={activeInvoice} invoiceID={activeInvoice}/>
+                    </div>
+                </div>}
             <Snackbar text={alertUser.text} closeSnack={()=>{setAlertUser({text:null})}}/>  
         </div>
     )

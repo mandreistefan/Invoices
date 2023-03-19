@@ -1,7 +1,7 @@
 import React from "react";
 import Snackbar from '../Snackbar/Snackbar.jsx'
 import ExpenseForm from './ExpenseForm.jsx'
-import SmallMenu from '../SmallMenu/SmallMenu.jsx'
+import Header from "../Header.jsx";
 
 let Expenses=()=>{
 
@@ -17,7 +17,7 @@ let Expenses=()=>{
 
     React.useEffect(()=>{
         fetchData()
-    },[])
+    },[dateInterval])
 
     let fetchData=()=>{
 
@@ -87,22 +87,15 @@ let Expenses=()=>{
         }
     }
 
+    let intervalFunction=(interval, appliesTo)=>{  
+        setInterval({start: interval.start, end: interval.end})
+    }
+
     return(
         <div className="app-data-container">
-            <div style={{overflowY:'scroll', maxHeight:'80vh'}} className="bordered-container">     
-                <div style={{padding:'10px'}}>
-                    <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-                        <h5 style={{margin:'0'}}>Cheltuieli</h5>
-                        <div style={{display:'flex', justifyContent:"flex-start"}}>
-                            <div style={{display:'flex', alignItems:'center', width:'fit-content', borderRadius:'6px', padding:'3px', marginRight:'5px'}}>
-                                <span title="Interval" style={{marginRight:'5px'}} className="material-icons-outlined">date_range</span>
-                                <input type="date" className="form-control shadow-none" style={{width:'fit-content'}} id="start" name="trip-start" value={dateInterval.start} onChange={someFunction}></input>
-                                <input type="date" className="form-control shadow-none" style={{width:'fit-content', margin:'0'}} id="end" name="trip-end" value={dateInterval.end} onChange={someFunction}></input>
-                            </div>
-                            <button class="btn btn-light" type="button" title="Adauga" onClick={()=>{setaddexpensesWindow(true)}}><div class="inner-button-content"><span class="material-icons-outlined">add</span>Adauga</div></button>
-                        </div>
-                    </div>   
-                    <br></br>                     
+            <div style={{maxHeight:'80vh'}} className="bordered-container">     
+                <div>
+                    <Header title="Cheltuieli" intervalFunction={intervalFunction} intervalSelections={["Data"]} icon="account_circle" refreshData={fetchData} buttons={[{title:"Adauga", action:()=>{setaddexpensesWindow(true)}, icon:"add", name:"Adauga"}]}/>                             
                     <div>                       
                         <table className='table'>
                             <thead>      
@@ -126,7 +119,7 @@ let Expenses=()=>{
                                             <td>{element.exp_sum}</td>
                                             <td>{element.exp_description}</td>
                                             <td>{expenseTypeIcon(element.exp_type)}</td>
-                                            <td>{prettyDate(element.exp_date)}</td>
+                                            <td>{element.exp_date}</td>
                                             <td>{element.exp_deduct ? <span title="Deductibil" className="material-icons-outlined">check_circle</span> : <span title="Non-deductibil" className="material-icons-outlined">cancel</span>}</td>
                                             <td className="table-actions-container">
                                                 <button title="Sterge" onClick={()=>{deleteExpense(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>

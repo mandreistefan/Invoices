@@ -9,6 +9,7 @@
   --navColor: #8391a2;
   --borderRadius: 16px;
   --lightMint: #c3eadc;
+  --shadow: 0 .125rem .25rem rgba(0,0,0,.075);
 }
 
 
@@ -63,10 +64,19 @@ table >tbody> tr:hover{
 .table > tbody > tr > .table-actions-container > button{
   visibility:hidden;
   float: right;
-  border:1px solid black;
   border-radius: 4px;
   padding: 2px;
   margin-right: 5px;
+}
+
+.table-actions-container{
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.table > tbody > tr > .table-actions-container > div{
+  visibility: hidden;
 }
 
 .table > tbody > tr > .table-actions-container > button:hover{
@@ -116,6 +126,10 @@ table >tbody> tr:hover{
 }
 
 .table > tbody > tr:hover > .table-actions-container > button{
+  visibility:visible;
+}
+
+.table > tbody > tr:hover > .table-actions-container > div{
   visibility:visible;
 }
 
@@ -341,7 +355,6 @@ background-color:#D1D1D1
 }
 
 .clients-table-row{
-  height: 30px;
   line-height: 20px;
 }
 
@@ -354,7 +367,6 @@ background-color:#D1D1D1
 }
 
 .clients-table-row td{
-  height: 30px;
   padding: 4px;
   vertical-align: middle;
 }
@@ -1144,6 +1156,8 @@ input[type=date]{
   border-radius: 16px;
   padding: 16px;
   height: 100%;
+  border:1px solid lightgray;
+  box-shadow: var(--shadow);
 }
 
 .financial-square > div{
@@ -1158,6 +1172,7 @@ input[type=date]{
   justify-content: center;
   color: gray;
   font-weight: 500;
+  border: none;
 }
 
 .form-control:focus{

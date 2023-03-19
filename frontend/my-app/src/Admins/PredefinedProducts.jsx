@@ -1,7 +1,7 @@
 import React from "react";
-import SmallMenu from '../SmallMenu/SmallMenu'
 import Snackbar from '../Snackbar/Snackbar.jsx'
 import ProductForm from "./ProductForm.jsx";
+import Header from '../Header.jsx'
 
 let Products=()=>{   
 
@@ -66,13 +66,7 @@ let Products=()=>{
     return(
         <div className="app-data-container">  
             <div className="bordered-container">  
-                <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
-                    <h5>Produse sablon</h5>
-                    <div className="btn-group">                               
-                        <button className='btn btn-light' type="button" onClick={()=>{setaddproductWindow(true)}} title="Adauga" ><div className="inner-button-content"><span className="material-icons-outlined">add</span>Adauga</div></button>
-                        <button className='btn btn-light' type="button" onClick={()=>{fetchData()}}  title="Reincarca" ><div className="inner-button-content"><span className="material-icons-outlined">refresh</span></div></button>
-                    </div>
-                </div>          
+                <Header title="Predefinite" icon="account_circle" refreshData={fetchData} buttons={[{title:"Adauga", action:()=>{setaddproductWindow(true)}, icon:"add", name:"Adauga"}]}/>         
                 {predefinedProducts &&       
                     <div style={{padding:'10px'}}> 
                         <table className='table'>                            
