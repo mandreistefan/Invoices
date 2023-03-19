@@ -63,7 +63,7 @@ let PageNavigation=(props)=>{
                 <div className='pagination-container' key={pagination.currentPage}>
                     <div style={{display:'inherit', justifyContent:'flex-start', alignItems:'center'}}>
                         <span>Show</span>
-                        <select class="form-select" id="pagination" name="pagination" className="m-2" onChange={changeStep} value={pagination.step}>
+                        <select class="form-select" id="pagination" name="pagination" className="m-2 pagination-step-selector" onChange={changeStep} value={pagination.step}>
                             <option value="10">10</option>
                             <option value="25">25</option>
                         </select>
@@ -76,7 +76,7 @@ let PageNavigation=(props)=>{
                             {pagination.pages!==[]&&
                             <ul className="pagination">
                                 {pagination.pages.map((element, i)=>(
-                                    <li key={element} className={pagination.currentPage===element ? "page-item active" : "page-item"}><div className="page-link" onClick={()=>{changePage(element)}}>{element}</div></li>
+                                    <li key={element} className={pagination.currentPage===element ? "page-item active" : "page-item"}><div className="page-link"  disabled={pagination.currentPage===element ? true : false} onClick={()=>{changePage(element)}}>{element}</div></li>
                                 ))}
                             </ul>
                         }

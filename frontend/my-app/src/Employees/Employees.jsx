@@ -103,7 +103,7 @@ let Employees=(props)=>{
                         {!activeEmployee &&
                         <div className="bordered-container">                        
                             <Header title="Angajati" icon="group" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[{title:"Angajat nou", action:()=>{showaddEmployeeWindow(true)}, icon:"add", name:"Angajat nou"}]}/>    
-                            <div style={{overflowY:'scroll', maxHeight:'80vh'}}>
+                            <div>
                                 <table className="table" id="invoices-table">
                                     <thead>
                                         <tr>
@@ -120,10 +120,10 @@ let Employees=(props)=>{
                                                 <td>{index+1}</td>
                                                 <td><b>{element.emp_first_name} {element.emp_last_name}</b></td>
                                                 <td>{element.emp_job_name}</td> 
-                                                <td>{element.emp_active ? <span class="material-icons-outlined">task_alt</span> : <span class="material-icons-outlined">cancel</span>}</td>                                          
+                                                <td>{element.emp_active ? <div><span className="material-icons-outlined text-success">task_alt</span><span className="text-success"><strong>Activ</strong></span></div> : <div><span class="material-icons-outlined text-danger">cancel</span><span className="text-danger"><strong>Inactiv</strong></span></div>}</td>                                          
                                                 <td className="table-actions-container">
-                                                    <button title="Arhiveaza angajat" onClick={()=>{deleteEmployee(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
-                                                    <button title="Deschide angajat" onClick={()=>{setActiveEmployee(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span></div></button>
+                                                    <button title="Arhiveaza angajat" onClick={()=>{deleteEmployee(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span>Sterge</div></button>
+                                                    <button title="Deschide angajat" onClick={()=>{setActiveEmployee(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span>Deschide</div></button>
                                                 </td>
                                             </tr>    
                                         ))}
@@ -133,7 +133,7 @@ let Employees=(props)=>{
                             <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>
                         </div>}
                         {activeEmployee&&
-                            <div style={{maxHeight:'90vh', overflowY:'scroll'}}> 
+                            <div> 
                                 <button className="outline-mint-button" style={{marginBottom:'15px'}} onClick={()=>{closeEmployee()}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>     
                                 <Employee id={activeEmployee} refreshParent={fetchData}/>
                             </div>    

@@ -240,30 +240,48 @@ async function addInvoice(data){
 
 async function getInvoices(querryObject){
     if(querryObject.page>1) offSet = (querryObject.page-1) * queryStep
-    let step = 10
+    //filtering params
     if(querryObject.filter==="search" && querryObject.filterBy.length===0) return ({status:"NO_DATA", data:null})
+    //the step
+    let step = 10
     if(querryObject.step) step=querryObject.step
+    //orderBy
+    let orderBy=" ORDER BY invoice_number DESC ";
+    if(querryObject.order!==undefined){
+        if(querryObject.orderBy!==undefined) orderAscDesc = querryObject.orderBy
+        switch(querryObject.order){
+            case "invoice_number":
+                orderBy=` ORDER BY invoice_number ${orderAscDesc}`
+                break
+            case "total":
+                orderBy=` ORDER BY invoice_total_sum ${orderAscDesc}`
+                break;
+            default:
+                orderBy=`ORDER BY invoice_number DESC`
+                break
+        }
+    }
     switch(querryObject.filter){
         case "all":
-            querry=`SELECT * FROM ${querryObject.target} ORDER BY invoice_number DESC LIMIT ${step} OFFSET ${step*querryObject.page}`
+            querry=`SELECT * FROM ${querryObject.target} ${orderBy} LIMIT ${step} OFFSET ${step*querryObject.page}`
             break
         case "clientID":
-            querry=`SELECT * FROM ${querryObject.target} WHERE customer_id=${querryObject.filterBy} LIMIT ${step} OFFSET ${step*querryObject.page}`
+            querry=`SELECT * FROM ${querryObject.target} WHERE customer_id=${querryObject.filterBy} LIMIT ${step} OFFSET ${step*querryObject.page} ${orderBy}`
             break;
         case "invoiceID":
-            querry=`SELECT * FROM ${querryObject.target} WHERE invoice_number=${querryObject.filterBy}`
+            querry=`SELECT * FROM ${querryObject.target} WHERE invoice_number=${querryObject.filterBy} ${orderBy}`
             break;
         case "recID":
-            querry=`SELECT * FROM ${querryObject.target} WHERE rec_number=${querryObject.filterBy} LIMIT ${step} OFFSET ${step*querryObject.page}`
+            querry=`SELECT * FROM ${querryObject.target} WHERE rec_number=${querryObject.filterBy} LIMIT ${step} OFFSET ${step*querryObject.page} ${orderBy}`
             break;
         case "active":
-            querry=`SELECT * FROM ${querryObject.target} WHERE invoice_active=${querryObject.filterBy} LIMIT ${step} OFFSET ${step*querryObject.page}`
+            querry=`SELECT * FROM ${querryObject.target} WHERE invoice_active=${querryObject.filterBy} LIMIT ${step} OFFSET ${step*querryObject.page} ${orderBy}`
             break;
         case "search":
-            querry=`SELECT * FROM invoices WHERE invoice_number in (${querryObject.filterBy}) order by invoice_number`
+            querry=`SELECT * FROM invoices WHERE invoice_number in (${querryObject.filterBy}) order by invoice_number  ${orderBy}`
             break
         default:
-            querry=`SELECT * FROM ${querryObject.target} LIMIT ${step} OFFSET ${step*querryObject.page}`
+            querry=`SELECT * FROM ${querryObject.target} LIMIT ${step} OFFSET ${step*querryObject.page} ${orderBy}`
             break
     }
 

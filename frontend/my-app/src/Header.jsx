@@ -88,7 +88,7 @@ let Header = (props) =>{
                                 <option key={element} value={element}>{element}</option>
                             ))}
                         </select>}
-                        <button className="outline-mint-button" onClick={()=>{applyInterval()}}>Apply</button>
+                        <button className="outline-mint-button" onClick={()=>{applyInterval()}}>Aplica</button>
                     </div>}
                     {properties.hasSearch===true &&
                     <form onSubmit={handleSearchSubmit} style={{display:'inherit', justifyContent:'flex-start'}} id="search-form" name="search-form">
@@ -96,7 +96,7 @@ let Header = (props) =>{
                             <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
                             <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>                                                   
                         </div>
-                        <button className="btn btn-light btn-sm">Cauta</button>
+                        <button style={{marginLeft:'10px'}} className="btn btn-light btn-sm mint-button">Cauta</button>
                     </form>} 
                 </div>
             </div>

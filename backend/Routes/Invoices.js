@@ -31,11 +31,12 @@ app.get('/invoices',(req,res)=>{
     if(req.query.filterBy) filterObject.filterBy=req.query.filterBy;
     if(req.query.page) filterObject.page=req.query.page;
     if(req.query.step) filterObject.step=req.query.step;
+    if(req.query.order) filterObject.order=req.query.order;
+    if(req.query.orderBy) filterObject.orderBy=req.query.orderBy;
     filterObject.target="invoices"
     //fetch data
     databaseController.fetchInvoices(filterObject).then(results=>{
         if(results.status==="OK"){
-            console.log("OK")
             res.send({
                 status:"OK",
                 recordsNumber: results.totalRecordsNumber,

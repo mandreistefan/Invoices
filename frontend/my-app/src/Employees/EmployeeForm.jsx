@@ -227,7 +227,7 @@ let EmployeeForm = (props)=>{
                 <textarea rows="4" placeholder="Salariu brut" id="emp_notes" name="emp_notes" disabled={(fieldsDisabled===false) ?  true: false} className={invalidDataItems.includes("emp_first_name") ? "form-control shadow-none invalid-data" :  data.emp_notes.modified ? "form-control shadow-none modified-data" : "form-control shadow-none"} autoComplete="off" onChange={changeFormData} value={data.emp_notes.value}/>
                 <label htmlFor="emp_notes">Informatii aditionale</label>
             </div>
-            <button className="btn btn-light" onClick={()=>{submitemployeeData()}} type="button" title="Editare angajat"><div class="inner-button-content"><span class="material-icons-outlined" style={{fontSize: '18px'}}>save</span>Salvare</div></button>
+            <button className="btn btn-light mint-button" onClick={()=>{submitemployeeData()}} type="button" title="Editare angajat"><div class="inner-button-content"><span class="material-icons-outlined" style={{fontSize: '18px'}}>save</span>Salvare</div></button>
             <Snackbar text={alertUser.text} closeSnack={()=>{setAlertUser({text:null})}}/>   
         </div>
     )       

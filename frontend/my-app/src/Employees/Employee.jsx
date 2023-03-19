@@ -374,7 +374,7 @@ export default class Employee extends React.Component{
                     </div>
                     <div style={{display: this.state.windows[1].active===true ? 'block' : 'none'}}> 
                         <Header title="Salarii" icon="account_circle" hasSearch="false" refreshData={this.updateEmployeeSalaries} buttons={[{title:"Salariu", action:()=>{this.setState({salaryWindow:true})}, icon:"add", name:"Salariu nou"}]} intervalFunction={this.intervalSalariesFunction} intervalSelections={["Data"]}/>    
-                        <table className='table' id="salaries-table">
+                        <table className='table' id="salaries-table" style={{marginBottom:'1rem'}}>
                             <thead>
                                 <tr>
                                     <td>Luna</td>
@@ -410,7 +410,7 @@ export default class Employee extends React.Component{
                     <div style={{display: this.state.windows[2].active===true ? 'block' : 'none'}}>                        
                         <div style={{width:'100%'}} >
                             <Header title="Zile libere" icon="account_circle" hasSearch="false" refreshData={this.updateVacationDays} buttons={[{title:"Cerere noua", action:()=>{this.setState({vacationDaysWindow:true})}, icon:"add", name:"Cerere noua"}]} intervalFunction={this.intervalVacationsFunction} intervalSelections={["Data", "Data inregistrare"]}/>    
-                            <table className='table' id="vacation-days-table">
+                            <table className='table' id="vacation-days-table" style={{marginBottom:'1rem'}}>
                                 <thead>
                                     <tr>
                                         <td>Data</td>

@@ -7,25 +7,32 @@ import Header from '../Header';
 
 let InvoicesOverview = (props) =>{
 
-    let defaultFilter = {filter:"all", filterBy:"", page:1}
+    let defaultFilter = {filter:"all", filterBy:"", page:1, order:"invoice_number", orderBy:"desc"}
 
     let [invoicesData, invoicesDataSet] = useState(null)
     let [activeInvoice, setActiveInvoice] = useState(null)
     let [alertUser, setAlertUser] = useState({text: null})
     let [numberOfElements, setNOE] = useState(null)
-    let [queryFilter, setFilter] = useState({filter: props.queryFilterBy ? props.queryFilterBy : defaultFilter.filter, filterBy: props.queryFilterData ? props.queryFilterData : defaultFilter.filterBy, page:1, step:10})
+    let [queryFilter, setFilter] = useState({
+        filter: props.queryFilterBy ? props.queryFilterBy : defaultFilter.filter, 
+        filterBy: props.queryFilterData ? props.queryFilterData : defaultFilter.filterBy, 
+        page:1, 
+        step:10,
+        order: defaultFilter.order,
+        orderBy: defaultFilter.orderBy
+    })
 
     //refecth on page change or when the query parameters change (ex. when a search is attempted)
     useEffect(()=>{
         fetchData()
-    },[queryFilter.page, queryFilter.step, queryFilter.filterBy])
+    },[queryFilter.page, queryFilter.step, queryFilter.filterBy, queryFilter.order, queryFilter.orderBy])
 
     /**
      * Fetches data
      */
     let fetchData=()=>{
         //fetches all data
-        let fetcher = `http://localhost:3000/invoices?target=invoices&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}&step=${queryFilter.step}`
+        let fetcher = `http://localhost:3000/invoices?target=invoices&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}&step=${queryFilter.step}&order=${queryFilter.order}&orderBy=${queryFilter.orderBy}`
         
         fetch(fetcher,
         {
@@ -146,10 +153,10 @@ let InvoicesOverview = (props) =>{
                                             <tr>
                                                 <td>#</td>
                                                 <td>Client</td>
-                                                <td>Numar factura</td>
+                                                <td><button className="table-order-button" onClick={()=>{setFilter({...queryFilter, order:'invoice_number', orderBy: queryFilter.orderBy==='asc' ? 'desc' : 'asc'})}}><span class="material-icons-outlined">{queryFilter.orderBy==='asc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span></button>Numar factura</td>
                                                 <td>Status</td>
                                                 <td>Data</td>
-                                                <td>Total</td>
+                                                <td><button className="table-order-button" onClick={()=>{setFilter({...queryFilter, order:'total', orderBy: queryFilter.orderBy==='asc' ? 'desc' : 'asc'})}}><span class="material-icons-outlined">{queryFilter.orderBy==='asc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span></button>Total</td>
                                                 <td></td>
                                             </tr>
                                         </thead>
@@ -163,10 +170,10 @@ let InvoicesOverview = (props) =>{
                                                     <td>{simpleDate(element.invoice_date)}</td>   
                                                     <td><b>{element.invoice_total_sum} RON</b></td>                                          
                                                     <td className="table-actions-container">
-                                                        <button title="Arhiveaza factura" onClick={()=>{deleteInvoice(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">delete</span></div></button>
-                                                        {element.invoice_status!=="finalised" && <button title="Seteaza ca platita" onClick={()=>{setInvoiceFinalised(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">task_alt</span></div></button>}
-                                                        <button title="Deschide factura" onClick={()=>{setActiveInvoice(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">open_in_new</span></div></button>
-                                                        <button title="Genereaza" onClick={()=>{openInvoice(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">file_open</span></div></button>
+                                                        <button title="Arhiveaza factura" onClick={()=>{deleteInvoice(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">delete</span>Sterge</div></button>
+                                                        {element.invoice_status!=="finalised" && <button title="Seteaza ca platita" onClick={()=>{setInvoiceFinalised(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">task_alt</span>Finalizeaza</div></button>}
+                                                        <button title="Deschide factura" onClick={()=>{setActiveInvoice(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">open_in_new</span>Deschide</div></button>
+                                                        <button title="Genereaza" onClick={()=>{openInvoice(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">file_open</span>Genereaza</div></button>
                                                     </td>
                                                 </tr>    
                                             ))}

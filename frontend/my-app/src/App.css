@@ -37,6 +37,7 @@ body{
   font-size:15px;
   background-color: #F7F7F8;
   padding:10px;
+  margin:0;
 }
 
 table tbody{
@@ -62,6 +63,14 @@ table >tbody> tr:hover{
 .table > tbody > tr > .table-actions-container > button{
   visibility:hidden;
   float: right;
+  border:1px solid black;
+  border-radius: 4px;
+  padding: 2px;
+  margin-right: 5px;
+}
+
+.table > tbody > tr > .table-actions-container > button:hover{
+  background-color: white;
 }
 
 .new-invoice-table > tbody > tr > td > input{
@@ -609,7 +618,7 @@ input[type=date]{
   align-items: center;
   background-color: white;
   border: 1px solid lightgray;
-  border-radius: 10px;
+  border-radius: 6px;
   box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
   width: 400px;
 }
@@ -922,6 +931,9 @@ input[type=date]{
   justify-content: space-between;
   align-items: center;
   padding: 20px;
+  background-color: #f8f9fa;
+  border-bottom-left-radius: var(--borderRadius);
+  border-bottom-right-radius: var(--borderRadius);
 }
 
 .pagination-container > div> button{
@@ -943,6 +955,24 @@ input[type=date]{
   border: none;
 }
 
+.pagination-step-selector{
+  border-color: var(--navActive);
+  border-radius: 6px;
+  padding: 4px;
+  color:var(--navActive);
+  background-color: #f8f9fa;
+}
+
+
+.pagination-step-selector:focus{
+  border: 1px solid var(--navActive);
+}
+
+.pagination-step-selector:focus-visible{
+  border: 1px solid var(--navActive);
+}
+
+
 .page-navigation{
   width: 100%;
   margin:5px;
@@ -950,7 +980,8 @@ input[type=date]{
 
 .page-link{
   border: none;
-  font-weight: 400;
+  font-weight: 600;
+  font-size: 20px;
 }
 
 .page-link:hover{
@@ -1005,7 +1036,6 @@ input[type=date]{
   border: 1px solid lightgray;
   border-radius: var(--borderRadius);
   box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
-  max-height: 90vh;
   background-color: white;
 }
 
@@ -1134,6 +1164,18 @@ input[type=date]{
   border-color: #ced4da;
 }
 
+.mint-button{
+  color: var(--navActive);
+  border-radius: 6px;
+  border: 1px solid var(--navActive)
+}
+
+.mint-button:hover{
+  color: var(--navActive);
+  background-color: var(--lightMint);
+  border: 1px solid var(--navActive);
+}
+
 .outline-mint-button{
   border:1px solid var(--navActive);
   border-radius: 6px;
@@ -1180,4 +1222,18 @@ input[type=date]{
 .tab.active{
   border-bottom: 4px solid var(--navActive);
   color:var(--navActive);
+}
+
+.table-order-button{
+  background-color: transparent;
+  border:none;
+  width: 20px;
+  height: 20px;
+  margin:0;
+  padding: 0;
+}
+
+.table-order-button>span{
+  font-size:20px;
+  color:white;
 }
