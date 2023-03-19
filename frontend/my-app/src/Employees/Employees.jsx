@@ -134,7 +134,7 @@ let Employees=(props)=>{
                         </div>}
                         {activeEmployee&&
                             <div style={{maxHeight:'90vh', overflowY:'scroll'}}> 
-                                <button className="outline-mint-button" style={{marginLeft:'16px'}} onClick={()=>{closeEmployee()}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>     
+                                <button className="outline-mint-button" style={{marginBottom:'15px'}} onClick={()=>{closeEmployee()}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>     
                                 <Employee id={activeEmployee} refreshParent={fetchData}/>
                             </div>    
                         }

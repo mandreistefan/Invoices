@@ -1244,19 +1244,19 @@ async function addSalary(paid_to, salary_month, salary_year, bank_ref, taxes){
     let querry;    
     switch(queryObject.filter){
         case "all":
-            querry=`SELECT * FROM employees_salaries ORDER BY id DESC LIMIT ${offSet}, ${step}`
+            querry=`SELECT id, DATE_FORMAT(paid_on, '%Y-%m-%d') as paid_on, sum_gross, sum_net, tax_cas, tax_cass, tax_income, tax_cm, paid_to, salary_month, salary_year, comments, bank_ref from employees_salaries ORDER BY id DESC LIMIT ${offSet}, ${step}`
             break
         case "paid_to":
-            querry=`SELECT * FROM employees_salaries WHERE paid_to=${queryObject.filterBy}`
+            querry=`SELECT id, DATE_FORMAT(paid_on, '%Y-%m-%d') as paid_on, sum_gross, sum_net, tax_cas, tax_cass, tax_income, tax_cm, paid_to, salary_month, salary_year, comments, bank_ref from employees_salaries WHERE paid_to=${queryObject.filterBy}`
             break
         case "interval":
-            querry=`SELECT * FROM employees_salaries WHERE paid_on >= "${queryObject.filterBy.startYear}-${queryObject.filterBy.startMonth}-${queryObject.filterBy.startDay}" AND paid_on <= "${queryObject.filterBy.endYear}-${queryObject.filterBy.endMonth}-${queryObject.filterBy.endDay}" `
+            querry=`SELECT id, DATE_FORMAT(paid_on, '%Y-%m-%d') as paid_on, sum_gross, sum_net, tax_cas, tax_cass, tax_income, tax_cm, paid_to, salary_month, salary_year, comments, bank_ref from employees_salaries WHERE paid_on >= "${queryObject.filterBy.startYear}-${queryObject.filterBy.startMonth}-${queryObject.filterBy.startDay}" AND paid_on <= "${queryObject.filterBy.endYear}-${queryObject.filterBy.endMonth}-${queryObject.filterBy.endDay}" `
             break
         case "employee_interval":
-            querry=`SELECT * FROM employees_salaries WHERE paid_on >= "${queryObject.filterBy.startYear}-${queryObject.filterBy.startMonth}-${queryObject.filterBy.startDay}" AND paid_on <= "${queryObject.filterBy.endYear}-${queryObject.filterBy.endMonth}-${queryObject.filterBy.endDay}" AND id='${queryObject.filterBy.employeeID}' `
+            querry=`SELECT id, DATE_FORMAT(paid_on, '%Y-%m-%d') as paid_on, sum_gross, sum_net, tax_cas, tax_cass, tax_income, tax_cm, paid_to, salary_month, salary_year, comments, bank_ref from employees_salaries WHERE paid_on >= "${queryObject.filterBy.startYear}-${queryObject.filterBy.startMonth}-${queryObject.filterBy.startDay}" AND paid_on <= "${queryObject.filterBy.endYear}-${queryObject.filterBy.endMonth}-${queryObject.filterBy.endDay}" AND id='${queryObject.filterBy.employeeID}' `
             break
         default:
-            querry=`SELECT * FROM employees_salaries LIMIT ${offSet}, ${step}`
+            querry=`SELECT id, DATE_FORMAT(paid_on, '%Y-%m-%d') as paid_on, sum_gross, sum_net, tax_cas, tax_cass, tax_income, tax_cm, paid_to, salary_month, salary_year, comments, bank_ref from employees_salaries LIMIT ${offSet}, ${step}`
             break
     }
 

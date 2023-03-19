@@ -206,6 +206,12 @@ async function fetchInvoiceData(querryObject){
 
 }
 
+/**
+ * 
+ * @param {*} interval String in the format yyyymmdd-yyyymmdd
+ * @returns An object {startDay:dd, startMonth:mm, startYear:yyyyy, endDay:dd, endMonth:mm, endYear:yyyy}
+ */
+
 function translateInterval(interval){
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
@@ -502,6 +508,7 @@ async function addSalary(data){
  * @param {object} filterObject Object that filters data 
  */
  async function getSalaries(filterObject){
+    if(filterObject.filter==="interval") filterObject.filterBy=translateInterval(filterObject.filterBy)
     return await databaseOperations.getSalaries(filterObject)
 }
 

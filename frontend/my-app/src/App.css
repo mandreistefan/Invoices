@@ -8,6 +8,7 @@
   --navActive: #3eb489;
   --navColor: #8391a2;
   --borderRadius: 16px;
+  --lightMint: #c3eadc;
 }
 
 
@@ -1140,6 +1141,24 @@ input[type=date]{
   align-items: center;
   color:var(--navActive);
   font-weight: 500;
+}
+
+.outline-mint-button:hover{
+  background-color: var(--lightMint)
+}
+
+.button-group-mint{
+  border: 1px solid var(--navActive);
+}
+
+.button-group-mint > button{
+  color:var(--navActive);
+}
+
+.button-group-mint > button:hover{
+  color:var(--navActive);
+  background-color: var(--lightMint);
+  border:1px solid var(--lightMint)
 }
 
 .tabs{

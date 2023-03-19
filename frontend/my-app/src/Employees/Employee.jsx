@@ -28,6 +28,7 @@ export default class Employee extends React.Component{
             salary_gross:0,
             salary_net:0,
             salaries:[],
+            salariesFilter:[],
             vacationDays:[],
             salaryWindow: false,
             newSalaryMonth:1,
@@ -83,7 +84,8 @@ export default class Employee extends React.Component{
                     taxesCopy[2].value=0;
                     this.setState({taxesPercentages: taxesCopy})                    
                 }
-                this.calculateNet()                   
+                this.calculateNet() 
+
             }else{
                 this.setState({alertUser:"Eroare"})
             }
@@ -111,10 +113,19 @@ export default class Employee extends React.Component{
                         income:element.tax_income, 
                         cm:element.tax_cm}, 
                     month:readableMonth(element.salary_month-1),
-                    date:this.normalDate(element.paid_on, false)
+                    year:element.salary_year,
+                    date:element.paid_on
                 })
             })
         }
+
+        //initially, the filter contains everything
+        let initialSalariesFilter = []
+        for(let i=0;i<salaries.length;i++){
+            initialSalariesFilter.push(i) 
+        }
+        this.setState({salariesFilter:initialSalariesFilter})
+
         return anArray
     }
 
@@ -254,8 +265,8 @@ export default class Employee extends React.Component{
     }
 
     updateEmployeeSalaries=()=>{
-        fetch(`http://localhost:3000/employee_salary?filter=paid_to&filterBy=${this.state.id}`
-        ).then(response=>response.json()).then(data=>{
+        fetch(`http://localhost:3000/employee_salary?filter=paid_to&filterBy=${this.state.id}`)
+        .then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 this.setState({salaries: this.convertSalaries(data.data)})
             }else{
@@ -301,9 +312,17 @@ export default class Employee extends React.Component{
         this.setState({windows:shallowCopy})
     }
 
+    intervalSalariesFunction=(interval)=>{
+        let filtered = []
+        this.state.salaries.forEach((element, index)=>{
+            if((Date.parse(element.date) >= Date.parse(interval.start)) && (Date.parse(element.date) <= Date.parse(interval.end))) filtered.push(index)
+        })
+        this.setState({salariesFilter:filtered})
+    }
+
      render(){
         return(
-            <div style={{border:'1px solid lightgray'}}>
+            <div className="bordered-container">
                 <div style={{display:'flex', alignItems:'center'}}>
                     <div style={{backgroundColor:'white', width:'100%', padding:'20px', borderTopRightRadius:'16px', borderTopLeftRadius:'16px', borderBottom:'1px solid lightgray'}}>
                         <h4>{this.state.first_name} {this.state.last_name}</h4>
@@ -328,11 +347,12 @@ export default class Employee extends React.Component{
                         </div>
                     </div>
                     <div style={{display: this.state.windows[1].active===true ? 'block' : 'none'}}> 
-                        <Header title="Salarii" icon="account_circle" hasSearch="false" refreshData={this.updateEmployeeSalaries} buttons={[{title:"Salariu", action:()=>{this.setState({salaryWindow:true})}, icon:"add", name:"Salariu nou"}]}/>    
+                        <Header title="Salarii" icon="account_circle" hasSearch="false" refreshData={this.updateEmployeeSalaries} buttons={[{title:"Salariu", action:()=>{this.setState({salaryWindow:true})}, icon:"add", name:"Salariu nou"}]} intervalFunction={this.intervalSalariesFunction}/>    
                         <table className='table' id="salaries-table">
                             <thead>
                                 <tr>
                                     <td>Luna</td>
+                                    <td>An</td>
                                     <td>Data</td>
                                     <td>Brut</td>
                                     <td>CAS</td>
@@ -343,19 +363,22 @@ export default class Employee extends React.Component{
                                 </tr>    
                             </thead>
                             <tbody>
-                                {this.state.salaries!=[] ? this.state.salaries.map((element, index)=>(
+                                {this.state.salariesFilter!==[] && 
+                                this.state.salariesFilter.map((element, index)=>(
                                     <tr key={index}>
-                                        <td><b>{element.month}</b></td>
-                                        <td>{element.date}</td>
-                                        <td><b>{element.gross}</b></td>
-                                        <td>{element.taxes.cas}</td>
-                                        <td>{element.taxes.cass}</td>
-                                        <td>{element.taxes.income}</td>
-                                        <td>{element.taxes.cm}</td>
-                                        <td><b>{element.net}</b></td>
+                                        <td><b>{this.state.salaries[element].month}</b></td>
+                                        <td><b>{this.state.salaries[element].year}</b></td>
+                                        <td>{this.state.salaries[element].date}</td>
+                                        <td><b>{this.state.salaries[element].gross}</b></td>
+                                        <td>{this.state.salaries[element].taxes.cas}</td>
+                                        <td>{this.state.salaries[element].taxes.cass}</td>
+                                        <td>{this.state.salaries[element].taxes.income}</td>
+                                        <td>{this.state.salaries[element].taxes.cm}</td>
+                                        <td><b>{this.state.salaries[element].net}</b></td>
                                     </tr>
-                                )):"Nu exista inregistrari"}
+                                ))}
                             </tbody>
+                            {this.state.salariesFilter.length===0 && <span>Nu exista date</span>}
                         </table>
                     </div>                    
                     <div style={{display: this.state.windows[2].active===true ? 'block' : 'none'}}>                        
