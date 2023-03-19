@@ -20,13 +20,22 @@ let Header = (props) =>{
     })
 
     useEffect(()=>{
+
+        let intervalSelections = []
+        if(props.intervalSelections)
+        props.intervalSelections.forEach(element=>{
+            intervalSelections.push(element)
+        })
+
         setProperties({
             title: props.title,
             icon: props.icon,
             searchAction: props.searchAction,
             buttons:props.buttons,
             hasSearch: props.searchAction!==undefined ? true : false,
-            hasInterval: props.intervalFunction!==undefined ? true : false
+            hasInterval: props.intervalFunction!==undefined ? true : false,
+            intervalAppliesTo: intervalSelections.length>0 ? intervalSelections[0] : null,
+            intervalSelections: intervalSelections
         })
     },[])
 
@@ -44,8 +53,11 @@ let Header = (props) =>{
     }
 
     function changeIntervalFunction(event){
-        event.target.name==="trip-start" ? setInterval({...dateInterval, start:event.target.value}) : setInterval({...dateInterval, end:event.target.value})
-        if(properties.hasInterval)  event.target.name==="trip-start" ? props.intervalFunction({...dateInterval, start:event.target.value}) : props.intervalFunction({...dateInterval, end:event.target.value})        
+        event.target.name==="trip-start" ? setInterval({...dateInterval, start:event.target.value}) : setInterval({...dateInterval, end:event.target.value})        
+    }
+
+    function applyInterval(){
+        props.intervalFunction(dateInterval, properties.intervalAppliesTo)
     }
 
     return(
@@ -70,6 +82,13 @@ let Header = (props) =>{
                         <span title="Interval" style={{marginRight:'5px'}} className="material-icons-outlined">date_range</span>
                         <input type="date" className="form-control shadow-none" style={{width:'fit-content'}} id="start" name="trip-start" value={dateInterval.start} onChange={changeIntervalFunction}></input>
                         <input type="date" className="form-control shadow-none" style={{width:'fit-content', margin:'0'}} id="end" name="trip-end" value={dateInterval.end} onChange={changeIntervalFunction}></input>
+                        {properties.intervalSelections.length>0 && 
+                        <select className="form-select form-select-sm shadow-none m-2" style={{width:'fit-content', height:'38px'}}>
+                            {properties.intervalSelections.map(element=>(
+                                <option key={element} value={element}>{element}</option>
+                            ))}
+                        </select>}
+                        <button className="outline-mint-button" onClick={()=>{applyInterval()}}>Apply</button>
                     </div>}
                     {properties.hasSearch===true &&
                     <form onSubmit={handleSearchSubmit} style={{display:'inherit', justifyContent:'flex-start'}} id="search-form" name="search-form">

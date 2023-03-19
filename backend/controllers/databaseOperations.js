@@ -1370,7 +1370,7 @@ async function addVacationDays(employee, daysObject){
 function getVacationDays(employee){
     let returnArr = []
     return new Promise((resolve, reject)=>{
-        connection.query(`SELECT vacation_date, vacation_type, date FROM employees_vacation WHERE employee_id='${employee}'`, function(error, result){
+        connection.query(`SELECT DATE_FORMAT(vacation_date, '%Y-%m-%d') as vacation_date, vacation_type, DATE_FORMAT(date, '%Y-%m-%d') as date FROM employees_vacation WHERE employee_id='${employee}'`, function(error, result){
             if(error){
                 console.log(error)
                 reject ({status:"ERROR", data:null})

@@ -30,6 +30,7 @@ export default class Employee extends React.Component{
             salaries:[],
             salariesFilter:[],
             vacationDays:[],
+            vacationDaysFilter:[],
             salaryWindow: false,
             newSalaryMonth:1,
             salaryYear:2023,
@@ -139,9 +140,17 @@ export default class Employee extends React.Component{
         let anArray = []
         if(vacationsObject!=null){
             vacationsObject.forEach(element=>{
-                anArray.push({date:this.normalDate(element.date, false), type:element.type, registerDate:this.normalDate(element.registerDate, false)})
+                anArray.push({date:element.date, type:element.type, registerDate:element.registerDate})
             })
         }
+
+        //initially, the filter contains everything
+        let initialVacationsFilter = []
+        for(let i=0;i<vacationsObject.length;i++){
+            initialVacationsFilter.push(i) 
+        }
+        this.setState({vacationDaysFilter:initialVacationsFilter})
+
         return anArray
     }
 
@@ -293,8 +302,7 @@ export default class Employee extends React.Component{
     }
 
     updateVacationDays=()=>{        
-        fetch(`http://localhost:3000/employee_vacation/${this.state.id}`
-        ).then(response=>response.json()).then(data=>{
+        fetch(`http://localhost:3000/employee_vacation/${this.state.id}`).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 this.setState({vacationDays: this.convertVacations(data.data)})
             }else{
@@ -312,12 +320,30 @@ export default class Employee extends React.Component{
         this.setState({windows:shallowCopy})
     }
 
-    intervalSalariesFunction=(interval)=>{
+    intervalSalariesFunction=(interval, appliesTo)=>{
         let filtered = []
         this.state.salaries.forEach((element, index)=>{
             if((Date.parse(element.date) >= Date.parse(interval.start)) && (Date.parse(element.date) <= Date.parse(interval.end))) filtered.push(index)
         })
         this.setState({salariesFilter:filtered})
+    }
+
+    intervalVacationsFunction=(interval, appliesTo)=>{
+        let filtered = []
+        switch(appliesTo){
+            case "Data":
+                this.state.vacationDays.forEach((element, index)=>{
+                    if((Date.parse(element.date) >= Date.parse(interval.start)) && (Date.parse(element.date) <= Date.parse(interval.end))) filtered.push(index)
+                })
+                break
+            case "Data inregistrare":
+                this.state.vacationDays.forEach((element, index)=>{
+                    if((Date.parse(element.registerDate) >= Date.parse(interval.start)) && (Date.parse(element.registerDate) <= Date.parse(interval.end))) filtered.push(index)
+                })
+                break
+        }
+
+        this.setState({vacationDaysFilter:filtered})
     }
 
      render(){
@@ -347,7 +373,7 @@ export default class Employee extends React.Component{
                         </div>
                     </div>
                     <div style={{display: this.state.windows[1].active===true ? 'block' : 'none'}}> 
-                        <Header title="Salarii" icon="account_circle" hasSearch="false" refreshData={this.updateEmployeeSalaries} buttons={[{title:"Salariu", action:()=>{this.setState({salaryWindow:true})}, icon:"add", name:"Salariu nou"}]} intervalFunction={this.intervalSalariesFunction}/>    
+                        <Header title="Salarii" icon="account_circle" hasSearch="false" refreshData={this.updateEmployeeSalaries} buttons={[{title:"Salariu", action:()=>{this.setState({salaryWindow:true})}, icon:"add", name:"Salariu nou"}]} intervalFunction={this.intervalSalariesFunction} intervalSelections={["Data"]}/>    
                         <table className='table' id="salaries-table">
                             <thead>
                                 <tr>
@@ -383,7 +409,7 @@ export default class Employee extends React.Component{
                     </div>                    
                     <div style={{display: this.state.windows[2].active===true ? 'block' : 'none'}}>                        
                         <div style={{width:'100%'}} >
-                            <Header title="Zile libere" icon="account_circle" hasSearch="false" refreshData={this.updateVacationDays} buttons={[{title:"Cerere noua", action:()=>{this.setState({vacationDaysWindow:true})}, icon:"add", name:"Cerere noua"}]}/>    
+                            <Header title="Zile libere" icon="account_circle" hasSearch="false" refreshData={this.updateVacationDays} buttons={[{title:"Cerere noua", action:()=>{this.setState({vacationDaysWindow:true})}, icon:"add", name:"Cerere noua"}]} intervalFunction={this.intervalVacationsFunction} intervalSelections={["Data", "Data inregistrare"]}/>    
                             <table className='table' id="vacation-days-table">
                                 <thead>
                                     <tr>
@@ -394,14 +420,15 @@ export default class Employee extends React.Component{
                                     </tr>    
                                 </thead>
                                 <tbody>
-                                    {this.state.vacationDays.length>0 ? this.state.vacationDays.map((element,index)=>(
+                                    {this.state.vacationDaysFilter!==[] &&
+                                    this.state.vacationDaysFilter.map((element,index)=>(
                                         <tr key={index}>
-                                            <td><b>{this.parseDate(element.date)}</b></td>
-                                            <td>{this.parseDate(element.registerDate)}</td>
-                                            <td>{element.type}</td>
-                                            <td><b>{element.status}</b></td>            
+                                            <td><b>{this.state.vacationDays[element].date}</b></td>
+                                            <td>{this.state.vacationDays[element].registerDate}</td>
+                                            <td>{this.state.vacationDays[element].type}</td>
+                                            <td><b>{this.state.vacationDays[element].status}</b></td>            
                                         </tr>
-                                    )):"Nu exista inregistrari"}
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
