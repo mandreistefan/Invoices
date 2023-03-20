@@ -59,8 +59,7 @@ let SideNavigation = (props) =>{
                     <DatabaseSelector/>
                 </div>                
             </div> 
-            <Outlet/>
-            
+            <Outlet/>            
       </div>
     )
 }

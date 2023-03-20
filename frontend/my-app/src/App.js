@@ -8,6 +8,7 @@ import Admins from './Admins/AdminsOverview.jsx'
 import PredefinedProducts from './Admins/PredefinedProducts.jsx'
 import Expenses from './Admins/Expenses'
 import Financials from './FinancialComponent/FinancialComponent'
+import Dashboard from './Dashboard';
 import {Route, createBrowserRouter, RouterProvider, createRoutesFromElements, createHashRouter} from 'react-router-dom'
 
 let App =()=> {
@@ -18,7 +19,8 @@ let App =()=> {
   if(navigator.userAgent.indexOf('Electron')>-1){
     router=createHashRouter(
       createRoutesFromElements(
-        <Route path="/" element={<Layout/>}>
+        <Route path="/" component={<Dashboard/>} element={<Layout/>}>
+          <Route path="/" element={<Dashboard/>} />
           <Route path='clients' element={<ClientsComponent/>}/>
           <Route path='invoices' element={<InvoicesComponent/>}/>
           <Route path='admins' element={<Admins/>}/>
@@ -32,7 +34,8 @@ let App =()=> {
   }else{
     router=createBrowserRouter(
       createRoutesFromElements(
-        <Route path="/" element={<Layout/>}>
+        <Route path="/" component={<Dashboard/>} element={<Layout/>}>
+          <Route path="/" element={<Dashboard/>} />
           <Route path='clients' element={<ClientsComponent/>}/>
           <Route path='invoices' element={<InvoicesComponent/>}/>
           <Route path='admins' element={<Admins/>}/>

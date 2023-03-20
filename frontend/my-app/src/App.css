@@ -1143,9 +1143,12 @@ input[type=date]{
 }
 
 #databaseSelector{
-  background-color: #313a46;
+  background-color: transparent;
   border-color: #3eb489;
-  color: #3eb489
+  color: #3eb489;
+  width: fit-content;
+  min-width: 175px;
+  padding: 4px;
 }
 
 .financial-square{
@@ -1251,4 +1254,39 @@ input[type=date]{
 .table-order-button>span{
   font-size:20px;
   color:white;
+}
+
+.dashboard-row{
+  display: flex;
+  flex-direction: row;
+  border-radius: var(--borderRadius);
+  padding: 16px;
+}
+
+.dashboard-row > div > div{
+  display: flex;
+  flex-direction: row;
+}
+
+.dashboard-row > div > div > span{
+  font-weight: 500;
+  color: gray;
+}
+
+.dashboard-row > div > div > div{
+  display: inherit;
+  flex-direction: column;
+}
+
+.dashboard-header{
+  color:var(--navActive);
+  display: flex;
+  align-items: center;
+}
+
+.dashboard-header > div{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border:5px solid var(--navActive);
 }

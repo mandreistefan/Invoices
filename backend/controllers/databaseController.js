@@ -543,6 +543,30 @@ async function exportData(filterObject){
     return await databaseOperations.exportData()
 }
 
+async function dashboardData(){
+    let response = {status:{finalised: 0, draft: 0}, lastInvoice:{client_last_name:"", client_first_name: "", date:"", total:0}, total_income: 0, total_invoices: 0}
+    let data = await databaseOperations.getDashboardData()
+
+    data.forEach(element => {
+        if(element.invoice_status==="draft") response.status.draft = response.status.draft + 1
+        if(element.invoice_status==="finalised"){
+            response.status.finalised = response.status.finalised + 1
+            response.total_income = response.total_income + parseFloat(element.invoice_total_sum)
+        }
+        response.total_invoices = response.total_invoices+1        
+    });
+    response.lastInvoice.client_first_name = data[0].client_first_name
+    response.lastInvoice.client_last_name = data[0].client_last_name
+    response.lastInvoice.date = data[0].invoice_date
+    response.lastInvoice.total = data[0].invoice_total_sum
+
+    return {status:"OK", data:response}
+}
+
+async function pingDB(){
+    return await databaseOperations.pingDB()
+}
+
 module.exports={ 
     fetchClients:fetchClients,
     addInvoice:addInvoice,
@@ -563,5 +587,6 @@ module.exports={
     addExpense:addExpense,
     deleteExpense,
     getEmployees, addEmployee, editEmployee, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeOverview, archiveEmployee, deletePredefinedProduct, 
-    exportData
+    exportData, dashboardData,
+    pingDB
 }

@@ -172,4 +172,30 @@ myApp.get("/generatePDF", (req, res)=>{
     });
 })
 
+//emit event to print the opened page
+myApp.get("/dashboardData", (req, res)=>{
+    databaseController.dashboardData().then(data=>{
+        res.send({
+            status:data.status,
+            data:data.data
+        })    
+    }).catch(error=>{
+        console.log(error)
+        res.send({
+            status:"ERROR",
+            data:null
+        })
+    })
+})
+
+//emit event to print the opened page
+myApp.get("/pingDatabase", (req, res)=>{
+    databaseController.pingDB().then(data=>{
+        res.send({response:data})    
+    }).catch(error=>{
+        console.log(error)
+        res.send({response:false})
+    })
+})
+
 myApp.listen(PORT)

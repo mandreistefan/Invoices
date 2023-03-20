@@ -3,7 +3,6 @@ const utile = require('../utils/util.js')
 const Json2csvParser = require("json2csv").Parser;
 const fs = require("fs");
 const { resolve } = require('path');
-const { getDate } = require('date-fns');
 
 const testDB = "invoicemanager"
 const liveDB = "baza_date_facturi"
@@ -1669,6 +1668,34 @@ async function exportData(){
     return await Promise.all([exportInvoices, exportBilledProjects, clients, expenses, employees, emp_sal, emp_vac])    
 }
 
+async function getDashboardData(productID){
+    return new Promise((resolve, reject)=>{
+        connection.query(`SELECT invoice_status, client_first_name , client_last_name , invoice_date , invoice_total_sum FROM invoices ORDER BY invoice_number DESC`, function(error, result){
+            if(error){
+                console.log(error)
+                reject ({status:"ERROR", data:null})
+            }
+            if(result){
+                resolve(result)
+            }
+            resolve({status:"FAIL", data:null})
+        })
+    })
+}
+
+async function pingDB(){
+    return new Promise((resolve, reject)=>{
+        connection.ping(function (err) {
+            if(err){
+                console.log(err)
+                reject(false)
+            }
+            resolve(true)
+        })   
+    })
+}
+
+
 module.exports ={
     getClients:getClients,
     addClient:addClient,
@@ -1695,5 +1722,6 @@ module.exports ={
     updateInvoiceTotals:updateInvoiceTotals,
     registerBilledProducts: registerBilledProducts,
     getRecordsNumber:getRecordsNumber, getDBinfo:getDBinfo, changeDatabase, getExpenses,addExpense, deleteExpense, searchDatabase, getEmployees, addEmployee, editEmployee, hasSalaryOnDate, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeInfo, archiveEmployee, deleteEmployee, removePredefinedProduct,
-    exportData
+    exportData,
+    getDashboardData, pingDB
 }
