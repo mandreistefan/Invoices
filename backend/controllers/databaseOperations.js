@@ -5,7 +5,7 @@ const fs = require("fs");
 const { resolve } = require('path');
 
 const testDB = "invoicemanager"
-const liveDB = "baza_date_facturi"
+const liveDB = "Facturi"
 databases = [testDB, liveDB]
 const queryStep = 10
 let offSet = 0
@@ -189,6 +189,7 @@ function registerBilledProducts(invoiceID, billedProductsArray){
             if(result.insertId>0){
                 //products registered, update the totals
                 updateInvoiceTotals(invoiceID)
+                databaseLog(`A new product added to invoice ${invoiceID}`)
                 resolve({
                     status:"OK",
                     data:total_tax
@@ -202,14 +203,6 @@ function registerBilledProducts(invoiceID, billedProductsArray){
             
         });
     })    
-}
-
-function updateInvoiceTax(invoiceID, tax){
-    connection.query(`UPDATE invoices SET invoice_tax='${tax}' WHERE invoice_number='${invoiceID}'`, function(error){
-        if(error){
-            console.log(`Could not update the tax of invoice ${invoiceID} because: ${error}`)
-        }
-    })
 }
 
 /**
@@ -552,49 +545,6 @@ function editClient(data){
     })
 }
 
-function linkInvoiceToRecSchema(rec, inv){
-    connection.query(`UPDATE invoices SET rec_number=${rec} WHERE invoice_number=${inv}`, function(error, result){
-        if(error){
-            console.log("ERROR when linking recurrentSchema with Invoice")
-        }
-    })
-}
-
-function getRecInfo(queryFilter, queryFilterData,){
-    let querry;
-    switch(queryFilter){
-        case "recurrentID":
-            querry = `SELECT * FROM invoices_recurrent WHERE rec_number=${queryFilterData}`;
-            break
-        default:
-            querry = `SELECT * FROM invoices_recurrent WHERE rec_number=${queryFilterData}`;
-            break
-    }
-    return new Promise((resolve, reject)=>{
-        connection.query(querry, function(error, result){
-            if(error){
-                console.log(error)
-                reject({
-                    status:"ERROR",
-                    data: "ERROR in getting recurrent schema"
-                })
-            }
-            if(result){
-                if(result.length!=0){
-                    resolve({
-                        status:"OK",
-                        data: result
-                    })
-                }else{
-                    resolve({
-                        status:"FAIL",
-                        data: null
-                    }) 
-                }
-            }
-        })
-    })
-}
 
 /**
  * 
@@ -655,6 +605,7 @@ function updateInvoice(invoice_number, data){
                 reject(0)
             }
             if(result.affectedRows!=0){
+                databaseLog(`Invoice ${invoice_number} has been updated`)
                 resolve(1)
             }else{
                 resolve(2)
@@ -807,6 +758,7 @@ function removeProduct(id){
                     data:null
                 })
             }
+            databaseLog(`A product has been removed from an invoice`)
             resolve({
                 status:"OK",
                 data:null
@@ -1756,8 +1708,6 @@ module.exports ={
     fetchInvoiceSummary: fetchInvoiceSummary,
     fetchBilledProducts: fetchBilledProducts,
     editClient:editClient,
-    linkInvoiceToRecSchema: linkInvoiceToRecSchema,
-    getRecInfo:getRecInfo,
     getFinancialData: getFinancialData,
     checkInvoiceStatus:checkInvoiceStatus,
     updateInvoice: updateInvoice,

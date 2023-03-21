@@ -39,41 +39,41 @@ let Dashboard = (props) =>{
                     </div>   
                     <h4 className="mb-3 fw-semibold lh-1">Statistici</h4>          
                     <div className="row">
-                        <div class="col-3">
+                        <div className="col-3">
                             <div className='financial-square'>
-                                <span  style={{color:'gray'}} class="material-icons-outlined p-1">receipt_long</span>
-                                <div class="p-1">
+                                <span  style={{color:'gray'}} className="material-icons-outlined p-1">receipt_long</span>
+                                <div className="p-1">
                                     <span style={{fontWeight:'500', color:'gray', marginBottom:'10px'}}>Numar facturi</span>
                                     <span style={{fontSize:'38px', fontWeight:'500'}}>{dashboardData.total_invoices}</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-3">
+                        <div className="col-3">
                             <div className='financial-square'>
-                                <span style={{color:'gray'}} class="material-icons-outlined p-1">receipt</span>
-                                <div class="p-1">
+                                <span style={{color:'gray'}} className="material-icons-outlined p-1">receipt</span>
+                                <div className="p-1">
                                     <span style={{fontWeight:'500', color:'gray', marginBottom:'10px'}}>Status facturi</span>
-                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span class="material-icons-outlined m-1">task_alt</span>Finalizate: {dashboardData.status.finalised}</span>
-                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span class="material-icons-outlined m-1">info</span>Ciorne: {dashboardData.status.draft}</span>
+                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span className="material-icons-outlined m-1">task_alt</span>Finalizate: {dashboardData.status.finalised}</span>
+                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span className="material-icons-outlined m-1">info</span>Ciorne: {dashboardData.status.draft}</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-3">
+                        <div className="col-3">
                             <div className='financial-square'>
-                                <span  style={{color:'gray'}} class="material-icons-outlined p-1">payments</span>
-                                <div class="p-1">
+                                <span  style={{color:'gray'}} className="material-icons-outlined p-1">payments</span>
+                                <div className="p-1">
                                     <span style={{fontWeight:'500', color:'gray'}}>Total incasat</span>
                                     <span style={{fontSize: '32px', fontWeight: '600', color: 'rgb(53, 182, 83)'}}>{dashboardData.total_income}</span><small>RON</small>
                                 </div>
                             </div>                     
                         </div>
-                        <div class="col-3">
+                        <div className="col-3">
                             <div className='financial-square'>
-                                <div class="p-1">
+                                <div className="p-1">
                                     <span style={{fontWeight:'500', color:'gray', marginBottom:'10px'}}>Ultima factura</span>
-                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span class="material-icons-outlined m-1">person</span>{dashboardData.lastInvoice.client_first_name} {dashboardData.lastInvoice.client_last_name}</span>
-                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span class="material-icons-outlined m-1">calendar_today</span>{dashboardData.lastInvoice.date.substring(0, 10)}</span>
-                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span class="material-icons-outlined m-1">money</span>{dashboardData.lastInvoice.total} <small>RON</small></span>
+                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span className="material-icons-outlined m-1">person</span>{dashboardData.lastInvoice.client_first_name} {dashboardData.lastInvoice.client_last_name}</span>
+                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span className="material-icons-outlined m-1">calendar_today</span>{dashboardData.lastInvoice.date.substring(0, 10)}</span>
+                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span className="material-icons-outlined m-1">money</span>{dashboardData.lastInvoice.total} <small>RON</small></span>
                                 </div>
                             </div>                         
                         </div>
@@ -88,8 +88,8 @@ let Dashboard = (props) =>{
             {dashboardData===null&&
                 <div>
                     {startupStatus===0&&
-                    <div class="spinner-border" role="status">
-                        <span class="sr-only">Loading...</span>
+                    <div className="spinner-border" role="status">
+                        <span className="sr-only">Loading...</span>
                     </div>}
                     {startupStatus}
                 </div>

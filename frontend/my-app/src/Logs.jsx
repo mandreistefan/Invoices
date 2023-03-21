@@ -28,9 +28,9 @@ let Logs = (props) =>{
     return(
         <div>
             {logs!==null&&
-            logs.map(element=>(
-                <div className="financial-square mb-2">
-                    <span style={{color:'gray'}} class="material-icons-outlined">schedule</span>
+            logs.map((element, index)=>(
+                <div key={index} className="financial-square mb-2">
+                    <span style={{color:'gray'}} className="material-icons-outlined">schedule</span>
                     <div>
                         <span style={{color:'gray', fontWeight:'500'}}>{element.date}</span>
                         <span>{element.message}</span>

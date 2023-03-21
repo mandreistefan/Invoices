@@ -60,8 +60,8 @@ let DatabaseOperations=(props)=>{
                                 <span>Connectat la</span>
                                 <form id="database-form" >
                                     <select id="databaseSelector" className="form-select form-select-sm shadow-none" onChange={handleDBchange}>
-                                        {databaseInfo.available.map(element=>(
-                                            <option selected={databaseInfo.active===element ? true : false} value={element}>{element}</option>
+                                        {databaseInfo.available.map((element, index)=>(
+                                            <option key={index} selected={databaseInfo.active===element ? true : false} value={element}>{element}</option>
                                         ))}
                                     </select>           
                                 </form>     
@@ -87,8 +87,8 @@ let DatabaseOperations=(props)=>{
             <div>
                 <form id="database-form" >
                     <select id="databaseSelector" className="form-select form-select-sm shadow-none" onChange={handleDBchange}>
-                        {databaseInfo.available.map(element=>(
-                            <option selected={databaseInfo.active===element ? true : false} value={element}>{element}</option>
+                        {databaseInfo.available.map((element, index)=>(
+                            <option  key={index} selected={databaseInfo.active===element ? true : false} value={element}>{element}</option>
                         ))}
                     </select>           
                 </form>   

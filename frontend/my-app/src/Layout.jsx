@@ -39,8 +39,8 @@ let SideNavigation = (props) =>{
         <div style={{display:'flex', flexDirection:'row', height:"100vh", width:'100vw', justifyContent:'space-between'}}>
             <div className="side-navigation-container expanded"> 
                 <div style={{display:'inherit', flexDirection:'column'}}>
-                    {navigationElements.map(element=>(
-                        <ul className="side-navigation-list">
+                    {navigationElements.map((element, index)=>(
+                        <ul key={index} className="side-navigation-list">
                             <h6 className="navigation-list-name">{element.name}</h6>
                             {element.elements.map(element=>(
                                 <li key={element.id} className={parseInt(selectedItem)===parseInt(element.id) ? "nav-link active" : "nav-link"} onClick={()=>setSelectedItem(element.id)} >
