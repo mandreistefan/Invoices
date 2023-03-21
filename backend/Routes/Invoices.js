@@ -33,6 +33,7 @@ app.get('/invoices',(req,res)=>{
     if(req.query.step) filterObject.step=req.query.step;
     if(req.query.order) filterObject.order=req.query.order;
     if(req.query.orderBy) filterObject.orderBy=req.query.orderBy;
+    req.query.interval ? filterObject.interval=req.query.interval : filterObject.interval=null;
     filterObject.target="invoices"
     //fetch data
     databaseController.fetchInvoices(filterObject).then(results=>{

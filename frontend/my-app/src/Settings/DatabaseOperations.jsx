@@ -49,25 +49,50 @@ let DatabaseOperations=(props)=>{
 
     return(
         <div>
-            <div style={{padding:'10px'}} style={{display:'flex', flexDirection:'row'}}> 
-                {
-                    databaseInfo.available.length>0 &&
-                    <form id="database-form" >
-                        <select id="databaseSelector" className="form-select form-select-sm shadow-none" onChange={handleDBchange}>
-                            {databaseInfo.available.map(element=>(
-                                <option selected={databaseInfo.active===element ? true : false} value={element}>{element}</option>
-                            ))}
-                        </select>           
-                    </form>                    
-                }
-                {props.showDetailed===true && 
-                <div>
-                    <button className="btn btn-success btn-sm " onClick={()=>{pingDatabase()}}>Ping</button>
-                    <span>Last ping status: {ping.status} at {ping.date}</span>
+            {props.showDetailed===true&&
+                <div className="row">
+                    {databaseInfo.available.length>0 &&
+                    <div className="col-3">
+                        <div className='financial-square'>
+                            <span style={{color:'gray', fontWeight:'500', marginBottom:'10px'}} className="material-icons-outlined p-1">cloud</span>
+                            <div className="p-1">
+                                <span style={{color:'gray', fontWeight:'500'}}>Conexiune</span>
+                                <span>Connectat la</span>
+                                <form id="database-form" >
+                                    <select id="databaseSelector" className="form-select form-select-sm shadow-none" onChange={handleDBchange}>
+                                        {databaseInfo.available.map(element=>(
+                                            <option selected={databaseInfo.active===element ? true : false} value={element}>{element}</option>
+                                        ))}
+                                    </select>           
+                                </form>     
+                            </div>  
+                        </div>
+                    </div>                   
+                    }            
+                    {props.showDetailed===true && 
+                    <div className="col-3">
+                        <div className='financial-square'>
+                            <span style={{color:'gray', marginBottom:'10px'}}  className="material-icons-outlined p-1">sync_problem</span>
+                            <div className="p-1">
+                                <span style={{color:'gray', fontWeight:'500'}}>Ping</span>
+                                <span>Last status: <strong>{ping.status}</strong></span>
+                                <span>Ping time: <strong>{ping.date}</strong></span>
+                                <button className="btn btn-success btn-sm" style={{width:'fit-content'}} onClick={()=>{pingDatabase()}}>Ping</button>      
+                            </div> 
+                        </div>         
+                    </div>}
                 </div>
-                }
-
-            </div> 
+            } 
+            {props.showDetailed===undefined&&
+            <div>
+                <form id="database-form" >
+                    <select id="databaseSelector" className="form-select form-select-sm shadow-none" onChange={handleDBchange}>
+                        {databaseInfo.available.map(element=>(
+                            <option selected={databaseInfo.active===element ? true : false} value={element}>{element}</option>
+                        ))}
+                    </select>           
+                </form>   
+            </div>}
         </div>
     )
 

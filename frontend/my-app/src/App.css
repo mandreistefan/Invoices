@@ -80,7 +80,7 @@ table >tbody> tr:hover{
 }
 
 .table > tbody > tr > .table-actions-container > button:hover{
-  background-color: white;
+  background-color: transparent;
 }
 
 .new-invoice-table > tbody > tr > td > input{
@@ -1256,28 +1256,6 @@ input[type=date]{
   color:white;
 }
 
-.dashboard-row{
-  display: flex;
-  flex-direction: row;
-  border-radius: var(--borderRadius);
-  padding: 16px;
-}
-
-.dashboard-row > div > div{
-  display: flex;
-  flex-direction: row;
-}
-
-.dashboard-row > div > div > span{
-  font-weight: 500;
-  color: gray;
-}
-
-.dashboard-row > div > div > div{
-  display: inherit;
-  flex-direction: column;
-}
-
 .dashboard-header{
   color:var(--navActive);
   display: flex;
@@ -1289,4 +1267,29 @@ input[type=date]{
   justify-content: center;
   align-items: center;
   border:5px solid var(--navActive);
+}
+
+
+.database-container-expanded > div{
+  border-radius: var(--borderRadius);
+  border: 1px solid lightgray;
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  padding: 16px
+}
+
+.database-container-expanded> div >div{
+  display: inherit;
+  flex-direction: column;
+}
+
+.grid-invoice > .grid-row{
+  display: grid;
+  grid-template-columns: auto auto auto auto auto; 
+  column-gap: 5px;
+}
+
+.dropbtn:hover{
+  background-color: transparent;
 }

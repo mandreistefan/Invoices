@@ -7,6 +7,8 @@ import { useState, useEffect } from "react"
  * @param {*} props.searchAction Action triggered when the search button is clicked
  * @param {*} props.buttons An array containing buttons: [{title:"", action:"", icon:"", name:""}]
  * @param {*} props.hasSearch False, if no search option
+ * @param {*} props.intervalSelections Elements for a dropdown; selected item is returned to the parent
+ * @param {*} props.intervalFunction Returns the interval and the selected dropdown element
  * @returns 
  */
 
@@ -77,7 +79,7 @@ let Header = (props) =>{
                 </div>
 
                 {(properties.hasSearch===true || properties.hasInterval===true) &&
-                <div style={{display:'inherit', justifyContent:'flex-start', alignItems:'center', padding:'20px', backgroundColor:'#f8f9fa'}}> 
+                <div style={{display:'inherit', justifyContent:'space-between', alignItems:'center', padding:'20px', backgroundColor:'#f8f9fa'}}> 
                     {properties.hasInterval===true &&
                     <div style={{display:'flex', alignItems:'center', width:'fit-content', borderRadius:'6px', padding:'3px', marginRight:'5px'}}>
                         <span title="Interval" style={{marginRight:'5px'}} className="material-icons-outlined">date_range</span>
@@ -89,7 +91,7 @@ let Header = (props) =>{
                                 <option key={element} value={element}>{element}</option>
                             ))}
                         </select>}
-                        <button className="outline-mint-button" onClick={()=>{applyInterval()}}>Aplica</button>
+                        <button style={{marginLeft:'10px'}} className="btn btn-light btn-sm mint-button" onClick={()=>{applyInterval()}}>Aplica</button>
                     </div>}
                     {properties.hasSearch===true &&
                     <form onSubmit={handleSearchSubmit} style={{display:'inherit', justifyContent:'flex-start'}} id="search-form" name="search-form">

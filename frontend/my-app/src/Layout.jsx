@@ -27,7 +27,7 @@ let SideNavigation = (props) =>{
 
     //initial setup can be saved in localstorage
     let savedNavigationOption = localStorage.getItem('selectedNavigationOption')
-    let [selectedItem, setSelectedItem] = useState(savedNavigationOption ? savedNavigationOption : 0);
+    let [selectedItem, setSelectedItem] = useState(null);
 
     useEffect(()=>{
         //save in local storage

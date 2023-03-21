@@ -8,7 +8,7 @@ import SmallMenu from '../SmallMenu/SmallMenu';
 
 let InvoicesOverview = (props) =>{
 
-    let defaultFilter = {filter:"all", filterBy:"", page:1, order:"invoice_number", orderBy:"desc"}
+    let defaultFilter = {filter:"all", filterBy:"", page:1, order:"invoice_number", orderBy:"desc", interval:""}
 
     let [invoicesData, invoicesDataSet] = useState(null)
     let [activeInvoice, setActiveInvoice] = useState(null)
@@ -20,20 +20,21 @@ let InvoicesOverview = (props) =>{
         page:1, 
         step:10,
         order: defaultFilter.order,
-        orderBy: defaultFilter.orderBy
+        orderBy: defaultFilter.orderBy,
+        interval: defaultFilter.interval
     })
 
     //refecth on page change or when the query parameters change (ex. when a search is attempted)
     useEffect(()=>{
         fetchData()
-    },[queryFilter.page, queryFilter.step, queryFilter.filterBy, queryFilter.order, queryFilter.orderBy])
+    },[queryFilter.page, queryFilter.step, queryFilter.filterBy, queryFilter.order, queryFilter.orderBy, queryFilter.interval])
 
     /**
      * Fetches data
      */
     let fetchData=()=>{
         //fetches all data
-        let fetcher = `http://localhost:3000/invoices?target=invoices&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}&step=${queryFilter.step}&order=${queryFilter.order}&orderBy=${queryFilter.orderBy}`
+        let fetcher = `http://localhost:3000/invoices?target=invoices&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}&step=${queryFilter.step}&order=${queryFilter.order}&orderBy=${queryFilter.orderBy}&interval=${queryFilter.interval}`
         
         fetch(fetcher,
         {
@@ -108,6 +109,7 @@ let InvoicesOverview = (props) =>{
     }
 
     let simpleDate = (date) =>{
+        console.log(date)
         let dateArr = date.toString().substr(0,10).split("-")
         return (`${dateArr[2]}/${dateArr[1]}/${dateArr[0]}`)
     }
@@ -122,8 +124,6 @@ let InvoicesOverview = (props) =>{
         }
     }
 
-
-
     let changePage=(pageNumber, step)=>{
         setFilter({...queryFilter, page:pageNumber, step:step})
     }
@@ -137,7 +137,16 @@ let InvoicesOverview = (props) =>{
     }
 
     let refreshData=()=>{        
-        setFilter({...queryFilter, filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
+        setFilter({...queryFilter, filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page, interval:defaultFilter.interval})
+    }
+
+    let intervalFunction=(interval, appliesTo)=>{
+        let start, end
+        start = interval.start.split("-")
+        end = interval.end.split("-")
+        let filterCopy = {...queryFilter}
+        filterCopy.interval = `${start[2][0]}${start[2][1]}${start[1][0]}${start[1][1]}${start[0][2]}${start[0][3]}-${end[2][0]}${end[2][1]}${end[1][0]}${end[1][1]}${end[0][2]}${end[0][3]}`
+        setFilter(filterCopy)
     }
 
     return(
@@ -147,7 +156,7 @@ let InvoicesOverview = (props) =>{
                     <div className="" style={{width:'100%'}}>
                         {!activeInvoice &&
                             <div> 
-                                <Header title="Facturi" icon="receipt_long" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[]}/>    
+                                <Header title="Facturi" icon="receipt_long" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[]} intervalFunction={intervalFunction}/>    
                                 <div style={{maxHeight:'80vh'}}>
                                     <table className="table" id="invoices-table">
                                         <thead>
@@ -168,7 +177,7 @@ let InvoicesOverview = (props) =>{
                                                     <td>{element.client_first_name} {element.client_last_name}</td>
                                                     <td>{element.invoice_number}</td>
                                                     <td>{setStatus(element.invoice_status)}</td>
-                                                    <td>{simpleDate(element.invoice_date)}</td>   
+                                                    <td>{element.normal_date}</td>   
                                                     <td>{element.invoice_total_sum} RON</td>                                          
                                                     <td className="table-actions-container">                                                       
                                                         {element.invoice_status!=="finalised" && <button title="Seteaza ca platita" onClick={()=>{setInvoiceFinalised(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">task_alt</span></div></button>}

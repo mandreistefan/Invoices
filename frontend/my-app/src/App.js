@@ -19,7 +19,7 @@ let App =()=> {
   if(navigator.userAgent.indexOf('Electron')>-1){
     router=createHashRouter(
       createRoutesFromElements(
-        <Route path="/" component={<Dashboard/>} element={<Layout/>}>
+        <Route path="/"  element={<Layout/>}>
           <Route path="/" element={<Dashboard/>} />
           <Route path='clients' element={<ClientsComponent/>}/>
           <Route path='invoices' element={<InvoicesComponent/>}/>
@@ -34,7 +34,7 @@ let App =()=> {
   }else{
     router=createBrowserRouter(
       createRoutesFromElements(
-        <Route path="/" component={<Dashboard/>} element={<Layout/>}>
+        <Route path="/" element={<Layout/>}>
           <Route path="/" element={<Dashboard/>} />
           <Route path='clients' element={<ClientsComponent/>}/>
           <Route path='invoices' element={<InvoicesComponent/>}/>

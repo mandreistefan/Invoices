@@ -110,7 +110,7 @@ let Financial = (props) =>{
                                 <div className="card-header">
                                     <span style={{color:'gray'}}  className="material-icons-outlined p-1">insights</span>Valori lunare ale facturilor incasate
                                 </div>
-                                <div className="card-body" style={{display:'flex', alignItems:'center', width:'100%'}}>
+                                <div className="card-body">
                                     <FinancialChart data={chartData} plottedFor={chartTitle}/>
                                 </div>
                             </div>

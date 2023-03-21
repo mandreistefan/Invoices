@@ -30,15 +30,17 @@ let Dashboard = (props) =>{
         <div className="app-data-container">
             {dashboardData!==null&&
                 <div>
-                    <h1 className="mb-3 fw-semibold lh-1 dashboard-header"><span class="material-icons-outlined" style={{fontSize:'40px'}}>receipt</span>Aplicatie facturare</h1>
-                    <div>
-                        <span>Conectat la</span>
+                    <h1 className="mb-3 fw-semibold lh-1 dashboard-header">Aplicatie facturare</h1>
+                    <br/>
+                    <h4 className="mb-3 fw-semibold lh-1">Baza de date</h4> 
+                    <div style={{marginBottom:'25px'}}>
                         <DatabaseSelector showDetailed={true}/>
-                    </div>                    
-                    <div class="row" style={{width:'100%', backgroundColor:'white', fontSize:'18px'}} className="dashboard-row">
+                    </div>   
+                    <h4 className="mb-3 fw-semibold lh-1">Statistici</h4>          
+                    <div className="row">
                         <div class="col-3">
-                            <div>
-                                <span class="material-icons-outlined p-1">receipt_long</span>
+                            <div className='financial-square'>
+                                <span  style={{color:'gray'}} class="material-icons-outlined p-1">receipt_long</span>
                                 <div class="p-1">
                                     <span style={{fontWeight:'500', color:'gray', marginBottom:'10px'}}>Numar facturi</span>
                                     <span style={{fontSize:'38px', fontWeight:'500'}}>{dashboardData.total_invoices}</span>
@@ -46,18 +48,18 @@ let Dashboard = (props) =>{
                             </div>
                         </div>
                         <div class="col-3">
-                            <div>
-                                <span class="material-icons-outlined p-1">receipt</span>
+                            <div className='financial-square'>
+                                <span style={{color:'gray'}} class="material-icons-outlined p-1">receipt</span>
                                 <div class="p-1">
                                     <span style={{fontWeight:'500', color:'gray', marginBottom:'10px'}}>Status facturi</span>
-                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span class="material-icons-outlined text-success m-1">task_alt</span>Finalizate: {dashboardData.status.finalised}</span>
-                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span class="material-icons-outlined text-warning m-1">info</span>Ciorne: {dashboardData.status.draft}</span>
+                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span class="material-icons-outlined m-1">task_alt</span>Finalizate: {dashboardData.status.finalised}</span>
+                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span class="material-icons-outlined m-1">info</span>Ciorne: {dashboardData.status.draft}</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-3">
-                            <div>
-                                <span class="material-icons-outlined p-1">payments</span>
+                            <div className='financial-square'>
+                                <span  style={{color:'gray'}} class="material-icons-outlined p-1">payments</span>
                                 <div class="p-1">
                                     <span style={{fontWeight:'500', color:'gray'}}>Total incasat</span>
                                     <span style={{fontSize: '32px', fontWeight: '600', color: 'rgb(53, 182, 83)'}}>{dashboardData.total_income}</span><small>RON</small>
@@ -65,7 +67,7 @@ let Dashboard = (props) =>{
                             </div>                     
                         </div>
                         <div class="col-3">
-                            <div>
+                            <div className='financial-square'>
                                 <div class="p-1">
                                     <span style={{fontWeight:'500', color:'gray', marginBottom:'10px'}}>Ultima factura</span>
                                     <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span class="material-icons-outlined m-1">person</span>{dashboardData.lastInvoice.client_first_name} {dashboardData.lastInvoice.client_last_name}</span>

@@ -238,6 +238,9 @@ async function addInvoice(data){
  */
 
 async function getInvoices(querryObject){
+
+    console.log(querryObject)
+
     if(querryObject.page>1) offSet = (querryObject.page-1) * queryStep
     //filtering params
     if(querryObject.filter==="search" && querryObject.filterBy.length===0) return ({status:"NO_DATA", data:null})
@@ -260,27 +263,33 @@ async function getInvoices(querryObject){
                 break
         }
     }
+
+    let querryInterval = ""
+    if(querryObject.processedInterval!==null){        
+        querryInterval = ` AND invoice_date >= "${querryObject.processedInterval.startYear}-${querryObject.processedInterval.startMonth}-${querryObject.processedInterval.startDay}" AND invoice_date <= "${querryObject.processedInterval.endYear}-${querryObject.processedInterval.endMonth}-${querryObject.processedInterval.endDay}" `
+    }
+
     switch(querryObject.filter){
         case "all":
-            querry=`SELECT * FROM ${querryObject.target} ${orderBy} LIMIT ${step} OFFSET ${step*querryObject.page}`
+            querry=`SELECT *, DATE_FORMAT(invoice_date, '%d-%m-%Y') as normal_date FROM ${querryObject.target} WHERE 1 ${querryInterval} ${orderBy} LIMIT ${step} OFFSET ${step*querryObject.page}`
             break
         case "clientID":
-            querry=`SELECT * FROM ${querryObject.target} WHERE customer_id=${querryObject.filterBy} LIMIT ${step} OFFSET ${step*querryObject.page} ${orderBy}`
+            querry=`SELECT *, DATE_FORMAT(invoice_date, '%d-%m-%Y') as normal_date FROM ${querryObject.target} WHERE customer_id=${querryObject.filterBy} ${querryInterval} LIMIT ${step} OFFSET ${step*querryObject.page} ${orderBy}`
             break;
         case "invoiceID":
-            querry=`SELECT * FROM ${querryObject.target} WHERE invoice_number=${querryObject.filterBy} ${orderBy}`
+            querry=`SELECT *, DATE_FORMAT(invoice_date, '%d-%m-%Y') as normal_date FROM ${querryObject.target} WHERE invoice_number=${querryObject.filterBy} ${querryInterval} ${orderBy}`
             break;
         case "recID":
-            querry=`SELECT * FROM ${querryObject.target} WHERE rec_number=${querryObject.filterBy} LIMIT ${step} OFFSET ${step*querryObject.page} ${orderBy}`
+            querry=`SELECT *, DATE_FORMAT(invoice_date, '%d-%m-%Y') as normal_date FROM ${querryObject.target} WHERE rec_number=${querryObject.filterBy} ${querryInterval} LIMIT ${step} OFFSET ${step*querryObject.page} ${orderBy}`
             break;
         case "active":
-            querry=`SELECT * FROM ${querryObject.target} WHERE invoice_active=${querryObject.filterBy} LIMIT ${step} OFFSET ${step*querryObject.page} ${orderBy}`
+            querry=`SELECT *, DATE_FORMAT(invoice_date, '%d-%m-%Y') as normal_date FROM ${querryObject.target} WHERE invoice_active=${querryObject.filterBy} ${querryInterval} LIMIT ${step} OFFSET ${step*querryObject.page} ${orderBy}`
             break;
         case "search":
-            querry=`SELECT * FROM invoices WHERE invoice_number in (${querryObject.filterBy}) order by invoice_number  ${orderBy}`
+            querry=`SELECT *, DATE_FORMAT(invoice_date, '%d-%m-%Y') as normal_date FROM invoices WHERE invoice_number in (${querryObject.filterBy}) ${orderBy}`
             break
         default:
-            querry=`SELECT * FROM ${querryObject.target} LIMIT ${step} OFFSET ${step*querryObject.page} ${orderBy}`
+            querry=`SELECT *, DATE_FORMAT(invoice_date, '%d-%m-%Y') as normal_date FROM ${querryObject.target} WHERE 1 ${querryInterval} LIMIT ${step} OFFSET ${step*querryObject.page} ${orderBy}`
             break
     }
 

@@ -120,7 +120,7 @@ let Clients = (props) =>{
                                         <td className="table-actions-container">                                                    
                                             <SmallMenu buttons={[
                                                 {title:"Deschide client", action:()=>{setActive(element.id)}, name:"Deschide", icon:"file_open"}, 
-                                                {title:"Factureaza client", action:()=>{invoiceThisClient(element)}, name:"Factureaza", icon:"file_open"}, 
+                                                {title:"Factureaza client", action:()=>{invoiceThisClient(element)}, name:"Factureaza", icon:"receipt_long"}, 
                                                 {title:"Arhiveaza client", action:()=>{deleteClient(element.id)}, name:"Sterge", icon:"delete"}
                                             ]}/>
                                         </td>

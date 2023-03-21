@@ -77,6 +77,12 @@ function addInvoice(data, callback){
 async function fetchInvoices(querryObject){
     let invoicesData, recordsNumber
 
+    if(querryObject.interval!==null){
+        querryObject.processedInterval = translateInterval(querryObject.interval)
+    }else{
+        querryObject.processedInterval = null
+    }
+
     if(querryObject.filter!="search"){
         try{
             [invoicesData, recordsNumber] = await Promise.all([databaseOperations.getInvoices(querryObject), databaseOperations.getRecordsNumber(querryObject.target, querryObject.filter, querryObject.filterBy)])
@@ -87,7 +93,7 @@ async function fetchInvoices(querryObject){
     }else{
         //can use + to replace the space in the search text
         let stringedFilterBy=querryObject.filterBy.replace("+"," ")
-        invoicesData = await databaseOperations.getInvoices({filter:"search", filterBy:await databaseOperations.searchDatabase({target:"invoices", searchTerm:stringedFilterBy}), page:1})
+        invoicesData = await databaseOperations.getInvoices({filter:"search", filterBy:await databaseOperations.searchDatabase({target:"invoices", searchTerm:stringedFilterBy}), page:1, processedInterval:null, interval:null})
     }
 
     return({
