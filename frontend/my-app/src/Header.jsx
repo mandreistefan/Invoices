@@ -72,6 +72,12 @@ let Header = (props) =>{
         props.searchAction(searchTerm)
     }
 
+    function selectChange(event){
+        let shallowCopy = properties
+        shallowCopy.intervalAppliesTo = properties.intervalSelections[properties.intervalSelections.indexOf(event.target.value)]
+        setProperties(shallowCopy)
+    }
+
     return(
         <div>
             {properties!==null &&
@@ -96,7 +102,7 @@ let Header = (props) =>{
                         <input type="date" className="form-control shadow-none" style={{width:'fit-content'}} id="start" name="trip-start" value={dateInterval.start} onChange={changeIntervalFunction}></input>
                         <input type="date" className="form-control shadow-none" style={{width:'fit-content', margin:'0'}} id="end" name="trip-end" value={dateInterval.end} onChange={changeIntervalFunction}></input>
                         {properties.intervalSelections.length>0 && 
-                        <select className="form-select form-select-sm shadow-none m-2" style={{width:'fit-content', height:'38px'}}>
+                        <select className="form-select form-select-sm shadow-none m-2" style={{width:'fit-content', height:'38px'}} onChange={selectChange}>
                             {properties.intervalSelections.map(element=>(
                                 <option key={element} value={element}>{element}</option>
                             ))}

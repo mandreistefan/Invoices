@@ -137,7 +137,7 @@ let ClientForm = (props)=>{
                 }      
             }
 
-            if(dataToBeSent.length===undefined) return false
+            if(dataToBeSent==={}) return false
 
             fetch(`http://localhost:3000/clients`, {
                 method:"PUT",
@@ -148,7 +148,7 @@ let ClientForm = (props)=>{
                 })
             }).then(response=>response.json()).then(data=>{
                 if(data.status==="OK"){
-                    setAlertUser({text:"Client updated"})
+                    setAlertUser({text:"OK"})
                 }else if(data.status==="SERVER_ERROR"){
                     setAlertUser({text:"Baza de date nu poate fi accesata"})
                 }else{

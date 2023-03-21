@@ -94,11 +94,11 @@ let Financial = (props) =>{
                     <span title="Interval" className="material-icons-outlined" style={{marginRight: '5px'}}>date_range</span>
                     <input type="date" className="form-control shadow-none" style={{width:'fit-content'}} id="start" name="trip-start" value={dateInterval.start} onChange={someFunction}></input>
                     <input type="date" className="form-control shadow-none" style={{width:'fit-content'}} id="end" name="trip-end" value={dateInterval.end} onChange={someFunction}></input>
-                </div> 
-                <div className='btn-group'>
-                    <button title={tableDisplay ? 'Vezi grafic' : 'Vezi tabel'} className="btn btn-light" onClick={()=>{setDisplay(!tableDisplay)}}><div className="inner-button-content"><span className="material-icons-outlined">{tableDisplay ? 'grid_view' : 'table_rows'} </span></div></button>    
-                    <button title="Export date" className="btn btn-light" onClick={()=>{exportData()}}><div className="inner-button-content"><span className="material-icons-outlined">file_download</span>Export</div></button>                    
                 </div>
+                <div class="btn-group">
+                    <button title={tableDisplay ? 'Vezi grafic' : 'Vezi tabel'} className="btn btn-light btn-sm mint-button" onClick={()=>{setDisplay(!tableDisplay)}}><div className="inner-button-content"><span className="material-icons-outlined">{tableDisplay ? 'grid_view' : 'table_rows'} </span></div></button>    
+                    <button title="Export date" className="btn btn-light btn-sm mint-button" onClick={()=>{exportData()}}><div className="inner-button-content"><span className="material-icons-outlined">file_download</span>Export</div></button>                    
+                </div> 
             </div>
             {financialData ?
             <div className='financial-grid'>

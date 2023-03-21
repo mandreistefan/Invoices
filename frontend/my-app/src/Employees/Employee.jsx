@@ -142,15 +142,14 @@ export default class Employee extends React.Component{
             vacationsObject.forEach(element=>{
                 anArray.push({date:element.date, type:element.type, registerDate:element.registerDate})
             })
-        }
 
-        //initially, the filter contains everything
-        let initialVacationsFilter = []
-        for(let i=0;i<vacationsObject.length;i++){
-            initialVacationsFilter.push(i) 
+            //initially, the filter contains everything
+            let initialVacationsFilter = []
+            for(let i=0;i<vacationsObject.length;i++){
+                initialVacationsFilter.push(i) 
+            }
+            this.setState({vacationDaysFilter:initialVacationsFilter})
         }
-        this.setState({vacationDaysFilter:initialVacationsFilter})
-
         return anArray
     }
 
@@ -335,6 +334,7 @@ export default class Employee extends React.Component{
                 this.state.vacationDays.forEach((element, index)=>{
                     if((Date.parse(element.date) >= Date.parse(interval.start)) && (Date.parse(element.date) <= Date.parse(interval.end))) filtered.push(index)
                 })
+                
                 break
             case "Data inregistrare":
                 this.state.vacationDays.forEach((element, index)=>{

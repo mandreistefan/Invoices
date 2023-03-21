@@ -1123,6 +1123,11 @@ input[type=date]{
 
 .card{
   height: 100%;
+  border-radius: var(--borderRadius);
+}
+
+.card-header{
+  border-radius: var(--borderRadius);
 }
 
 .financial-grid{
