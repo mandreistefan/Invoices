@@ -49,7 +49,11 @@ let Employees=(props)=>{
     }
 
     function handleSearchSubmit(searchTermStringified){
-        setFilter({...queryFilter, filter:"search", filterBy:searchTermStringified})
+        if(searchTermStringified===""){
+            setFilter({...queryFilter, filter:"all", filterBy:defaultFilter.filterBy})
+        }else{
+            setFilter({...queryFilter, filter:"search", filterBy:searchTermStringified})
+        }    
     }
 
     function deleteEmployee(){
