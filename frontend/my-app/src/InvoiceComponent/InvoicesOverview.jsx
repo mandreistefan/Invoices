@@ -24,6 +24,8 @@ let InvoicesOverview = (props) =>{
         interval: defaultFilter.interval
     })
 
+    let [activeFilters, setActiveFilters] = useState({date:null, search:null})
+
     //refecth on page change or when the query parameters change (ex. when a search is attempted)
     useEffect(()=>{
         fetchData()
@@ -133,7 +135,17 @@ let InvoicesOverview = (props) =>{
     }
 
     function handleSearchSubmit(searchTermStringified){
-        setFilter({...queryFilter, filter:"search", filterBy:searchTermStringified})
+        if(searchTermStringified===""){
+            setFilter({...queryFilter, filter:"all", filterBy:defaultFilter.filterBy})
+            let activeFiltersCopy = {...activeFilters}
+            activeFiltersCopy.search=null
+            setActiveFilters(activeFiltersCopy)
+        }else{
+            setFilter({...queryFilter, filter:"search", filterBy:searchTermStringified})
+            let activeFiltersCopy = {...activeFilters}
+            activeFiltersCopy.search=searchTermStringified
+            setActiveFilters(activeFiltersCopy)
+        }
     }
 
     let refreshData=()=>{        
@@ -147,6 +159,11 @@ let InvoicesOverview = (props) =>{
         let filterCopy = {...queryFilter}
         filterCopy.interval = `${start[2][0]}${start[2][1]}${start[1][0]}${start[1][1]}${start[0][2]}${start[0][3]}-${end[2][0]}${end[2][1]}${end[1][0]}${end[1][1]}${end[0][2]}${end[0][3]}`
         setFilter(filterCopy)
+
+        let activeFiltersCopy = {...activeFilters}
+        activeFiltersCopy.date=`${start[2]}.${start[1]}.${start[0]} - ${end[2]}.${end[1]}.${end[0]}`
+        setActiveFilters(activeFiltersCopy)
+
     }
 
     return(
@@ -157,6 +174,10 @@ let InvoicesOverview = (props) =>{
                         {!activeInvoice &&
                             <div> 
                                 <Header title="Facturi" icon="receipt_long" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[]} intervalFunction={intervalFunction}/>    
+                                <div style={{backgroundColor:"#f8f9fa", padding:'6px', paddingLeft:'20px'}}>
+                                    {activeFilters.date!==null && <span class="badge bg-success">Data: {activeFilters.date}</span>}
+                                    {activeFilters.search!==null && <span class="badge bg-success">Cautare: {activeFilters.search}</span>}
+                                </div>
                                 <div style={{maxHeight:'80vh'}}>
                                     <table className="table" id="invoices-table">
                                         <thead>

@@ -62,6 +62,16 @@ let Header = (props) =>{
         props.intervalFunction(dateInterval, properties.intervalAppliesTo)
     }
 
+    function resetInterval(){
+        setInterval({start:`${currentDate.getFullYear()}-01-01`, end:`${currentDate.getFullYear()}-12-31`})
+    }
+
+    function resetSearch(){
+        let searchTerm = ""
+        document.getElementById("searchinput").value=searchTerm
+        props.searchAction(searchTerm)
+    }
+
     return(
         <div>
             {properties!==null &&
@@ -91,7 +101,11 @@ let Header = (props) =>{
                                 <option key={element} value={element}>{element}</option>
                             ))}
                         </select>}
-                        <button style={{marginLeft:'10px'}} className="btn btn-light btn-sm mint-button" onClick={()=>{applyInterval()}}>Aplica</button>
+                        <div className="btn-group" style={{marginLeft:'10px'}}>
+                            <button className="btn btn-light btn-sm mint-button" onClick={()=>{applyInterval()}}>Aplica</button>
+                            <button className="btn btn-light btn-sm mint-button" onClick={()=>{resetInterval()}}>Reseteaza</button>
+                        </div>
+                        
                     </div>}
                     {properties.hasSearch===true &&
                     <form onSubmit={handleSearchSubmit} style={{display:'inherit', justifyContent:'flex-start'}} id="search-form" name="search-form">
@@ -99,7 +113,10 @@ let Header = (props) =>{
                             <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
                             <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>                                                   
                         </div>
-                        <button style={{marginLeft:'10px'}} className="btn btn-light btn-sm mint-button">Cauta</button>
+                        <div className="btn-group" style={{marginLeft:'10px'}}>
+                            <button className="btn btn-light btn-sm mint-button">Cauta</button>
+                            <button type="button" className="btn btn-light btn-sm mint-button" onClick={()=>{resetSearch()}}>Reseteaza</button>
+                        </div>
                     </form>} 
                 </div>}
             </div>

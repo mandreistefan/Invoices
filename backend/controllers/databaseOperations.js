@@ -264,9 +264,12 @@ async function getInvoices(querryObject){
         }
     }
 
+    //at search the IDs are pre-filtered
     let querryInterval = ""
-    if(querryObject.processedInterval!==null){        
-        querryInterval = ` AND invoice_date >= "${querryObject.processedInterval.startYear}-${querryObject.processedInterval.startMonth}-${querryObject.processedInterval.startDay}" AND invoice_date <= "${querryObject.processedInterval.endYear}-${querryObject.processedInterval.endMonth}-${querryObject.processedInterval.endDay}" `
+    if(querryObject.filter!=="search"){
+        if(querryObject.processedInterval!==null){        
+            querryInterval = ` AND invoice_date >= "${querryObject.processedInterval.startYear}-${querryObject.processedInterval.startMonth}-${querryObject.processedInterval.startDay}" AND invoice_date <= "${querryObject.processedInterval.endYear}-${querryObject.processedInterval.endMonth}-${querryObject.processedInterval.endDay}" `
+        }
     }
 
     switch(querryObject.filter){
@@ -991,8 +994,16 @@ function deleteExpense(id){
  async function searchDatabase(queryObject){
     switch(queryObject.target){
         case "invoices":
+
+            let querryInterval = ""
+            if(queryObject.processedInterval!==null){        
+                querryInterval = ` AND invoice_date >= "${queryObject.processedInterval.startYear}-${queryObject.processedInterval.startMonth}-${queryObject.processedInterval.startDay}" AND invoice_date <= "${queryObject.processedInterval.endYear}-${queryObject.processedInterval.endMonth}-${queryObject.processedInterval.endDay}" `
+            }
+
+            console.log(querryInterval)
+
             let invoices = new Promise((resolve, reject)=>{
-                connection.query(`select invoice_number from invoices where client_county LIKE '%${queryObject.searchTerm}%' OR invoice_bank_ref LIKE '${queryObject.searchTerm}' OR client_fiscal_1 LIKE '%${queryObject.searchTerm}%' OR client_fiscal_2 LIKE '%${queryObject.searchTerm}%' OR client_first_name LIKE '%${queryObject.searchTerm}%' OR client_last_name LIKE '%${queryObject.searchTerm}%' OR client_city LIKE '%${queryObject.searchTerm}%' OR client_street LIKE '%${queryObject.searchTerm}%' OR client_adress_number LIKE '%${queryObject.searchTerm}%' OR client_zip LIKE '%${queryObject.searchTerm}%' OR client_phone LIKE '%${queryObject.searchTerm}%' OR client_email LIKE '%${queryObject.searchTerm}%' OR invoice_total_sum LIKE '%${queryObject.searchTerm}%' order by invoice_number desc `, function(error, result){
+                connection.query(`select invoice_number from invoices where (client_county LIKE '%${queryObject.searchTerm}%' OR invoice_bank_ref LIKE '${queryObject.searchTerm}' OR client_fiscal_1 LIKE '%${queryObject.searchTerm}%' OR client_fiscal_2 LIKE '%${queryObject.searchTerm}%' OR client_first_name LIKE '%${queryObject.searchTerm}%' OR client_last_name LIKE '%${queryObject.searchTerm}%' OR client_city LIKE '%${queryObject.searchTerm}%' OR client_street LIKE '%${queryObject.searchTerm}%' OR client_adress_number LIKE '%${queryObject.searchTerm}%' OR client_zip LIKE '%${queryObject.searchTerm}%' OR client_phone LIKE '%${queryObject.searchTerm}%' OR client_email LIKE '%${queryObject.searchTerm}%' OR invoice_total_sum LIKE '%${queryObject.searchTerm}%') ${querryInterval} order by invoice_number desc `, function(error, result){
                     if(error){
                         console.log(error)
                         reject({status:"ERROR", data:null})
