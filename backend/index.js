@@ -110,7 +110,6 @@ myApp.get('/recurrent/*',(req,res)=>{
 //exports the DB in a CSV file format
 myApp.get("/export", (req, res)=>{
     databaseController.createExportableData().then(data=>{
-        console.log(data)
         res.send({
             status:"OK",
             data: {success:data[0], attempts:data[1]}
@@ -192,6 +191,16 @@ myApp.get("/dashboardData", (req, res)=>{
 myApp.get("/pingDatabase", (req, res)=>{
     databaseController.pingDB().then(data=>{
         res.send({response:data})    
+    }).catch(error=>{
+        console.log(error)
+        res.send({response:false})
+    })
+})
+
+//emit event to print the opened page
+myApp.get("/latestLogs", (req, res)=>{
+    databaseController.getRecentLogs().then(data=>{
+        res.send(data)    
     }).catch(error=>{
         console.log(error)
         res.send({response:false})

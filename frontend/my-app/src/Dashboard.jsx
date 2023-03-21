@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import DatabaseSelector from './Settings/DatabaseOperations'
+import Logs from "./Logs"
 
 let Dashboard = (props) =>{
 
@@ -76,6 +77,11 @@ let Dashboard = (props) =>{
                                 </div>
                             </div>                         
                         </div>
+                    </div>
+                    <br></br>
+                    <h4 className="mb-3 fw-semibold lh-1">Ultimele actiuni</h4>   
+                    <div>
+                        <Logs/>
                     </div>
                 </div>
             }

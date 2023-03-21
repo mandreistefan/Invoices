@@ -42,6 +42,15 @@ function currentDate(){
     return(`${date.getFullYear()}-${(date.getMonth()+1)<10 ? "0"+(date.getMonth()+1) : (date.getMonth()+1)}-${date.getDate()<10 ? "0"+date.getDate() : date.getDate()}`)
 }
 
+function databaseLog(message){
+    connection.query(`INSERT INTO log (message) VALUES('${message}')`, function(error,result){
+        if(error){
+            console.log(`An error occured: ${error}`)
+        }
+    })
+}
+
+
 /**
  * 
  * @param {{filter: string, filterBy: string, page:int, target:string}} querryObject filter is the case, filterBy is the value, page is the page(offset), target can be used to specify the table
@@ -102,6 +111,7 @@ function addClient(data){
                 reject("ERROR")
             }
             if(result.insertId){
+                databaseLog(`Client ${result.insertId} has been created`)
                 resolve({
                     status: "OK",
                     data: result.insertId
@@ -139,6 +149,7 @@ function createNewInvoice(data)
                 reject(null)
             }
             if(result.insertId){
+                databaseLog(`Invoice ${result.insertId} has been created`)
                 resolve(result.insertId)
             }else{
                 resolve(null)
@@ -405,6 +416,7 @@ function archiveInvoice(invoiceID){
                 })
             }
             if(result.insertId>0){
+                databaseLog(`Invoice ${invoiceID} has been archived`)
                 resolve({
                     status:"OK",
                     data:null
@@ -1685,10 +1697,11 @@ async function exportData(){
         });
     })
     //chain data
+    databaseLog(`Data exported`)
     return await Promise.all([exportInvoices, exportBilledProjects, clients, expenses, employees, emp_sal, emp_vac])    
 }
 
-async function getDashboardData(productID){
+async function getDashboardData(){
     return new Promise((resolve, reject)=>{
         connection.query(`SELECT invoice_status, client_first_name , client_last_name , invoice_date , invoice_total_sum FROM invoices ORDER BY invoice_number DESC`, function(error, result){
             if(error){
@@ -1712,6 +1725,21 @@ async function pingDB(){
             }
             resolve(true)
         })   
+    })
+}
+
+async function getLatestLogs(){
+    return new Promise((resolve, reject)=>{
+        connection.query(`SELECT * from log order by date DESC LIMIT 3`, function(error, result){
+            if(error){
+                console.log(error)
+                reject ({status:"ERROR", data:null})
+            }
+            if(result){
+                resolve({status:"OK", data:result})
+            }
+            resolve({status:"FAIL", data:null})
+        })
     })
 }
 
@@ -1743,5 +1771,5 @@ module.exports ={
     registerBilledProducts: registerBilledProducts,
     getRecordsNumber:getRecordsNumber, getDBinfo:getDBinfo, changeDatabase, getExpenses,addExpense, deleteExpense, searchDatabase, getEmployees, addEmployee, editEmployee, hasSalaryOnDate, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeInfo, archiveEmployee, deleteEmployee, removePredefinedProduct,
     exportData,
-    getDashboardData, pingDB
+    getDashboardData, pingDB, databaseLog, getLatestLogs
 }

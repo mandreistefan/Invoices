@@ -297,7 +297,8 @@ async function updateInvoice(data){
                 //an error occured
                 if(updateStatus===0){
                     return("UPDATE_INVOICE_ERROR")
-                }                
+                }
+                databaseOperations.databaseLog(`Invoice ${invoice_number} has been finalised`)                
             }
             //new products to be added
             if(billingProducts!=null){
@@ -573,6 +574,11 @@ async function pingDB(){
     return await databaseOperations.pingDB()
 }
 
+async function getRecentLogs(){
+    return await databaseOperations.getLatestLogs()
+}
+
+
 module.exports={ 
     fetchClients:fetchClients,
     addInvoice:addInvoice,
@@ -594,5 +600,5 @@ module.exports={
     deleteExpense,
     getEmployees, addEmployee, editEmployee, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeOverview, archiveEmployee, deletePredefinedProduct, 
     exportData, dashboardData,
-    pingDB
+    pingDB, getRecentLogs
 }
