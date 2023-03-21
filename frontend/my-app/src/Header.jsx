@@ -87,7 +87,7 @@ let Header = (props) =>{
                     <div className="btn-group button-group-mint">   
                         {
                             properties.buttons.length>0 && properties.buttons.map((element, index)=>(
-                                <button type="button" className='btn btn-light btn-sm' title={element.title} onClick={()=>{element.action()}}><div className="inner-button-content"><span className="material-icons-outlined">{element.icon}</span>{element.name}</div></button>   
+                                <button type="button" className='btn btn-light btn-sm' title={element.title} onClick={element.action}><div className="inner-button-content"><span className="material-icons-outlined">{element.icon}</span>{element.name}</div></button>   
                             ))
                         }  
                         <button type="button" className='btn btn-light btn-sm' title="Reincarca datele" onClick={()=>{refreshData()}}><div className="inner-button-content"><span className="material-icons-outlined">refresh</span>Reincarca</div></button>                             
