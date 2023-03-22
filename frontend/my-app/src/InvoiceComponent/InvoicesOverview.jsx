@@ -53,10 +53,19 @@ let InvoicesOverview = (props) =>{
                     invoicesDataSet(data.data)
                     setNOE(data.recordsNumber)
                 }else{
-                    let currentData = [...invoicesData]
-                    let concatenatedData = currentData.concat(data.data)
-                    invoicesDataSet(concatenatedData)
-                    if(concatenatedData.length < (queryFilter.page * queryFilter.step)) document.getElementById("loadMore").disabled = true
+                    if(queryFilter.filter==="all"){
+                        let currentData = [...invoicesData]
+                        let concatenatedData = currentData.concat(data.data)
+                        invoicesDataSet(concatenatedData)
+                        if(concatenatedData.length < (queryFilter.page * queryFilter.step)) document.getElementById("loadMore").disabled = true
+                    }else{
+                        data.data.forEach(element => {
+                            element.expanded = false
+                        });
+                        invoicesDataSet(data.data)
+                        if(queryFilter.filter==="search") document.getElementById("loadMore").disabled = true
+                    }
+
                 }          
 
                 //setActiveInvoice(data.data[0].invoice_number)
@@ -239,7 +248,7 @@ let InvoicesOverview = (props) =>{
                             <div className="p-1">
                                 <span style={{color:'gray', fontWeight:'500'}}>{element.client_first_name} {element.client_last_name}</span>
                                 <span style={{color:'gray', fontWeight:'500'}}>{element.normal_date}</span>
-                                <span style={{fontSize:'32px', fontWeight:'600'}}>{element.invoice_total_sum}<small>RON</small></span>
+                                <span style={{fontSize:'22px', fontWeight:'600'}}>{element.invoice_total_sum}<small>RON</small></span>
                                 <span style={{color:'gray', fontWeight:'500'}}>{element.invoice_number}</span>
                             </div>
                         </div>
