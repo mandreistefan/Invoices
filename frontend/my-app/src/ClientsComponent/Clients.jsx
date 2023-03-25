@@ -4,6 +4,7 @@ import Snackbar from '../Snackbar/Snackbar.jsx'
 import PageNavigation from '../PageNavigation.jsx'
 import Invoice from '../InvoiceComponent/Invoice.jsx';
 import SmallMenu from '../SmallMenu/SmallMenu.jsx';
+import Header from '../Header.jsx';
 
 let Clients = (props) =>{
 
@@ -85,80 +86,63 @@ let Clients = (props) =>{
         setFilter({...queryFilter, page:pageNumber, step:step})
     }
 
-    function handleSearchSubmit(event){
-        event.preventDefault()
-        let searchTerm = event.target.searchinput.value
-        if(searchTerm.length==0) return false
-        let searchTermStringified = searchTerm.replaceAll(" ", "+")
-        setFilter({...queryFilter, filter:"search", filterBy:searchTermStringified})
+    function handleSearchSubmit(searchTermStringified){
+        if(searchTermStringified===""){
+            setFilter({...queryFilter, filter:"all", filterBy:defaultFilter.filterBy})
+        }else{
+            setFilter({...queryFilter, filter:"search", filterBy:searchTermStringified})
+        }
     }
 
-    let resetSearch=()=>{
-        document.getElementById("searchinput").value=""
-        setFilter({...queryFilter, filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page, step: 10})
+    let refreshData=()=>{        
+        setFilter({...queryFilter, filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
     }
 
     return(
-            <div>
-      
-                    <div className="bordered-container p-3" style={{width:'100%'}}>
-                        {!activeClient&&  
-                        <div>    
-                            <div style={{marginBottom:'25px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-                                <div style={{display:'inherit', justifyContent:'flex-start', alignItems:'center'}}>
-                                    <span class="material-icons-outlined">account_circle</span>
-                                    <span style={{fontSize:'18px', fontWeight:'600'}}>Clienti</span>
-                                    <form onSubmit={handleSearchSubmit} style={{marginLeft:'10px'}} id="search-form" name="search-form">
-                                        <div className="search-form-container"> 
-                                            <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
-                                            <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>                                                   
-                                        </div>
-                                    </form>
-                                </div>
-                                <div className="btn-group">                               
-                                    <button type="button" className='btn btn-light btn-sm' title="Client nou" onClick={()=>{showonewClientWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span></div></button>
-                                    <button type="button" className='btn btn-light btn-sm' title="Reincarca date"  onClick={()=>{resetSearch()}}><div className="inner-button-content"><span className="material-icons-outlined" >refresh</span></div></button>
-                                </div>  
-                            </div> 
-                            <div style={{overflowY:'scroll', maxHeight:'80vh'}}>
-                                <table className="table" id="invoices-table">
-                                    <thead>
-                                        <tr>
-                                            <td>#</td>
-                                            <td>Nume</td>
-                                            <td>Tip</td>
-                                            <td>Adresa</td>
-                                            <td></td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {allClients && allClients.map((element, index)=>(          
-                                            <tr key={index}>
-                                                <td>{index+1}</td>
-                                                <td><b>{element.client_first_name} {element.client_last_name}</b></td>
-                                                <td><div style={{display:'flex', alignItems:'center'}}>{element.client_type ? element.client_type==="pers" ? <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>person</span>Persoana fizica</span> : <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>store</span>Firma</span> : "NA"}</div></td> 
-                                                <td>{element.client_county}, {element.client_city}, {element.client_street}, {element.client_adress_number}, {element.client_zip}</td>                                          
-                                                <td className="table-actions-container">
-                                                    <button title="Arhiveaza client" onClick={()=>{deleteClient(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
-                                                    <button  className='btn-light' title="Factureaza client" onClick={()=>{invoiceThisClient(element)}}><div className="inner-button-content"><span className="material-icons-outlined">library_add</span></div></button>
-                                                    <button title="Deschide client" onClick={()=>{setActive(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span></div></button>
-                                                </td>
-                                            </tr> 
- 
-                                        ))}
-                                    </tbody>  
-                                </table>
-                                <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>
-                            </div>
-                        </div>}
-                        {activeClient&&
-                            <div className='overview-container bordered-container'> 
-                                <button style={{border:'none', borderRadius:'6px', display:'flex', alignItems:'center', margin:'10px'}} onClick={()=>{setActive(null)}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>     
-                                <ClientForm key={activeClient.id} editable={true} clientID={activeClient}/>
-                            </div>
-                        }
-                    </div>                             
-                
+            <div> 
+                {!activeClient&&  
+                <div className="bordered-container" style={{display: activeClient===null ? "" : "none"}} >   
+                    <Header title="Clienti" icon="account_circle" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[{title:"Client nou", action:()=>{showonewClientWindow(true)}, icon:"add", name:"Client nou"}]}/>
+                    <div >
+                        <table className="table" id="invoices-table">
+                            <thead>
+                                <tr>
+                                    <td>#</td>
+                                    <td>Nume</td>
+                                    <td>Tip</td>
+                                    <td>Adresa</td>
+                                    <td></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {allClients && allClients.map((element, index)=>(          
+                                    <tr key={index}>
+                                        <td>{index+1}</td>
+                                        <td><b>{element.client_first_name} {element.client_last_name}</b></td>
+                                        <td><div style={{display:'flex', alignItems:'center'}}>{element.client_type ? element.client_type==="pers" ? <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>person</span>Persoana fizica</span> : <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>store</span>Firma</span> : "NA"}</div></td> 
+                                        <td>{element.client_county}, {element.client_city}, {element.client_street}, {element.client_adress_number}, {element.client_zip}</td>                                          
+                                        <td className="table-actions-container">                                                    
+                                            <SmallMenu buttons={[
+                                                {title:"Deschide client", action:()=>{setActive(element.id)}, name:"Deschide", icon:"file_open"}, 
+                                                {title:"Factureaza client", action:()=>{invoiceThisClient(element)}, name:"Factureaza", icon:"receipt_long"}, 
+                                                {title:"Arhiveaza client", action:()=>{deleteClient(element.id)}, name:"Sterge", icon:"delete"}
+                                            ]}/>
+                                        </td>
+                                    </tr> 
+
+                                ))}
+                            </tbody>  
+                        </table>
+                        <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>
+                    </div>
+                </div>}                           
+                {activeClient&&
+                <div> 
+                    <button className='outline-mint-button' style={{marginBottom:'10px'}} onClick={()=>{setActive(null)}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>     
+                    <div className='bordered-container'>
+                        <ClientForm key={activeClient.id} editable={true} clientID={activeClient}/>
+                    </div>
+                </div>}
                 {newClientWindow&&
                     <div>
                         <div className="blur-overlap"></div>

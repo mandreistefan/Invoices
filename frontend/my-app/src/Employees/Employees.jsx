@@ -3,6 +3,8 @@ import Snackbar from '../Snackbar/Snackbar.jsx'
 import Employee from './Employee.jsx'
 import EmployeeForm from './EmployeeForm.jsx'
 import PageNavigation from "../PageNavigation.jsx";
+import Header from "../Header.jsx";
+import SmallMenu from "../SmallMenu/SmallMenu.jsx";
 
 let Employees=(props)=>{
 
@@ -46,12 +48,12 @@ let Employees=(props)=>{
         //localStorage.setItem('activeEmployee', id)
     }
 
-    function handleSearchSubmit(event){
-        event.preventDefault()
-        let searchTerm = event.target.searchinput.value
-        if(searchTerm.length===0) return false
-        let searchTermStringified = searchTerm.replaceAll(" ", "+")
-        setFilter({...queryFilter, filter:"search", filterBy:searchTermStringified})
+    function handleSearchSubmit(searchTermStringified){
+        if(searchTermStringified===""){
+            setFilter({...queryFilter, filter:"all", filterBy:defaultFilter.filterBy})
+        }else{
+            setFilter({...queryFilter, filter:"search", filterBy:searchTermStringified})
+        }    
     }
 
     function deleteEmployee(){
@@ -94,30 +96,19 @@ let Employees=(props)=>{
         setFilter({...queryFilter, page:pageNumber, step:step})
     }
 
+    let refreshData=()=>{        
+        setFilter({...queryFilter, filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
+    }
+
     return(
         <div className="app-data-container">
             {employees&&                       
-                <div className="bordered-container p-3">
+                <div>
                     <div className="" style={{width:'100%'}}>
                         {!activeEmployee &&
-                        <div>
-                            <div style={{marginBottom:'25px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-                                <div style={{display:'inherit', justifyContent:'flex-start', alignItems:'center'}}>
-                                    <span class="material-icons-outlined">group</span>
-                                    <span style={{fontSize:'18px', fontWeight:'600'}}>Employees</span>
-                                    <form onSubmit={handleSearchSubmit} className="search-form" id="search-form" name="search-form">
-                                        <div className="search-form-container"> 
-                                            <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
-                                            <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>                                                    
-                                        </div> 
-                                    </form>
-                                </div>
-                                <div className="btn-group">                               
-                                    <button type="button" className='btn btn-light btn-sm' title="Angajat nou" onClick={()=>{showaddEmployeeWindow(true)}}><div className="inner-button-content"><span className="material-icons-outlined" >add</span></div></button>
-                                    <button type="button" className='btn btn-light btn-sm' title="Reincarca date"  onClick={()=>{resetSearch()}}><div className="inner-button-content"><span className="material-icons-outlined" >refresh</span></div></button>
-                                </div> 
-                            </div>  
-                            <div style={{overflowY:'scroll', maxHeight:'80vh'}}>
+                        <div className="bordered-container">                        
+                            <Header title="Angajati" icon="group" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[{title:"Angajat nou", action:()=>{showaddEmployeeWindow(true)}, icon:"add", name:"Angajat nou"}]}/>    
+                            <div>
                                 <table className="table" id="invoices-table">
                                     <thead>
                                         <tr>
@@ -132,12 +123,11 @@ let Employees=(props)=>{
                                         {employees.length>0 && employees.map((element, index)=>(          
                                             <tr key={index}>
                                                 <td>{index+1}</td>
-                                                <td><b>{element.emp_first_name} {element.emp_last_name}</b></td>
+                                                <td>{element.emp_first_name} {element.emp_last_name}</td>
                                                 <td>{element.emp_job_name}</td> 
-                                                <td>{element.emp_active ? <span class="material-icons-outlined">task_alt</span> : <span class="material-icons-outlined">cancel</span>}</td>                                          
+                                                <td>{element.emp_active ? <div style={{display:"flex", alignItems:'center'}}><span className="material-icons-outlined text-success">task_alt</span><span className="text-success"><strong>Activ</strong></span></div> : <div><span class="material-icons-outlined text-danger">cancel</span><span className="text-danger"><strong>Inactiv</strong></span></div>}</td>                                          
                                                 <td className="table-actions-container">
-                                                    <button title="Arhiveaza angajat" onClick={()=>{deleteEmployee(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
-                                                    <button title="Deschide angajat" onClick={()=>{setActiveEmployee(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">open_in_new</span></div></button>
+                                                    <SmallMenu buttons={[{title:"Deschide angajat", action:()=>{setActiveEmployee(element.id)}, name:"Deschide", icon:"file_open"}, {title:"Arhiveaza angajat", action:()=>{deleteEmployee(element.id)}, name:"Sterge", icon:"delete"}]}/>
                                                 </td>
                                             </tr>    
                                         ))}
@@ -147,8 +137,8 @@ let Employees=(props)=>{
                             <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>
                         </div>}
                         {activeEmployee&&
-                            <div className='overview-container bordered-container' style={{maxHeight:'80vh', overflowY:'scroll'}}> 
-                                <button style={{border:'none', borderRadius:'6px', display:'flex', alignItems:'center', margin:'10px'}} onClick={()=>{closeEmployee()}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>     
+                            <div> 
+                                <button className="outline-mint-button" style={{marginBottom:'15px'}} onClick={()=>{closeEmployee()}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>     
                                 <Employee id={activeEmployee} refreshParent={fetchData}/>
                             </div>    
                         }

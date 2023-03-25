@@ -35,9 +35,11 @@ let SmallMenu = (props) =>{
     //use different logic depending on the status of menuVisible (true if the menu is open and false if not)
     return(       
         <div class="dropdown" ref={carlig}>
-            <button onClick={()=>{setVisibility(true)}} className="dropbtn"><span class="material-icons-outlined">more_vert</span></button>
-            <div id="myDropdown" className={menuVisible ? "dropdown-content show" : "dropdown-content"} ref={carlig}>
-                <h3>Hello</h3>
+            <button onClick={()=>{setVisibility(true)}} className="dropbtn" style={{padding:'2px', display:'flex', alignItems:'center'}}><span class="material-icons-outlined">menu</span></button>
+            <div id="myDropdown" className={menuVisible ? "dropdown-content show" : "dropdown-content"} ref={carlig}>     
+                {props.buttons.map(element=>(
+                    <button onClick={()=>{element.action()}} style={{display:'flex', alignItems:'center'}}><span className="material-icons-outlined">{element.icon}</span>{element.name}</button>
+                ))}             
             </div>
         </div>
     )

@@ -172,7 +172,7 @@ let ProductForm = (props) =>{
                     <label className="form-subsection-label" htmlFor="pp_price_per_item">Descriere</label>
                 </div>
             </div>
-            <button class="btn btn-light btn-sm" onClick={()=>{submitData()}} disabled={dataModified ? false : true}><span class="action-button-label"><span class="material-icons-outlined">check</span>Salvare</span></button>
+            <button class="btn btn-success btn-sm" onClick={()=>{submitData()}} disabled={dataModified ? false : true}><span class="action-button-label"><span class="material-icons-outlined">check</span>Salvare</span></button>
             <Snackbar text={snackBarText} closeSnack={()=>{setSnackBarText(null)}}/>
         </div>
     )

@@ -19,7 +19,7 @@ const fs = require('fs')
 const { EventEmitter } =require('events');
 const event = new EventEmitter();
 let PORT = '3001'
-const inElectron = true
+const inElectron = false
 
 if(inElectron){
     PORT='3000'
@@ -110,7 +110,6 @@ myApp.get('/recurrent/*',(req,res)=>{
 //exports the DB in a CSV file format
 myApp.get("/export", (req, res)=>{
     databaseController.createExportableData().then(data=>{
-        console.log(data)
         res.send({
             status:"OK",
             data: {success:data[0], attempts:data[1]}
@@ -170,6 +169,42 @@ myApp.get("/generatePDF", (req, res)=>{
             data:null
         })
     });
+})
+
+//emit event to print the opened page
+myApp.get("/dashboardData", (req, res)=>{
+    databaseController.dashboardData().then(data=>{
+        res.send({
+            status:data.status,
+            data:data.data
+        })    
+    }).catch(error=>{
+        console.log(error)
+        res.send({
+            status:"ERROR",
+            data:null
+        })
+    })
+})
+
+//emit event to print the opened page
+myApp.get("/pingDatabase", (req, res)=>{
+    databaseController.pingDB().then(data=>{
+        res.send({response:data})    
+    }).catch(error=>{
+        console.log(error)
+        res.send({response:false})
+    })
+})
+
+//emit event to print the opened page
+myApp.get("/latestLogs", (req, res)=>{
+    databaseController.getRecentLogs().then(data=>{
+        res.send(data)    
+    }).catch(error=>{
+        console.log(error)
+        res.send({response:false})
+    })
 })
 
 myApp.listen(PORT)

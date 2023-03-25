@@ -8,7 +8,8 @@ import Admins from './Admins/AdminsOverview.jsx'
 import PredefinedProducts from './Admins/PredefinedProducts.jsx'
 import Expenses from './Admins/Expenses'
 import Financials from './FinancialComponent/FinancialComponent'
-import {Route, createBrowserRouter, RouterProvider, createRoutesFromElements, createHashRouter} from 'react-router-dom'
+import Dashboard from './Dashboard';
+import {Route, createBrowserRouter, RouterProvider, createRoutesFromElements, createHashRouter, useRouteError} from 'react-router-dom'
 
 let App =()=> {
 
@@ -18,7 +19,8 @@ let App =()=> {
   if(navigator.userAgent.indexOf('Electron')>-1){
     router=createHashRouter(
       createRoutesFromElements(
-        <Route path="/" element={<Layout/>}>
+        <Route path="/"  element={<Layout/>} errorElement={<ErrorBoundary />}>
+          <Route path="/" element={<Dashboard/>} />
           <Route path='clients' element={<ClientsComponent/>}/>
           <Route path='invoices' element={<InvoicesComponent/>}/>
           <Route path='admins' element={<Admins/>}/>
@@ -32,7 +34,8 @@ let App =()=> {
   }else{
     router=createBrowserRouter(
       createRoutesFromElements(
-        <Route path="/" element={<Layout/>}>
+        <Route path="/" element={<Layout/>} errorElement={<ErrorBoundary />}>
+          <Route path="/" element={<Dashboard/>} />
           <Route path='clients' element={<ClientsComponent/>}/>
           <Route path='invoices' element={<InvoicesComponent/>}/>
           <Route path='admins' element={<Admins/>}/>
@@ -43,6 +46,35 @@ let App =()=> {
         </Route>
       )
     )
+  }
+
+  function ErrorBoundary() {
+    let error = useRouteError();
+    if(error.status===404){
+      return <div>
+        <div className="px-4 py-5 my-5 text-center">          
+          <h1 className="display-5 fw-bold">Pagina nu exista</h1>
+          <div className="col-lg-6 mx-auto">
+            <p className="lead mb-4">Pagina cautata nu exista. Click mai jos pentru a merge catre dashboard</p>
+            <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <a href="./">Catre pagina de pornire</a>
+            </div>
+          </div>
+        </div>        
+      </div>
+    }
+    // Uncaught ReferenceError: path is not defined
+    return <div>
+      <div className="px-4 py-5 my-5 text-center">          
+        <h1 className="display-5 fw-bold">Ceva nu a mers bine</h1>
+        <div className="col-lg-6 mx-auto">
+          <p className="lead mb-4">A aparut o eroare generala. Incearca sa mergi la pagina de pornire</p>
+          <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
+          <a href="./">Catre pagina de pornire</a>
+          </div>
+        </div>
+      </div>        
+    </div>
   }
 
   return(

@@ -3,28 +3,41 @@ import './Invoices.css'
 import Snackbar from '../Snackbar/Snackbar.jsx'
 import PageNavigation from '../PageNavigation.jsx'
 import Invoice from './Invoice'
+import Header from '../Header';
+import SmallMenu from '../SmallMenu/SmallMenu';
 
 let InvoicesOverview = (props) =>{
 
-    let defaultFilter = {filter:"all", filterBy:"", page:1}
+    let defaultFilter = {filter:"all", filterBy:"", page:1, order:"invoice_number", orderBy:"desc", interval:""}
 
     let [invoicesData, invoicesDataSet] = useState(null)
     let [activeInvoice, setActiveInvoice] = useState(null)
     let [alertUser, setAlertUser] = useState({text: null})
     let [numberOfElements, setNOE] = useState(null)
-    let [queryFilter, setFilter] = useState({filter: props.queryFilterBy ? props.queryFilterBy : defaultFilter.filter, filterBy: props.queryFilterData ? props.queryFilterData : defaultFilter.filterBy, page:1, step:10})
+    let [queryFilter, setFilter] = useState({
+        filter: props.queryFilterBy ? props.queryFilterBy : defaultFilter.filter, 
+        filterBy: props.queryFilterData ? props.queryFilterData : defaultFilter.filterBy, 
+        page:1, 
+        step:10,
+        order: defaultFilter.order,
+        orderBy: defaultFilter.orderBy,
+        interval: defaultFilter.interval
+    })
+
+    let [activeFilters, setActiveFilters] = useState({date:null, search:null})
+
 
     //refecth on page change or when the query parameters change (ex. when a search is attempted)
     useEffect(()=>{
         fetchData()
-    },[queryFilter.page, queryFilter.step, queryFilter.filterBy])
+    },[queryFilter.page, queryFilter.step, queryFilter.filterBy, queryFilter.order, queryFilter.orderBy, queryFilter.interval])
 
     /**
      * Fetches data
      */
     let fetchData=()=>{
         //fetches all data
-        let fetcher = `http://localhost:3000/invoices?target=invoices&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}&step=${queryFilter.step}`
+        let fetcher = `http://localhost:3000/invoices?target=invoices&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}&step=${queryFilter.step}&order=${queryFilter.order}&orderBy=${queryFilter.orderBy}&interval=${queryFilter.interval}`
         
         fetch(fetcher,
         {
@@ -32,7 +45,7 @@ let InvoicesOverview = (props) =>{
             headers: { 'Content-Type': 'application/json' },
         })
         .then(response=>response.json()).then(data=>{      
-            if(data.status==="OK"){                
+            if(data.status==="OK"){  
                 data.data.forEach(element => {
                     element.expanded = false
                 });
@@ -99,21 +112,20 @@ let InvoicesOverview = (props) =>{
     }
 
     let simpleDate = (date) =>{
+        console.log(date)
         let dateArr = date.toString().substr(0,10).split("-")
         return (`${dateArr[2]}/${dateArr[1]}/${dateArr[0]}`)
     }
 
-    let setStatus = (status) =>{
+    let setStatus = (status, aBoolean) =>{
         if(status==="draft"){
-            return (<span style={{display:'flex', alignItems:'center', width:'fit-content',fontWeight:'400'}}><span style={{marginRight:"3px", fontSize:'18px'}} className="material-icons-outlined">info</span></span>)
+            return (<span style={{display:'flex', alignItems:'center', width:'fit-content',fontWeight:'600'}} className="text-warning"><span style={{marginRight:"3px"}} className="material-icons-outlined">info</span>{aBoolean && "Draft"}</span>)
         }else if(status==="finalised"){
-            return (<span style={{display:'flex', alignItems:'center', width:'fit-content', fontWeight:'400'}}><span style={{marginRight:"3px", fontSize:'18px'}} className="material-icons-outlined">task_alt</span></span>)
+            return (<span style={{display:'flex', alignItems:'center', width:'fit-content', fontWeight:'600'}} className="text-success"><span style={{marginRight:"3px"}} className="material-icons-outlined">task_alt</span>{aBoolean && "Finalizat"}</span>)
         }else{
-            return (<span style={{display:'flex', alignItems:'center', width:'fit-content', fontWeight:'400'}}><span style={{marginRight:"3px", fontSize:'18px'}} className="material-icons-outlined">error</span></span>)
+            return (<span style={{display:'flex', alignItems:'center', width:'fit-content', fontWeight:'600'}} className="text-danger"><span style={{marginRight:"3px"}} className="material-icons-outlined">error</span>{aBoolean && "Eroare"}</span>)
         }
     }
-
-
 
     let changePage=(pageNumber, step)=>{
         setFilter({...queryFilter, page:pageNumber, step:step})
@@ -123,89 +135,96 @@ let InvoicesOverview = (props) =>{
         window.open(`http://localhost:${window.navigator.userAgent==="ElectronApp" ? "3000" : "3001"}/generateInvoice/${invoiceID}`).focus();
     }
 
-    function handleSearchSubmit(event){
-        event.preventDefault()
-        let searchTerm = event.target.searchinput.value
-        if(searchTerm.length===0) return false
-        let searchTermStringified = searchTerm.replaceAll(" ", "+")
-        setFilter({...queryFilter, filter:"search", filterBy:searchTermStringified})
+    function handleSearchSubmit(searchTermStringified){
+        if(searchTermStringified===""){
+            setFilter({...queryFilter, filter:"all", filterBy:defaultFilter.filterBy})
+            let activeFiltersCopy = {...activeFilters}
+            activeFiltersCopy.search=null
+            setActiveFilters(activeFiltersCopy)
+        }else{
+            setFilter({...queryFilter, filter:"search", filterBy:searchTermStringified})
+            let activeFiltersCopy = {...activeFilters}
+            activeFiltersCopy.search=searchTermStringified
+            setActiveFilters(activeFiltersCopy)
+        }
     }
 
-    let resetSearch=()=>{
-        document.getElementById("searchinput").value=""
-        setFilter({...queryFilter, filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
+    let refreshData=()=>{        
+        setFilter({...queryFilter, filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page, interval:defaultFilter.interval})
+    }
+
+    let intervalFunction=(interval, appliesTo)=>{
+        let start, end
+        start = interval.start.split("-")
+        end = interval.end.split("-")
+        let filterCopy = {...queryFilter}
+        filterCopy.interval = `${start[2][0]}${start[2][1]}${start[1][0]}${start[1][1]}${start[0][2]}${start[0][3]}-${end[2][0]}${end[2][1]}${end[1][0]}${end[1][1]}${end[0][2]}${end[0][3]}`
+        setFilter(filterCopy)
+
+        let activeFiltersCopy = {...activeFilters}
+        activeFiltersCopy.date=`${start[2]}.${start[1]}.${start[0]} - ${end[2]}.${end[1]}.${end[0]}`
+        setActiveFilters(activeFiltersCopy)
+
     }
 
     return(
         <div className="app-data-container">  
-                {invoicesData &&    
-                <div className="bordered-container p-3">                    
+                {invoicesData &&     
+                <div className="bordered-container" style={{display: activeInvoice===null ? "" : "none"}}>                    
                     <div className="" style={{width:'100%'}}>
                         {!activeInvoice &&
-                            <div>   
-                                <div style={{marginBottom:'25px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-                                    <div style={{display:'inherit', justifyContent:'flex-start', alignItems:'center'}}>
-                                        <span className="material-icons-outlined">receipt_long</span>
-                                        <span style={{fontSize:'18px', fontWeight:'600'}}>Facturi</span>    
-                                        <form onSubmit={handleSearchSubmit} style={{marginLeft:'10px'}}  className="search-form" id="search-form" name="search-form">
-                                            <div className="search-form-container"> 
-                                                <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
-                                                <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>                                                 
-                                            </div>
-                                        </form>
-                                    </div>
-                                    <div className="btn-group">                               
-                                        <button type="button" className='btn btn-light btn-sm' title="Reincarca date"  onClick={()=>{resetSearch()}}><div className="inner-button-content"><span className="material-icons-outlined" >refresh</span></div></button>
-                                    </div> 
+                            <div> 
+                                <Header title="Facturi" icon="receipt_long" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[]} intervalFunction={intervalFunction}/>    
+                                <div style={{backgroundColor:"#f8f9fa", padding:'6px', paddingLeft:'20px'}}>
+                                    {activeFilters.date!==null && <span className="badge bg-success">Data: {activeFilters.date}</span>}
+                                    {activeFilters.search!==null && <span className="badge bg-success">Cautare: {activeFilters.search}</span>}
                                 </div>
- 
-                                <div style={{overflowY:'scroll', maxHeight:'80vh'}}>
-                                    <table className="table" id="invoices-table">
-                                        <thead>
-                                            <tr>
-                                                <td>#</td>
-                                                <td>Client</td>
-                                                <td>Numar factura</td>
-                                                <td>Status</td>
-                                                <td>Data</td>
-                                                <td>Total</td>
-                                                <td></td>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {invoicesData.length>0 && invoicesData.map((element, index)=>(          
-                                                <tr key={index}>
-                                                    <td>{((queryFilter.page*10)-10) +index+1}</td>
-                                                    <td><b>{element.client_first_name} {element.client_last_name}</b></td>
-                                                    <td>{element.invoice_number}</td>
-                                                    <td>{setStatus(element.invoice_status)}</td>
-                                                    <td>{simpleDate(element.invoice_date)}</td>   
-                                                    <td><b>{element.invoice_total_sum} RON</b></td>                                          
-                                                    <td className="table-actions-container">
-                                                        <button title="Arhiveaza factura" onClick={()=>{deleteInvoice(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">delete</span></div></button>
-                                                        {element.invoice_status!=="finalised" && <button title="Seteaza ca platita" onClick={()=>{setInvoiceFinalised(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">task_alt</span></div></button>}
-                                                        <button title="Deschide factura" onClick={()=>{setActiveInvoice(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">open_in_new</span></div></button>
-                                                        <button title="Genereaza" onClick={()=>{openInvoice(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">file_open</span></div></button>
-                                                    </td>
-                                                </tr>    
-                                            ))}
-                                        </tbody>  
-                                    </table>
+                                <div style={{maxHeight:'80vh'}}>   
+                                        <table className="table" id="invoices-table">
+                                            <thead>
+                                                <tr>
+                                                    <td>#</td>
+                                                    <td>Client</td>
+                                                    <td>Status</td>
+                                                    <td><button className="table-order-button" onClick={()=>{setFilter({...queryFilter, order:'invoice_number', orderBy: queryFilter.orderBy==='asc' ? 'desc' : 'asc'})}}><span className="material-icons-outlined">{queryFilter.orderBy==='asc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span></button>Numar factura</td> 
+                                                    <td>Data</td>
+                                                    <td><button className="table-order-button" onClick={()=>{setFilter({...queryFilter, order:'total', orderBy: queryFilter.orderBy==='asc' ? 'desc' : 'asc'})}}><span className="material-icons-outlined">{queryFilter.orderBy==='asc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span></button>Total</td>
+                                                    <td></td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {invoicesData.length>0 && invoicesData.map((element, index)=>(          
+                                                    <tr key={index}>
+                                                        <td>{((queryFilter.page*10)-10) +index+1}</td>
+                                                        <td>{element.client_first_name} {element.client_last_name}</td>
+                                                        <td>{setStatus(element.invoice_status, true)}</td>
+                                                        <td>{element.invoice_number}</td>
+                                                        <td>{element.normal_date}</td>   
+                                                        <td>{element.invoice_total_sum} RON</td>                                          
+                                                        <td className="table-actions-container">                                                       
+                                                            {element.invoice_status!=="finalised" && <button title="Seteaza ca platita" onClick={()=>{setInvoiceFinalised(element.invoice_number)}}><div className="inner-button-content"><span className="material-icons-outlined">task_alt</span></div></button>}
+                                                            <SmallMenu buttons={[{title:"Genereaza factura", action:()=>{openInvoice(element.invoice_number)}, name:"Genereaza", icon:"file_open"}, {title:"Deschide factura", action:()=>{setActiveInvoice(element.invoice_number)}, name:"Deschide", icon:"open_in_new"}, {title:"Arhiveaza factura", action:()=>{deleteInvoice(element.invoice_number)}, name:"Sterge", icon:"delete"}]}/>
+                                                        </td>
+                                                    </tr>    
+                                                ))}
+                                            </tbody>  
+                                        </table>  
                                     <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>
                                 </div>                                
                             </div>  
                         } 
-                        {activeInvoice &&
-                            <div className='overview-container bordered-container'>
-                                <button style={{border:'none', borderRadius:'6px', display:'flex', alignItems:'center', margin:'10px'}} onClick={()=>{setActiveInvoice(null)}}><span className="material-icons-outlined">arrow_back</span>Inchide</button>
-                                <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
-                                    <div style={{display:'inherit', alignItems:'center'}}><span style={{fontSize:'24px'}}>Factura numarul {activeInvoice}</span></div>                                                        
-                                </div>
-                                <Invoice key={activeInvoice} invoiceID={activeInvoice}/>
-                        </div>}
                     </div>
-                </div>
-            }
+                </div>}
+                {activeInvoice &&
+                <div>
+                    <button className='outline-mint-button' style={{marginBottom:'10px'}} onClick={()=>{setActiveInvoice(null)}}><span className="material-icons-outlined">arrow_back</span>Inchide</button>
+                    <div className='overview-container bordered-container'>                                
+                        <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
+                            <div style={{display:'inherit', alignItems:'center'}}><span style={{fontSize:'24px'}}>Factura numarul {activeInvoice}</span></div>                                                        
+                        </div>
+                        <Invoice key={activeInvoice} invoiceID={activeInvoice}/>
+                    </div>
+                </div>}
             <Snackbar text={alertUser.text} closeSnack={()=>{setAlertUser({text:null})}}/>  
         </div>
     )

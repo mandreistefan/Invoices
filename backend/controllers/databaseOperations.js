@@ -3,10 +3,9 @@ const utile = require('../utils/util.js')
 const Json2csvParser = require("json2csv").Parser;
 const fs = require("fs");
 const { resolve } = require('path');
-const { getDate } = require('date-fns');
 
 const testDB = "invoicemanager"
-const liveDB = "baza_date_facturi"
+const liveDB = "Facturi"
 databases = [testDB, liveDB]
 const queryStep = 10
 let offSet = 0
@@ -42,6 +41,15 @@ function currentDate(){
     let date = new Date()
     return(`${date.getFullYear()}-${(date.getMonth()+1)<10 ? "0"+(date.getMonth()+1) : (date.getMonth()+1)}-${date.getDate()<10 ? "0"+date.getDate() : date.getDate()}`)
 }
+
+function databaseLog(message){
+    connection.query(`INSERT INTO log (message) VALUES('${message}')`, function(error,result){
+        if(error){
+            console.log(`An error occured: ${error}`)
+        }
+    })
+}
+
 
 /**
  * 
@@ -103,6 +111,7 @@ function addClient(data){
                 reject("ERROR")
             }
             if(result.insertId){
+                databaseLog(`Client ${result.insertId} has been created`)
                 resolve({
                     status: "OK",
                     data: result.insertId
@@ -140,6 +149,7 @@ function createNewInvoice(data)
                 reject(null)
             }
             if(result.insertId){
+                databaseLog(`Invoice ${result.insertId} has been created`)
                 resolve(result.insertId)
             }else{
                 resolve(null)
@@ -179,6 +189,7 @@ function registerBilledProducts(invoiceID, billedProductsArray){
             if(result.insertId>0){
                 //products registered, update the totals
                 updateInvoiceTotals(invoiceID)
+                databaseLog(`A new product added to invoice ${invoiceID}`)
                 resolve({
                     status:"OK",
                     data:total_tax
@@ -192,14 +203,6 @@ function registerBilledProducts(invoiceID, billedProductsArray){
             
         });
     })    
-}
-
-function updateInvoiceTax(invoiceID, tax){
-    connection.query(`UPDATE invoices SET invoice_tax='${tax}' WHERE invoice_number='${invoiceID}'`, function(error){
-        if(error){
-            console.log(`Could not update the tax of invoice ${invoiceID} because: ${error}`)
-        }
-    })
 }
 
 /**
@@ -239,31 +242,61 @@ async function addInvoice(data){
  */
 
 async function getInvoices(querryObject){
+
+    console.log(querryObject)
+
     if(querryObject.page>1) offSet = (querryObject.page-1) * queryStep
-    let step = 10
+    //filtering params
     if(querryObject.filter==="search" && querryObject.filterBy.length===0) return ({status:"NO_DATA", data:null})
+    //the step
+    let step = 10
     if(querryObject.step) step=querryObject.step
+    //orderBy
+    let orderBy=" ORDER BY invoice_number DESC ";
+    if(querryObject.order!==undefined){
+        if(querryObject.orderBy!==undefined) orderAscDesc = querryObject.orderBy
+        switch(querryObject.order){
+            case "invoice_number":
+                orderBy=` ORDER BY invoice_number ${orderAscDesc}`
+                break
+            case "total":
+                orderBy=` ORDER BY invoice_total_sum ${orderAscDesc}`
+                break;
+            default:
+                orderBy=`ORDER BY invoice_number DESC`
+                break
+        }
+    }
+
+    //at search the IDs are pre-filtered
+    let querryInterval = ""
+    if(querryObject.filter!=="search"){
+        if(querryObject.processedInterval!==null){        
+            querryInterval = ` AND invoice_date >= "${querryObject.processedInterval.startYear}-${querryObject.processedInterval.startMonth}-${querryObject.processedInterval.startDay}" AND invoice_date <= "${querryObject.processedInterval.endYear}-${querryObject.processedInterval.endMonth}-${querryObject.processedInterval.endDay}" `
+        }
+    }
+
     switch(querryObject.filter){
         case "all":
-            querry=`SELECT * FROM ${querryObject.target} ORDER BY invoice_number DESC LIMIT ${step} OFFSET ${step*querryObject.page}`
+            querry=`SELECT *, DATE_FORMAT(invoice_date, '%d-%m-%Y') as normal_date FROM ${querryObject.target} WHERE 1 ${querryInterval} ${orderBy} LIMIT ${step} OFFSET ${step*querryObject.page}`
             break
         case "clientID":
-            querry=`SELECT * FROM ${querryObject.target} WHERE customer_id=${querryObject.filterBy} LIMIT ${step} OFFSET ${step*querryObject.page}`
+            querry=`SELECT *, DATE_FORMAT(invoice_date, '%d-%m-%Y') as normal_date FROM ${querryObject.target} WHERE customer_id=${querryObject.filterBy} ${querryInterval} LIMIT ${step} OFFSET ${step*querryObject.page} ${orderBy}`
             break;
         case "invoiceID":
-            querry=`SELECT * FROM ${querryObject.target} WHERE invoice_number=${querryObject.filterBy}`
+            querry=`SELECT *, DATE_FORMAT(invoice_date, '%d-%m-%Y') as normal_date FROM ${querryObject.target} WHERE invoice_number=${querryObject.filterBy} ${querryInterval} ${orderBy}`
             break;
         case "recID":
-            querry=`SELECT * FROM ${querryObject.target} WHERE rec_number=${querryObject.filterBy} LIMIT ${step} OFFSET ${step*querryObject.page}`
+            querry=`SELECT *, DATE_FORMAT(invoice_date, '%d-%m-%Y') as normal_date FROM ${querryObject.target} WHERE rec_number=${querryObject.filterBy} ${querryInterval} LIMIT ${step} OFFSET ${step*querryObject.page} ${orderBy}`
             break;
         case "active":
-            querry=`SELECT * FROM ${querryObject.target} WHERE invoice_active=${querryObject.filterBy} LIMIT ${step} OFFSET ${step*querryObject.page}`
+            querry=`SELECT *, DATE_FORMAT(invoice_date, '%d-%m-%Y') as normal_date FROM ${querryObject.target} WHERE invoice_active=${querryObject.filterBy} ${querryInterval} LIMIT ${step} OFFSET ${step*querryObject.page} ${orderBy}`
             break;
         case "search":
-            querry=`SELECT * FROM invoices WHERE invoice_number in (${querryObject.filterBy}) order by invoice_number`
+            querry=`SELECT *, DATE_FORMAT(invoice_date, '%d-%m-%Y') as normal_date FROM invoices WHERE invoice_number in (${querryObject.filterBy}) ${orderBy}`
             break
         default:
-            querry=`SELECT * FROM ${querryObject.target} LIMIT ${step} OFFSET ${step*querryObject.page}`
+            querry=`SELECT *, DATE_FORMAT(invoice_date, '%d-%m-%Y') as normal_date FROM ${querryObject.target} WHERE 1 ${querryInterval} LIMIT ${step} OFFSET ${step*querryObject.page} ${orderBy}`
             break
     }
 
@@ -376,6 +409,7 @@ function archiveInvoice(invoiceID){
                 })
             }
             if(result.insertId>0){
+                databaseLog(`Invoice ${invoiceID} has been archived`)
                 resolve({
                     status:"OK",
                     data:null
@@ -511,49 +545,6 @@ function editClient(data){
     })
 }
 
-function linkInvoiceToRecSchema(rec, inv){
-    connection.query(`UPDATE invoices SET rec_number=${rec} WHERE invoice_number=${inv}`, function(error, result){
-        if(error){
-            console.log("ERROR when linking recurrentSchema with Invoice")
-        }
-    })
-}
-
-function getRecInfo(queryFilter, queryFilterData,){
-    let querry;
-    switch(queryFilter){
-        case "recurrentID":
-            querry = `SELECT * FROM invoices_recurrent WHERE rec_number=${queryFilterData}`;
-            break
-        default:
-            querry = `SELECT * FROM invoices_recurrent WHERE rec_number=${queryFilterData}`;
-            break
-    }
-    return new Promise((resolve, reject)=>{
-        connection.query(querry, function(error, result){
-            if(error){
-                console.log(error)
-                reject({
-                    status:"ERROR",
-                    data: "ERROR in getting recurrent schema"
-                })
-            }
-            if(result){
-                if(result.length!=0){
-                    resolve({
-                        status:"OK",
-                        data: result
-                    })
-                }else{
-                    resolve({
-                        status:"FAIL",
-                        data: null
-                    }) 
-                }
-            }
-        })
-    })
-}
 
 /**
  * 
@@ -614,6 +605,7 @@ function updateInvoice(invoice_number, data){
                 reject(0)
             }
             if(result.affectedRows!=0){
+                databaseLog(`Invoice ${invoice_number} has been updated`)
                 resolve(1)
             }else{
                 resolve(2)
@@ -766,6 +758,7 @@ function removeProduct(id){
                     data:null
                 })
             }
+            databaseLog(`A product has been removed from an invoice`)
             resolve({
                 status:"OK",
                 data:null
@@ -894,7 +887,7 @@ function changeDatabase(databaseName){
 
 function getExpenses(filterObject, getAll){
 
-    let querryToBeExec = `SELECT * FROM expenses WHERE exp_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND exp_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" order by id`
+    let querryToBeExec = `SELECT id, exp_name, exp_sum, exp_description, exp_type, DATE_FORMAT(exp_date, '%Y-%m-%d') as exp_date, exp_deduct FROM expenses WHERE exp_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND exp_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" order by id`
     
     if(!getAll) querryToBeExec = `SELECT * FROM expenses WHERE exp_date >= "${filterObject.startYear}-${filterObject.startMonth}-${filterObject.startDay}" AND exp_date <= "${filterObject.endYear}-${filterObject.endMonth}-${filterObject.endDay}" AND exp_deduct='1' order by id`
     return new Promise((resolve, reject)=>{  
@@ -965,8 +958,16 @@ function deleteExpense(id){
  async function searchDatabase(queryObject){
     switch(queryObject.target){
         case "invoices":
+
+            let querryInterval = ""
+            if(queryObject.processedInterval!==null){        
+                querryInterval = ` AND invoice_date >= "${queryObject.processedInterval.startYear}-${queryObject.processedInterval.startMonth}-${queryObject.processedInterval.startDay}" AND invoice_date <= "${queryObject.processedInterval.endYear}-${queryObject.processedInterval.endMonth}-${queryObject.processedInterval.endDay}" `
+            }
+
+            console.log(querryInterval)
+
             let invoices = new Promise((resolve, reject)=>{
-                connection.query(`select invoice_number from invoices where client_county LIKE '%${queryObject.searchTerm}%' OR invoice_bank_ref LIKE '${queryObject.searchTerm}' OR client_fiscal_1 LIKE '%${queryObject.searchTerm}%' OR client_fiscal_2 LIKE '%${queryObject.searchTerm}%' OR client_first_name LIKE '%${queryObject.searchTerm}%' OR client_last_name LIKE '%${queryObject.searchTerm}%' OR client_city LIKE '%${queryObject.searchTerm}%' OR client_street LIKE '%${queryObject.searchTerm}%' OR client_adress_number LIKE '%${queryObject.searchTerm}%' OR client_zip LIKE '%${queryObject.searchTerm}%' OR client_phone LIKE '%${queryObject.searchTerm}%' OR client_email LIKE '%${queryObject.searchTerm}%' OR invoice_total_sum LIKE '%${queryObject.searchTerm}%' order by invoice_number desc `, function(error, result){
+                connection.query(`select invoice_number from invoices where (client_county LIKE '%${queryObject.searchTerm}%' OR invoice_bank_ref LIKE '${queryObject.searchTerm}' OR client_fiscal_1 LIKE '%${queryObject.searchTerm}%' OR client_fiscal_2 LIKE '%${queryObject.searchTerm}%' OR client_first_name LIKE '%${queryObject.searchTerm}%' OR client_last_name LIKE '%${queryObject.searchTerm}%' OR client_city LIKE '%${queryObject.searchTerm}%' OR client_street LIKE '%${queryObject.searchTerm}%' OR client_adress_number LIKE '%${queryObject.searchTerm}%' OR client_zip LIKE '%${queryObject.searchTerm}%' OR client_phone LIKE '%${queryObject.searchTerm}%' OR client_email LIKE '%${queryObject.searchTerm}%' OR invoice_total_sum LIKE '%${queryObject.searchTerm}%') ${querryInterval} order by invoice_number desc `, function(error, result){
                     if(error){
                         console.log(error)
                         reject({status:"ERROR", data:null})
@@ -1244,19 +1245,19 @@ async function addSalary(paid_to, salary_month, salary_year, bank_ref, taxes){
     let querry;    
     switch(queryObject.filter){
         case "all":
-            querry=`SELECT * FROM employees_salaries ORDER BY id DESC LIMIT ${offSet}, ${step}`
+            querry=`SELECT id, DATE_FORMAT(paid_on, '%Y-%m-%d') as paid_on, sum_gross, sum_net, tax_cas, tax_cass, tax_income, tax_cm, paid_to, salary_month, salary_year, comments, bank_ref from employees_salaries ORDER BY id DESC LIMIT ${offSet}, ${step}`
             break
         case "paid_to":
-            querry=`SELECT * FROM employees_salaries WHERE paid_to=${queryObject.filterBy}`
+            querry=`SELECT id, DATE_FORMAT(paid_on, '%Y-%m-%d') as paid_on, sum_gross, sum_net, tax_cas, tax_cass, tax_income, tax_cm, paid_to, salary_month, salary_year, comments, bank_ref from employees_salaries WHERE paid_to=${queryObject.filterBy}`
             break
         case "interval":
-            querry=`SELECT * FROM employees_salaries WHERE paid_on >= "${queryObject.filterBy.startYear}-${queryObject.filterBy.startMonth}-${queryObject.filterBy.startDay}" AND paid_on <= "${queryObject.filterBy.endYear}-${queryObject.filterBy.endMonth}-${queryObject.filterBy.endDay}" `
+            querry=`SELECT id, DATE_FORMAT(paid_on, '%Y-%m-%d') as paid_on, sum_gross, sum_net, tax_cas, tax_cass, tax_income, tax_cm, paid_to, salary_month, salary_year, comments, bank_ref from employees_salaries WHERE paid_on >= "${queryObject.filterBy.startYear}-${queryObject.filterBy.startMonth}-${queryObject.filterBy.startDay}" AND paid_on <= "${queryObject.filterBy.endYear}-${queryObject.filterBy.endMonth}-${queryObject.filterBy.endDay}" `
             break
         case "employee_interval":
-            querry=`SELECT * FROM employees_salaries WHERE paid_on >= "${queryObject.filterBy.startYear}-${queryObject.filterBy.startMonth}-${queryObject.filterBy.startDay}" AND paid_on <= "${queryObject.filterBy.endYear}-${queryObject.filterBy.endMonth}-${queryObject.filterBy.endDay}" AND id='${queryObject.filterBy.employeeID}' `
+            querry=`SELECT id, DATE_FORMAT(paid_on, '%Y-%m-%d') as paid_on, sum_gross, sum_net, tax_cas, tax_cass, tax_income, tax_cm, paid_to, salary_month, salary_year, comments, bank_ref from employees_salaries WHERE paid_on >= "${queryObject.filterBy.startYear}-${queryObject.filterBy.startMonth}-${queryObject.filterBy.startDay}" AND paid_on <= "${queryObject.filterBy.endYear}-${queryObject.filterBy.endMonth}-${queryObject.filterBy.endDay}" AND id='${queryObject.filterBy.employeeID}' `
             break
         default:
-            querry=`SELECT * FROM employees_salaries LIMIT ${offSet}, ${step}`
+            querry=`SELECT id, DATE_FORMAT(paid_on, '%Y-%m-%d') as paid_on, sum_gross, sum_net, tax_cas, tax_cass, tax_income, tax_cm, paid_to, salary_month, salary_year, comments, bank_ref from employees_salaries LIMIT ${offSet}, ${step}`
             break
     }
 
@@ -1370,7 +1371,7 @@ async function addVacationDays(employee, daysObject){
 function getVacationDays(employee){
     let returnArr = []
     return new Promise((resolve, reject)=>{
-        connection.query(`SELECT vacation_date, vacation_type, date FROM employees_vacation WHERE employee_id='${employee}'`, function(error, result){
+        connection.query(`SELECT DATE_FORMAT(vacation_date, '%Y-%m-%d') as vacation_date, vacation_type, DATE_FORMAT(date, '%Y-%m-%d') as date FROM employees_vacation WHERE employee_id='${employee}'`, function(error, result){
             if(error){
                 console.log(error)
                 reject ({status:"ERROR", data:null})
@@ -1648,8 +1649,52 @@ async function exportData(){
         });
     })
     //chain data
+    databaseLog(`Data exported`)
     return await Promise.all([exportInvoices, exportBilledProjects, clients, expenses, employees, emp_sal, emp_vac])    
 }
+
+async function getDashboardData(){
+    return new Promise((resolve, reject)=>{
+        connection.query(`SELECT invoice_status, client_first_name , client_last_name , invoice_date , invoice_total_sum FROM invoices ORDER BY invoice_number DESC`, function(error, result){
+            if(error){
+                console.log(error)
+                reject ({status:"ERROR", data:null})
+            }
+            if(result){
+                resolve(result)
+            }
+            resolve({status:"FAIL", data:null})
+        })
+    })
+}
+
+async function pingDB(){
+    return new Promise((resolve, reject)=>{
+        connection.ping(function (err) {
+            if(err){
+                console.log(err)
+                reject(false)
+            }
+            resolve(true)
+        })   
+    })
+}
+
+async function getLatestLogs(){
+    return new Promise((resolve, reject)=>{
+        connection.query(`SELECT * from log order by date DESC LIMIT 3`, function(error, result){
+            if(error){
+                console.log(error)
+                reject ({status:"ERROR", data:null})
+            }
+            if(result){
+                resolve({status:"OK", data:result})
+            }
+            resolve({status:"FAIL", data:null})
+        })
+    })
+}
+
 
 module.exports ={
     getClients:getClients,
@@ -1663,8 +1708,6 @@ module.exports ={
     fetchInvoiceSummary: fetchInvoiceSummary,
     fetchBilledProducts: fetchBilledProducts,
     editClient:editClient,
-    linkInvoiceToRecSchema: linkInvoiceToRecSchema,
-    getRecInfo:getRecInfo,
     getFinancialData: getFinancialData,
     checkInvoiceStatus:checkInvoiceStatus,
     updateInvoice: updateInvoice,
@@ -1677,5 +1720,6 @@ module.exports ={
     updateInvoiceTotals:updateInvoiceTotals,
     registerBilledProducts: registerBilledProducts,
     getRecordsNumber:getRecordsNumber, getDBinfo:getDBinfo, changeDatabase, getExpenses,addExpense, deleteExpense, searchDatabase, getEmployees, addEmployee, editEmployee, hasSalaryOnDate, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeInfo, archiveEmployee, deleteEmployee, removePredefinedProduct,
-    exportData
+    exportData,
+    getDashboardData, pingDB, databaseLog, getLatestLogs
 }

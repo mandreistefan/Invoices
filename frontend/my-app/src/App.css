@@ -7,14 +7,18 @@
   --navBackground: #313a46;
   --navActive: #3eb489;
   --navColor: #8391a2;
+  --borderRadius: 16px;
+  --lightMint: #c3eadc;
+  --shadow: 0 .125rem .25rem rgba(0,0,0,.075);
 }
 
 
 body{
-  background-color: #f5f7fa;
+  background-color: white;
   --font-family-sans-serif: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
   --font-family-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
   font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  /**font-family: "Poppins", sans-serif;*/
 }
 
 .app-content{
@@ -34,6 +38,7 @@ body{
   font-size:15px;
   background-color: #F7F7F8;
   padding:10px;
+  margin:0;
 }
 
 table tbody{
@@ -49,7 +54,9 @@ table >tbody> tr:hover{
   border-bottom: 1px solid lightgray;
   font-size:15px;
   font-weight: 300 !important;
-  color:black;
+  /*color:black;*/
+  background-color: #313a46;
+  color:white;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
 }
@@ -57,6 +64,23 @@ table >tbody> tr:hover{
 .table > tbody > tr > .table-actions-container > button{
   visibility:hidden;
   float: right;
+  border-radius: 4px;
+  padding: 2px;
+  margin-right: 5px;
+}
+
+.table-actions-container{
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.table > tbody > tr > .table-actions-container > div{
+  visibility: hidden;
+}
+
+.table > tbody > tr > .table-actions-container > button:hover{
+  background-color: transparent;
 }
 
 .new-invoice-table > tbody > tr > td > input{
@@ -105,6 +129,10 @@ table >tbody> tr:hover{
   visibility:visible;
 }
 
+.table > tbody > tr:hover > .table-actions-container > div{
+  visibility:visible;
+}
+
 td{
   vertical-align: middle;
 }
@@ -142,7 +170,8 @@ td{
 }
 
 .page-link{
-  color:#353535
+  color:#353535;
+  background-color: transparent;
 }
 
 .page-link:hover{
@@ -213,7 +242,7 @@ td{
 }
 
 .overlapping-component-inner{
-  border-radius: 8px;
+  border-radius: var(--borderRadius);
   background-color: white;
   position: absolute;
   z-index:10;
@@ -327,7 +356,6 @@ background-color:#D1D1D1
 }
 
 .clients-table-row{
-  height: 30px;
   line-height: 20px;
 }
 
@@ -340,7 +368,6 @@ background-color:#D1D1D1
 }
 
 .clients-table-row td{
-  height: 30px;
   padding: 4px;
   vertical-align: middle;
 }
@@ -483,6 +510,11 @@ box-shadow: 0px 0px 5px 0px #FF0000;
   border-radius: 6px;
 }
 
+.modified-data{
+  border-color: var(--navActive);
+
+}
+
 .page-item{
   font-weight: 600;
 }
@@ -599,7 +631,7 @@ input[type=date]{
   align-items: center;
   background-color: white;
   border: 1px solid lightgray;
-  border-radius: 10px;
+  border-radius: 6px;
   box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
   width: 400px;
 }
@@ -911,6 +943,10 @@ input[type=date]{
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-bottom-left-radius: var(--borderRadius);
+  border-bottom-right-radius: var(--borderRadius);
 }
 
 .pagination-container > div> button{
@@ -932,6 +968,24 @@ input[type=date]{
   border: none;
 }
 
+.pagination-step-selector{
+  border-color: var(--navActive);
+  border-radius: 6px;
+  padding: 4px;
+  color:var(--navActive);
+  background-color: #f8f9fa;
+}
+
+
+.pagination-step-selector:focus{
+  border: 1px solid var(--navActive);
+}
+
+.pagination-step-selector:focus-visible{
+  border: 1px solid var(--navActive);
+}
+
+
 .page-navigation{
   width: 100%;
   margin:5px;
@@ -939,7 +993,8 @@ input[type=date]{
 
 .page-link{
   border: none;
-  font-weight: 400;
+  font-weight: 600;
+  font-size: 20px;
 }
 
 .page-link:hover{
@@ -992,9 +1047,8 @@ input[type=date]{
 
 .bordered-container{
   border: 1px solid lightgray;
-  border-radius: 6px;
+  border-radius: var(--borderRadius);
   box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
-  max-height: 90vh;
   background-color: white;
 }
 
@@ -1070,6 +1124,11 @@ input[type=date]{
 
 .card{
   height: 100%;
+  border-radius: var(--borderRadius);
+}
+
+.card-header{
+  border-radius: var(--borderRadius);
 }
 
 .financial-grid{
@@ -1090,9 +1149,12 @@ input[type=date]{
 }
 
 #databaseSelector{
-  background-color: #313a46;
+  background-color: transparent;
   border-color: #3eb489;
-  color: #3eb489
+  color: #3eb489;
+  width: fit-content;
+  min-width: 175px;
+  padding: 4px;
 }
 
 .financial-square{
@@ -1103,6 +1165,8 @@ input[type=date]{
   border-radius: 16px;
   padding: 16px;
   height: 100%;
+  border:1px solid lightgray;
+  box-shadow: var(--shadow);
 }
 
 .financial-square > div{
@@ -1117,4 +1181,125 @@ input[type=date]{
   justify-content: center;
   color: gray;
   font-weight: 500;
+  border: none;
+}
+
+.form-control:focus{
+  border-color: #ced4da;
+}
+
+.mint-button{
+  color: var(--navActive);
+  border-radius: 6px;
+  border: 1px solid var(--navActive)
+}
+
+.mint-button:hover{
+  color: var(--navActive);
+  background-color: var(--lightMint);
+  border: 1px solid var(--navActive);
+}
+
+.outline-mint-button{
+  border:1px solid var(--navActive);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  color:var(--navActive);
+  font-weight: 500;
+}
+
+.outline-mint-button:hover{
+  background-color: var(--lightMint)
+}
+
+.button-group-mint{
+  border: 1px solid var(--navActive);
+}
+
+.button-group-mint > button{
+  color:var(--navActive);
+}
+
+.button-group-mint > button:hover{
+  color:var(--navActive);
+  background-color: var(--lightMint);
+  border:1px solid var(--lightMint)
+}
+
+.tabs{
+  display: grid;
+  grid-template-columns: auto auto auto;
+  background-color: white;
+  border-bottom: 1px solid lightgray;
+}
+
+.tab{
+  border: none;
+  border-bottom: 4px solid white;
+  background-color: transparent;
+  padding: 16px;
+  font-weight: 500;
+  color: gray;
+}
+
+.tab.active{
+  border-bottom: 4px solid var(--navActive);
+  color:var(--navActive);
+}
+
+.table-order-button{
+  background-color: transparent;
+  border:none;
+  width: 20px;
+  height: 20px;
+  margin:0;
+  padding: 0;
+}
+
+.table-order-button>span{
+  font-size:20px;
+  color:white;
+}
+
+.dashboard-header{
+  color:var(--navActive);
+  display: flex;
+  align-items: center;
+}
+
+.dashboard-header > div{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border:5px solid var(--navActive);
+}
+
+
+.database-container-expanded > div{
+  border-radius: var(--borderRadius);
+  border: 1px solid lightgray;
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  padding: 16px
+}
+
+.database-container-expanded> div >div{
+  display: inherit;
+  flex-direction: column;
+}
+
+.grid-invoice > .grid-row{
+  display: grid;
+  grid-template-columns: auto auto auto auto auto; 
+  column-gap: 5px;
+}
+
+.dropbtn:hover{
+  background-color: transparent;
+}
+
+.grid-invoices > div:hover{
+  box-shadow: 0 .125rem .25rem rgba(0,0,0,.095)!important;;
 }
