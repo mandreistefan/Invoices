@@ -98,27 +98,27 @@ export default class Employee extends React.Component{
 
     convertSalaries=(salaries)=>{
 
+        if(salaries===null) return ([])
+
         let readableMonth=(monthInteger)=>{
             let months = ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"]
             return months[monthInteger]
         }
 
         let anArray=[]
-        if(salaries!=null){
-            salaries.forEach(element=>{
-                anArray.push({
-                    gross:element.sum_gross, 
-                    net:element.sum_net, 
-                    taxes:{cas:element.tax_cas, 
-                        cass:element.tax_cass, 
-                        income:element.tax_income, 
-                        cm:element.tax_cm}, 
-                    month:readableMonth(element.salary_month-1),
-                    year:element.salary_year,
-                    date:element.paid_on
-                })
+        salaries.forEach(element=>{
+            anArray.push({
+                gross:element.sum_gross, 
+                net:element.sum_net, 
+                taxes:{cas:element.tax_cas, 
+                    cass:element.tax_cass, 
+                    income:element.tax_income, 
+                    cm:element.tax_cm}, 
+                month:readableMonth(element.salary_month-1),
+                year:element.salary_year,
+                date:element.paid_on
             })
-        }
+        })        
 
         //initially, the filter contains everything
         let initialSalariesFilter = []

@@ -67,22 +67,22 @@ let ClientForm = (props)=>{
         switch(who){
             //first name
             case "client_first_name":
-                return what.length===0 ? false : true
+                return what.length===0 ? "Camp obligatoriu" : true
             //phone number have data
             case "client_phone":
-                return what.length!==10 ? false : true
+                return what.length!==10 ? "Campul trebuie sa aiba 10 caractere" : true
             //email - only if filled       
             case "client_email":
-                return what.length===0 ? false : true
+                return what.length===0 ? "Camp obligatoriu" : true
             //county
             case "client_county":
-                return what.length===0 ? false : true
+                return what.length===0 ? "Camp obligatoriu" : true
             //city
             case "client_city":
-                return what.length===0 ? false : true
+                return what.length===0 ? "Camp obligatoriu" : true
             //street/
             case "client_street":
-                return what.length===0 ? false : true
+                return what.length===0 ? "Camp obligatoriu" : true
             default:
                 return true
         }
@@ -128,8 +128,27 @@ let ClientForm = (props)=>{
         let clientID = (props.clientID) ? props.clientID : null;
         //update a client logic
         if(clientID){
-            let dataToBeSent ={}
+            let flag = true
+            let dataToBeSent={}
             let shallowCopy = {...data}
+            let validation
+            for (const [key, value] of Object.entries(shallowCopy)) { 
+                validation =  validateData(key, shallowCopy[key].value)
+                if(validation===true) {
+                    dataToBeSent[key] = shallowCopy[key].value
+                    if(shallowCopy[key].invalid=true) shallowCopy[key].invalid=false 
+                }else{
+                    shallowCopy[key].invalid=validation
+                    flag=false
+                }            
+            }
+
+            //at least one invalid element
+            if(!flag){
+                clientData(shallowCopy)
+                return false
+            }
+
             for (const [key, value] of Object.entries(shallowCopy)) {
                 if(shallowCopy[key].modified===true){
                     dataToBeSent[key] = shallowCopy[key].value
@@ -162,12 +181,14 @@ let ClientForm = (props)=>{
             let flag = true
             let dataToBeSent={}
             let shallowCopy = {...data}
+            let validation
             for (const [key, value] of Object.entries(shallowCopy)) { 
-                if(validateData(key, shallowCopy[key].value)) {
+                validation =  validateData(key, shallowCopy[key].value)
+                if(validation===true) {
                     dataToBeSent[key] = shallowCopy[key].value
                     if(shallowCopy[key].invalid=true) shallowCopy[key].invalid=false 
                 }else{
-                    shallowCopy[key].invalid=true
+                    shallowCopy[key].invalid=validation
                     flag=false
                 }            
             }
@@ -217,23 +238,27 @@ let ClientForm = (props)=>{
                         <div class="form-floating mb-3">
                             <input type="text" className={data.client_first_name.invalid ? "form-control shadow-none is-invalid" : data.client_first_name.modified ? "form-control shadow-none modified-data" : "form-control shadow-none"} id="client_first_name" name="client_first_name" placeholder="Nume" onChange={changeFormData} value={data.client_first_name.value} disabled={fieldsDisabled}></input>
                             <label for="client_first_name">Nume</label>
+                            <div class="invalid-feedback">{data.client_first_name.invalid}</div>
                         </div>
                     </div>
                     <div class="col-md">
                         <div class="form-floating mb-3">
                             <input type="text" className={data.client_last_name.invalid ? "form-control shadow-none is-invalid" : data.client_last_name.modified ? "form-control shadow-none modified-data" : "form-control shadow-none"} id="client_last_name" name="client_last_name" placeholder="Prenume" onChange={changeFormData} value={data.client_last_name.value} disabled={fieldsDisabled}></input>
                             <label for="client_last_name">Prenume</label>
+                            <div  class="invalid-feedback">{data.client_last_name.invalid}</div>
                         </div>
                     </div>
                 </div>
                 <div class="form-floating mb-3">
                     <input type="text" className={data.client_phone.invalid ? "form-control shadow-none is-invalid" : data.client_phone.modified ? "form-control shadow-none modified-data" : "form-control shadow-none"} id="client_phone" name="client_phone" placeholder="Telefon" onChange={changeFormData} value={data.client_phone.value} disabled={fieldsDisabled}></input>
                     <label for="client_phone">Telefon</label>
+                    <div  class="invalid-feedback">{data.client_phone.invalid}</div>
                 </div>
 
                 <div class="form-floating mb-3">
                     <input type="email" className={data.client_email.invalid ? "form-control shadow-none is-invalid" : data.client_email.modified ? "form-control shadow-none modified-data" : "form-control shadow-none"} id="client_email" name="client_email" placeholder="Mail" onChange={changeFormData} value={data.client_email.value} disabled={fieldsDisabled}></input>
                     <label for="client_email">Email</label>
+                    <div  class="invalid-feedback">{data.client_email.invalid}</div>
                 </div>
 
                 <div class="row g-2">
@@ -241,12 +266,14 @@ let ClientForm = (props)=>{
                         <div class="form-floating mb-3">
                             <input type="text" className={data.client_county.invalid ? "form-control shadow-none is-invalid" : data.client_county.modified ? "form-control shadow-none modified-data" : "form-control shadow-none"} id="client_county" name="client_county" placeholder="Judet" onChange={changeFormData} value={data.client_county.value} disabled={fieldsDisabled}></input>
                             <label for="client_county">Judet</label>
+                            <div  class="invalid-feedback">{data.client_county.invalid}</div>
                         </div>
                     </div>
                     <div class="col-md">
                         <div class="form-floating mb-3">
                             <input type="text" className={data.client_city.invalid ? "form-control shadow-none is-invalid" : data.client_city.modified ? "form-control shadow-none modified-data" : "form-control shadow-none"} id="client_city" name="client_city" placeholder="Oras" onChange={changeFormData} value={data.client_city.value} disabled={fieldsDisabled}></input>
                             <label for="client_city">Oras</label>
+                            <div  class="invalid-feedback">{data.client_city.invalid}</div>
                         </div>
                     </div>
                 </div>
@@ -256,18 +283,21 @@ let ClientForm = (props)=>{
                         <div class="form-floating mb-3">
                             <input type="text" className={data.client_street.invalid ? "form-control shadow-none is-invalid" : data.client_street.modified ? "form-control shadow-none modified-data" : "form-control shadow-none"} id="client_street" name="client_street" placeholder="Strada" onChange={changeFormData} value={data.client_street.value} disabled={fieldsDisabled}></input>
                             <label for="client_street">Strada</label>
+                            <div  class="invalid-feedback">{data.client_street.invalid}</div>
                         </div>
                     </div>
                     <div class="col-md">
                         <div class="form-floating mb-3">
                             <input type="text" className={data.client_adress_number.invalid ? "form-control shadow-none is-invalid" : data.client_adress_number.modified ? "form-control shadow-none modified-data" : "form-control shadow-none"} id="client_adress_number" name="client_adress_number" placeholder="Numar" onChange={changeFormData} value={data.client_adress_number.value} disabled={fieldsDisabled}></input>
                             <label for="client_adress_number">Numar</label>
+                            <div  class="invalid-feedback">{data.client_adress_number.invalid}</div>
                         </div>
                     </div>
                 </div>
                 <div class="form-floating mb-3">
                     <input type="text" className={data.client_zip.invalid ? "form-control shadow-none is-invalid" : data.client_zip.modified ? "form-control shadow-none modified-data" : "form-control shadow-none"} id="client_zip" name="client_zip" placeholder="Numar" onChange={changeFormData} value={data.client_zip.value} disabled={fieldsDisabled}></input>
                     <label for="client_zip">ZIP</label>
+                    <div  class="invalid-feedback">{data.client_zip.invalid}</div>
                 </div>
 
                 <div class="form-floating mb-3">

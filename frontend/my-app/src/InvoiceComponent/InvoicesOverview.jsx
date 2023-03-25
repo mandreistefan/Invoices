@@ -25,7 +25,7 @@ let InvoicesOverview = (props) =>{
     })
 
     let [activeFilters, setActiveFilters] = useState({date:null, search:null})
-    let [viewType, setViewType] = useState(0)
+
 
     //refecth on page change or when the query parameters change (ex. when a search is attempted)
     useEffect(()=>{
@@ -45,29 +45,12 @@ let InvoicesOverview = (props) =>{
             headers: { 'Content-Type': 'application/json' },
         })
         .then(response=>response.json()).then(data=>{      
-            if(data.status==="OK"){    
-                if(viewType===0){
-                    data.data.forEach(element => {
-                        element.expanded = false
-                    });
-                    invoicesDataSet(data.data)
-                    setNOE(data.recordsNumber)
-                }else{
-                    if(queryFilter.filter==="all"){
-                        let currentData = [...invoicesData]
-                        let concatenatedData = currentData.concat(data.data)
-                        invoicesDataSet(concatenatedData)
-                        if(concatenatedData.length < (queryFilter.page * queryFilter.step)) document.getElementById("loadMore").disabled = true
-                    }else{
-                        data.data.forEach(element => {
-                            element.expanded = false
-                        });
-                        invoicesDataSet(data.data)
-                        if(queryFilter.filter==="search") document.getElementById("loadMore").disabled = true
-                    }
-
-                }          
-
+            if(data.status==="OK"){  
+                data.data.forEach(element => {
+                    element.expanded = false
+                });
+                invoicesDataSet(data.data)
+                setNOE(data.recordsNumber)
                 //setActiveInvoice(data.data[0].invoice_number)
             }else if(data.status==="SERVER_ERROR"){
                 setAlertUser({text: "Baza de date nu poate fi accesata"})
@@ -184,10 +167,6 @@ let InvoicesOverview = (props) =>{
 
     }
 
-    function changeDisplay(){        
-        setViewType(viewType===0 ? 1 : 0)
-    }
-
     return(
         <div className="app-data-container">  
                 {invoicesData &&     
@@ -195,20 +174,19 @@ let InvoicesOverview = (props) =>{
                     <div className="" style={{width:'100%'}}>
                         {!activeInvoice &&
                             <div> 
-                                <Header title="Facturi" icon="receipt_long" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[{title:"Tip display", action:()=>{setViewType(viewType===0 ? 1 : 0)}, icon:"add", name:"Display"}]} intervalFunction={intervalFunction}/>    
+                                <Header title="Facturi" icon="receipt_long" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[]} intervalFunction={intervalFunction}/>    
                                 <div style={{backgroundColor:"#f8f9fa", padding:'6px', paddingLeft:'20px'}}>
                                     {activeFilters.date!==null && <span className="badge bg-success">Data: {activeFilters.date}</span>}
                                     {activeFilters.search!==null && <span className="badge bg-success">Cautare: {activeFilters.search}</span>}
                                 </div>
-                                <div style={{maxHeight:'80vh'}}>
-                                    {viewType===0 &&
+                                <div style={{maxHeight:'80vh'}}>   
                                         <table className="table" id="invoices-table">
                                             <thead>
                                                 <tr>
                                                     <td>#</td>
                                                     <td>Client</td>
-                                                    <td><button className="table-order-button" onClick={()=>{setFilter({...queryFilter, order:'invoice_number', orderBy: queryFilter.orderBy==='asc' ? 'desc' : 'asc'})}}><span className="material-icons-outlined">{queryFilter.orderBy==='asc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span></button>Numar factura</td>
                                                     <td>Status</td>
+                                                    <td><button className="table-order-button" onClick={()=>{setFilter({...queryFilter, order:'invoice_number', orderBy: queryFilter.orderBy==='asc' ? 'desc' : 'asc'})}}><span className="material-icons-outlined">{queryFilter.orderBy==='asc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span></button>Numar factura</td> 
                                                     <td>Data</td>
                                                     <td><button className="table-order-button" onClick={()=>{setFilter({...queryFilter, order:'total', orderBy: queryFilter.orderBy==='asc' ? 'desc' : 'asc'})}}><span className="material-icons-outlined">{queryFilter.orderBy==='asc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span></button>Total</td>
                                                     <td></td>
@@ -219,8 +197,8 @@ let InvoicesOverview = (props) =>{
                                                     <tr key={index}>
                                                         <td>{((queryFilter.page*10)-10) +index+1}</td>
                                                         <td>{element.client_first_name} {element.client_last_name}</td>
-                                                        <td>{element.invoice_number}</td>
                                                         <td>{setStatus(element.invoice_status, true)}</td>
+                                                        <td>{element.invoice_number}</td>
                                                         <td>{element.normal_date}</td>   
                                                         <td>{element.invoice_total_sum} RON</td>                                          
                                                         <td className="table-actions-container">                                                       
@@ -231,32 +209,12 @@ let InvoicesOverview = (props) =>{
                                                 ))}
                                             </tbody>  
                                         </table>  
-                                    }
-                                    <div style={{display:viewType===1 ? "none" : "block"}}><PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/></div>
+                                    <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>
                                 </div>                                
                             </div>  
                         } 
                     </div>
                 </div>}
-                {viewType===1 &&
-                <div>
-                    {invoicesData.length>0 && 
-                    <div style={{display:'flex', justifyContent:'row', flexWrap:'wrap'}} className="grid-invoices">
-                        {invoicesData.map((element, index)=>(                                   
-                        <div className="financial-square" style={{width:'225px', margin:'6px', cursor:'pointer'}} onClick={()=>{setActiveInvoice(element.invoice_number)}}>
-                            <span className='p-1'>{setStatus(element.invoice_status, false)}</span>
-                            <div className="p-1">
-                                <span style={{color:'gray', fontWeight:'500'}}>{element.client_first_name} {element.client_last_name}</span>
-                                <span style={{color:'gray', fontWeight:'500'}}>{element.normal_date}</span>
-                                <span style={{fontSize:'22px', fontWeight:'600'}}>{element.invoice_total_sum}<small>RON</small></span>
-                                <span style={{color:'gray', fontWeight:'500'}}>{element.invoice_number}</span>
-                            </div>
-                        </div>
-                        ))}                    
-                    </div>}
-                    <button id="loadMore" className="btn btn-light outline-mint-button" onClick={()=>{setFilter({...queryFilter, page: queryFilter.page + 1})}}>Incarca</button>
-                </div>
-                }
                 {activeInvoice &&
                 <div>
                     <button className='outline-mint-button' style={{marginBottom:'10px'}} onClick={()=>{setActiveInvoice(null)}}><span className="material-icons-outlined">arrow_back</span>Inchide</button>
