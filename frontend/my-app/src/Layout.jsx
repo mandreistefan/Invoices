@@ -12,7 +12,7 @@ let Layout = (props) =>{
     let navigationElements = 
     [
         {
-            name:"ACTIUNI",
+            name:"ACTIUNI PRINCIPALE",
             elements:[
                 {id:0, name: "clients", displayName:'Clienti', icon:'account_circle', path:'/clients'},
                 {id:1, name: "invoices", displayName:'Facturi', icon:'receipt_long', path:'/invoices'},
@@ -22,6 +22,7 @@ let Layout = (props) =>{
         },
         {   name:"DIVERSE",
             elements:[
+                {id:7, name: "dashboard", displayName:'Dashboard', icon:'home', path:'/'},
                 {id:8, name: "products", displayName:'Predefinite', icon:'folder_copy', path:'/products'},
                 {id:9, name: "expenses", displayName:'Cheltuieli', icon:'monetization_on', path:'/expenses'}            
             ]

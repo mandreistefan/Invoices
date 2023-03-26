@@ -5,7 +5,6 @@ import Logs from "./Logs"
 let Dashboard = (props) =>{
 
     let [dashboardData, setData] = useState(null)
-    let [startupStatus, setStatus] = useState(0)
 
     useEffect(()=>{
         fetch(`http://localhost:3000/dashboardData`,
@@ -87,11 +86,9 @@ let Dashboard = (props) =>{
             }
             {dashboardData===null&&
                 <div>
-                    {startupStatus===0&&
                     <div className="spinner-border" role="status">
-                        <span className="sr-only">Loading...</span>
-                    </div>}
-                    {startupStatus}
+                        <span className="sr-only"></span>
+                    </div> 
                 </div>
             }
         </div>
