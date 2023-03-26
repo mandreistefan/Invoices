@@ -1,10 +1,10 @@
 import {useState, useEffect} from 'react';
 import ClientForm from '../ClientForm/ClientForm.jsx';
-import Snackbar from '../Snackbar/Snackbar.jsx'
 import PageNavigation from '../PageNavigation.jsx'
 import Invoice from '../InvoiceComponent/Invoice.jsx';
 import SmallMenu from '../SmallMenu/SmallMenu.jsx';
 import Header from '../Header.jsx';
+import { useOutletContext } from 'react-router-dom';
 
 let Clients = (props) =>{
 
@@ -16,7 +16,6 @@ let Clients = (props) =>{
     const [activeClient, setActive] = useState(null)
     //used in pagination
     let [numberOfElements, setNOE] = useState(null)
-    let [alertUser, setAlertUser] = useState({text: null})
     //new client form
     let [newClientWindow, showonewClientWindow] = useState(false)
     //used to fetch data
@@ -24,6 +23,7 @@ let Clients = (props) =>{
     //new ivoice for him
     let [invoiceClient, invoiceThisClient] = useState(null)
 
+    const addSnackbar = useOutletContext();
 
     useEffect(()=>{
         fetchClients()
@@ -45,15 +45,15 @@ let Clients = (props) =>{
                 setAllClients(data.data)
                 setNOE(data.totalRecordsNumber)                
             }else if(data.status==="SERVER_ERROR"){
-                setAlertUser({text:"Baza de date nu poate fi accesata"})
+                addSnackbar({icon:"report_problem", text:"Baza de date nu poate fi accesata"})
             }else if(data.status==="NO_DATA"){
-                setAlertUser({text:"Nu exista date"})
+                addSnackbar({text:"Nu exista date"})
             }else{
                 if(data==null||data.totalRecordsNumber===0){
-                    setAlertUser({text:"Nu exista date"})
+                    addSnackbar({text:"Nu exista date"})
                     return false
                 }
-                setAlertUser({text:"Eroare"})
+                addSnackbar({icon:"report_problem", text:"Eroare"})
             }
         })
     }
@@ -72,12 +72,12 @@ let Clients = (props) =>{
         })
         .then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
-                setAlertUser({text:"Client arhivat"})
+                addSnackbar({text:"Client arhivat"})
                 fetchClients()
             }else if(data.status==="SERVER_ERROR"){
-                setAlertUser({text:"Baza de date nu poate fi accesata"})
+                addSnackbar({icon:"report_problem", text:"Baza de date nu poate fi accesata"})
             }else{
-                setAlertUser({text:"Eroare"})
+                addSnackbar({icon:"report_problem", text:"Eroare"})
             }            
         })
     }
@@ -140,7 +140,7 @@ let Clients = (props) =>{
                 <div> 
                     <button className='outline-mint-button' style={{marginBottom:'10px'}} onClick={()=>{setActive(null)}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>     
                     <div className='bordered-container'>
-                        <ClientForm key={activeClient.id} editable={true} clientID={activeClient}/>
+                        <ClientForm key={activeClient.id} editable={true} clientID={activeClient} addSnackbar={addSnackbar}/>
                     </div>
                 </div>}
                 {newClientWindow&&
@@ -151,7 +151,9 @@ let Clients = (props) =>{
                                 <span>Client nou</span>
                                 <button type="button" className="action-close-window" onClick={()=>{showonewClientWindow(false)}}><span className="material-icons-outlined">close</span></button>
                             </div>
-                            <ClientForm editable={true} isSubmitable={true} clientID={null}/>
+                            <div className='p-3'>
+                                <ClientForm editable={true} isSubmitable={true} clientID={null} addSnackbar={addSnackbar}/>
+                            </div>
                         </div>
                     </div>
                 }
@@ -163,11 +165,10 @@ let Clients = (props) =>{
                                 <span>Factura noua</span>
                                 <button type="button" className="action-close-window" onClick={()=>{invoiceThisClient(null)}}><span className="material-icons-outlined">close</span></button>
                             </div>
-                            <Invoice activeClient={invoiceClient}/>
+                            <Invoice activeClient={invoiceClient} addSnackbar={addSnackbar}/>
                         </div>
                     </div>
-                }
-                <Snackbar text={alertUser.text} closeSnack={()=>{setAlertUser({text:null})}}/>                
+                }              
             </div>
     )
 }

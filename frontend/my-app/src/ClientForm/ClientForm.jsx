@@ -1,6 +1,5 @@
 import {useState, useEffect} from "react";
 import "./clientform.css"
-import Snackbar from '../Snackbar/Snackbar.jsx'
 
 let ClientForm = (props)=>{
 
@@ -20,7 +19,6 @@ let ClientForm = (props)=>{
         client_notes: {value: "", modified: false, invalid: false}, 
     })
 
-    let [alertUser, setAlertUser] = useState({text: null})
     let [fieldsDisabled, setFieldsDisabled] = useState(false)
     let [clientID, setID] = useState (props.clientID ? props.clientID : null)
 
@@ -53,9 +51,9 @@ let ClientForm = (props)=>{
                     }
                     clientData(shallowCopy)
                 }else if(responseData.status==="SERVER_ERROR"){
-                    setAlertUser({text:"Baza de date nu poate fi accesata"})
+                    props.addSnackbar({icon:"report_problem",text:"Baza de date nu poate fi accesata"})
                 }else{
-                    setAlertUser({text:"Eroare"})
+                    props.addSnackbar({icon:"report_problem",text:"Eroare"})
                 }
             })        
         }        
@@ -146,6 +144,7 @@ let ClientForm = (props)=>{
             //at least one invalid element
             if(!flag){
                 clientData(shallowCopy)
+                props.addSnackbar({icon:"report_problem", text:"Unele date sunt invalide"})
                 return false
             }
 
@@ -167,14 +166,14 @@ let ClientForm = (props)=>{
                 })
             }).then(response=>response.json()).then(data=>{
                 if(data.status==="OK"){
-                    setAlertUser({text:"OK"})
+                    props.addSnackbar({text:"OK"})
                 }else if(data.status==="SERVER_ERROR"){
-                    setAlertUser({text:"Baza de date nu poate fi accesata"})
+                    props.addSnackbar({icon:"report_problem",text:"Baza de date nu poate fi accesata"})
                 }else{
-                    setAlertUser({text:"Eroare"})
+                    props.addSnackbar({icon:"report_problem", text:"Eroare"})
                 }
             }).catch(error=>{
-                setAlertUser({text:"Eroare"})
+                props.addSnackbar({icon:"report_problem", text:"Eroare"})
             })       
         }else{
             //new client logic
@@ -196,6 +195,7 @@ let ClientForm = (props)=>{
             //at least one invalid element
             if(!flag){
                 clientData(shallowCopy)
+                props.addSnackbar({icon:"report_problem", text:"Unele date sunt invalide"})
                 return false
             }
             //no data to be sent
@@ -208,16 +208,16 @@ let ClientForm = (props)=>{
             })
             .then(response=>response.json()).then(data=>{
                 if(data.status==="OK"){
-                    setAlertUser({text:"Client inregistrat"})
+                    props.addSnackbar({text:"Client inregistrat"})
                     clientData(shallowCopy) 
                 }else if(data.status==="SERVER_ERROR"){
-                    setAlertUser({text:"Baza de date nu poate fi accesata"})
+                    props.addSnackbar({icon:"report_problem",text:"Baza de date nu poate fi accesata"})
                 }else{
-                    setAlertUser({text:"Eroare"})
+                    props.addSnackbar({icon:"report_problem",text:"Eroare"})
                 }
             })
             .catch(error=>{
-                setAlertUser({text:"Eroare"})
+                props.addSnackbar({icon:"report_problem",text:"Eroare"})
             })
         } 
     }
@@ -306,9 +306,8 @@ let ClientForm = (props)=>{
                 </div>
 
                 {props.editable && <button id="edit-client-data" class="btn btn-success btn-sm" ><span class="action-button-label"><span class="material-icons-outlined">check</span>Salvare</span></button>}
-            </form>            
-}
-            <Snackbar text={alertUser.text} closeSnack={()=>{setAlertUser({text:null})}}/>   
+            </form>
+            } 
         </div>
     )       
 }

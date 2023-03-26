@@ -1,10 +1,9 @@
-import Snackbar from '../Snackbar/Snackbar.jsx'
-import React from "react";
+import { useEffect, useState } from 'react';
 
 let ProductForm = (props) =>{
 
     //default values
-    let [arrayData, setData] = React.useState({
+    let [arrayData, setData] = useState({
         product_id:null, 
         pp_name: {value:"", modified:false}, 
         pp_um: {value: "", modified:false}, 
@@ -12,12 +11,11 @@ let ProductForm = (props) =>{
         pp_tax: {value: 10, modified:false}, 
         pp_description:{value: "", modified:false}
     })
-    let [snackBarText, setSnackBarText] = React.useState(null)
-    let [dataModified, setdataModified] = React.useState(false)
-    let carlig=React.useRef();
+
+    let [dataModified, setdataModified] = useState(false)
 
     //received some data as props
-    React.useEffect(()=>{
+    useEffect(()=>{
         if(props.productID){ 
             fetch(`http://localhost:3000/products/${props.productID}`, {
                 method:"GET"
@@ -35,9 +33,9 @@ let ProductForm = (props) =>{
                         pp_description: {value: data.data[0].pp_description, modified:false}
                     })
                 }else if(data.status==="SERVER_ERROR"){
-                    setSnackBarText("Baza de date nu poate fi accesata")
+                    props.addSnackbar({icon:"report_problem",text:"Baza de date nu poate fi accesata"})
                 }else{
-                    setSnackBarText("An error ocurred")
+                    props.addSnackbar({icon:"report_problem",text:"Eroare"})
                 }
             })                 
         }
@@ -47,29 +45,29 @@ let ProductForm = (props) =>{
     let submitData=()=>{
         //some data validation
         if(arrayData.pp_name.value===""){
-            setSnackBarText("You need a product name")
+            props.addSnackbar({text:"Numele produsului nu e completat"})
             return false
         }
         if(arrayData.pp_um.value===""){
-            setSnackBarText("You need a product UM")
+            props.addSnackbar({text:"UM nu e completat"})
             return false
         }
         if(arrayData.pp_price_per_item.value===""){
-            setSnackBarText("You need a product price")
+            props.addSnackbar({text:"Pretul produsului nu e completat"})
             return false
         }else{
             if(!(parseFloat(arrayData.pp_price_per_item.value))) {
-                setSnackBarText("The price format is invalid")
+                props.addSnackbar({text:"Pretul nu e valid"})
                 return false
             }
         }
        
         if(arrayData.pp_tax.value===""){
-            setSnackBarText("You need a product tax")
+            props.addSnackbar({text:"Taxa produsului nu e completata"})
             return false
         }else{
             if(parseInt(arrayData.pp_tax.value)>=100) {
-                setSnackBarText("Tax cannot be equal to, or larger than, 100")
+                props.addSnackbar({text:"Taxa trebuie sa fie mai mica decat 100"})
                 return false
             }
         }   
@@ -103,11 +101,11 @@ let ProductForm = (props) =>{
         .then(response=>response.json())
         .then(data=>{
             if(data.status==="OK"){
-                setSnackBarText("Success")
+                props.addSnackbar({text:"OK"})
             }else if(data.status==="SERVER_ERROR"){
-                setSnackBarText("Baza de date nu poate fi accesata")
+                props.addSnackbar({icon:"report_problem", text:"Baza de date nu poate fi accesata"})
             }else{
-                setSnackBarText("An error ocurred")
+                props.addSnackbar({icon:"report_problem", text:"Eroare"})
             }
         })
 
@@ -173,7 +171,6 @@ let ProductForm = (props) =>{
                 </div>
             </div>
             <button class="btn btn-success btn-sm" onClick={()=>{submitData()}} disabled={dataModified ? false : true}><span class="action-button-label"><span class="material-icons-outlined">check</span>Salvare</span></button>
-            <Snackbar text={snackBarText} closeSnack={()=>{setSnackBarText(null)}}/>
         </div>
     )
 }

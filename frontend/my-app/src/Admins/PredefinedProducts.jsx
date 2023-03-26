@@ -1,18 +1,18 @@
-import React from "react";
-import Snackbar from '../Snackbar/Snackbar.jsx'
+import {useState, useEffect} from "react";
 import ProductForm from "./ProductForm.jsx";
 import Header from '../Header.jsx'
+import { useOutletContext } from "react-router-dom";
 
 let Products=()=>{   
 
     const defaultFilter={filter:"all", filterBy:"", page:1}
-    let [query, setFilter] = React.useState({filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
-    let [predefinedProducts, ppSet] = React.useState([])
-    let [productProps, setProductProps] = React.useState(null)
-    let [snackBarText, setSnackBarText] = React.useState(null)
-    let [addproductWindow, setaddproductWindow] = React.useState(false)
+    let [query, setFilter] = useState({filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
+    let [predefinedProducts, ppSet] = useState([])
+    let [productProps, setProductProps] = useState(null)
+    const addSnackbar = useOutletContext()
+    let [addproductWindow, setaddproductWindow] = useState(false)
 
-    React.useEffect(()=>{
+    useEffect(()=>{
         fetchData()
     },[query])
 
@@ -21,12 +21,12 @@ let Products=()=>{
             if(data.status==="OK"){
                 ppSet(data.data)
             }else if(data.status==="SERVER_ERROR"){
-                setSnackBarText("Baza de date nu poate fi accesata")
+                addSnackbar({icon:"report_problem",text: "Baza de date nu poate fi accesata"})
             }else{
-                setSnackBarText("Eroare")
+                addSnackbar({icon:"report_problem",text: "Eroare"})
             }
         }).catch(error=>{
-            setSnackBarText("Eroare")
+            addSnackbar({icon:"report_problem",text: "Eroare"})
         })
     }
 
@@ -46,12 +46,12 @@ let Products=()=>{
             if(data.status==="OK"){
                 fetchData()
             }else if(data.status==="SERVER_ERROR"){
-                setSnackBarText("Baza de date nu poate fi accesata")
+                addSnackbar({icon:"report_problem", text: "Baza de date nu poate fi accesata"})
             }else{
-                setSnackBarText("Eroare")
+                addSnackbar({icon:"report_problem",text: "Eroare"})
             }
         }).catch(error=>{
-            setSnackBarText("Eroare")
+            addSnackbar({icon:"report_problem",text: "Eroare"})
         })
     }
 
@@ -106,7 +106,7 @@ let Products=()=>{
                                 <button type="button" className="action-close-window " onClick={()=>{setProductProps(null)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button> 
                                 <div className="overlapping-component-inner">
                                     <span><b>Editare produs</b></span>
-                                    <ProductForm data={productProps}/> 
+                                    <ProductForm data={productProps} addSnackbar={addSnackbar}/> 
                                 </div>              
                             </div>
                         }      
@@ -120,10 +120,9 @@ let Products=()=>{
                             <span>Predefinit nou</span>
                             <button type="button" className="action-close-window" onClick={()=>{setaddproductWindow(false)}}><span className="material-icons-outlined">close</span></button>
                         </div>
-                        <ProductForm/>
+                        <ProductForm addSnackbar={addSnackbar}/>
                     </div>
                 </div>}
-                <Snackbar text={snackBarText} closeSnack={()=>{setSnackBarText(null)}}/>
             </div>
         </div>
     )    

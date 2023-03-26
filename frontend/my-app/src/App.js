@@ -1,15 +1,13 @@
 import './App.css';
-import React from 'react';
 import Layout from './Layout'
 import ClientsComponent from './ClientsComponent/ClientsComponent.jsx'
 import InvoicesComponent from './InvoiceComponent/InvoicesOverview'
 import Employees from './Employees/Employees.jsx'
-import Admins from './Admins/AdminsOverview.jsx'
 import PredefinedProducts from './Admins/PredefinedProducts.jsx'
 import Expenses from './Admins/Expenses'
 import Financials from './FinancialComponent/FinancialComponent'
 import Dashboard from './Dashboard';
-import {Route, createBrowserRouter, RouterProvider, createRoutesFromElements, createHashRouter, useRouteError} from 'react-router-dom'
+import {Route, createBrowserRouter, RouterProvider, createRoutesFromElements, createHashRouter, useRouteError, useOutletContext} from 'react-router-dom'
 
 let App =()=> {
 
@@ -19,11 +17,10 @@ let App =()=> {
   if(navigator.userAgent.indexOf('Electron')>-1){
     router=createHashRouter(
       createRoutesFromElements(
-        <Route path="/"  element={<Layout/>} errorElement={<ErrorBoundary />}>
+        <Route path="/"  element={<Layout/>} errorElement={<ErrorBoundary/>} >
           <Route path="/" element={<Dashboard/>} />
           <Route path='clients' element={<ClientsComponent/>}/>
           <Route path='invoices' element={<InvoicesComponent/>}/>
-          <Route path='admins' element={<Admins/>}/>
           <Route path='employees' element={<Employees/>}/>
           <Route path='products' element={<PredefinedProducts/>}/>
           <Route path='expenses' element={<Expenses/>}/>
@@ -34,11 +31,10 @@ let App =()=> {
   }else{
     router=createBrowserRouter(
       createRoutesFromElements(
-        <Route path="/" element={<Layout/>} errorElement={<ErrorBoundary />}>
+        <Route path="/" element={<Layout/>} errorElement={<ErrorBoundary />} >
           <Route path="/" element={<Dashboard/>} />
           <Route path='clients' element={<ClientsComponent/>}/>
           <Route path='invoices' element={<InvoicesComponent/>}/>
-          <Route path='admins' element={<Admins/>}/>
           <Route path='employees' element={<Employees/>}/>
           <Route path='products' element={<PredefinedProducts/>}/>
           <Route path='expenses' element={<Expenses/>}/>

@@ -1,13 +1,12 @@
 import {useState, useEffect} from 'react';
 import './FinancialComponent.css'
-import Snackbar from '../Snackbar/Snackbar.jsx'
 import FinancialChart from './FinancialChart.jsx'
 import PieChart from './PieChart.jsx'
+import { useOutletContext } from 'react-router-dom';
 
 let Financial = (props) =>{
 
     let [financialData, setFinancialData] = useState(null)
-    let [alertUser, setUserAlert] =useState({text: null})
     //use for the horizontal scale of the chart
     let [chartTitle, setChartTile] = useState("Current year")
     let [chartData, setChartData] = useState([{month:8, year:2022, total:0}, {month:9, year:2022, total:0}])
@@ -19,6 +18,8 @@ let Financial = (props) =>{
         end: `${currentDate.getFullYear()}-12-31`
     }) 
     
+    const addSnackbar = useOutletContext()
+
     let [tableDisplay, setDisplay] = useState(false)
     let [taxes, setTaxes]= useState({profitTaxPercentage: 1, profitTax: 0, profit: 0})
 
@@ -62,11 +63,11 @@ let Financial = (props) =>{
                 //calcualtes taxes
                 setTaxes({...taxes, profitTax: parseFloat(((data.data.total-data.data.expenses-data.data.salaries)/100)*taxes.profitTaxPercentage).toFixed(2), profit:parseFloat(data.data.total-taxes.profitTax)})
             }else if(data.status==="NO_DATA"){
-                setUserAlert({text: "Nu exista date"})
+                addSnackbar({text: "Nu exista date"})
             }else if(data.status==="SERVER_ERROR"){
-                setUserAlert({text: "Baza de date nu poate fi accesata"})    
+                addSnackbar({icon:"report_problem",text: "Baza de date nu poate fi accesata"})    
             }else{
-                setUserAlert({text: "Baza de date nu poate fi accesata"})
+                addSnackbar({ticon:"report_problem",ext: "Baza de date nu poate fi accesata"})
             }
         })
     }
@@ -78,11 +79,11 @@ let Financial = (props) =>{
     function exportData(){
         fetch(`http://localhost:3000/export_data`).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
-                setUserAlert({text: `Au fost exportate ${data.data.length} tabele`})  
+                addSnackbar({text: `Au fost exportate ${data.data.length} tabele`})  
             }else if(data.status==="SERVER_ERROR"){
-                setUserAlert({text: "Baza de date nu poate fi accesata"})    
+                addSnackbar({icon:"report_problem",text: "Baza de date nu poate fi accesata"})    
             }else{
-                setUserAlert({text: "Baza de date nu poate fi accesata"})
+                addSnackbar({icon:"report_problem",text: "Baza de date nu poate fi accesata"})
             }
         })
     }
@@ -262,8 +263,7 @@ let Financial = (props) =>{
                 </div>
             </div>
             }
-            </div>:"Nu exista date"}
-            <Snackbar text={alertUser.text} closeSnack={()=>{setUserAlert({text:null})}}/>         
+            </div>:"Nu exista date"}     
         </div>
     )
 

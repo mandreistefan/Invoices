@@ -1,6 +1,5 @@
 import React from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import Snackbar from '../Snackbar/Snackbar.jsx'
 import PredefinedProducts from '../Admins/ExistingProducts.jsx'
 
 export default class Invoice extends React.Component{
@@ -21,7 +20,6 @@ export default class Invoice extends React.Component{
             total_prod_price: 0,  
             total_tax:0,
             activeClient: props.activeClient ? props.activeClient.id : null,
-            alertUser: null,
             invoice_server_status: "draft",
             invoice_status: "draft",
             invoice_pay_method: "cash",            
@@ -137,7 +135,7 @@ export default class Invoice extends React.Component{
                 //don't submit an invoice with no user data
                 if(!this.clientDataValid()){
                     console.log("clientDatainvalid")
-                    this.setState({alertUser:"Invalid form data!"})
+                    this.props.addSnackbar({text:"Datele introduse sunt invalid"})
                     return false
                 }
 
@@ -184,17 +182,19 @@ export default class Invoice extends React.Component{
                     invoiceID = data.invoiceID
                     this.setState({invoiceID: invoiceID})
                     //notify the user
-                    this.setState({alertUser:"Factura creata", dataModified:false})
+                    this.props.addSnackbar({text:"Factura creata"})
+                    this.setState({dataModified:false})
                 }else{
                     //notify the user
-                    this.setState({alertUser:"Factura modificata", dataModified:false})  
+                    this.props.addSnackbar({text:"Factura creata"})
+                    this.setState({dataModified:false})
                 }
                 //all is good, reload data; use a local because the state-update can be too slow and the state.invoiceID will be kept null when fetchInvoiceData is called
                 this.fetchInvoiceData(invoiceID)
             }else if(data.status==="SERVER_ERROR"){
-                this.setState({alertUser:"Baza de date nu poate fi accesata"})
+                this.props.addSnackbar({icon:"report_problem",text:"Baza de date nu poate fi accesata"})
             }else{
-                this.setState({alertUser:"An error occured"})
+                this.props.addSnackbar({icon:"report_problem",text:"Eroare"})
             }
         })
     }
@@ -204,10 +204,6 @@ export default class Invoice extends React.Component{
         
         if(triggerName==="billingType"){
             if(event.target.value==="recurring-billing-option" && this.state.activeClient===null){
-                this.setState({
-                    alertUser:"Recurrent invoices can be created for registered users only!",
-                    billingType: "one-time-billing-option"
-                })
                 return;
             }
         }
@@ -292,7 +288,7 @@ export default class Invoice extends React.Component{
             if(element.properties.id){
                 if(element.properties.id===dataObject.id){
                     productAlready=true;
-                    this.setState({alertUser:"Product already added!"})
+                    this.props.addSnackbar({text:"Produsul este deja adaugat"})
                     return false
                 }
             }
@@ -339,9 +335,9 @@ export default class Invoice extends React.Component{
             if(data.status==="OK"){
                 this.removeTableElement(rowIndex)
             }else if(data.status==="SERVER_ERROR"){
-                this.setState({alertUser:"Baza de date nu poate fi accesata"})
+                this.props.addSnackbar({icon:"report_problem",text:"Baza de date nu poate fi accesata"})
             }else{
-                this.setState({alertUser:"Eroare"})
+                this.props.addSnackbar({icon:"report_problem",text:"Eroare"})
             }
         })
     }
@@ -365,9 +361,9 @@ export default class Invoice extends React.Component{
             if(data.status==="OK"){
                 this.setState({invoice_status:"finalised"})
             }else if(data.status==="SERVER_ERROR"){
-                this.setState({alertUser:"Factura setata ca finalizata"})
+                this.props.addSnackbar({text:"Factura setata ca finalizata"})
             }else{
-                this.setState({alertUser:"A aparut o eroare"})
+                this.props.addSnackbar({icon:"report_problem",text:"Eroare"})
             }
         })
     }
@@ -494,8 +490,7 @@ export default class Invoice extends React.Component{
                                 <PredefinedProducts addElement={this.addPredefinedElement} insertable={true}/> 
                             </div>              
                         </div>
-                    }                                              
-                    <Snackbar text={this.state.alertUser} closeSnack={()=>{this.setState({alertUser:null})}}/>        
+                    }                                                  
                 </div>
             ) 
         }   

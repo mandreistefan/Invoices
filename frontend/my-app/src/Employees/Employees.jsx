@@ -1,10 +1,10 @@
-import {useState, useEffect} from "react";
-import Snackbar from '../Snackbar/Snackbar.jsx'
+import {useState, useEffect } from "react";
 import Employee from './Employee.jsx'
 import EmployeeForm from './EmployeeForm.jsx'
 import PageNavigation from "../PageNavigation.jsx";
 import Header from "../Header.jsx";
 import SmallMenu from "../SmallMenu/SmallMenu.jsx";
+import { useOutletContext } from "react-router-dom";
 
 let Employees=(props)=>{
 
@@ -16,7 +16,6 @@ let Employees=(props)=>{
     let [employees, setEmployees] = useState([])
     let [queryFilter, setFilter] = useState({filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page, step:defaultFilter.step})
     let [activeEmployee, setActive] = useState("")
-    let [alertUser, setAlertUser] = useState(null)
     let [addEmployeeWindow, showaddEmployeeWindow] = useState(false)
     let [editEmployeeWindow, setEditableEmployee] = useState(false)
     let [numberOfElements, setNOE] = useState(null)
@@ -25,16 +24,18 @@ let Employees=(props)=>{
         fetchData()        
     },[queryFilter.page, queryFilter.step, queryFilter.filterBy])
 
+    const addSnackbar = useOutletContext()
+
     function fetchData(){
         fetch(`http://localhost:3000/employees?filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}&step=${queryFilter.step}`).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 setEmployees(data.data)
                 setNOE(data.recordsNumber)
             }else if(data.status==="NO_DATA"){
-                setAlertUser("Nu sunt date")
+                addSnackbar({text:"Nu sunt date"})
             }            
         }).catch(error=>{
-            setAlertUser("Something went wrong")
+            addSnackbar({icon:"report_problem",text:"Eroare"})
         })
     }
 
@@ -65,14 +66,14 @@ let Employees=(props)=>{
             headers: { 'Content-Type': 'application/json' }
         }).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
-                setAlertUser("Angajat arhivat")
+                addSnackbar({text:"Angajat arhivat"})
                 localStorage.setItem('activeEmployee', null)
                 fetchData()
             }else{
-                setAlertUser("Eroare")
+                addSnackbar({icon:"report_problem",text:"Eroare"})
             }            
         }).catch(error=>{
-            setAlertUser("Eroare")
+            addSnackbar({icon:"report_problem",text:"Eroare"})
         }) 
     }
 
@@ -139,7 +140,7 @@ let Employees=(props)=>{
                         {activeEmployee&&
                             <div> 
                                 <button className="outline-mint-button" style={{marginBottom:'15px'}} onClick={()=>{closeEmployee()}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>     
-                                <Employee id={activeEmployee} refreshParent={fetchData}/>
+                                <Employee id={activeEmployee} refreshParent={fetchData} addSnackbar={addSnackbar}/>
                             </div>    
                         }
                     </div>
@@ -153,11 +154,10 @@ let Employees=(props)=>{
                             <span>Angajat nou</span>
                             <button type="button" className="action-close-window" onClick={()=>{closeAndRefresh()}}><span className="material-icons-outlined">close</span></button>
                         </div>
-                        <div className="p-3"><EmployeeForm/></div>
+                        <div className="p-3"><EmployeeForm addSnackbar={addSnackbar}/></div>
                     </div>
                 </div>
             }
-            <Snackbar text={alertUser} closeSnack={()=>{setAlertUser(null)}}/>  
         </div>
     )
 }

@@ -1,5 +1,4 @@
 import React from "react";
-import Snackbar from '../Snackbar/Snackbar.jsx'
 import EmployeeForm from "./EmployeeForm.jsx";
 import Header from "../Header.jsx";
 
@@ -34,7 +33,6 @@ export default class Employee extends React.Component{
             salaryWindow: false,
             newSalaryMonth:1,
             salaryYear:2023,
-            alertUser:null, 
             vacationDaysWindow:false,
             vacationDaysRequested:[{date: `${dateString.year}-${dateString.month}-${dateString.day}`, type:"vacation", disabled:false}], 
             availableVacationDays:0,
@@ -88,11 +86,11 @@ export default class Employee extends React.Component{
                 this.calculateNet() 
 
             }else{
-                this.setState({alertUser:"Eroare"})
+                this.props.addSnackbar({text:"Eroare"})
             }
         }).catch(error=>{
             console.log(error)
-            this.setState({alertUser:"Eroare"})
+            this.props.addSnackbar({text:"Eroare"})
         })
     }
 
@@ -165,10 +163,10 @@ export default class Employee extends React.Component{
             body:JSON.stringify({paid_to:this.state.id, salary_month:this.state.newSalaryMonth, salary_year:this.state.salaryYear, bank_ref:document.getElementById("bankref").value, taxes})
         }).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
-                this.setState({alertUser:"Salariu inregistrat"})
+                this.props.addSnackbar({text:"Salariu inregistrat"})
                 this.updateEmployeeSalaries()
             }else{
-                if(data.data==="SALARY_EXISTS") this.setState({alertUser:"Exista o inregistrare pentru luna respectiva"})
+                if(data.data==="SALARY_EXISTS") this.props.addSnackbar({text:"Exista o inregistrare pentru luna respectiva"})
             }
         }).catch(error=>{
             console.log(error)
@@ -199,7 +197,7 @@ export default class Employee extends React.Component{
                 })
             }).then(response=>response.json()).then(data=>{
                 if(data.status==="OK"){
-                    this.setState({alertUser:"Cerere inregistrata"})
+                    this.props.addSnackbar({text:"Cerere inregistrata"})
                     let vacationsCopy = [...this.state.vacationDaysRequested]
                     vacationsCopy.forEach(element=>{
                         element.disabled=true
@@ -209,11 +207,11 @@ export default class Employee extends React.Component{
                     document.getElementById("submit-vacation-day-button").disabled=true
                     this.updateVacationDays()
                 }else{
-                    this.setState({alertUser:"Ceva nu a functionat"})
+                    this.props.addSnackbar({icon:"report_problem",text:"Ceva nu a functionat"})
                 }                
             })
         }else{
-            this.setState({alertUser:"O data este repetata"})
+            this.props.addSnackbar({text:"O data este repetata"})
         }        
     }
 
@@ -243,7 +241,7 @@ export default class Employee extends React.Component{
             //checks if the day is saturday or sunday
             let theDate = new Date(event.target.value)
             if(theDate.getDay()===0 || theDate.getDay()===6){
-                this.setState({alertUser:"Ziua selectata este zi de weekend"})
+                this.props.addSnackbar({text:"Ziua selectata este zi de weekend"})
                 return false
             }
             //date change
@@ -278,7 +276,7 @@ export default class Employee extends React.Component{
             if(data.status==="OK"){
                 this.setState({salaries: this.convertSalaries(data.data)})
             }else{
-                this.setState({alertUser:"Ceva nu a functionat"})
+                this.props.addSnackbar({icon:"report_problem",text:"Ceva nu a functionat"})
             }                
         })
     }
@@ -305,7 +303,7 @@ export default class Employee extends React.Component{
             if(data.status==="OK"){
                 this.setState({vacationDays: this.convertVacations(data.data)})
             }else{
-                this.setState({alertUser:"Ceva nu a functionat"})
+                this.props.addSnackbar({icon:"report_problem",text:"Ceva nu a functionat"})
             }                
         })
     }
@@ -369,7 +367,7 @@ export default class Employee extends React.Component{
                             <h4>Date angajat</h4>
                         </div>
                         <div style={{padding:'20px'}}>
-                            <EmployeeForm refreshParent={this.fetchData} employeeID={this.props.id}/>
+                            <EmployeeForm refreshParent={this.fetchData} employeeID={this.props.id} addSnackbar={this.props.addSnackbar}/>
                         </div>
                     </div>
                     <div style={{display: this.state.windows[1].active===true ? 'block' : 'none'}}> 
@@ -578,7 +576,6 @@ export default class Employee extends React.Component{
                         </div>
                     </div>             
                 }
-               <Snackbar text={this.state.alertUser} closeSnack={()=>{this.setState({alertUser:null})}}/>  
             </div>
         )
     }

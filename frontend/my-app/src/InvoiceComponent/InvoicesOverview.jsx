@@ -1,10 +1,10 @@
 import {useEffect, useState} from 'react';
 import './Invoices.css'
-import Snackbar from '../Snackbar/Snackbar.jsx'
 import PageNavigation from '../PageNavigation.jsx'
 import Invoice from './Invoice'
 import Header from '../Header';
 import SmallMenu from '../SmallMenu/SmallMenu';
+import { useOutletContext } from 'react-router-dom';
 
 let InvoicesOverview = (props) =>{
 
@@ -12,7 +12,6 @@ let InvoicesOverview = (props) =>{
 
     let [invoicesData, invoicesDataSet] = useState(null)
     let [activeInvoice, setActiveInvoice] = useState(null)
-    let [alertUser, setAlertUser] = useState({text: null})
     let [numberOfElements, setNOE] = useState(null)
     let [queryFilter, setFilter] = useState({
         filter: props.queryFilterBy ? props.queryFilterBy : defaultFilter.filter, 
@@ -26,6 +25,7 @@ let InvoicesOverview = (props) =>{
 
     let [activeFilters, setActiveFilters] = useState({date:null, search:null})
 
+    const addSnackbar = useOutletContext();
 
     //refecth on page change or when the query parameters change (ex. when a search is attempted)
     useEffect(()=>{
@@ -53,12 +53,12 @@ let InvoicesOverview = (props) =>{
                 setNOE(data.recordsNumber)
                 //setActiveInvoice(data.data[0].invoice_number)
             }else if(data.status==="SERVER_ERROR"){
-                setAlertUser({text: "Baza de date nu poate fi accesata"})
+                addSnackbar({icon:"report_problem", text: "Baza de date nu poate fi accesata"})
             }else if(data.status==="NO_DATA"){
-                setAlertUser({text: "Nu exista date"})
+                addSnackbar({text: "Nu exista date"})
             }else{
                 if(data===null||data.recordsNumber===0){
-                    setAlertUser({text:"Nu exista date"})
+                    addSnackbar({text:"Nu exista date"})
                     return false
                 } 
             }            
@@ -84,11 +84,11 @@ let InvoicesOverview = (props) =>{
         .then(response=>response.json())
         .then(data=>{
             if(data.status==="OK"){
-                setAlertUser({text: "Factura arhivata"})
+                addSnackbar({text: "Factura arhivata"})
             }else if(data.status==="SERVER_ERROR"){
-                setAlertUser({text: "Baza de date nu poate fi accesata"})
+                addSnackbar({icon:"report_problem", text: "Baza de date nu poate fi accesata"})
             }else{
-                setAlertUser({text: "An error ocurred"})
+                addSnackbar({icon:"report_problem", text: "An error ocurred"})
             }
         })
     }
@@ -101,12 +101,12 @@ let InvoicesOverview = (props) =>{
         })
         .then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
-                setAlertUser({text: "Factura setata ca finalizata"})
+                addSnackbar({text: "Factura setata ca finalizata"})
                 fetchData()
             }else if(data.status==="SERVER_ERROR"){
-                setAlertUser({text: "Baza de date nu poate fi accesata"})
+                addSnackbar({icon:"report_problem", text: "Baza de date nu poate fi accesata"})
             }else{
-                setAlertUser({text: "An error ocurred"})
+                addSnackbar({icon:"report_problem", text: "An error ocurred"})
             }
         })
     }
@@ -222,10 +222,9 @@ let InvoicesOverview = (props) =>{
                         <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
                             <div style={{display:'inherit', alignItems:'center'}}><span style={{fontSize:'24px'}}>Factura numarul {activeInvoice}</span></div>                                                        
                         </div>
-                        <Invoice key={activeInvoice} invoiceID={activeInvoice}/>
+                        <Invoice key={activeInvoice} invoiceID={activeInvoice} addSnackbar={addSnackbar}/>
                     </div>
                 </div>}
-            <Snackbar text={alertUser.text} closeSnack={()=>{setAlertUser({text:null})}}/>  
         </div>
     )
 

@@ -1,11 +1,10 @@
-import Snackbar from '../Snackbar/Snackbar.jsx'
-import React from "react";
+import { useEffect, useState } from 'react';
 
 let ExpenseForm = (props) =>{
 
     let currentDate = new Date()
     //default values
-    let [arrayData, setData] = React.useState({
+    let [arrayData, setData] = useState({
         id:null, 
         exp_name: {value:"", modified:false}, 
         exp_sum: {value: 0, modified:false}, 
@@ -14,11 +13,10 @@ let ExpenseForm = (props) =>{
         exp_date: {value: currentDate, modified:false},
         exp_type: {value: "tools", modified:false},
     })
-    let [snackBarText, setSnackBarText] = React.useState(null)
-    let [dataModified, setdataModified] = React.useState(false)
+    let [dataModified, setdataModified] = useState(false)
 
     //received some data as props
-    React.useEffect(()=>{
+    useEffect(()=>{
         if(props.data){                    
             setData({
                 id: props.data.id,
@@ -35,15 +33,15 @@ let ExpenseForm = (props) =>{
     let submitData=()=>{
         //some data validation
         if(arrayData.exp_name.value===""){
-            setSnackBarText("You need a name")
+            props.addSnackbar({text: "Cheltuiala are nevoie de un nume"})
             return false
         }
         if(arrayData.exp_sum.value===""){
-            setSnackBarText("You need a sum")
+            props.addSnackbar({text: "Suma nu a fost completata"})
             return false
         }
         if(arrayData.exp_description.value===""){
-            setSnackBarText("You need a description")
+            props.addSnackbar({text: "Descrierea nu a fost completata"})
             return false
         }  
 
@@ -77,12 +75,12 @@ let ExpenseForm = (props) =>{
         .then(response=>response.json())
         .then(data=>{
             if(data.status==="OK"){
-                setSnackBarText("Success")
+                props.addSnackbar({text: "OK"})
                 props.reFetch()
             }else if(data.status==="SERVER_ERROR"){
-                setSnackBarText("Baza de date nu poate fi accesata") 
+                props.addSnackbar({icon:"report_problem", text: "Baza de date nu poate fi accesata"}) 
             }else{
-                setSnackBarText("An error ocurred")
+                props.addSnackbar({icon:"report_problem", text: "Eroare"})
             }
 
             for (const [key, value] of Object.entries(shallowCopy)) {
@@ -160,7 +158,6 @@ let ExpenseForm = (props) =>{
                 </div>
             </div>
             <button class="btn btn-success btn-sm" onClick={()=>{submitData()}} disabled={dataModified ? false : true}><span class="action-button-label"><span class="material-icons-outlined">check</span>Salvare</span></button>
-            <Snackbar text={snackBarText} closeSnack={()=>{setSnackBarText(null)}}/>
         </div>
     )
 }

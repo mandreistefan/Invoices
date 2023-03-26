@@ -1,21 +1,21 @@
-import React from "react";
-import Snackbar from '../Snackbar/Snackbar.jsx'
+import { useEffect, useState } from 'react';
 import ExpenseForm from './ExpenseForm.jsx'
 import Header from "../Header.jsx";
+import { useOutletContext } from "react-router-dom";
 
 let Expenses=()=>{
 
-    let [alertUser, setAlertUser] = React.useState({text: null})
-    let [expenses, setExpenses] = React.useState([])
-    let [addexpensesWindow, setaddexpensesWindow] = React.useState(false)
+    const addSnackbar = useOutletContext()
+    let [expenses, setExpenses] = useState([])
+    let [addexpensesWindow, setaddexpensesWindow] = useState(false)
     //time interval 
     let currentDate = new Date()
-    let [dateInterval, setInterval] = React.useState({
+    let [dateInterval, setInterval] = useState({
         start: `${currentDate.getFullYear()}-01-01`,
         end: `${currentDate.getFullYear()}-12-31`
     })
 
-    React.useEffect(()=>{
+    useEffect(()=>{
         fetchData()
     },[dateInterval])
 
@@ -29,12 +29,12 @@ let Expenses=()=>{
             if(data.status==="OK"){
                 setExpenses(data.data)
             }else if(data.status==="SERVER_ERROR"){
-                setAlertUser({text: "Baza de date nu poate fi accesata"}) 
+                addSnackbar({icon:"report_problem", text: "Baza de date nu poate fi accesata"}) 
             }else{
-                setAlertUser({text: "Eroare"}) 
+                addSnackbar({icon:"report_problem", text: "Eroare"}) 
             }
         }).catch(error=>{
-            setAlertUser({text: "Eroare"}) 
+            addSnackbar({icon:"report_problem", text: "Eroare"}) 
         })
     }
 
@@ -52,12 +52,12 @@ let Expenses=()=>{
         .then(response=>response.json())
         .then(data=>{
             if(data.status==="OK"){
-                setAlertUser({text: "Cheltuiala stearsa"})
+                addSnackbar({text: "Cheltuiala stearsa"})
                 fetchData()
             }else if(data.status==="SERVER_ERROR"){
-                setAlertUser({text: "Baza de date nu poate fi accesata"}) 
+                addSnackbar({icon:"report_problem", text: "Baza de date nu poate fi accesata"}) 
             }else{
-                setAlertUser({text: "Eroare"})
+                addSnackbar({icon:"report_problem", text: "Eroare"})
             }
         })
     }
@@ -140,12 +140,11 @@ let Expenses=()=>{
                                 <span>Inregistrare cheltuiala</span>
                                 <button type="button" className="action-close-window" onClick={()=>{setaddexpensesWindow(false)}}><span className="material-icons-outlined">close</span></button>
                             </div>
-                            <ExpenseForm reFetch={fetchData}/>
+                            <ExpenseForm reFetch={fetchData} addSnackbar={addSnackbar}/>
                         </div>
                     </div>
                 }
             </div>
-            <Snackbar text={alertUser.text} closeSnack={()=>{setAlertUser({text:null})}}/>  
         </div>
     )
 
