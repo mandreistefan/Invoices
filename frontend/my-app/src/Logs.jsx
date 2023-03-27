@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import {processedDate} from './Utils'
 
 
 let Logs = (props) =>{
@@ -6,6 +7,7 @@ let Logs = (props) =>{
     let [logs, setLogs] = useState(null)
 
     useEffect(()=>{
+        
         fetch(`http://localhost:3000/latestlogs`,
         {
             method:"GET",
@@ -32,7 +34,7 @@ let Logs = (props) =>{
                 <div key={index} className="financial-square mb-2">
                     <span style={{color:'gray'}} className="material-icons-outlined">schedule</span>
                     <div>
-                        <span style={{color:'gray', fontWeight:'500'}}>{element.date}</span>
+                        <span style={{color:'gray', fontWeight:'500'}}>{processedDate(element.date)}</span>
                         <span>{element.message}</span>
                     </div>
                 </div>

@@ -219,9 +219,6 @@ let InvoicesOverview = (props) =>{
                 <div>
                     <button className='outline-mint-button' style={{marginBottom:'10px'}} onClick={()=>{setActiveInvoice(null)}}><span className="material-icons-outlined">arrow_back</span>Inchide</button>
                     <div className='overview-container bordered-container'>                                
-                        <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}} className='p-3'>
-                            <div style={{display:'inherit', alignItems:'center'}}><span style={{fontSize:'24px'}}>Factura numarul {activeInvoice}</span></div>                                                        
-                        </div>
                         <Invoice key={activeInvoice} invoiceID={activeInvoice} addSnackbar={addSnackbar}/>
                     </div>
                 </div>}

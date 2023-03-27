@@ -207,4 +207,20 @@ myApp.get("/latestLogs", (req, res)=>{
     })
 })
 
+myApp.get("/history", (req, res)=>{
+    console.log("here")
+    let target = req.query.target
+    if(!target){
+        res.send({
+            status:"INVALID_REQUEST",
+            data:null
+        })
+    }
+    databaseController.getHistory(target).then(data=>{
+        res.send(data)
+    }).catch(error=>{
+
+    })
+})
+
 myApp.listen(PORT)

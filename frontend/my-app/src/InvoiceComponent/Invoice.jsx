@@ -1,6 +1,7 @@
 import React from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import PredefinedProducts from '../Admins/ExistingProducts.jsx'
+import History from "../History.jsx";
 
 export default class Invoice extends React.Component{
        
@@ -376,7 +377,18 @@ export default class Invoice extends React.Component{
     render()
         {
             return(
-                <div className="invoices-add-container p-3">                              
+                <div className="invoices-add-container p-3">  
+                    <div style={{display:'flex', justifyContent:'space-between'}} className="mb-3">
+                        <span style={{fontSize:'24px'}}>{this.state.invoiceID!==null ? `Factura numarul ${this.state.invoiceID}` : "Factura noua"}</span> 
+                        <div className="btn-group" role="group">
+                            <button className="btn btn-success btn-sm" disabled={(this.state.dataModified) ? false : true} form="invoice-form" id="submit-invoice-button"><span className="action-button-label"><span className="material-icons-outlined">check</span>Salvare</span></button>                                                           
+                            <button title="Finalizare" type="button" className="btn btn-success btn-sm" disabled={(this.state.invoice_status==="finalised" || this.state.invoiceID===null) ? true : false} onClick={()=>{this.setInvoiceFinalised()}}><span className="action-button-label"><span className="material-icons-outlined">task_alt</span>Finalizare</span></button>
+                            <button title="Generare" type="button" className="btn btn-success btn-sm" disabled={(this.state.invoiceID===null) ? true : false} onClick={()=>{this.generateInvoice()}}><span className="action-button-label"><span className="material-icons-outlined">file_open</span>Generare</span></button>
+                        </div>  
+                    </div>
+                    {this.state.invoice_server_status==="finalised" &&
+                    <div className="alert alert-success"><small>Factura finalizata. Facturile finalizate nu mai pot fi editate.</small></div>
+                    }                            
                     <form id="invoice-form" onSubmit={this.submitData} style={{width:'100%'}}>                              
                         <div className="client-info-container form-sub-container" style={{display:'flex', flexDirection:'column'}}>
                             <h6>Date client</h6>
@@ -473,12 +485,12 @@ export default class Invoice extends React.Component{
                                 <h6>Total: {this.state.total_prod_price}</h6>
                             </div>
                         </div>
-                        <div className="btn-group" role="group">
-                            <button className="btn btn-success btn-sm" disabled={(this.state.dataModified) ? false : true} form="invoice-form" id="submit-invoice-button"><span className="action-button-label"><span className="material-icons-outlined">check</span>Salvare</span></button>                                                           
-                            <button title="Finalizare" type="button" className="btn btn-success btn-sm" disabled={(this.state.invoice_status==="finalised" || this.state.invoiceID===null) ? true : false} onClick={()=>{this.setInvoiceFinalised()}}><span className="action-button-label"><span className="material-icons-outlined">task_alt</span>Finalizare</span></button>
-                            <button title="Generare" type="button" className="btn btn-success btn-sm" disabled={(this.state.invoiceID===null) ? true : false} onClick={()=>{this.generateInvoice()}}><span className="action-button-label"><span className="material-icons-outlined">file_open</span>Generare</span></button>
-                        </div>
                     </form>
+                    {this.state.invoiceID && 
+                    <div className="mt-3">
+                        <h6>Istoric</h6>
+                        <div className="my-3 p-3 bg-body rounded shadow-sm"><History target={`invoice ${this.state.invoiceID}`}/></div>
+                    </div>}
                     {this.state.predefinedList&&
                         <div> 
                             <div className="blur-overlap"></div>                                 

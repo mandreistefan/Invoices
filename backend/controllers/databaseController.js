@@ -578,6 +578,11 @@ async function getRecentLogs(){
     return await databaseOperations.getLatestLogs()
 }
 
+async function getHistory(target){
+    let targetTerms = target.indexOf("+")>0 ? target.split("+") : target
+    return databaseOperations.getHistory(targetTerms)
+}
+
 
 module.exports={ 
     fetchClients:fetchClients,
@@ -600,5 +605,6 @@ module.exports={
     deleteExpense,
     getEmployees, addEmployee, editEmployee, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeOverview, archiveEmployee, deletePredefinedProduct, 
     exportData, dashboardData,
-    pingDB, getRecentLogs
+    pingDB, getRecentLogs,
+    getHistory
 }

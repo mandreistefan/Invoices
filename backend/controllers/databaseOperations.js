@@ -1695,6 +1695,28 @@ async function getLatestLogs(){
     })
 }
 
+async function getHistory(targetTerms){
+
+    let query = ""
+    if(Array.isArray(targetTerms)){
+        query = `SELECT * FROM log WHERE MESSAGE like '%${targetTerms[0]} ${targetTerms[1]}%'`
+    }else{
+        query = `SELECT * FROM log WHERE MESSAGE like '%${targetTerms}%'`
+    }
+    return new Promise((resolve, reject)=>{
+        connection.query(query, function(error, result){
+            if(error){
+                console.log(error)
+                reject ({status:"ERROR", data:null})
+            }
+            if(result){
+                resolve({status:"OK", data:result})
+            }
+            resolve({status:"FAIL", data:null})
+        })
+    })
+}
+
 
 module.exports ={
     getClients:getClients,
@@ -1721,5 +1743,6 @@ module.exports ={
     registerBilledProducts: registerBilledProducts,
     getRecordsNumber:getRecordsNumber, getDBinfo:getDBinfo, changeDatabase, getExpenses,addExpense, deleteExpense, searchDatabase, getEmployees, addEmployee, editEmployee, hasSalaryOnDate, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeInfo, archiveEmployee, deleteEmployee, removePredefinedProduct,
     exportData,
-    getDashboardData, pingDB, databaseLog, getLatestLogs
+    getDashboardData, pingDB, databaseLog, getLatestLogs,
+    getHistory
 }
