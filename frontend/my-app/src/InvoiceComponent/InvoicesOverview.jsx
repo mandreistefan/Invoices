@@ -119,11 +119,11 @@ let InvoicesOverview = (props) =>{
 
     let setStatus = (status, aBoolean) =>{
         if(status==="draft"){
-            return (<span style={{display:'flex', alignItems:'center', width:'fit-content',fontWeight:'600'}} className="text-warning"><span style={{marginRight:"3px"}} className="material-icons-outlined">info</span>{aBoolean && "Draft"}</span>)
+            return (<span style={{display:'flex', alignItems:'center', width:'fit-content'}} className="text-warning"><span style={{marginRight:"3px", fontSize:'15px'}} className="material-icons-outlined">info</span>{aBoolean && "Ciorna"}</span>)
         }else if(status==="finalised"){
-            return (<span style={{display:'flex', alignItems:'center', width:'fit-content', fontWeight:'600'}} className="text-success"><span style={{marginRight:"3px"}} className="material-icons-outlined">task_alt</span>{aBoolean && "Finalizat"}</span>)
+            return (<span style={{display:'flex', alignItems:'center', width:'fit-content'}} className="text-success"><span style={{marginRight:"3px", fontSize:'15px'}} className="material-icons-outlined">task_alt</span>{aBoolean && "Finalizata"}</span>)
         }else{
-            return (<span style={{display:'flex', alignItems:'center', width:'fit-content', fontWeight:'600'}} className="text-danger"><span style={{marginRight:"3px"}} className="material-icons-outlined">error</span>{aBoolean && "Eroare"}</span>)
+            return (<span style={{display:'flex', alignItems:'center', width:'fit-content'}} className="text-danger"><span style={{marginRight:"3px", fontSize:'15px'}} className="material-icons-outlined">error</span>{aBoolean && "Eroare"}</span>)
         }
     }
 

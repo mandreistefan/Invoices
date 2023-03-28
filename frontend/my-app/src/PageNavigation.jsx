@@ -63,7 +63,7 @@ let PageNavigation=(props)=>{
                 <div className='pagination-container' key={pagination.currentPage}>
                     <div style={{display:'inherit', justifyContent:'flex-start', alignItems:'center'}}>
                         <span>Show</span>
-                        <select class="form-select" id="pagination" name="pagination" className="m-2 pagination-step-selector" onChange={changeStep} value={pagination.step}>
+                        <select class="form-select" id="pagination" name="pagination" className="pagination-step-selector" onChange={changeStep} value={pagination.step}>
                             <option value="10">10</option>
                             <option value="25">25</option>
                         </select>
@@ -71,7 +71,7 @@ let PageNavigation=(props)=>{
                     </div>
                     <div style={{display:'inherit', justifyContent:'flex-start', alignItems:'center'}}>
                         <button className="" disabled={parseInt(pagination.currentPage)<2 ? true : false} onClick={()=>{setPagination({...pagination, currentPage:1})}}><span class="material-icons-outlined">first_page</span></button>
-                        <button className="" disabled={parseInt(pagination.currentPage)<2 ? true : false} onClick={()=>{setPagination({...pagination, currentPage:pagination.currentPage-1})}}><span class="material-icons-outlined">arrow_back</span></button>
+                        <button className="" disabled={parseInt(pagination.currentPage)<2 ? true : false} onClick={()=>{setPagination({...pagination, currentPage:pagination.currentPage-1})}}><span class="material-icons-outlined">navigate_before</span></button>
                         <nav key={props.numberOfItems} className='page-navigation' aria-label="Navigation">
                             {pagination.pages!==[]&&
                             <ul className="pagination">
@@ -81,7 +81,7 @@ let PageNavigation=(props)=>{
                             </ul>
                         }
                         </nav>
-                        <button className=""  disabled={pagination.currentPage===pagination.numberOfPages ? true : false} onClick={()=>{setPagination({...pagination, currentPage:pagination.currentPage+1})}}><span class="material-icons-outlined">arrow_forward</span></button>
+                        <button className=""  disabled={pagination.currentPage===pagination.numberOfPages ? true : false} onClick={()=>{setPagination({...pagination, currentPage:pagination.currentPage+1})}}><span class="material-icons-outlined">navigate_next</span></button>
                         <button className="" disabled={pagination.currentPage===pagination.numberOfPages ? true : false} onClick={()=>{setPagination({...pagination, currentPage:pagination.numberOfPages})}}><span class="material-icons-outlined">last_page</span></button>
                     </div>
                 </div>

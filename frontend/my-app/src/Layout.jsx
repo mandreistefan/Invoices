@@ -14,15 +14,15 @@ let Layout = (props) =>{
         {
             name:"ACTIUNI PRINCIPALE",
             elements:[
+                {id:7, name: "dashboard", displayName:'Dashboard', icon:'home', path:'/'},
                 {id:0, name: "clients", displayName:'Clienti', icon:'account_circle', path:'/clients'},
                 {id:1, name: "invoices", displayName:'Facturi', icon:'receipt_long', path:'/invoices'},
-                {id:6, name: "employees", displayName:'Angajati', icon:'group', path:'/employees'},
-                {id:10, name: "financials", displayName:'Finante', icon:'attach_money', path:'/financials'}
+                {id:6, name: "employees", displayName:'Angajati', icon:'group', path:'/employees'}                
             ]
         },
         {   name:"DIVERSE",
             elements:[
-                {id:7, name: "dashboard", displayName:'Dashboard', icon:'home', path:'/'},
+                {id:10, name: "financials", displayName:'Finante', icon:'attach_money', path:'/financials'},
                 {id:8, name: "products", displayName:'Predefinite', icon:'folder_copy', path:'/products'},
                 {id:9, name: "expenses", displayName:'Cheltuieli', icon:'monetization_on', path:'/expenses'}            
             ]

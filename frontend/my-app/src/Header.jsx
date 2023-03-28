@@ -95,9 +95,8 @@ let Header = (props) =>{
                 </div>
 
                 {(properties.hasSearch===true || properties.hasInterval===true) &&
-                <div style={{display:'inherit', justifyContent:'space-between', alignItems:'center', padding:'20px', backgroundColor:'#f8f9fa'}}> 
-                    {properties.hasInterval===true &&
-                    <div style={{display:'flex', alignItems:'center', width:'fit-content', borderRadius:'6px', padding:'3px', marginRight:'5px'}}>
+                <div style={{display:'inherit', justifyContent:'space-between', alignItems:'center', padding:'10px', backgroundColor:'#f8f9fa'}}> 
+                    <div style={{display:'flex', alignItems:'center', width:'fit-content', borderRadius:'6px', padding:'3px', marginRight:'5px', visibility:properties.hasInterval===true ? "visible" : "hidden"}}>
                         <span title="Interval" style={{marginRight:'5px'}} className="material-icons-outlined">date_range</span>
                         <input type="date" className="form-control shadow-none" style={{width:'fit-content'}} id="start" name="trip-start" value={dateInterval.start} onChange={changeIntervalFunction}></input>
                         <input type="date" className="form-control shadow-none" style={{width:'fit-content', margin:'0'}} id="end" name="trip-end" value={dateInterval.end} onChange={changeIntervalFunction}></input>
@@ -108,20 +107,21 @@ let Header = (props) =>{
                             ))}
                         </select>}
                         <div className="btn-group" style={{marginLeft:'10px'}}>
-                            <button className="btn btn-light btn-sm mint-button" onClick={()=>{applyInterval()}}>Aplica</button>
-                            <button className="btn btn-light btn-sm mint-button" onClick={()=>{resetInterval()}}>Reseteaza</button>
-                        </div>
-                        
-                    </div>}
+                            <button className="btn btn-light btn-sm mint-button" onClick={()=>{applyInterval()}}><span class="material-icons-outlined">done</span></button>
+                            <button className="btn btn-light btn-sm mint-button" onClick={()=>{resetInterval()}}><span class="material-icons-outlined">refresh</span></button>
+                        </div>                        
+                    </div>
                     {properties.hasSearch===true &&
-                    <form onSubmit={handleSearchSubmit} style={{display:'inherit', justifyContent:'flex-start'}} id="search-form" name="search-form">
+                    <form onSubmit={handleSearchSubmit} style={{display:'flex', alignItems:'center', width:'fit-content', borderRadius:'6px', padding:'3px'}} id="search-form" name="search-form">
                         <div className="search-form-container"> 
-                            <span className="material-icons-outlined" style={{width:'24px', color:'lightgray', margin:'auto'}}>search</span>                                                                  
+                            <div style={{width:'36px', height:'36px', padding:'6px'}}>
+                                <span className="material-icons-outlined" style={{color:'lightgray', margin:'auto'}}>search</span>
+                            </div>                                                                                              
                             <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>                                                   
                         </div>
                         <div className="btn-group" style={{marginLeft:'10px'}}>
-                            <button className="btn btn-light btn-sm mint-button">Cauta</button>
-                            <button type="button" className="btn btn-light btn-sm mint-button" onClick={()=>{resetSearch()}}>Reseteaza</button>
+                            <button className="btn btn-light btn-sm mint-button"><span class="material-icons-outlined">done</span></button>
+                            <button type="button" className="btn btn-light btn-sm mint-button" onClick={()=>{resetSearch()}}><span class="material-icons-outlined">refresh</span></button>
                         </div>
                     </form>} 
                 </div>}
