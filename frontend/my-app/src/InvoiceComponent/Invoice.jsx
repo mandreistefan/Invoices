@@ -387,15 +387,15 @@ export default class Invoice extends React.Component{
                         </div>  
                     </div>
                     {this.state.invoice_server_status==="finalised" &&
-                    <div className="alert alert-success"><small>Factura finalizata. Facturile finalizate nu mai pot fi editate.</small></div>
+                        <div className="alert alert-success"><small>Factura finalizata. Facturile finalizate nu mai pot fi editate.</small></div>
                     }                            
                     <form id="invoice-form" onSubmit={this.submitData} style={{width:'100%'}}>                              
                         <div className="client-info-container form-sub-container" style={{display:'flex', flexDirection:'column'}}>
                             <h6>Date client</h6>
-                            <span>Nume: <b>{this.state.clientData.client_last_name} {this.state.clientData.client_first_name}</b></span>
-                            <span>Telefon: <b>{this.state.clientData.client_phone}</b></span>
-                            <span>Email: <b>{this.state.clientData.client_email}</b></span> 
-                            <span style={{color:'gray'}}>Note: {this.state.clientData.client_notes}</span>                                   
+                            <span>Nume: {this.state.clientData.client_last_name} {this.state.clientData.client_first_name}</span>
+                            <span>Telefon: {this.state.clientData.client_phone}</span>
+                            <span>Email: {this.state.clientData.client_email}</span> 
+                            <span style={{color:'gray'}}>Note client: {this.state.clientData.client_notes}</span>                                   
                         </div>
                         <div className="invoice-products-container" style={{marginTop:'20px', marginBottom:'20px'}}>
                             <div style={{display:'flex', justifyContent:'space-between', marginBottom:'10px'}}>
@@ -482,14 +482,14 @@ export default class Invoice extends React.Component{
                                 ))}                               
                             </div>
                             <div className="billing-products-footer">
-                                <h6>Total: {this.state.total_prod_price}</h6>
+                                <h5>Total: {this.state.total_prod_price} RON</h5>
                             </div>
                         </div>
                     </form>
+                    <hr></hr>
                     {this.state.invoiceID && 
                     <div className="mt-3">
-                        <h6>Istoric</h6>
-                        <div className="my-3 p-3 bg-body rounded shadow-sm"><History target={`invoice ${this.state.invoiceID}`}/></div>
+                        <div key={this.state.invoiceID}><History target={`invoice ${this.state.invoiceID}`}/></div>
                     </div>}
                     {this.state.predefinedList&&
                         <div> 

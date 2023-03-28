@@ -1118,8 +1118,7 @@ input[type=date]{
 
 .billing-products-footer{
   margin-top: 10px;
-  display: grid;
-  grid-template-columns: 85% 15%;
+  width: 100%;
 }
 
 .card{

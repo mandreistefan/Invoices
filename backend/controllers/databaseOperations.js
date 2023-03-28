@@ -5,7 +5,7 @@ const fs = require("fs");
 const { resolve } = require('path');
 
 const testDB = "invoicemanager"
-const liveDB = "Facturi"
+const liveDB = "facturi"
 databases = [testDB, liveDB]
 const queryStep = 10
 let offSet = 0
