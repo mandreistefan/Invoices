@@ -46,7 +46,11 @@ let PieChart=(props)=>{
             <Doughnut data={data} options={options}/>            
             {data.datasets[0].data.length>0&&   
                 data.labels.map((element, index)=>(
-                    <span className="badge m-2" style={{backgroundColor:data.datasets[0].borderColor[index]}}>{element} {data.datasets[0].data[index].toFixed(2)}%</span>
+                    <div key={index} style={{display:'flex', flexDirection:'row'}}>
+                        <span style={{color:data.datasets[0].borderColor[index]}}><span className="material-icons-outlined">radio_button_unchecked</span></span>
+                        <span style={{color:'black'}}><b>{element}</b> {data.datasets[0].data[index].toFixed(2)}%</span>
+                    </div>
+                    
                 ))   
             }   
             {data.datasets[0].data.length===0 && <h6>Nu exista date</h6>}             

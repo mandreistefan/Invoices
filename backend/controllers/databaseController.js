@@ -552,20 +552,24 @@ async function exportData(filterObject){
 
 async function dashboardData(){
     let response = {status:{finalised: 0, draft: 0}, lastInvoice:{client_last_name:"", client_first_name: "", date:"", total:0}, total_income: 0, total_invoices: 0}
-    let data = await databaseOperations.getDashboardData()
+    let invoiceData = await databaseOperations.getDashboardData()
 
-    data.forEach(element => {
+    let highestSum = {income: 0, date: null, id:null}
+
+    invoiceData.forEach(element => {
         if(element.invoice_status==="draft") response.status.draft = response.status.draft + 1
         if(element.invoice_status==="finalised"){
             response.status.finalised = response.status.finalised + 1
             response.total_income = response.total_income + parseFloat(element.invoice_total_sum)
+            if(parseFloat(element.invoice_total_sum)>highestSum.income) highestSum={income: parseFloat(element.invoice_total_sum), date: element.invoice_date, id: element.invoice_number}
         }
         response.total_invoices = response.total_invoices+1        
     });
-    response.lastInvoice.client_first_name = data[0].client_first_name
-    response.lastInvoice.client_last_name = data[0].client_last_name
-    response.lastInvoice.date = data[0].invoice_date
-    response.lastInvoice.total = data[0].invoice_total_sum
+    response.lastInvoice.client_first_name = invoiceData[0].client_first_name
+    response.lastInvoice.client_last_name = invoiceData[0].client_last_name
+    response.lastInvoice.date = invoiceData[0].invoice_date
+    response.lastInvoice.total = invoiceData[0].invoice_total_sum
+    response.highestInvoice = highestSum
 
     return {status:"OK", data:response}
 }

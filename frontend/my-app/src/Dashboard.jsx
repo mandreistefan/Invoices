@@ -30,13 +30,25 @@ let Dashboard = (props) =>{
         <div className="app-data-container">
             {dashboardData!==null&&
                 <div>
-                    <h1 className="mb-3 fw-semibold lh-1 dashboard-header">Aplicatie facturare</h1>
+                    <h1 className="mb-3 fw-semibold lh-1 dashboard-header" style={{fontWeight:'700'}}>Aplicatie facturare</h1>
                     <br/>
-                    <h4 className="mb-3 fw-semibold lh-1">Baza de date</h4> 
+                    <span className="mb-3 fw-semibold lh-1" style={{fontWeight:'700', textTransform:'capitalize', fontSize:'16px'}}>Baza de date</span> 
                     <div style={{marginBottom:'25px'}}>
                         <DatabaseSelector showDetailed={true}/>
                     </div>   
-                    <h4 className="mb-3 fw-semibold lh-1">Statistici</h4>          
+                    <span className="mb-3 fw-semibold lh-1" style={{fontWeight:'700', textTransform:'capitalize', fontSize:'16px'}}>Statistici</span> 
+                    <div className="row" style={{marginBottom:'24px'}}>
+                        <div className="col-3">
+                            <div className='financial-square'>
+                                <div className="p-1">
+                                    <span style={{fontWeight:'500', color:'gray', marginBottom:'10px'}}>Ultima factura</span>
+                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span className="material-icons-outlined m-1">person</span>{dashboardData.lastInvoice.client_first_name} {dashboardData.lastInvoice.client_last_name}</span>
+                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span className="material-icons-outlined m-1">calendar_today</span>{dashboardData.lastInvoice.date.substring(0, 10)}</span>
+                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span className="material-icons-outlined m-1">money</span>{dashboardData.lastInvoice.total} <small>RON</small></span>
+                                </div>
+                            </div>                         
+                        </div>
+                    </div>         
                     <div className="row">
                         <div className="col-3">
                             <div className='financial-square'>
@@ -49,13 +61,12 @@ let Dashboard = (props) =>{
                         </div>
                         <div className="col-3">
                             <div className='financial-square'>
-                                <span style={{color:'gray'}} className="material-icons-outlined p-1">receipt</span>
                                 <div className="p-1">
-                                    <span style={{fontWeight:'500', color:'gray', marginBottom:'10px'}}>Status facturi</span>
-                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span className="material-icons-outlined m-1">task_alt</span>Finalizate: {dashboardData.status.finalised}</span>
-                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span className="material-icons-outlined m-1">info</span>Ciorne: {dashboardData.status.draft}</span>
+                                    <span style={{fontWeight:'500', color:'gray'}}>Cea mai mare factura</span>
+                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span className="material-icons-outlined m-1">calendar_today</span>{dashboardData.highestInvoice.date.substring(0, 10)}</span>
+                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span className="material-icons-outlined m-1">money</span>{dashboardData.highestInvoice.income} <small>RON</small></span>
                                 </div>
-                            </div>
+                            </div>                     
                         </div>
                         <div className="col-3">
                             <div className='financial-square'>
@@ -66,19 +77,9 @@ let Dashboard = (props) =>{
                                 </div>
                             </div>                     
                         </div>
-                        <div className="col-3">
-                            <div className='financial-square'>
-                                <div className="p-1">
-                                    <span style={{fontWeight:'500', color:'gray', marginBottom:'10px'}}>Ultima factura</span>
-                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span className="material-icons-outlined m-1">person</span>{dashboardData.lastInvoice.client_first_name} {dashboardData.lastInvoice.client_last_name}</span>
-                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span className="material-icons-outlined m-1">calendar_today</span>{dashboardData.lastInvoice.date.substring(0, 10)}</span>
-                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span className="material-icons-outlined m-1">money</span>{dashboardData.lastInvoice.total} <small>RON</small></span>
-                                </div>
-                            </div>                         
-                        </div>
                     </div>
                     <br></br>
-                    <h4 className="mb-3 fw-semibold lh-1">Ultimele actiuni</h4>   
+                    <span className="mb-3 fw-semibold lh-1" style={{fontWeight:'700', textTransform:'capitalize', fontSize:'16px'}}>Ultimele actiuni</span>   
                     <div>
                         <Logs/>
                     </div>

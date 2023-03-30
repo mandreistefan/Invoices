@@ -68,7 +68,7 @@ let Products=()=>{
             <div className="bordered-container">  
                 <Header title="Predefinite" icon="account_circle" refreshData={fetchData} buttons={[{title:"Adauga", action:()=>{setaddproductWindow(true)}, icon:"add", name:"Adauga"}]}/>         
                 {predefinedProducts &&       
-                    <div style={{padding:'10px'}}> 
+                    <div> 
                         <table className='table'>                            
                             <thead>
                                 <tr>
@@ -92,7 +92,7 @@ let Products=()=>{
                                         <td>{element.pp_tax}%</td>
                                         <td>{element.pp_description}</td>
                                         <td className="table-actions-container">                            
-                                            <button title="Sterge produs" onClick={()=>{deleteProduct(element.id)}}><div class="inner-button-content"><span class="material-icons-outlined">delete</span></div></button>
+                                            <button title="Sterge produs" onClick={()=>{deleteProduct(element.id)}}><div className="inner-button-content"><span className="material-icons-outlined">delete</span></div></button>
                                         </td>
                                     </tr>
                                 ))

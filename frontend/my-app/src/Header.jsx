@@ -82,33 +82,33 @@ let Header = (props) =>{
         <div>
             {properties!==null &&
             <div style={{display:'flex', flexDirection:'column'}}>
-                <div style={{display:'inherit', justifyContent:'space-between', padding:'20px', borderBottom:'1px solid lightgray'}}>
-                    <span style={{fontSize:'28px', fontWeight:'600'}}>{properties.title}</span> 
+                <div style={{display:'inherit', justifyContent:'space-between', padding:'16px', borderBottom:'1px solid lightgray', alignItems:'center'}}>
+                    <span style={{fontSize:'16px', fontWeight:'700', color:'#6c757d', textTransform:'uppercase'}}>{properties.title}</span> 
                     <div className="btn-group button-group-mint">   
                         {
                             properties.buttons.length>0 && properties.buttons.map((element, index)=>(
-                                <button type="button" className='btn btn-light btn-sm' title={element.title} onClick={element.action}><div className="inner-button-content"><span className="material-icons-outlined">{element.icon}</span>{element.name}</div></button>   
+                                <button key={index} type="button" style={{padding:'2px', paddingLeft:'4px', paddingRight:'4px'}} className='btn btn-light btn-sm' title={element.title} onClick={element.action}><div className="inner-button-content"><span className="material-icons-outlined" style={{fontSize:'18px'}}>{element.icon}</span>{element.name}</div></button>   
                             ))
                         }  
-                        <button type="button" className='btn btn-light btn-sm' title="Reincarca datele" onClick={()=>{refreshData()}}><div className="inner-button-content"><span className="material-icons-outlined">refresh</span>Reincarca</div></button>                             
+                        <button type="button" style={{padding:'2px', paddingLeft:'4px', paddingRight:'4px'}} className='btn btn-light btn-sm' title="Reincarca datele" onClick={()=>{refreshData()}}><div className="inner-button-content"><span className="material-icons-outlined" style={{fontSize:'18px'}}>refresh</span>Reincarca</div></button>                             
                     </div> 
                 </div>
 
                 {(properties.hasSearch===true || properties.hasInterval===true) &&
                 <div style={{display:'inherit', justifyContent:'space-between', alignItems:'center', padding:'10px', backgroundColor:'#f8f9fa'}}> 
                     <div style={{display:'flex', alignItems:'center', width:'fit-content', borderRadius:'6px', padding:'3px', marginRight:'5px', visibility:properties.hasInterval===true ? "visible" : "hidden"}}>
-                        <span title="Interval" style={{marginRight:'5px'}} className="material-icons-outlined">date_range</span>
+                        <span title="Interval" style={{marginRight:'5px', color: '#6c757d'}} className="material-icons-outlined" >date_range</span>
                         <input type="date" className="form-control shadow-none" style={{width:'fit-content'}} id="start" name="trip-start" value={dateInterval.start} onChange={changeIntervalFunction}></input>
                         <input type="date" className="form-control shadow-none" style={{width:'fit-content', margin:'0'}} id="end" name="trip-end" value={dateInterval.end} onChange={changeIntervalFunction}></input>
                         {properties.intervalSelections.length>0 && 
                         <select className="form-select form-select-sm shadow-none m-2" style={{width:'fit-content', height:'38px'}} onChange={selectChange}>
-                            {properties.intervalSelections.map(element=>(
-                                <option key={element} value={element}>{element}</option>
+                            {properties.intervalSelections.map((element, index)=>(
+                                <option key={index} value={element}>{element}</option>
                             ))}
                         </select>}
                         <div className="btn-group" style={{marginLeft:'10px'}}>
-                            <button className="btn btn-light btn-sm mint-button" onClick={()=>{applyInterval()}}><span class="material-icons-outlined">done</span></button>
-                            <button className="btn btn-light btn-sm mint-button" onClick={()=>{resetInterval()}}><span class="material-icons-outlined">refresh</span></button>
+                            <button className="btn btn-light btn-sm mint-button" onClick={()=>{applyInterval()}}><span className="material-icons-outlined" style={{fontSize:'18px'}}>done</span></button>
+                            <button className="btn btn-light btn-sm mint-button" onClick={()=>{resetInterval()}}><span className="material-icons-outlined" style={{fontSize:'18px'}}>refresh</span></button>
                         </div>                        
                     </div>
                     {properties.hasSearch===true &&
@@ -120,8 +120,8 @@ let Header = (props) =>{
                             <input className="form-control shadow-none" id="searchinput" placeholder="Cauta.."></input>                                                   
                         </div>
                         <div className="btn-group" style={{marginLeft:'10px'}}>
-                            <button className="btn btn-light btn-sm mint-button"><span class="material-icons-outlined">done</span></button>
-                            <button type="button" className="btn btn-light btn-sm mint-button" onClick={()=>{resetSearch()}}><span class="material-icons-outlined">refresh</span></button>
+                            <button className="btn btn-light btn-sm mint-button"><span className="material-icons-outlined" style={{fontSize:'18px'}}>done</span></button>
+                            <button type="button" className="btn btn-light btn-sm mint-button" onClick={()=>{resetSearch()}}><span className="material-icons-outlined" style={{fontSize:'18px'}}>refresh</span></button>
                         </div>
                     </form>} 
                 </div>}

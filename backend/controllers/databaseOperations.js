@@ -1655,7 +1655,7 @@ async function exportData(){
 
 async function getDashboardData(){
     return new Promise((resolve, reject)=>{
-        connection.query(`SELECT invoice_status, client_first_name , client_last_name , invoice_date , invoice_total_sum FROM invoices ORDER BY invoice_number DESC`, function(error, result){
+        connection.query(`SELECT invoice_number, invoice_status, client_first_name , client_last_name , invoice_date , invoice_total_sum FROM invoices ORDER BY invoice_number DESC`, function(error, result){
             if(error){
                 console.log(error)
                 reject ({status:"ERROR", data:null})
