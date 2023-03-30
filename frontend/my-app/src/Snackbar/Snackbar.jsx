@@ -6,7 +6,6 @@ let Snackbar = (props) =>{
     let [snackBar, setSnackBar] = useState(null)    
 
     useEffect(()=>{
-        console.log(props.properties)
         if(props.properties){
             let properties = {
                 text: props.properties.text,

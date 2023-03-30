@@ -187,7 +187,7 @@ export default class Invoice extends React.Component{
                     this.setState({dataModified:false})
                 }else{
                     //notify the user
-                    this.props.addSnackbar({text:"Factura creata"})
+                    this.props.addSnackbar({text:"Factura actualizata"})
                     this.setState({dataModified:false})
                 }
                 //all is good, reload data; use a local because the state-update can be too slow and the state.invoiceID will be kept null when fetchInvoiceData is called

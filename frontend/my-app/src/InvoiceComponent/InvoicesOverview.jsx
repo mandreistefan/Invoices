@@ -167,6 +167,11 @@ let InvoicesOverview = (props) =>{
 
     }
 
+    let closeAndRefresh=()=>{
+        setActiveInvoice(null)
+        fetchData()
+    }
+
     return(
         <div className="app-data-container">  
                 {invoicesData &&     
@@ -217,7 +222,7 @@ let InvoicesOverview = (props) =>{
                 </div>}
                 {activeInvoice &&
                 <div>
-                    <button className='outline-mint-button' style={{marginBottom:'10px'}} onClick={()=>{setActiveInvoice(null)}}><span className="material-icons-outlined">arrow_back</span>Inchide</button>
+                    <button className='outline-mint-button' style={{marginBottom:'10px'}} onClick={()=>{closeAndRefresh()}}><span className="material-icons-outlined">arrow_back</span>Inchide</button>
                     <div className='overview-container bordered-container'>                                
                         <Invoice key={activeInvoice} invoiceID={activeInvoice} addSnackbar={addSnackbar}/>
                     </div>

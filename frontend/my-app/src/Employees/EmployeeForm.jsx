@@ -205,6 +205,11 @@ let EmployeeForm = (props)=>{
             }              
         }
 
+        if(Object.keys(dataToBeSent).length === 0){
+            props.addSnackbar({text:"Nu au fost modificate date"})
+            return false
+        }
+
         fetch(`http://localhost:3000/employees`, {
             method:"PUT",
             headers: { 'Content-Type': 'application/json' },
