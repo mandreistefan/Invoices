@@ -64,6 +64,17 @@ app.get('/invoices',(req,res)=>{
     })
 })
 
+app.get('/billedProducts', (req, res)=>{
+    let orderBy={by: null, order: 'asc'}
+    if(req.query.orderBy) orderBy.by=req.query.orderBy
+    if(req.query.order) orderBy.order=req.query.order
+    databaseController.getBilledProducts(orderBy).then(data=>{
+         res.send(data)
+    }).catch(error=>{
+        res.send({status:"ERROR", data:null})
+    })
+})
+
 //creates an invoice
 app.post("/invoices", (req,res)=>{
     databaseController.addInvoice(req.body, (callback)=>{

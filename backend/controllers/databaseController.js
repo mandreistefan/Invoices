@@ -199,7 +199,7 @@ async function fetchInvoiceData(querryObject){
     dataArray.invoiceProperty.total.price=invoiceData.data[0].invoice_total_sum
 
     //products linked with the invoice
-    let productData = await databaseOperations.fetchBilledProducts(querryObject.filterBy)
+    let productData = await databaseOperations.fetchBilledProductsFromInvoice(querryObject.filterBy)
 
     //can't find the products
     if(productData.status!=="OK") return ({status:"ERROR"})
@@ -587,6 +587,30 @@ async function getHistory(target){
     return databaseOperations.getHistory(targetTerms)
 }
 
+async function getBilledProducts(orderobject){
+    let data = await databaseOperations.fetchBilledProducts(orderobject)
+    if(data.status!=="OK") return ({status:data.status, data:null})
+    let limits = []
+    let limitIndex=1
+    data.data.forEach((element, index)=>{
+        if(index!==data.data.length-1){
+            if(element.product_name.toLowerCase()===data.data[index+1].product_name.toLowerCase()){
+                limitIndex = limitIndex + 1
+            }else{
+                limits.push(limitIndex)
+                limitIndex=1;
+            }
+        }else{
+            if(limitIndex>1){
+                limits.push(limitIndex)
+            }else{
+                limits.push(1)
+            }
+        }
+    })
+    return ({status:"OK", data: data.data, limits})
+}
+
 
 module.exports={ 
     fetchClients:fetchClients,
@@ -610,5 +634,5 @@ module.exports={
     getEmployees, addEmployee, editEmployee, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeOverview, archiveEmployee, deletePredefinedProduct, 
     exportData, dashboardData,
     pingDB, getRecentLogs,
-    getHistory
+    getHistory, getBilledProducts
 }

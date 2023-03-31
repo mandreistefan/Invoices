@@ -6,6 +6,7 @@ import Employees from './Employees/Employees.jsx'
 import PredefinedProducts from './Admins/PredefinedProducts.jsx'
 import Expenses from './Admins/Expenses'
 import Financials from './FinancialComponent/FinancialComponent'
+import BilledProducts from './Admins/BilledProducts.jsx'
 import Dashboard from './Dashboard';
 import {Route, createBrowserRouter, RouterProvider, createRoutesFromElements, createHashRouter, useRouteError, useOutletContext} from 'react-router-dom'
 
@@ -25,6 +26,7 @@ let App =()=> {
           <Route path='products' element={<PredefinedProducts/>}/>
           <Route path='expenses' element={<Expenses/>}/>
           <Route path='financials' element={<Financials/>}/>
+          <Route path='billedProducts' element={<BilledProducts/>}/>
         </Route>
       )
     )
@@ -39,6 +41,7 @@ let App =()=> {
           <Route path='products' element={<PredefinedProducts/>}/>
           <Route path='expenses' element={<Expenses/>}/>
           <Route path='financials' element={<Financials/>}/>
+          <Route path='billedProducts' element={<BilledProducts/>}/>
         </Route>
       )
     )

@@ -485,7 +485,7 @@ function fetchInvoiceSummary(invoiceNumber){
  * @returns {Promise<{status: string, data:Array|null}>} An object with two keys, the status of the OP and an array containing the data
  */
 
-function fetchBilledProducts(invoiceNumber){
+function fetchBilledProductsFromInvoice(invoiceNumber){
     return new Promise((resolve, reject)=>{
         connection.query(`SELECT * FROM invoices_billed_products WHERE invoiceID='${invoiceNumber}'`, function(err, result){
             if(err){
@@ -509,6 +509,41 @@ function fetchBilledProducts(invoiceNumber){
         })
     })
 }
+
+/**
+ * Retrieves billed products
+ * @returns {Promise<{status: string, data:Array|null}>} An object with two keys, the status of the OP and an array containing the data
+ */
+
+function fetchBilledProducts(orderobject){
+    let query = "select id, invoiceID, product_name, product_price, total_price, product_description from invoices_billed_products order by product_name asc"
+    if(orderobject.by!=null){
+        query = `select id, invoiceID, product_name, product_price, total_price, product_description from invoices_billed_products order by ${orderobject.by} ${orderobject.order}`
+    }
+    return new Promise((resolve, reject)=>{
+        connection.query(query, function(err, result){
+            if(err){
+                console.log(err)
+                reject({
+                    status:"ERROR",
+                    data:null
+                })
+            }
+            if(result){
+                resolve({
+                    status:"OK",
+                    data:result
+                })
+            }else{
+                resolve({
+                    status: "FAILED",
+                    data: null
+                })
+            }
+        })
+    })
+}
+
 
 /**
  * Updates a client
@@ -793,7 +828,7 @@ function getProductInvoice(id){
 async function updateInvoiceTotals(invoiceID){
 
     //get all products from db
-    let data = await fetchBilledProducts(invoiceID)
+    let data = await fetchBilledProductsFromInvoice(invoiceID)
     //calculate totals
     totals = data.data ? utile.calculateTotalSum(data.data) : {totalTax: 0, totalSum: 0}
 
@@ -1728,7 +1763,7 @@ module.exports ={
     archiveInvoice: archiveInvoice,
     deleteInvoice: deleteInvoice ,
     fetchInvoiceSummary: fetchInvoiceSummary,
-    fetchBilledProducts: fetchBilledProducts,
+    fetchBilledProductsFromInvoice, fetchBilledProducts,
     editClient:editClient,
     getFinancialData: getFinancialData,
     checkInvoiceStatus:checkInvoiceStatus,

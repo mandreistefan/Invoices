@@ -191,9 +191,9 @@ let InvoicesOverview = (props) =>{
                                                     <td>#</td>
                                                     <td>Client</td>
                                                     <td>Status</td>
-                                                    <td><button className="table-order-button" onClick={()=>{setFilter({...queryFilter, order:'invoice_number', orderBy: queryFilter.orderBy==='asc' ? 'desc' : 'asc'})}}><span className="material-icons-outlined">{queryFilter.orderBy==='asc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span></button>Numar factura</td> 
+                                                    <td>Numar factura<button className="table-order-button" onClick={()=>{setFilter({...queryFilter, order:'invoice_number', orderBy: queryFilter.orderBy==='asc' ? 'desc' : 'asc'})}}><span className="material-icons-outlined">{queryFilter.orderBy==='asc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span></button></td> 
                                                     <td>Data</td>
-                                                    <td><button className="table-order-button" onClick={()=>{setFilter({...queryFilter, order:'total', orderBy: queryFilter.orderBy==='asc' ? 'desc' : 'asc'})}}><span className="material-icons-outlined">{queryFilter.orderBy==='asc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span></button>Total</td>
+                                                    <td>Total<button className="table-order-button" onClick={()=>{setFilter({...queryFilter, order:'total', orderBy: queryFilter.orderBy==='asc' ? 'desc' : 'asc'})}}><span className="material-icons-outlined">{queryFilter.orderBy==='asc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span></button></td>
                                                     <td></td>
                                                 </tr>
                                             </thead>
