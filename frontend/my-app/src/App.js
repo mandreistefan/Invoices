@@ -13,7 +13,8 @@ import {Route, createBrowserRouter, RouterProvider, createRoutesFromElements, cr
 let App =()=> {
 
   let router;
-  
+  const path  = window.location.href.indexOf("app") > -1 ? "/app" : "/"  
+
   //Electron env
   if(navigator.userAgent.indexOf('Electron')>-1){
     router=createHashRouter(
@@ -33,8 +34,8 @@ let App =()=> {
   }else{
     router=createBrowserRouter(
       createRoutesFromElements(
-        <Route path="/" element={<Layout/>} errorElement={<ErrorBoundary />} >
-          <Route path="/" element={<Dashboard/>} />
+        <Route path={path} element={<Layout/>} errorElement={<ErrorBoundary />} >
+          <Route path="" element={<Dashboard/>} />
           <Route path='clients' element={<ClientsComponent/>}/>
           <Route path='invoices' element={<InvoicesComponent/>}/>
           <Route path='employees' element={<Employees/>}/>

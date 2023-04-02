@@ -8,24 +8,25 @@ import Snackbar from "./Snackbar/Snackbar";
 let Layout = (props) =>{
 
     let [snackbars, setSnackbars] = useState([])
+    const path  = window.location.href.indexOf("app") > -1 ? "/app/" : "/"
 
     let navigationElements = 
     [
         {
             name:"ACTIUNI PRINCIPALE",
             elements:[
-                {id:7, name: "dashboard", displayName:'Dashboard', icon:'home', path:'/'},
-                {id:0, name: "clients", displayName:'Clienti', icon:'account_circle', path:'/clients'},
-                {id:1, name: "invoices", displayName:'Facturi', icon:'receipt_long', path:'/invoices'},
-                {id:2, name: "employees", displayName:'Angajati', icon:'group', path:'/employees'}                
+                {id:7, name: "dashboard", displayName:'Dashboard', icon:'home', path:`${path}`},
+                {id:0, name: "clients", displayName:'Clienti', icon:'account_circle', path:`${path}clients`},
+                {id:1, name: "invoices", displayName:'Facturi', icon:'receipt_long', path:`${path}invoices`},
+                {id:2, name: "employees", displayName:'Angajati', icon:'group', path:`${path}employees`}                
             ]
         },
         {   name:"DIVERSE",
             elements:[
-                {id:3, name: "financials", displayName:'Finante', icon:'attach_money', path:'/financials'},
-                {id:4, name: "products", displayName:'Predefinite', icon:'folder_copy', path:'/products'},
-                {id:5, name: "expenses", displayName:'Cheltuieli', icon:'monetization_on', path:'/expenses'},  
-                {id:6, name: "billedProducts", displayName:'Produse', icon:'shopping_bag', path:'/billedProducts'}                 
+                {id:3, name: "financials", displayName:'Finante', icon:'attach_money', path:`${path}financials`},
+                {id:4, name: "products", displayName:'Predefinite', icon:'folder_copy', path:`${path}products`},
+                {id:5, name: "expenses", displayName:'Cheltuieli', icon:'monetization_on', path:`${path}expenses`},  
+                {id:6, name: "billedProducts", displayName:'Produse', icon:'shopping_bag', path:`${path}billedProducts`}                 
             ]
         }
     ]

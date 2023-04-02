@@ -80,6 +80,7 @@ myApp.use('/', productsHandler)
 myApp.use('/', financialsHandler)
 myApp.use('/', expensesHandler)
 myApp.use('/', employeesHandler)
+myApp.use('/app', express.static(path.join(__dirname, 'front_end_build')))
 
 
 cron.schedule('* 00 13 * *', () => {
@@ -208,7 +209,7 @@ myApp.get("/latestLogs", (req, res)=>{
 })
 
 myApp.get("/history", (req, res)=>{
-    console.log("here")
+
     let target = req.query.target
     if(!target){
         res.send({
@@ -222,5 +223,10 @@ myApp.get("/history", (req, res)=>{
 
     })
 })
+
+myApp.get("/app/*", (req, res)=>{
+    res.sendFile(path.join(__dirname, './front_end_build/Aplicatie.html'));
+})
+
 
 myApp.listen(PORT)
