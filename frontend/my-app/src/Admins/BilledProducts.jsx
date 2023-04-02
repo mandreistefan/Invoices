@@ -99,7 +99,7 @@ let BilledProducts = (props) =>{
             {grouped===true &&
             <div>
                 <div class="alert alert-success"><small>Produsele sunt grupate dupa nume. Gruparea nu este case-sensitive.</small></div>
-                <div className="container">              
+                <div className="container-fluid">              
                     {data.length>0 &&   
                     <div className="row">
                         {groupedObject.map((element, index)=>(  
