@@ -243,7 +243,7 @@ async function addInvoice(data){
 
 async function getInvoices(querryObject){
 
-    console.log(querryObject)
+    console.log(querryObject.processedInterval)
 
     if(querryObject.page>1) offSet = (querryObject.page-1) * queryStep
     //filtering params
@@ -271,7 +271,7 @@ async function getInvoices(querryObject){
     //at search the IDs are pre-filtered
     let querryInterval = ""
     if(querryObject.filter!=="search"){
-        if(querryObject.processedInterval!==null){        
+        if(querryObject.processedInterval!==undefined){        
             querryInterval = ` AND invoice_date >= "${querryObject.processedInterval.startYear}-${querryObject.processedInterval.startMonth}-${querryObject.processedInterval.startDay}" AND invoice_date <= "${querryObject.processedInterval.endYear}-${querryObject.processedInterval.endMonth}-${querryObject.processedInterval.endDay}" `
         }
     }

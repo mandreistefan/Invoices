@@ -46,7 +46,7 @@ let Expenses=()=>{
 
         if(window.confirm("Stergeti cheltuiala?") === false) return false
 
-        fetch("http://localhost:${port}/expenses",
+        fetch(`http://localhost:${port}/expenses`,
         {
             method:"DELETE",
             headers: { 'Content-Type': 'application/json' },

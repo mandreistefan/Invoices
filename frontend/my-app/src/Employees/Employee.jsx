@@ -157,7 +157,7 @@ export default class Employee extends React.Component{
         this.state.taxesPercentages.forEach(element=>{
             taxes.push(element.value)
         })
-        fetch(`http://localhost::${this.state.port}/employee_salary`, {
+        fetch(`http://localhost:${this.state.port}/employee_salary`, {
             method:"POST",
             headers: { 'Content-Type': 'application/json' },
             body:JSON.stringify({paid_to:this.state.id, salary_month:this.state.newSalaryMonth, salary_year:this.state.salaryYear, bank_ref:document.getElementById("bankref").value, taxes})
@@ -188,7 +188,7 @@ export default class Employee extends React.Component{
             })
         })
         if(allGood){
-            fetch('http://localhost::${this.state.port}/employee_vacation', {
+            fetch(`http://localhost:${this.state.port}/employee_vacation`, {
                 method:"POST",
                 headers: { 'Content-Type': 'application/json' },
                 body:JSON.stringify({
@@ -271,7 +271,7 @@ export default class Employee extends React.Component{
     }
 
     updateEmployeeSalaries=()=>{
-        fetch(`http://localhost::${this.state.port}/employee_salary?filter=paid_to&filterBy=${this.state.id}`)
+        fetch(`http://localhost:${this.state.port}/employee_salary?filter=paid_to&filterBy=${this.state.id}`)
         .then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 this.setState({salaries: this.convertSalaries(data.data)})
@@ -299,7 +299,7 @@ export default class Employee extends React.Component{
     }
 
     updateVacationDays=()=>{        
-        fetch(`http://localhost::${this.state.port}/employee_vacation/${this.state.id}`).then(response=>response.json()).then(data=>{
+        fetch(`http://localhost:${this.state.port}/employee_vacation/${this.state.id}`).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 this.setState({vacationDays: this.convertVacations(data.data)})
             }else{
