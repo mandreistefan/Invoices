@@ -9,6 +9,7 @@ let Layout = (props) =>{
 
     let [snackbars, setSnackbars] = useState([])
     const path  = window.location.href.indexOf("app") > -1 ? "/app/" : "/"
+    const port = window.location.href.indexOf("app") > -1 ? "3001" : "3000"  
 
     let navigationElements = 
     [
@@ -48,7 +49,6 @@ let Layout = (props) =>{
     }
 
     function closeSnack(index){
-        console.log(index)
         let snackbarsCopy = [...snackbars]
         snackbarsCopy.splice(index, 1)
         setSnackbars(snackbarsCopy)
@@ -76,10 +76,10 @@ let Layout = (props) =>{
                         ))}
                     </div>                
                     <div style={{display:'inherit', flexDirection:'row', alignItems:'center'}} className="p-2">
-                        <DatabaseSelector/>
+                        <DatabaseSelector port={port}/>
                     </div>                
                 </div> 
-                <Outlet context={addSnackbar}/>            
+                <Outlet context={{addSnackbar, port}}/>            
         </div>
         <div className="snackbars-container">
             {snackbars.length>0&&

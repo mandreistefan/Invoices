@@ -37,7 +37,7 @@ if(inElectron){
 
         mainWindow.webContents.setUserAgent("ElectronApp");
         // and load the index.html of the app.
-        mainWindow.loadFile(path.join(__dirname, './front_end_build/Aplicatie.html'));
+        mainWindow.loadFile(path.join(__dirname, './front_end/Aplicatie.html'));
 
         //listen for the print PDF event
         event.on('printPDF', ()=>{
@@ -80,7 +80,7 @@ myApp.use('/', productsHandler)
 myApp.use('/', financialsHandler)
 myApp.use('/', expensesHandler)
 myApp.use('/', employeesHandler)
-myApp.use('/app', express.static(path.join(__dirname, 'front_end_build')))
+myApp.use('/app', express.static(path.join(__dirname, 'front_end')))
 
 
 cron.schedule('* 00 13 * *', () => {
@@ -209,7 +209,6 @@ myApp.get("/latestLogs", (req, res)=>{
 })
 
 myApp.get("/history", (req, res)=>{
-
     let target = req.query.target
     if(!target){
         res.send({
@@ -225,7 +224,7 @@ myApp.get("/history", (req, res)=>{
 })
 
 myApp.get("/app/*", (req, res)=>{
-    res.sendFile(path.join(__dirname, './front_end_build/Aplicatie.html'));
+    res.sendFile(path.join(__dirname, './front_end/Aplicatie.html'));
 })
 
 

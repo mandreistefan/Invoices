@@ -13,7 +13,7 @@ import {Route, createBrowserRouter, RouterProvider, createRoutesFromElements, cr
 let App =()=> {
 
   let router;
-  const path  = window.location.href.indexOf("app") > -1 ? "/app" : "/"  
+  const path = window.location.href.indexOf("app") > -1 ? "/app" : "/" 
 
   //Electron env
   if(navigator.userAgent.indexOf('Electron')>-1){

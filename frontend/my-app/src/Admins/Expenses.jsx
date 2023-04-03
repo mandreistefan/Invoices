@@ -5,8 +5,11 @@ import { useOutletContext } from "react-router-dom";
 
 let Expenses=()=>{
 
-    const addSnackbar = useOutletContext()
-    let [expenses, setExpenses] = useState([])
+    let {...context} = useOutletContext();
+    const addSnackbar = context.addSnackbar 
+    const port = context.port
+
+      let [expenses, setExpenses] = useState([])
     let [addexpensesWindow, setaddexpensesWindow] = useState(false)
     //time interval 
     let currentDate = new Date()
@@ -25,7 +28,7 @@ let Expenses=()=>{
         let endDateArray = dateInterval.end.split("-")
         let filterBy=`${startDateArray[2]}${startDateArray[1]}${startDateArray[0].substring(2,4)}-${endDateArray[2]}${endDateArray[1]}${endDateArray[0].substring(2,4)}`
 
-        fetch(`http://localhost:3000/expenses?filter=interval&filterBy=${filterBy}`).then(response=>response.json()).then(data=>{
+        fetch(`http://localhost:${port}/expenses?filter=interval&filterBy=${filterBy}`).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 setExpenses(data.data)
             }else if(data.status==="SERVER_ERROR"){
@@ -43,7 +46,7 @@ let Expenses=()=>{
 
         if(window.confirm("Stergeti cheltuiala?") === false) return false
 
-        fetch("http://localhost:3000/expenses",
+        fetch("http://localhost:${port}/expenses",
         {
             method:"DELETE",
             headers: { 'Content-Type': 'application/json' },

@@ -3,8 +3,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import PredefinedProducts from '../Admins/ExistingProducts.jsx'
 import History from "../History.jsx";
 
-export default class Invoice extends React.Component{
-       
+export default class Invoice extends React.Component{       
+    
     //set the elements we will be working with
     constructor(props) {
         super(props);
@@ -31,8 +31,9 @@ export default class Invoice extends React.Component{
             dataModified: false, 
             showClientInfo: false,
             showBilledProducts: true,
-            display: "table"
-        };        
+            display: "table",
+            port: window.location.href.indexOf("app") > -1 ? "3001" : "3000"  
+        };    
     }
 
     //let's check for some invoice data
@@ -52,7 +53,7 @@ export default class Invoice extends React.Component{
 
     //gets all the data linked to an invoice; sets the state of certain elements based on retrieved data
     fetchInvoiceData=(invoice)=>{
-        fetch(`http://localhost:3000/invoice?filter=invoiceID&filterBy=${invoice}`).then(response=>response.json()).then(data=>{
+        fetch(`http://localhost:${this.state.port}/invoice?filter=invoiceID&filterBy=${invoice}`).then(response=>response.json()).then(data=>{
             let invoiceData = data.data
             //client data
             let clientDataCopy = {...this.state.clientData}
@@ -168,7 +169,7 @@ export default class Invoice extends React.Component{
         }        
         
         //sends data
-        fetch(`http://localhost:3000/invoices`, {
+        fetch(`http://localhost:${this.state.port}/invoices`, {
             method:method,
             headers: { 'Content-Type': 'application/json' },
             body:JSON.stringify(dataToBeSent)
@@ -327,7 +328,7 @@ export default class Invoice extends React.Component{
             return false
         }
         //remove the product from the database
-        fetch(`http://localhost:3000/billed_products/${entry}`,{
+        fetch(`http://localhost:${this.state.port}/billed_products/${entry}`,{
             method:"DELETE",
             headers: { 'Content-Type': 'application/json' }
         })
@@ -353,7 +354,7 @@ export default class Invoice extends React.Component{
 
     setInvoiceFinalised = () =>{
         let invoiceID = this.state.invoiceID
-        fetch(`http://localhost:3000/invoices`, {
+        fetch(`http://localhost:${this.state.port}/invoices`, {
             method:"PUT",
             headers: { 'Content-Type': 'application/json' },
             body:JSON.stringify({invoice_status: "finalised", invoiceID})

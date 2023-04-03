@@ -43,10 +43,10 @@ export default class Employee extends React.Component{
                 {name: "CASS", key:"CASS", description: "Asigurari sociale sanatate", value: 10},
                 {name: "VENIT", key:"TAX", description: "Impozit venit", value: 10},
                 {name: "CAM", key:"CAM", description:"Contributie asiguratorie munca", value: 2.25}
-            ]          
+            ]  ,
+            port: window.location.href.indexOf("app") > -1 ? "3001" : "3000"       
         }
         this.handleMonthChange = this.handleMonthChange.bind(this);
-
     }
 
     componentDidMount(){
@@ -57,7 +57,7 @@ export default class Employee extends React.Component{
 
 
     fetchData=()=>{
-        fetch(`http://localhost:3000/employee/${this.state.id}`).then(response=>response.json()).then(data=>{
+        fetch(`http://localhost:${this.state.port}/employee/${this.state.id}`).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 this.setState({
                     first_name:data.data.info[0].emp_first_name, 
@@ -157,7 +157,7 @@ export default class Employee extends React.Component{
         this.state.taxesPercentages.forEach(element=>{
             taxes.push(element.value)
         })
-        fetch(`http://localhost:3000/employee_salary`, {
+        fetch(`http://localhost::${this.state.port}/employee_salary`, {
             method:"POST",
             headers: { 'Content-Type': 'application/json' },
             body:JSON.stringify({paid_to:this.state.id, salary_month:this.state.newSalaryMonth, salary_year:this.state.salaryYear, bank_ref:document.getElementById("bankref").value, taxes})
@@ -179,7 +179,7 @@ export default class Employee extends React.Component{
         //check that dates do not repeat
         this.state.vacationDaysRequested.forEach((element, index)=>{
             this.state.vacationDaysRequested.forEach((element2, index2)=>{
-                if(index!=index2){
+                if(index!==index2){
                     if(element.date===element2.date){  
                         allGood=false
                         return
@@ -188,7 +188,7 @@ export default class Employee extends React.Component{
             })
         })
         if(allGood){
-            fetch('http://localhost:3000/employee_vacation', {
+            fetch('http://localhost::${this.state.port}/employee_vacation', {
                 method:"POST",
                 headers: { 'Content-Type': 'application/json' },
                 body:JSON.stringify({
@@ -271,7 +271,7 @@ export default class Employee extends React.Component{
     }
 
     updateEmployeeSalaries=()=>{
-        fetch(`http://localhost:3000/employee_salary?filter=paid_to&filterBy=${this.state.id}`)
+        fetch(`http://localhost::${this.state.port}/employee_salary?filter=paid_to&filterBy=${this.state.id}`)
         .then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 this.setState({salaries: this.convertSalaries(data.data)})
@@ -299,7 +299,7 @@ export default class Employee extends React.Component{
     }
 
     updateVacationDays=()=>{        
-        fetch(`http://localhost:3000/employee_vacation/${this.state.id}`).then(response=>response.json()).then(data=>{
+        fetch(`http://localhost::${this.state.port}/employee_vacation/${this.state.id}`).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 this.setState({vacationDays: this.convertVacations(data.data)})
             }else{

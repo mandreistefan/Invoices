@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import ProductForm from './ProductForm'
 import Snackbar from '../Snackbar/Snackbar.jsx'
+import { useOutletContext } from 'react-router-dom';
 
 let PredefinedProductsManager = (props) =>{
 
@@ -8,8 +8,12 @@ let PredefinedProductsManager = (props) =>{
     let [snackBarText, setSnackBarText] = useState(null)
     let [active, setActive] = useState(null)
 
+    let {...context} = useOutletContext();
+    const addSnackbar = context.addSnackbar 
+    const port = context.port
+
     useEffect(()=>{
-        fetch('http://localhost:3000/products').then(response=>response.json()).then(data=>{
+        fetch(`http://localhost:${port}/products`).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 ppSet(data.data)
             }else if(data.status==="SERVER_ERROR"){

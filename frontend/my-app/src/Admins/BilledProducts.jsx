@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import Header from "../Header"
+import { useOutletContext } from 'react-router-dom';
 
 let BilledProducts = (props) =>{
 
@@ -9,14 +9,18 @@ let BilledProducts = (props) =>{
     let [grouped, setGrouped] = useState(false)
     let [filterObject, setFilter] = useState({orderBy: null, order: null})
 
+    let {...context} = useOutletContext();
+    const addSnackbar = context.addSnackbar 
+    const port = context.port
+    
     useEffect(()=>{
         fetchData()
     },[filterObject.orderBy, filterObject.order])
 
     function fetchData(){
-        let fetchLink = `http://localhost:3000/billedProducts`
+        let fetchLink = `http://localhost:${port}/billedProducts`
         if(filterObject.orderBy!==null){
-            fetchLink=`http://localhost:3000/billedProducts?orderBy=${filterObject.orderBy}&order=${filterObject.order}`
+            fetchLink=`http://localhost:${port}/billedProducts?orderBy=${filterObject.orderBy}&order=${filterObject.order}`
         }
 
         fetch(fetchLink).then(response=>response.json()).then(data=>{

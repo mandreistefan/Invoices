@@ -6,6 +6,10 @@ import { useOutletContext } from 'react-router-dom';
 
 let Financial = (props) =>{
 
+    let {...context} = useOutletContext();
+    const addSnackbar = context.addSnackbar 
+    const port = context.port
+
     let [financialData, setFinancialData] = useState(null)
     //use for the horizontal scale of the chart
     let [chartTitle, setChartTile] = useState("Current year")
@@ -17,8 +21,6 @@ let Financial = (props) =>{
         start: `${currentDate.getFullYear()}-01-01`,
         end: `${currentDate.getFullYear()}-12-31`
     }) 
-    
-    const addSnackbar = useOutletContext()
 
     let [tableDisplay, setDisplay] = useState(false)
     let [taxes, setTaxes]= useState({profitTaxPercentage: 1, profitTax: 0, profit: 0})
@@ -33,7 +35,7 @@ let Financial = (props) =>{
         let endDayArray = dateInterval.end.split("-")
         let filterBy=`${startDateArray[2]}${startDateArray[1]}${startDateArray[0].substring(2,4)}-${endDayArray[2]}${endDayArray[1]}${endDayArray[0].substring(2,4)}`
 
-        let querry = `http://localhost:3000/financial?filter=interval&filterBy=${filterBy}`
+        let querry = `http://localhost:${port}/financial?filter=interval&filterBy=${filterBy}`
         fetch(querry).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 //periodicalData has a different use
@@ -77,7 +79,7 @@ let Financial = (props) =>{
     }
 
     function exportData(){
-        fetch(`http://localhost:3000/export_data`).then(response=>response.json()).then(data=>{
+        fetch(`http://localhost:${port}/export_data`).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 addSnackbar({text: `Au fost exportate ${data.data.length} tabele`})  
             }else if(data.status==="SERVER_ERROR"){

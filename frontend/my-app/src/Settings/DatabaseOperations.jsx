@@ -5,9 +5,11 @@ let DatabaseOperations=(props)=>{
     let [databaseInfo, setDBinfo] = useState({active: null, available:[]})
     let [ping, setPing] = useState({status:"NA", date:"NA"})
 
+    const port = window.location.href.indexOf("app") > -1 ? "3001" : "3000"  
+
     useEffect(()=>{
         if(databaseInfo.active===null){
-            fetch('http://localhost:3000/database').then(response=>response.json()).then(data=>{
+            fetch(`http://localhost:${port}/database`).then(response=>response.json()).then(data=>{
                 if(data.status==="OK"){
                     setDBinfo({active: data.data.database, available:data.data.databases})
                 }else if(data.status==="SERVER_ERROR"){
@@ -21,7 +23,7 @@ let DatabaseOperations=(props)=>{
 
 
     let handleDBchange=(event)=>{
-        fetch(`http://localhost:3000/switchDatabase`, {
+        fetch(`http://localhost:${port}/switchDatabase`, {
             method:"POST",
             headers: { 'Content-Type': 'application/json' },
             body:JSON.stringify({database: event.target.value})
@@ -33,7 +35,7 @@ let DatabaseOperations=(props)=>{
     }
 
     let pingDatabase=()=>{
-        fetch(`http://localhost:3000/pingDatabase`, {
+        fetch(`http://localhost:${port}/pingDatabase`, {
             method:"GET",
             headers: { 'Content-Type': 'application/json'}
         }).then(response=>response.json()).then(data=>{

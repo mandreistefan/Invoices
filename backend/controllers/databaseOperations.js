@@ -284,7 +284,7 @@ async function getInvoices(querryObject){
             querry=`SELECT *, DATE_FORMAT(invoice_date, '%d-%m-%Y') as normal_date FROM ${querryObject.target} WHERE customer_id=${querryObject.filterBy} ${querryInterval} LIMIT ${step} OFFSET ${step*querryObject.page} ${orderBy}`
             break;
         case "invoiceID":
-            querry=`SELECT *, DATE_FORMAT(invoice_date, '%d-%m-%Y') as normal_date FROM ${querryObject.target} WHERE invoice_number=${querryObject.filterBy} ${querryInterval} ${orderBy}`
+            querry=`SELECT *, DATE_FORMAT(invoice_date, '%d-%m-%Y') as normal_date FROM ${querryObject.target} WHERE invoice_number=${querryObject.filterBy}`
             break;
         case "recID":
             querry=`SELECT *, DATE_FORMAT(invoice_date, '%d-%m-%Y') as normal_date FROM ${querryObject.target} WHERE rec_number=${querryObject.filterBy} ${querryInterval} LIMIT ${step} OFFSET ${step*querryObject.page} ${orderBy}`

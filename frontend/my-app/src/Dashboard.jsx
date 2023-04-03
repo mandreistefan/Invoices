@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react"
 import DatabaseSelector from './Settings/DatabaseOperations'
 import Logs from "./Logs"
+import { useOutletContext } from 'react-router-dom';
 
 let Dashboard = (props) =>{
+
+    let {...context} = useOutletContext();
+    const addSnackbar = context.addSnackbar 
+    const port = context.port
 
     let [dashboardData, setData] = useState(null)
 
     useEffect(()=>{
-        fetch(`http://localhost:3000/dashboardData`,
+        fetch(`http://localhost:${port}/dashboardData`,
             {
                 method:"GET",
                 headers: { 'Content-Type': 'application/json' },

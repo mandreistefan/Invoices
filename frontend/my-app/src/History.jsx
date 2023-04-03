@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react"
 import {processedDate} from './Utils.jsx'
+import { useOutletContext } from "react-router-dom";
 
 let History = (props) =>{
 
     let [logs, setLogs] = useState(null)
     let [dataFetchStatus, setFetchStatus] = useState(<div className="spinner-border" role="status"></div>)
 
+    let {...context} = useOutletContext();
+    const addSnackbar = context.addSnackbar 
+    const port = context.port
+
     useEffect(()=>{
         if(props.target){
-            fetch(`http://localhost:3000/history?target=${props.target}`,
+            fetch(`http://localhost:${port}/history?target=${props.target}`,
             {
                 method:"GET",
                 headers: { 'Content-Type': 'application/json' },

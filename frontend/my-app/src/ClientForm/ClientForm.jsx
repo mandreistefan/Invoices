@@ -1,7 +1,12 @@
 import {useState, useEffect} from "react";
 import "./clientform.css"
+import { useOutletContext } from 'react-router-dom';
 
 let ClientForm = (props)=>{
+
+    let {...context} = useOutletContext();
+    const addSnackbar = context.addSnackbar 
+    const port = context.port
 
     let [data, clientData]=useState({
         client_type: {value: "pers", modified: false, invalid: false}, 
@@ -38,7 +43,7 @@ let ClientForm = (props)=>{
             clientData(shallowCopy)
         //just an ID, fetch the data from the DB
         }else if(props.clientID!=null){
-            fetch(`http://localhost:3000/clients?filter=id&filterBy=${clientID}`,
+            fetch(`http://localhost:${port}/clients?filter=id&filterBy=${clientID}`,
             {
                 method:"GET",
                 headers: { 'Content-Type': 'application/json' }
@@ -157,7 +162,7 @@ let ClientForm = (props)=>{
 
             if(dataToBeSent==={}) return false
 
-            fetch(`http://localhost:3000/clients`, {
+            fetch(`http://localhost:${port}/clients`, {
                 method:"PUT",
                 headers: { 'Content-Type': 'application/json' },
                 body:JSON.stringify({
@@ -201,7 +206,7 @@ let ClientForm = (props)=>{
             //no data to be sent
             if(dataToBeSent==={}) return false
             
-            fetch(`http://localhost:3000/clients`, {
+            fetch(`http://localhost:${port}/clients`, {
                 method:"POST",
                 headers: { 'Content-Type': 'application/json' },
                 body:JSON.stringify(dataToBeSent)

@@ -5,11 +5,14 @@ import { useOutletContext } from "react-router-dom";
 
 let Products=()=>{   
 
+    let {...context} = useOutletContext();
+    const addSnackbar = context.addSnackbar 
+    const port = context.port
+
     const defaultFilter={filter:"all", filterBy:"", page:1}
     let [query, setFilter] = useState({filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
     let [predefinedProducts, ppSet] = useState([])
     let [productProps, setProductProps] = useState(null)
-    const addSnackbar = useOutletContext()
     let [addproductWindow, setaddproductWindow] = useState(false)
 
     useEffect(()=>{
@@ -17,7 +20,7 @@ let Products=()=>{
     },[query])
 
     function fetchData(){
-        fetch(`http://localhost:3000/products?filter=${query.filter}&filterBy=${query.filterBy}&page=${query.page}`).then(response=>response.json()).then(data=>{
+        fetch(`http://localhost:${port}/products?filter=${query.filter}&filterBy=${query.filterBy}&page=${query.page}`).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 ppSet(data.data)
             }else if(data.status==="SERVER_ERROR"){
@@ -38,7 +41,7 @@ let Products=()=>{
 
         if(window.confirm("Stargeti produsul?") === false) return false
 
-        fetch(`http://localhost:3000/products/${productID}`, {
+        fetch(`http://localhost:${port}/products/${productID}`, {
             method:"DELETE",
             headers: { 'Content-Type': 'application/json'
         }

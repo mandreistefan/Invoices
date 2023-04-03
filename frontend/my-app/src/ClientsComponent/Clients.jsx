@@ -10,7 +10,6 @@ let Clients = (props) =>{
 
     let defaultFilter = {filter:"all", filterBy:"", page:1}
 
-
     const [allClients, setAllClients] = useState(null)   
     //client that is being edited
     const [activeClient, setActive] = useState(null)
@@ -22,8 +21,9 @@ let Clients = (props) =>{
     let [queryFilter, setFilter]=useState({filter: props.queryFilterBy ? props.queryFilterBy : defaultFilter.filter, filterBy: props.queryFilterData ? props.queryFilterData : defaultFilter.filterBy, page:1, step:10})
     //new ivoice for him
     let [invoiceClient, invoiceThisClient] = useState(null)
-
-    const addSnackbar = useOutletContext();
+    let {...context} = useOutletContext();
+    const addSnackbar = context.addSnackbar 
+    const port = context.port
 
     useEffect(()=>{
         fetchClients()
@@ -34,7 +34,7 @@ let Clients = (props) =>{
      */
     let fetchClients=()=>{
         //fetches all clients
-        fetch(`http://localhost:3000/clients?&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}&step=${queryFilter.step}`,
+        fetch(`http://localhost:${port}/clients?&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}&step=${queryFilter.step}`,
         {
             method:"GET",
             headers: { 'Content-Type': 'application/json' }
@@ -64,7 +64,7 @@ let Clients = (props) =>{
 
         if(window.confirm("Arhivati client?") === false) return false
 
-        fetch(`http://localhost:3000/clients`,
+        fetch(`http://localhost:${port}/clients`,
         {
             method:"DELETE",
             headers: { 'Content-Type': 'application/json' },

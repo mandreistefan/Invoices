@@ -1,6 +1,11 @@
 import {useState, useEffect} from "react";
+import { useOutletContext } from "react-router-dom";
 
 let EmployeeForm = (props)=>{
+
+    let {...context} = useOutletContext();
+    const addSnackbar = context.addSnackbar 
+    const port = context.port
 
     let [data, setTheData]=useState({
         emp_first_name: {value: "", modified: false, invalid: false}, 
@@ -24,7 +29,7 @@ let EmployeeForm = (props)=>{
 
     //for a client ID, retrieve and set form data
     let fetchEmployeeData=()=>{
-        fetch(`http://localhost:3000/employee/${employeeID}`,
+        fetch(`http://localhost:${port}/employee/${employeeID}`,
         {
             method:"GET",
             headers: { 'Content-Type': 'application/json' }
@@ -139,7 +144,7 @@ let EmployeeForm = (props)=>{
                 return false
             }
 
-            fetch(`http://localhost:3000/employees`, {
+            fetch(`http://localhost:${port}/employees`, {
                 method:"POST",
                 headers: { 'Content-Type': 'application/json' },
                 body:JSON.stringify(dataToBeSent)
@@ -210,7 +215,7 @@ let EmployeeForm = (props)=>{
             return false
         }
 
-        fetch(`http://localhost:3000/employees`, {
+        fetch(`http://localhost:${port}/employees`, {
             method:"PUT",
             headers: { 'Content-Type': 'application/json' },
             body:JSON.stringify({

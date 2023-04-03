@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 
 let ProductForm = (props) =>{
+
+    let {...context} = useOutletContext();
+    const addSnackbar = context.addSnackbar 
+    const port = context.port
 
     //default values
     let [arrayData, setData] = useState({
@@ -17,7 +22,7 @@ let ProductForm = (props) =>{
     //received some data as props
     useEffect(()=>{
         if(props.productID){ 
-            fetch(`http://localhost:3000/products/${props.productID}`, {
+            fetch(`http://localhost:${port}/products/${props.productID}`, {
                 method:"GET"
             })
             .then(response=>response.json())
@@ -93,7 +98,7 @@ let ProductForm = (props) =>{
         
         
         //submit data; same PUT request for new product and editing a product; when the ID is sent, the data is edited
-        fetch(`http://localhost:3000/products`, {
+        fetch(`http://localhost:${port}/products`, {
             method:"PUT",
             headers: { 'Content-Type': 'application/json' },
             body:JSON.stringify(sendData)

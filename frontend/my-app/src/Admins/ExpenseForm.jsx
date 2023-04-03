@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 
 let ExpenseForm = (props) =>{
+
+    let {...context} = useOutletContext();
+    const addSnackbar = context.addSnackbar 
+    const port = context.port
 
     let currentDate = new Date()
     //default values
@@ -67,7 +72,7 @@ let ExpenseForm = (props) =>{
         if(sendData.length===0) return false
     
         //submit data
-        fetch(`http://localhost:3000/expenses`, {
+        fetch(`http://localhost:${port}/expenses`, {
             method:method,
             headers: { 'Content-Type': 'application/json' },
             body:JSON.stringify(sendData)

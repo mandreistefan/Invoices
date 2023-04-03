@@ -8,7 +8,7 @@ let filterObject = {}
 
 //serves a HTML file to the front-end; the HTML files acts as a template for the invoice; used to print
 app.get("/generateInvoice/*",(req,res)=>{
-    res.sendFile(path.join(__dirname,'../../frontend/my-app/public/InvoiceTemplate.html'))
+    res.sendFile(path.join(__dirname,'../front_end/InvoiceTemplate.html'))
 })
 
 //get the data of a single invoice

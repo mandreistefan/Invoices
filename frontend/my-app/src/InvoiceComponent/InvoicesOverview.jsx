@@ -8,6 +8,10 @@ import { useOutletContext } from 'react-router-dom';
 
 let InvoicesOverview = (props) =>{
 
+    let {...context} = useOutletContext();
+    const addSnackbar = context.addSnackbar 
+    const port = context.port
+
     let defaultFilter = {filter:"all", filterBy:"", page:1, order:"invoice_number", orderBy:"desc", interval:""}
 
     let [invoicesData, invoicesDataSet] = useState(null)
@@ -25,8 +29,6 @@ let InvoicesOverview = (props) =>{
 
     let [activeFilters, setActiveFilters] = useState({date:null, search:null})
 
-    const addSnackbar = useOutletContext();
-
     //refecth on page change or when the query parameters change (ex. when a search is attempted)
     useEffect(()=>{
         fetchData()
@@ -37,7 +39,7 @@ let InvoicesOverview = (props) =>{
      */
     let fetchData=()=>{
         //fetches all data
-        let fetcher = `http://localhost:3000/invoices?target=invoices&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}&step=${queryFilter.step}&order=${queryFilter.order}&orderBy=${queryFilter.orderBy}&interval=${queryFilter.interval}`
+        let fetcher = `http://localhost:${port}/invoices?target=invoices&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}&step=${queryFilter.step}&order=${queryFilter.order}&orderBy=${queryFilter.orderBy}&interval=${queryFilter.interval}`
         
         fetch(fetcher,
         {
@@ -75,7 +77,7 @@ let InvoicesOverview = (props) =>{
 
         if(window.confirm("Arhivati factura?") === false) return false
 
-        fetch("http://localhost:3000/invoices",
+        fetch("http://localhost:${port}/invoices",
         {
             method:"DELETE",
             headers: { 'Content-Type': 'application/json' },
@@ -94,7 +96,7 @@ let InvoicesOverview = (props) =>{
     }
 
     let setInvoiceFinalised = (invoiceID) =>{
-        fetch(`http://localhost:3000/invoices`, {
+        fetch(`http://localhost:${port}/invoices`, {
             method:"PUT",
             headers: { 'Content-Type': 'application/json' },
             body:JSON.stringify({invoice_status: "finalised", invoiceID})
@@ -224,7 +226,7 @@ let InvoicesOverview = (props) =>{
                 <div>
                     <button className='outline-mint-button' style={{marginBottom:'10px'}} onClick={()=>{closeAndRefresh()}}><span className="material-icons-outlined">arrow_back</span>Inchide</button>
                     <div className='overview-container bordered-container'>                                
-                        <Invoice key={activeInvoice} invoiceID={activeInvoice} addSnackbar={addSnackbar}/>
+                        <Invoice key={activeInvoice} invoiceID={activeInvoice} addSnackbar={addSnackbar} port={port}/>
                     </div>
                 </div>}
         </div>

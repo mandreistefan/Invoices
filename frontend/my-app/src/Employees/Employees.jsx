@@ -7,6 +7,9 @@ import SmallMenu from "../SmallMenu/SmallMenu.jsx";
 import { useOutletContext } from "react-router-dom";
 
 let Employees=(props)=>{
+    let {...context} = useOutletContext();
+    const addSnackbar = context.addSnackbar 
+    const port = context.port
 
     const defaultFilter={filter:"all", filterBy:"", page:1, step:10}
 
@@ -24,10 +27,8 @@ let Employees=(props)=>{
         fetchData()        
     },[queryFilter.page, queryFilter.step, queryFilter.filterBy])
 
-    const addSnackbar = useOutletContext()
-
     function fetchData(){
-        fetch(`http://localhost:3000/employees?filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}&step=${queryFilter.step}`).then(response=>response.json()).then(data=>{
+        fetch(`http://localhost:${port}/employees?filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}&step=${queryFilter.step}`).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 setEmployees(data.data)
                 setNOE(data.recordsNumber)
@@ -61,7 +62,7 @@ let Employees=(props)=>{
 
         if(window.confirm("Arhivati angajat?") === false) return false
 
-        fetch(`http://localhost:3000/employee/${activeEmployee}`, {
+        fetch(`http://localhost:${port}/employee/${activeEmployee}`, {
             method:"DELETE",
             headers: { 'Content-Type': 'application/json' }
         }).then(response=>response.json()).then(data=>{
@@ -140,7 +141,7 @@ let Employees=(props)=>{
                         {activeEmployee&&
                             <div> 
                                 <button className="outline-mint-button" style={{marginBottom:'15px'}} onClick={()=>{closeEmployee()}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>     
-                                <Employee id={activeEmployee} refreshParent={fetchData} addSnackbar={addSnackbar}/>
+                                <Employee id={activeEmployee} refreshParent={fetchData} addSnackbar={addSnackbar} port={port}/>
                             </div>    
                         }
                     </div>

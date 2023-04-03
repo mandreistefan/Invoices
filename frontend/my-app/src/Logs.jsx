@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react"
 import {processedDate} from './Utils'
-
+import { useOutletContext } from "react-router-dom";
 
 let Logs = (props) =>{
 
     let [logs, setLogs] = useState(null)
 
+    let {...context} = useOutletContext();
+    const addSnackbar = context.addSnackbar 
+    const port = context.port
+
     useEffect(()=>{
         
-        fetch(`http://localhost:3000/latestlogs`,
+        fetch(`http://localhost:${port}/latestlogs`,
         {
             method:"GET",
             headers: { 'Content-Type': 'application/json' },
