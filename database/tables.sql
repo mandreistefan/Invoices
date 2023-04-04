@@ -15,10 +15,8 @@ CREATE TABLE `clients` (
   `client_phone` varchar(15) DEFAULT NULL,
   `client_email` varchar(50) DEFAULT NULL,
   `client_notes` text,
-  `client_billing_adress` varchar(50) DEFAULT NULL,
-  `client_gui_color` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- invoicemanager.clients_archived definition
@@ -39,7 +37,7 @@ CREATE TABLE `clients_archived` (
   `client_email` varchar(25) NOT NULL,
   `client_notes` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- invoicemanager.employees definition
@@ -61,7 +59,7 @@ CREATE TABLE `employees` (
   `emp_notes` text,
   `emp_vacation_days` int NOT NULL DEFAULT '20',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- invoicemanager.employees_archived definition
@@ -101,7 +99,7 @@ CREATE TABLE `employees_salaries` (
   `comments` varchar(250) DEFAULT NULL,
   `bank_ref` varchar(25) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- invoicemanager.employees_vacation definition
@@ -114,7 +112,7 @@ CREATE TABLE `employees_vacation` (
   `date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `status` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- invoicemanager.expenses definition
@@ -128,7 +126,7 @@ CREATE TABLE `expenses` (
   `exp_date` date NOT NULL,
   `exp_deduct` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- invoicemanager.invoices definition
@@ -156,7 +154,7 @@ CREATE TABLE `invoices` (
   `invoice_tax` float DEFAULT '0',
   `invoice_total_sum` float DEFAULT '0',
   PRIMARY KEY (`invoice_number`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- invoicemanager.invoices_archived definition
@@ -184,7 +182,7 @@ CREATE TABLE `invoices_archived` (
   `invoice_tax` float NOT NULL,
   `invoice_total_sum` float NOT NULL,
   PRIMARY KEY (`invoice_number`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- invoicemanager.invoices_billed_products definition
@@ -202,7 +200,15 @@ CREATE TABLE `invoices_billed_products` (
   `total_price` float NOT NULL,
   `product_description` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- invoicemanager.log definition
+
+CREATE TABLE `log` (
+  `date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `message` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- invoicemanager.predefined_products definition
@@ -215,12 +221,4 @@ CREATE TABLE `predefined_products` (
   `pp_price_per_item` float NOT NULL,
   `pp_description` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-
--- invoicemanager.log definition
-
-CREATE TABLE `log` (
-  `date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `message` varchar(100) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

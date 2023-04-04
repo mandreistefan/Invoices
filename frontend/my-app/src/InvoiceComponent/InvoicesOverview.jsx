@@ -77,7 +77,7 @@ let InvoicesOverview = (props) =>{
 
         if(window.confirm("Arhivati factura?") === false) return false
 
-        fetch("http://localhost:${port}/invoices",
+        fetch(`http://localhost:${port}/invoices`,
         {
             method:"DELETE",
             headers: { 'Content-Type': 'application/json' },

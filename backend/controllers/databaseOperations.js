@@ -242,9 +242,6 @@ async function addInvoice(data){
  */
 
 async function getInvoices(querryObject){
-
-    console.log(querryObject.processedInterval)
-
     if(querryObject.page>1) offSet = (querryObject.page-1) * queryStep
     //filtering params
     if(querryObject.filter==="search" && querryObject.filterBy.length===0) return ({status:"NO_DATA", data:null})
@@ -270,8 +267,9 @@ async function getInvoices(querryObject){
 
     //at search the IDs are pre-filtered
     let querryInterval = ""
+    console.log(querryObject.processedInterval)
     if(querryObject.filter!=="search"){
-        if(querryObject.processedInterval!==undefined){        
+        if(querryObject.processedInterval!==undefined && querryObject.processedInterval!==null){        
             querryInterval = ` AND invoice_date >= "${querryObject.processedInterval.startYear}-${querryObject.processedInterval.startMonth}-${querryObject.processedInterval.startDay}" AND invoice_date <= "${querryObject.processedInterval.endYear}-${querryObject.processedInterval.endMonth}-${querryObject.processedInterval.endDay}" `
         }
     }
@@ -333,13 +331,14 @@ async function getInvoices(querryObject){
 function archiveClientData(clientID){
     return new Promise((resolve, reject)=>{
         try{
-            connection.query(`INSERT INTO clients_archived(id, client_type, client_fiscal_1, client_fiscal_2, client_first_name, client_last_name, client_county, client_city, client_street, client_adress_number, client_zip, client_phone, client_email, client_notes, client_gui_color) select * from clients where id='${clientID}'`, function(err, result){
+            connection.query(`INSERT INTO clients_archived SELECT * from clients WHERE id='${clientID}'`, function(err, result){
                 if(err){
                     reject({
                         status:"ERROR",
                         data:"ERROR archiving client"
                     })
                 }
+                console.log(result)
                 if(result.insertId>0){
                     resolve({
                         status:"OK",
