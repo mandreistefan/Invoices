@@ -34,6 +34,8 @@ if(inElectron){
                 nodeIntegration: true
             }
         });
+        //hides the electron menu bar
+        mainWindow.setMenuBarVisibility(false);
 
         mainWindow.webContents.setUserAgent("ElectronApp");
         // and load the index.html of the app.
