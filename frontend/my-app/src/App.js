@@ -5,18 +5,27 @@ import {useState} from "react";
 import DatabaseSelector from './Settings/DatabaseOperations'
 import {Outlet, Link} from 'react-router-dom'
 import Snackbar from './Snackbar/Snackbar';
-import React, { lazy, Suspense } from 'react';
+//import React, { lazy, Suspense } from 'react';
+//import Layout from './Layout'
+import ClientsComponent from './ClientsComponent/ClientsComponent.jsx'
+import InvoicesComponent from './InvoiceComponent/InvoicesOverview'
+import Employees from './Employees/Employees.jsx'
+import PredefinedProducts from './Admins/PredefinedProducts.jsx'
+import Expenses from './Admins/Expenses'
+import Financials from './FinancialComponent/FinancialComponent'
+import BilledProducts from './Admins/BilledProducts.jsx'
+import Dashboard from './Dashboard';
 
 let App =()=> {
 
-  const Dashboard = lazy( () =>import('./Dashboard'))
+  /*const Dashboard = lazy( () =>import('./Dashboard'))
   const Expenses = lazy(()=>import('./Admins/Expenses'))
   const ClientsComponent = lazy(()=>import('./ClientsComponent/ClientsComponent.jsx'))
   const Financials = lazy(()=>import('./FinancialComponent/FinancialComponent.jsx'))
   const Employees = lazy(()=>import('./Employees/Employees.jsx'))
   const BilledProducts = lazy(()=>import('./Admins/BilledProducts.jsx'))
   const PredefinedProducts = lazy(()=>import('./Admins/PredefinedProducts.jsx'))
-  const InvoicesComponent = lazy(()=> import('./InvoiceComponent/InvoicesOverview'))
+  const InvoicesComponent = lazy(()=> import('./InvoiceComponent/InvoicesOverview'))*/
 
   let router;
   const path = window.location.href.indexOf("app") > -1 ? "/app" : "/" 
@@ -156,9 +165,9 @@ let App =()=> {
                     <DatabaseSelector port={port} changeFunction={setActiveDB}/>
                 </div>                
             </div> 
-            <Suspense fallback={<span>Loading</span>}>
+            {/*<Suspense fallback={<span>Loading</span>}>*/}
               <Outlet context={{addSnackbar, port}}/>     
-            </Suspense>                   
+            {/*</Suspense>*/}               
         </div>
         <div className="snackbars-container">
             {snackbars.length>0&&
