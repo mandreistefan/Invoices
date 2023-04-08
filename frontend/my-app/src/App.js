@@ -23,6 +23,7 @@ let App =()=> {
   let [snackbars, setSnackbars] = useState([])
   const port = window.location.href.indexOf("app") > -1 ? "3001" : "3000" 
   let [selectedItem, setSelectedItem] = useState(null);
+  let [activeDB, setActiveDB] = useState(null)
 
   //Electron env
   if(navigator.userAgent.indexOf('Electron')>-1){
@@ -152,7 +153,7 @@ let App =()=> {
                     ))}
                 </div>                
                 <div style={{display:'inherit', flexDirection:'row', alignItems:'center'}} className="p-2">
-                    <DatabaseSelector port={port}/>
+                    <DatabaseSelector port={port} changeFunction={setActiveDB}/>
                 </div>                
             </div> 
             <Suspense fallback={<span>Loading</span>}>

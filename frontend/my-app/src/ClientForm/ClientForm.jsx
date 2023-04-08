@@ -229,6 +229,7 @@ let ClientForm = (props)=>{
 
     return(            
         <div className={(props.editable===true) ? "form-container" : ""}>
+            {data.client_first_name.value ? <h4>{data.client_first_name.value} {data.client_last_name.value}</h4> : ""}
             {data && 
             <form onSubmit={submitClientData} id="client_form" name="client_form" aria-disabled={props.editable ? "false" : "true"}>  
                 <div class="form-floating  mb-3">

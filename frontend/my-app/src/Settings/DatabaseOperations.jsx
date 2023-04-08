@@ -29,6 +29,7 @@ let DatabaseOperations=(props)=>{
             body:JSON.stringify({database: event.target.value})
         }).then(response=>response.json()).then(data=>{
             if(data.status==="OK") setDBinfo({active: event.target.value, available:databaseInfo.available})
+            if(props.changeFunction) props.changeFunction(event.target.value)
         }).catch(error=>{
             console.log(error)
         })       

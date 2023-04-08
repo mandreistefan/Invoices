@@ -121,11 +121,11 @@ let InvoicesOverview = (props) =>{
 
     let setStatus = (status, aBoolean) =>{
         if(status==="draft"){
-            return (<span style={{display:'flex', alignItems:'center', width:'fit-content'}} className="text-warning"><span style={{marginRight:"3px", fontSize:'15px'}} className="material-icons-outlined">info</span>{aBoolean && "Ciorna"}</span>)
+            return (<div className="badge badge-yellow"><span style={{marginRight:"3px", fontSize:'15px'}} className="material-icons-outlined">info</span>{aBoolean && "Ciorna"}</div>)
         }else if(status==="finalised"){
-            return (<span style={{display:'flex', alignItems:'center', width:'fit-content'}} className="text-success"><span style={{marginRight:"3px", fontSize:'15px'}} className="material-icons-outlined">task_alt</span>{aBoolean && "Finalizata"}</span>)
+            return (<div className="badge badge-green"><span style={{marginRight:"3px", fontSize:'15px'}} className="material-icons-outlined">task_alt</span>{aBoolean && "Finalizata"}</div>)
         }else{
-            return (<span style={{display:'flex', alignItems:'center', width:'fit-content'}} className="text-danger"><span style={{marginRight:"3px", fontSize:'15px'}} className="material-icons-outlined">error</span>{aBoolean && "Eroare"}</span>)
+            return (<div className="badge badge-gray"><span style={{marginRight:"3px", fontSize:'15px'}} className="material-icons-outlined">error</span>{aBoolean && "Eroare"}</div>)
         }
     }
 

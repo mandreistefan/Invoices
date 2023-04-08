@@ -119,7 +119,7 @@ let Clients = (props) =>{
                                     <tr key={index}>
                                         <td>{index+1}</td>
                                         <td><b>{element.client_first_name} {element.client_last_name}</b></td>
-                                        <td><div style={{display:'flex', alignItems:'center'}}>{element.client_type ? element.client_type==="pers" ? <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>person</span>Persoana fizica</span> : <span><span className="material-icons-outlined" style={{fontSize:'16px'}}>store</span>Firma</span> : "NA"}</div></td> 
+                                        <td>{element.client_type==="pers" ? <div className='badge badge-gray'><span className="material-icons-outlined" style={{fontSize:'16px'}}>person</span>Persoana fizica</div> : <div className='badge badge-gray'><span className="material-icons-outlined" style={{fontSize:'16px'}}>store</span>Firma</div>}</td> 
                                         <td>{element.client_county}, {element.client_city}, {element.client_street}, {element.client_adress_number}, {element.client_zip}</td>                                          
                                         <td className="table-actions-container">                                                    
                                             <SmallMenu buttons={[

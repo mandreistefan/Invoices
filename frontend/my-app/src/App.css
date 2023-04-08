@@ -62,7 +62,6 @@ table >tbody> tr:hover{
 }
 
 .table > tbody > tr > .table-actions-container > button{
-  visibility:hidden;
   float: right;
   border-radius: 4px;
   padding: 2px;
@@ -73,10 +72,6 @@ table >tbody> tr:hover{
   display: flex;
   justify-content: flex-end;
   align-items: center;
-}
-
-.table > tbody > tr > .table-actions-container > div{
-  visibility: hidden;
 }
 
 .table > tbody > tr > .table-actions-container > button:hover{
@@ -953,7 +948,9 @@ input[type=date]{
 .pagination-step-selector{
   border-color: black;
   border-radius: 6px;
-  padding: 4px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 4px;
   margin-left: 5px;
   margin-right: 5px;
   color: black;
@@ -1185,6 +1182,13 @@ input[type=date]{
   border: 1px solid var(--navActive);
 }
 
+.mint-button:focus{
+  color: var(--navActive);
+  background-color: var(--lightMint);
+  border: 1px solid var(--navActive);
+  box-shadow: none;
+}
+
 .outline-mint-button{
   border:1px solid var(--navActive);
   border-radius: 6px;
@@ -1286,4 +1290,30 @@ input[type=date]{
 
 .grid-invoices > div:hover{
   box-shadow: 0 .125rem .25rem rgba(0,0,0,.095)!important;;
+}
+
+.badge{
+  border:1px solid;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  width: fit-content;
+}
+
+.badge-green{
+  border-color: green;
+  color: green;
+  background-color: #d1e7dd;
+}
+
+.badge-yellow{
+  border-color: #ffe69c;
+  color: #664d03;
+  background-color: #fff3cd;
+}
+
+.badge-gray{
+  border-color: #c4c8cb;
+  color: black;
+  background-color: #e2e3e5;
 }

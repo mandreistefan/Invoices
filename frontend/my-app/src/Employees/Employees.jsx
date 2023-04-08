@@ -127,7 +127,7 @@ let Employees=(props)=>{
                                                 <td>{index+1}</td>
                                                 <td>{element.emp_first_name} {element.emp_last_name}</td>
                                                 <td>{element.emp_job_name}</td> 
-                                                <td>{element.emp_active ? <div style={{display:"flex", alignItems:'center'}}><span className="material-icons-outlined text-success">task_alt</span><span className="text-success"><strong>Activ</strong></span></div> : <div><span class="material-icons-outlined text-danger">cancel</span><span className="text-danger"><strong>Inactiv</strong></span></div>}</td>                                          
+                                                <td>{element.emp_active ? <div className="badge badge-green"><span style={{marginRight:"3px", fontSize:'15px'}} className="material-icons-outlined">task_alt</span>Activ</div> : <div className="badge badge-gray"><span style={{marginRight:"3px", fontSize:'15px'}} className="material-icons-outlined">cancel</span>Inactiv</div>}</td>                                          
                                                 <td className="table-actions-container">
                                                     <SmallMenu buttons={[{title:"Deschide angajat", action:()=>{setActiveEmployee(element.id)}, name:"Deschide", icon:"file_open"}, {title:"Arhiveaza angajat", action:()=>{deleteEmployee(element.id)}, name:"Sterge", icon:"delete"}]}/>
                                                 </td>
