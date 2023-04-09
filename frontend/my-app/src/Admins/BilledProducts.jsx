@@ -3,7 +3,7 @@ import { useOutletContext } from 'react-router-dom';
 
 let BilledProducts = (props) =>{
 
-    let [data, setData] = useState([])
+    let [data, setData] = useState(null)
     let [limits, setLimits] = useState([])
     let [groupedObject, setGroupedObject] = useState([])
     let [grouped, setGrouped] = useState(false)
@@ -71,40 +71,39 @@ let BilledProducts = (props) =>{
                 </div>
             </div>
             {grouped===false &&
-            <div className="bordered-container">
-                {data.length>0&&                    
-                    <table className='table'>
-                        <thead>      
-                            <tr>
-                                <td>#</td>
-                                <td>Nume</td>
-                                <td>Pret produs<button className="table-order-button" onClick={()=>{setFilter({orderBy:"product_price", order: filterObject.order==="asc" ? "desc" : "asc"})}}><span className="material-icons-outlined">{filterObject.order==='asc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span></button></td>
-                                <td>Pret total<button className="table-order-button" onClick={()=>{setFilter({orderBy:"total_price", order: filterObject.order==="asc" ? "desc" : "asc"})}}><span className="material-icons-outlined">{filterObject.order==='asc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span></button></td>
-                                <td>Factura<button className="table-order-button" onClick={()=>{setFilter({orderBy:"invoiceID", order: filterObject.order==="asc" ? "desc" : "asc"})}}><span className="material-icons-outlined">{filterObject.order==='asc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span></button></td>
-                            </tr> 
-                        </thead>               
-                        <tbody className='clients-table-body app-data-table-body'>
-                            {data.length>0 &&
-                                data.map((element, index)=>(
-                                    <tr key={index} className='clients-table-row app-data-table-row'>
-                                        <td>{index+1}</td>
-                                        <td>{element.product_name}</td>
-                                        <td>{element.product_price}</td>
-                                        <td>{element.total_price}</td>
-                                        <td>{element.invoiceID}</td>
-                                    </tr>
-                                ))
-                            }
-                        </tbody>
-                    </table>
-                }
-                {data.length===0 && <h6>Nu exista produse</h6>} 
+            <div className="bordered-container">                  
+                <table className='table'>
+                    <thead>      
+                        <tr>
+                            <td>#</td>
+                            <td>Nume</td>
+                            <td>Pret produs<button className="table-order-button" onClick={()=>{setFilter({orderBy:"product_price", order: filterObject.order==="asc" ? "desc" : "asc"})}}><span className="material-icons-outlined">{filterObject.order==='asc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span></button></td>
+                            <td>Pret total<button className="table-order-button" onClick={()=>{setFilter({orderBy:"total_price", order: filterObject.order==="asc" ? "desc" : "asc"})}}><span className="material-icons-outlined">{filterObject.order==='asc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span></button></td>
+                            <td>Factura<button className="table-order-button" onClick={()=>{setFilter({orderBy:"invoiceID", order: filterObject.order==="asc" ? "desc" : "asc"})}}><span className="material-icons-outlined">{filterObject.order==='asc' ? 'arrow_drop_down' : 'arrow_drop_up'}</span></button></td>
+                        </tr> 
+                    </thead>               
+                    <tbody className='clients-table-body app-data-table-body'>
+                        {data &&
+                            data.map((element, index)=>(
+                                <tr key={index} className='clients-table-row app-data-table-row'>
+                                    <td>{index+1}</td>
+                                    <td>{element.product_name}</td>
+                                    <td>{element.product_price}</td>
+                                    <td>{element.total_price}</td>
+                                    <td>{element.invoiceID}</td>
+                                </tr>
+                            ))
+                        }
+                    </tbody>
+                    {data===null && context.loadingSpinner}  
+                    {data===[] && <h6>Nu exista date</h6>}  
+                </table>                 
             </div>}
             {grouped===true &&
             <div>
                 <div class="alert alert-success"><small>Produsele sunt grupate dupa nume. Gruparea nu este case-sensitive.</small></div>
                 <div className="container-fluid">              
-                    {data.length>0 &&   
+                    {data &&   
                     <div className="row">
                         {groupedObject.map((element, index)=>(  
                             <div className="col-6" style={{padding:'0', border:'1px solid lightgray'}}>
@@ -127,7 +126,8 @@ let BilledProducts = (props) =>{
                             </div>                             
                         ))}
                     </div>}
-                    {data.length===0 && <h6>Nu exista produse</h6>}
+                    {data===null && context.loadingSpinner}  
+                    {data===[] && <h6>Nu exista date</h6>} 
                 </div>
             </div>
             }

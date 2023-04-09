@@ -19,7 +19,7 @@ const fs = require('fs')
 const { EventEmitter } =require('events');
 const event = new EventEmitter();
 let PORT = '3001'
-const inElectron = true
+const inElectron = false
 
 if(inElectron){
     PORT='3000'

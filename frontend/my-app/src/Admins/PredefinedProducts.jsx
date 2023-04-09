@@ -11,7 +11,7 @@ let Products=()=>{
 
     const defaultFilter={filter:"all", filterBy:"", page:1}
     let [query, setFilter] = useState({filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
-    let [predefinedProducts, ppSet] = useState([])
+    let [predefinedProducts, ppSet] = useState(null)
     let [productProps, setProductProps] = useState(null)
     let [addproductWindow, setaddproductWindow] = useState(false)
 
@@ -69,52 +69,51 @@ let Products=()=>{
     return(
         <div className="app-data-container">  
             <div className="bordered-container">  
-                <Header title="Predefinite" icon="account_circle" refreshData={fetchData} buttons={[{title:"Adauga", action:()=>{setaddproductWindow(true)}, icon:"add", name:"Adauga"}]}/>         
-                {predefinedProducts &&       
-                    <div> 
-                        <table className='table'>                            
-                            <thead>
-                                <tr>
-                                    <td>#</td>
-                                    <td>Nume</td>
-                                    <td>UM</td>
-                                    <td>Pret</td>
-                                    <td>Taxa</td>
-                                    <td>Descriere</td>
-                                    <td></td>
+                <Header title="Predefinite" icon="account_circle" refreshData={fetchData} buttons={[{title:"Adauga", action:()=>{setaddproductWindow(true)}, icon:"add", name:"Adauga"}]}/>           
+                <div> 
+                    <table className='table'>                            
+                        <thead>
+                            <tr>
+                                <td>#</td>
+                                <td>Nume</td>
+                                <td>UM</td>
+                                <td>Pret</td>
+                                <td>Taxa</td>
+                                <td>Descriere</td>
+                                <td></td>
+                            </tr>
+                        </thead>                     
+                        <tbody className='clients-table-body app-data-table-body'>
+                        {predefinedProducts &&  
+                            predefinedProducts.map((element, index)=>(
+                                <tr key={index} className='clients-table-row app-data-table-row'>
+                                    <td>{index+1}</td>
+                                    <td>{element.pp_name}</td>
+                                    <td>{element.pp_um}</td>
+                                    <td>{element.pp_price_per_item} RON</td>
+                                    <td>{element.pp_tax}%</td>
+                                    <td>{element.pp_description}</td>
+                                    <td className="table-actions-container">                            
+                                        <button title="Sterge produs" onClick={()=>{deleteProduct(element.id)}}><div className="inner-button-content"><span className="material-icons-outlined">delete</span></div></button>
+                                    </td>
                                 </tr>
-                            </thead>                     
-                            <tbody className='clients-table-body app-data-table-body'>
-                            {predefinedProducts.length>0 && 
-                                predefinedProducts.map((element, index)=>(
-                                    <tr key={index} className='clients-table-row app-data-table-row'>
-                                        <td>{index+1}</td>
-                                        <td>{element.pp_name}</td>
-                                        <td>{element.pp_um}</td>
-                                        <td>{element.pp_price_per_item} RON</td>
-                                        <td>{element.pp_tax}%</td>
-                                        <td>{element.pp_description}</td>
-                                        <td className="table-actions-container">                            
-                                            <button title="Sterge produs" onClick={()=>{deleteProduct(element.id)}}><div className="inner-button-content"><span className="material-icons-outlined">delete</span></div></button>
-                                        </td>
-                                    </tr>
-                                ))
-                            }
-                            </tbody>
-                        </table>
-                        {predefinedProducts.length===0 && <h6>Nu exista produse</h6>}
-                        {productProps!=null &&
-                            <div> 
-                                <div className="blur-overlap"></div>    
-                                <button type="button" className="action-close-window " onClick={()=>{setProductProps(null)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button> 
-                                <div className="overlapping-component-inner">
-                                    <span><b>Editare produs</b></span>
-                                    <ProductForm data={productProps} addSnackbar={addSnackbar}/> 
-                                </div>              
-                            </div>
-                        }      
-                    </div>
-                }
+                            ))
+                        }
+                        </tbody>
+                        {predefinedProducts===null && context.loadingSpinner}  
+                        {predefinedProducts===[] && <h6>Nu exista date</h6>}  
+                    </table>
+                    {productProps!=null &&
+                        <div> 
+                            <div className="blur-overlap"></div>    
+                            <button type="button" className="action-close-window " onClick={()=>{setProductProps(null)}}><span className='action-button-label'><span className="material-icons-outlined">close</span></span></button> 
+                            <div className="overlapping-component-inner">
+                                <span><b>Editare produs</b></span>
+                                <ProductForm data={productProps} addSnackbar={addSnackbar}/> 
+                            </div>              
+                        </div>
+                    }      
+                </div>                
                 {addproductWindow&&
                 <div>
                     <div className="blur-overlap"></div>     

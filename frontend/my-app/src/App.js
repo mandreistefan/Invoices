@@ -27,6 +27,7 @@ let App =()=> {
   const PredefinedProducts = lazy(()=>import('./Admins/PredefinedProducts.jsx'))
   const InvoicesComponent = lazy(()=> import('./InvoiceComponent/InvoicesOverview'))*/
 
+  const loadingSpinner = (<div className='m-3'><div className="spinner-border text-primary" role="status"></div></div>)
   let router;
   const path = window.location.href.indexOf("app") > -1 ? "/app" : "/" 
   let [snackbars, setSnackbars] = useState([])
@@ -166,7 +167,7 @@ let App =()=> {
                 </div>                
             </div> 
             {/*<Suspense fallback={<span>Loading</span>}>*/}
-              <Outlet context={{addSnackbar, port}}/>     
+              <Outlet context={{addSnackbar, port, loadingSpinner}}/>     
             {/*</Suspense>*/}               
         </div>
         <div className="snackbars-container">

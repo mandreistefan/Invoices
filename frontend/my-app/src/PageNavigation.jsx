@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 
 /**
  * Renders pagination
@@ -16,6 +16,20 @@ let PageNavigation=(props)=>{
         pages:[],
         step:10
     })
+
+    //number of pages
+    const numberofpages = useMemo(()=>{
+        return props.numberOfItems%step>0 ? parseInt(props.numberOfItems/step+1) : parseInt(props.numberOfItems/step)
+    }, [props.numberOfItems])
+
+    useEffect(()=>{
+        setPagination({
+            currentPage: pagination.currentPage || 1, 
+            numberOfPages: numberofpages,
+            pages: arrayOfIndexes(numberofpages),
+            step: props.step ? props.step : pagination.step
+        })
+    }, [])
 
     let changePage=(pageNumber)=>{
         let shallowCopy = {...pagination}
@@ -42,16 +56,6 @@ let PageNavigation=(props)=>{
         }
         return anArray
     }
-
-    useEffect(()=>{
-        let pagesNumber = props.numberOfItems%step>0 ? parseInt(props.numberOfItems/step+1) : parseInt(props.numberOfItems/step)
-        setPagination({
-            currentPage: pagination.currentPage || 1, 
-            numberOfPages: pagesNumber,
-            pages: arrayOfIndexes(pagesNumber),
-            step: props.step ? props.step : pagination.step
-        })
-    },[])
 
     useEffect(()=>{
         props.changePage(pagination.currentPage, pagination.step)

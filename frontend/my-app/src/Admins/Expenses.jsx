@@ -9,7 +9,7 @@ let Expenses=()=>{
     const addSnackbar = context.addSnackbar 
     const port = context.port
 
-      let [expenses, setExpenses] = useState([])
+    let [expenses, setExpenses] = useState(null)
     let [addexpensesWindow, setaddexpensesWindow] = useState(false)
     //time interval 
     let currentDate = new Date()
@@ -114,7 +114,7 @@ let Expenses=()=>{
                                 </tr> 
                             </thead>               
                             <tbody className='clients-table-body app-data-table-body'>
-                                {expenses.length>0 &&
+                                {expenses &&
                                     expenses.map((element, index)=>(
                                         <tr key={index} className='clients-table-row app-data-table-row'>
                                             <td>{index+1}</td>
@@ -131,8 +131,9 @@ let Expenses=()=>{
                                     ))
                                 }
                             </tbody>
+                            {expenses===null && context.loadingSpinner}  
+                            {expenses===[] && <h6>Nu exista date</h6>}  
                         </table>
-                        {expenses.length===0 && <h6>Nu exista cheltuieli</h6>} 
                     </div>                  
                 </div>
                 {addexpensesWindow&&

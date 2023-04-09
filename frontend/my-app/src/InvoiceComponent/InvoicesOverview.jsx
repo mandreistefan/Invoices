@@ -38,6 +38,7 @@ let InvoicesOverview = (props) =>{
      * Fetches data
      */
     let fetchData=()=>{
+        if(invoicesData!==null) invoicesDataSet(null)
         //fetches all data
         let fetcher = `http://localhost:${port}/invoices?target=invoices&filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}&step=${queryFilter.step}&order=${queryFilter.order}&orderBy=${queryFilter.orderBy}&interval=${queryFilter.interval}`
         
@@ -175,8 +176,7 @@ let InvoicesOverview = (props) =>{
     }
 
     return(
-        <div className="app-data-container">  
-                {invoicesData &&     
+        <div className="app-data-container">
                 <div className="bordered-container" style={{display: activeInvoice===null ? "" : "none"}}>                    
                     <div className="" style={{width:'100%'}}>
                         {!activeInvoice &&
@@ -200,7 +200,7 @@ let InvoicesOverview = (props) =>{
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {invoicesData.length>0 && invoicesData.map((element, index)=>(          
+                                                {invoicesData && invoicesData.length>0 && invoicesData.map((element, index)=>(          
                                                     <tr key={index}>
                                                         <td>{((queryFilter.page*10)-10) +index+1}</td>
                                                         <td>{element.client_first_name} {element.client_last_name}</td>
@@ -213,22 +213,24 @@ let InvoicesOverview = (props) =>{
                                                             <SmallMenu buttons={[{title:"Genereaza factura", action:()=>{openInvoice(element.invoice_number)}, name:"Genereaza", icon:"file_open"}, {title:"Deschide factura", action:()=>{setActiveInvoice(element.invoice_number)}, name:"Deschide", icon:"open_in_new"}, {title:"Arhiveaza factura", action:()=>{deleteInvoice(element.invoice_number)}, name:"Sterge", icon:"delete"}]}/>
                                                         </td>
                                                     </tr>    
-                                                ))}
-                                            </tbody>  
+                                                ))}                                                
+                                            </tbody> 
+                                            {invoicesData===null && context.loadingSpinner} 
+                                            {invoicesData===[] && <h6>Nu exista date</h6>} 
                                         </table>  
                                     <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>
                                 </div>                                
                             </div>  
                         } 
                     </div>
-                </div>}
+                </div>
                 {activeInvoice &&
                 <div>
                     <button className='outline-mint-button' style={{marginBottom:'10px'}} onClick={()=>{closeAndRefresh()}}><span className="material-icons-outlined">arrow_back</span>Inchide</button>
                     <div className='overview-container bordered-container'>                                
                         <Invoice key={activeInvoice} invoiceID={activeInvoice} addSnackbar={addSnackbar} port={port}/>
                     </div>
-                </div>}
+                </div>}                
         </div>
     )
 

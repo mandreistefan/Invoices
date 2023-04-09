@@ -103,7 +103,7 @@ let Clients = (props) =>{
                 {!activeClient&&  
                 <div className="bordered-container" style={{display: activeClient===null ? "" : "none"}} >   
                     <Header title="Clienti" icon="account_circle" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[{title:"Client nou", action:()=>{showonewClientWindow(true)}, icon:"add", name:"Client nou"}]}/>
-                    <div >
+                    <div>
                         <table className="table" id="invoices-table">
                             <thead>
                                 <tr>
@@ -118,7 +118,7 @@ let Clients = (props) =>{
                                 {allClients && allClients.map((element, index)=>(          
                                     <tr key={index}>
                                         <td>{index+1}</td>
-                                        <td><b>{element.client_first_name} {element.client_last_name}</b></td>
+                                        <td>{element.client_first_name} {element.client_last_name}</td>
                                         <td>{element.client_type==="pers" ? <div className='badge badge-gray'><span className="material-icons-outlined" style={{fontSize:'16px'}}>person</span>Persoana fizica</div> : <div className='badge badge-gray'><span className="material-icons-outlined" style={{fontSize:'16px'}}>store</span>Firma</div>}</td> 
                                         <td>{element.client_county}, {element.client_city}, {element.client_street}, {element.client_adress_number}, {element.client_zip}</td>                                          
                                         <td className="table-actions-container">                                                    
@@ -129,9 +129,10 @@ let Clients = (props) =>{
                                             ]}/>
                                         </td>
                                     </tr> 
-
-                                ))}
-                            </tbody>  
+                                ))}                                
+                            </tbody> 
+                            {allClients===null && context.loadingSpinner}  
+                            {allClients===[] && <h6>Nu exista date</h6>}  
                         </table>
                         <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>
                     </div>
@@ -168,7 +169,7 @@ let Clients = (props) =>{
                             <Invoice activeClient={invoiceClient} addSnackbar={addSnackbar}/>
                         </div>
                     </div>
-                }              
+                }                            
             </div>
     )
 }

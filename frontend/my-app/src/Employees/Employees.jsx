@@ -16,7 +16,7 @@ let Employees=(props)=>{
     //local storage
     //if(!localStorage.getItem('activeEmployee')) localStorage.setItem('activeEmployee', "")
 
-    let [employees, setEmployees] = useState([])
+    let [employees, setEmployees] = useState(null)
     let [queryFilter, setFilter] = useState({filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page, step:defaultFilter.step})
     let [activeEmployee, setActive] = useState("")
     let [addEmployeeWindow, showaddEmployeeWindow] = useState(false)
@@ -103,50 +103,50 @@ let Employees=(props)=>{
     }
 
     return(
-        <div className="app-data-container">
-            {employees&&                       
-                <div>
-                    <div className="" style={{width:'100%'}}>
-                        {!activeEmployee &&
-                        <div className="bordered-container">                        
-                            <Header title="Angajati" icon="group" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[{title:"Angajat nou", action:()=>{showaddEmployeeWindow(true)}, icon:"add", name:"Angajat nou"}]}/>    
-                            <div>
-                                <table className="table" id="invoices-table">
-                                    <thead>
-                                        <tr>
-                                            <td>#</td>
-                                            <td>Nume</td>
-                                            <td>Titlu</td>
-                                            <td>Activ</td>
-                                            <td></td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {employees.length>0 && employees.map((element, index)=>(          
-                                            <tr key={index}>
-                                                <td>{index+1}</td>
-                                                <td>{element.emp_first_name} {element.emp_last_name}</td>
-                                                <td>{element.emp_job_name}</td> 
-                                                <td>{element.emp_active ? <div className="badge badge-green"><span style={{marginRight:"3px", fontSize:'15px'}} className="material-icons-outlined">task_alt</span>Activ</div> : <div className="badge badge-gray"><span style={{marginRight:"3px", fontSize:'15px'}} className="material-icons-outlined">cancel</span>Inactiv</div>}</td>                                          
-                                                <td className="table-actions-container">
-                                                    <SmallMenu buttons={[{title:"Deschide angajat", action:()=>{setActiveEmployee(element.id)}, name:"Deschide", icon:"file_open"}, {title:"Arhiveaza angajat", action:()=>{deleteEmployee(element.id)}, name:"Sterge", icon:"delete"}]}/>
-                                                </td>
-                                            </tr>    
-                                        ))}
-                                    </tbody>  
-                                </table>
-                            </div>
-                            <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>
-                        </div>}
-                        {activeEmployee&&
-                            <div> 
-                                <button className="outline-mint-button" style={{marginBottom:'15px'}} onClick={()=>{closeEmployee()}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>     
-                                <Employee id={activeEmployee} refreshParent={fetchData} addSnackbar={addSnackbar} port={port}/>
-                            </div>    
-                        }
-                    </div>
+        <div className="app-data-container">                                 
+            <div>
+                <div className="" style={{width:'100%'}}>
+                    {!activeEmployee &&
+                    <div className="bordered-container">                        
+                        <Header title="Angajati" icon="group" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[{title:"Angajat nou", action:()=>{showaddEmployeeWindow(true)}, icon:"add", name:"Angajat nou"}]}/>    
+                        <div>
+                            <table className="table" id="invoices-table">
+                                <thead>
+                                    <tr>
+                                        <td>#</td>
+                                        <td>Nume</td>
+                                        <td>Titlu</td>
+                                        <td>Activ</td>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {employees && employees.length>0 && employees.map((element, index)=>(          
+                                        <tr key={index}>
+                                            <td>{index+1}</td>
+                                            <td>{element.emp_first_name} {element.emp_last_name}</td>
+                                            <td>{element.emp_job_name}</td> 
+                                            <td>{element.emp_active ? <div className="badge badge-green"><span style={{marginRight:"3px", fontSize:'15px'}} className="material-icons-outlined">task_alt</span>Activ</div> : <div className="badge badge-gray"><span style={{marginRight:"3px", fontSize:'15px'}} className="material-icons-outlined">cancel</span>Inactiv</div>}</td>                                          
+                                            <td className="table-actions-container">
+                                                <SmallMenu buttons={[{title:"Deschide angajat", action:()=>{setActiveEmployee(element.id)}, name:"Deschide", icon:"file_open"}, {title:"Arhiveaza angajat", action:()=>{deleteEmployee(element.id)}, name:"Sterge", icon:"delete"}]}/>
+                                            </td>
+                                        </tr>    
+                                    ))}
+                                </tbody> 
+                                {employees===null && context.loadingSpinner}  
+                                {employees===[] && <h6>Nu exista date</h6>}
+                            </table>
+                        </div>
+                        <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>
+                    </div>}
+                    {activeEmployee&&
+                        <div> 
+                            <button className="outline-mint-button" style={{marginBottom:'15px'}} onClick={()=>{closeEmployee()}}><span class="material-icons-outlined">arrow_back</span>Inchide</button>     
+                            <Employee id={activeEmployee} refreshParent={fetchData} addSnackbar={addSnackbar} port={port}/>
+                        </div>    
+                    }
                 </div>
-            }
+            </div>            
             {addEmployeeWindow && 
                 <div>
                     <div className="blur-overlap"></div> 
