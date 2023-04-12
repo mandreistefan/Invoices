@@ -12,7 +12,7 @@ let Employees=(props)=>{
     const port = context.port
 
     const defaultFilter={filter:"all", filterBy:"", page:1, step:10}
-
+    const mS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     //local storage
     //if(!localStorage.getItem('activeEmployee')) localStorage.setItem('activeEmployee', "")
 
@@ -102,6 +102,20 @@ let Employees=(props)=>{
         setFilter({...queryFilter, filter:defaultFilter.filter, filterBy:defaultFilter.filterBy, page:defaultFilter.page})
     }
 
+    /**
+     * 
+     * @param {*} month Integer, the 1-index month of the salary
+     * @param {*} year Integer, year of the salary
+     */
+    function isSalaryUpToDate(month, year){
+        let currentDate = new Date()
+        if(year===currentDate.getFullYear() && parseInt(month) === parseInt(currentDate.getMonth()+1)){
+            return(<div className="badge badge-green"><span style={{marginRight:"3px", fontSize:'15px'}} className="material-icons-outlined">payments</span>{mS[month-1]} {year}</div>)
+        }else{
+            return(<div className="badge badge-yellow"><span style={{marginRight:"3px", fontSize:'15px'}} className="material-icons-outlined">payments</span>{mS[month-1]} {year}</div>)
+        }   
+    }
+
     return(
         <div className="app-data-container">                                 
             <div>
@@ -117,6 +131,10 @@ let Employees=(props)=>{
                                         <td>Nume</td>
                                         <td>Titlu</td>
                                         <td>Activ</td>
+                                        <td>Salariu net</td>
+                                        <td>Data plata ultim salariu</td>
+                                        <td>Ultim salariu</td>
+                                        <td>Zile vacanta</td>
                                         <td></td>
                                     </tr>
                                 </thead>
@@ -127,6 +145,10 @@ let Employees=(props)=>{
                                             <td>{element.emp_first_name} {element.emp_last_name}</td>
                                             <td>{element.emp_job_name}</td> 
                                             <td>{element.emp_active ? <div className="badge badge-green"><span style={{marginRight:"3px", fontSize:'15px'}} className="material-icons-outlined">task_alt</span>Activ</div> : <div className="badge badge-gray"><span style={{marginRight:"3px", fontSize:'15px'}} className="material-icons-outlined">cancel</span>Inactiv</div>}</td>                                          
+                                            <td>{element.emp_cur_salary_net}</td>
+                                            <td>{element.lastSalaryDetails.pay_date}</td>
+                                            <td>{isSalaryUpToDate(element.lastSalaryDetails.salary_month, element.lastSalaryDetails.salary_year)}</td>
+                                            <td>{element.lastSalaryDetails.vacationDays}</td>
                                             <td className="table-actions-container">
                                                 <SmallMenu buttons={[{title:"Deschide angajat", action:()=>{setActiveEmployee(element.id)}, name:"Deschide", icon:"file_open"}, {title:"Arhiveaza angajat", action:()=>{deleteEmployee(element.id)}, name:"Sterge", icon:"delete"}]}/>
                                             </td>

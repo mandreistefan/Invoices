@@ -19,7 +19,6 @@ async function fetchClients(querryObject){
             return({status:"ERROR", data:null})
         }        
     }else{
-
         try{
             //can use + to replace the space in the search text
             let stringedFilterBy=querryObject.filterBy.replace("+"," ")
@@ -432,15 +431,28 @@ async function getEmployees(filterObject){
     if(filterObject.filter!="search"){
         //client data
         [employeesObject, totalRecordsNumber] = await Promise.all([databaseOperations.getEmployees(filterObject), databaseOperations.getRecordsNumber("employees", filterObject.filter, filterObject.filterBy)])
+        //first element is the list of all employees
+        if(employeesObject[0]===null) return {status:"NO_DATA", recordsNumber: 0, data: null}
     }else{
         //can use + to replace the space in the search text
         [employeesObject, totalRecordsNumber] = await Promise.all([await databaseOperations.getEmployees({filter:"search", filterBy:await databaseOperations.searchDatabase({target:"employees", searchTerm:filterObject.filterBy.replace("+"," ")}), page:1}), 0])
+        if(employeesObject[0]===null) return {status:"NO_DATA", recordsNumber: 0, data: null}
     }
+  
+    employeesObject[0].forEach((element, index)=>{
+        element.lastSalaryDetails = {
+            pay_date: employeesObject[1][index*2][0].pay_date,
+            salary_month: employeesObject[1][index*2][0].salary_month,
+            salary_year: employeesObject[1][index*2][0].salary_year,
+            net: employeesObject[1][index*2][0].sum_net,
+            vacationDays: employeesObject[1][index+index+1][0].count
+        }
+    })
 
     return({
-        status: employeesObject.status,
+        status: "OK",
         totalRecordsNumber,
-        data: employeesObject.data
+        data: employeesObject[0]
     })
 
 }

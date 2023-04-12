@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 
 let DatabaseOperations=(props)=>{
 
     let [databaseInfo, setDBinfo] = useState({active: null, available:[]})
     let [ping, setPing] = useState({status:"NA", date:"NA"})
 
-    const port = window.location.href.indexOf("app") > -1 ? "3001" : "3000"  
+    const port = useRef(window.location.href.indexOf("app") > -1 ? "3001" : "3000") 
 
     useEffect(()=>{
         if(databaseInfo.active===null){
-            fetch(`http://localhost:${port}/database`).then(response=>response.json()).then(data=>{
+            fetch(`http://localhost:${port.current}/database`).then(response=>response.json()).then(data=>{
                 if(data.status==="OK"){
                     setDBinfo({active: data.data.database, available:data.data.databases})
                 }else if(data.status==="SERVER_ERROR"){
@@ -23,20 +23,20 @@ let DatabaseOperations=(props)=>{
 
 
     let handleDBchange=(event)=>{
-        fetch(`http://localhost:${port}/switchDatabase`, {
+        fetch(`http://localhost:${port.current}/switchDatabase`, {
             method:"POST",
             headers: { 'Content-Type': 'application/json' },
             body:JSON.stringify({database: event.target.value})
         }).then(response=>response.json()).then(data=>{
             if(data.status==="OK") setDBinfo({active: event.target.value, available:databaseInfo.available})
-            if(props.changeFunction) props.changeFunction(event.target.value)
+            //if(props.changeFunction) props.changeFunction(event.target.value)
         }).catch(error=>{
             console.log(error)
         })       
     }
 
     let pingDatabase=()=>{
-        fetch(`http://localhost:${port}/pingDatabase`, {
+        fetch(`http://localhost:${port.current}/pingDatabase`, {
             method:"GET",
             headers: { 'Content-Type': 'application/json'}
         }).then(response=>response.json()).then(data=>{

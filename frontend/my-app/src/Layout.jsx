@@ -7,6 +7,7 @@ import Snackbar from "./Snackbar/Snackbar";
 //when the page changes, an App.js function has to be called, since App.js renders the components
 let Layout = (props) =>{
 
+    const loadingSpinner = (<div className='m-3'><div className="spinner-border text-primary" role="status"></div></div>)
     let [snackbars, setSnackbars] = useState([])
     const path  = window.location.href.indexOf("app") > -1 ? "/app/" : "/"
     const port = window.location.href.indexOf("app") > -1 ? "3001" : "3000"  
@@ -76,10 +77,10 @@ let Layout = (props) =>{
                         ))}
                     </div>                
                     <div style={{display:'inherit', flexDirection:'row', alignItems:'center'}} className="p-2">
-                        <DatabaseSelector port={port}/>
+                        <DatabaseSelector/>
                     </div>                
                 </div> 
-                <Outlet context={{addSnackbar, port}}/>            
+                <Outlet context={{addSnackbar, port, loadingSpinner}}/>            
         </div>
         <div className="snackbars-container">
             {snackbars.length>0&&

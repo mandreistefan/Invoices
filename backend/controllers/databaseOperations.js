@@ -14,7 +14,8 @@ const connection=mysql.createConnection({
     host:"localhost",
     user:"root",
     password:"root",
-    database:"invoicemanager"
+    database:"invoicemanager",
+    multipleStatements: true
 })
 
 connection.on('error', function (err) {
@@ -267,7 +268,6 @@ async function getInvoices(querryObject){
 
     //at search the IDs are pre-filtered
     let querryInterval = ""
-    console.log(querryObject.processedInterval)
     if(querryObject.filter!=="search"){
         if(querryObject.processedInterval!==undefined && querryObject.processedInterval!==null){        
             querryInterval = ` AND invoice_date >= "${querryObject.processedInterval.startYear}-${querryObject.processedInterval.startMonth}-${querryObject.processedInterval.startDay}" AND invoice_date <= "${querryObject.processedInterval.endYear}-${querryObject.processedInterval.endMonth}-${querryObject.processedInterval.endDay}" `
@@ -1093,7 +1093,7 @@ function deleteExpense(id){
  * @returns {Promise<{status: string, data: array}>} status of the OP as string and the data as array containing key:pair values
  */
 
-function getEmployees(queryObject){
+async function getEmployees(queryObject){
     let step = 10;
     if(queryObject.step) step = queryObject.step
     if(queryObject.filter==="search" && queryObject.filterBy.length===0) return ({status:"NO_DATA", data:null})
@@ -1112,35 +1112,51 @@ function getEmployees(queryObject){
             querry=`SELECT * FROM employees`
             break
     }
-    return new Promise((resolve, reject)=>{
+    let clients =  await new Promise((resolve, reject)=>{
         connection.query(querry, function(err, result){
             if(err){
                 console.log(err)
-                reject({
-                    status:"ERROR",
-                    data:"ERROR fetching employees"
-                })
+                reject(null)
             }
             if(result){
                 if(result.length>0){
-                    resolve({
-                        status:"OK",
-                        data:result
-                    })
+                    resolve(result)
                 }else{
-                    resolve({
-                        status:"NO_DATA",
-                        data:null
-                    })
+                    resolve(null)
                 }
             }else{
-                resolve({
-                    status: "FAILED",
-                    data: null
-                })
+                resolve(null)
             }
         })
     })
+
+    let clientsDetails = await new Promise((resolve, reject)=>{
+        let query = ""
+        let currentYear = new Date()
+        //no employees fetched
+        if(clients===null) reject (null)
+        //get the IDs of the employees
+        clients.forEach(element=>{
+            query = query + `SELECT DATE_FORMAT(paid_on, '%d-%m-%Y') as pay_date, sum_net, salary_month, salary_year FROM employees_salaries WHERE paid_to=${element.id} AND paid_on > '${currentYear.getFullYear()}-01-01' AND paid_on < '${currentYear.getFullYear()}-12-31' ORDER BY paid_on DESC LIMIT 1; SELECT count(*) AS count FROM employees_vacation WHERE employee_id = ${element.id} AND date > '${currentYear.getFullYear()}-01-01' AND date < '${currentYear.getFullYear()}-12-31';`
+        })
+        connection.query(query, function(err, result){
+            if(err){
+                console.log(err)
+                reject(null)
+            }
+            if(result){
+                if(result.length>0){
+                    resolve(result)
+                }else{
+                    resolve(null)
+                }
+            }else{
+                resolve(null)
+            }
+        })
+    })
+    //client data and financial data for each client
+    return Promise.all([clients, clientsDetails])
 }
 
 /**
@@ -1751,6 +1767,16 @@ async function getHistory(targetTerms){
     })
 }
 
+async function getEmployeesDetails(clientsArray){
+    let query = ""
+    let date = currentDate()
+    clientsArray.forEach(element=>{
+        query = query + `SELECT paid_on, sum_net, salary_month, salary_year FROM employees_salaries WHERE paid_to=${element};`
+    })
+    console.log(query)
+    return null
+}
+
 
 module.exports ={
     getClients:getClients,
@@ -1778,5 +1804,5 @@ module.exports ={
     getRecordsNumber:getRecordsNumber, getDBinfo:getDBinfo, changeDatabase, getExpenses,addExpense, deleteExpense, searchDatabase, getEmployees, addEmployee, editEmployee, hasSalaryOnDate, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeInfo, archiveEmployee, deleteEmployee, removePredefinedProduct,
     exportData,
     getDashboardData, pingDB, databaseLog, getLatestLogs,
-    getHistory
+    getHistory, getEmployeesDetails
 }
