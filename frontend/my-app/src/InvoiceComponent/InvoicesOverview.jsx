@@ -135,7 +135,7 @@ let InvoicesOverview = (props) =>{
     }
 
     let openInvoice=(invoiceID)=>{
-        window.open(`http://localhost:${window.navigator.userAgent==="ElectronApp" ? "3000" : "3001"}/generateInvoice/${invoiceID}`).focus();
+        window.open(`http://localhost:3001/generateInvoice/${invoiceID}`).focus();
     }
 
     function handleSearchSubmit(searchTermStringified){

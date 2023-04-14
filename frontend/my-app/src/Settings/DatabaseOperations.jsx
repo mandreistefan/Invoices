@@ -5,7 +5,7 @@ let DatabaseOperations=(props)=>{
     let [databaseInfo, setDBinfo] = useState({active: null, available:[]})
     let [ping, setPing] = useState({status:"NA", date:"NA"})
 
-    const port = useRef(window.location.href.indexOf("app") > -1 ? "3001" : "3000") 
+    const port = useRef(navigator.userAgent.indexOf('Electron')>-1 ? "3001" : "3000") 
 
     useEffect(()=>{
         if(databaseInfo.active===null){

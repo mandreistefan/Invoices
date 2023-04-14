@@ -23,14 +23,15 @@ let App =()=> {
   const PredefinedProducts = lazy(()=>import('./Admins/PredefinedProducts.jsx'))
   const InvoicesComponent = lazy(()=> import('./InvoiceComponent/InvoicesOverview'))*/
 
-  let router;
-  const path = window.location.href.indexOf("app") > -1 ? "/app" : "/" 
+  let router;  
+  let inElectron = navigator.userAgent.indexOf('Electron')>-1 ? true : false;
+  let path =  "/"
 
   //Electron env
-  if(navigator.userAgent.indexOf('Electron')>-1){
+  if(inElectron){
     router=createHashRouter(
       createRoutesFromElements(
-        <Route path="/"  element={<Layout/>} errorElement={<ErrorBoundary/>} >
+        <Route path={path}  element={<Layout/>} errorElement={<ErrorBoundary/>} >
           <Route path="/" element={<Dashboard/>} />
           <Route path='clients' element={<ClientsComponent/>}/>
           <Route path='invoices' element={<InvoicesComponent/>}/>
@@ -61,6 +62,7 @@ let App =()=> {
 
   function ErrorBoundary() {
     let error = useRouteError();
+    console.log(error)
     if(error.status===404){
       return <div>
         <div className="px-4 py-5 my-5 text-center">          
@@ -68,7 +70,7 @@ let App =()=> {
           <div className="col-lg-6 mx-auto">
             <p className="lead mb-4">Pagina cautata nu exista. Click mai jos pentru a merge catre dashboard</p>
             <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
-            <a href="./">Catre pagina de pornire</a>
+            <a href={path}>Catre pagina de pornire</a>
             </div>
           </div>
         </div>        
@@ -81,7 +83,7 @@ let App =()=> {
         <div className="col-lg-6 mx-auto">
           <p className="lead mb-4">A aparut o eroare generala. Incearca sa mergi la pagina de pornire</p>
           <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
-          <a href="./">Catre pagina de pornire</a>
+          <a href={path}>Catre pagina de pornire</a>
           </div>
         </div>
       </div>        
@@ -89,7 +91,7 @@ let App =()=> {
   }
 
   return(
-      <RouterProvider router={router}/>
+      <RouterProvider router={router} inElectron={inElectron}/>
   )  
 
 }

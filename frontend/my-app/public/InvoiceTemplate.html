@@ -129,7 +129,7 @@
         //emits an event to the server to call the printToPDF() function
         function printAsPdf(){
             console.log("Generating PDF")
-                fetch("http://localhost:3000/generatePDF",
+                fetch("http://localhost:3001/generatePDF",
                 {
                     method:"GET"
                 })
@@ -148,7 +148,7 @@
             //append the ID in the link
             let pathArray = window.location.pathname.split('/'); 
 
-            fetch(`http://localhost:3000/invoice/?filter=invoiceID&filterBy=${pathArray[2]}`,
+            fetch(`http://localhost:3001/invoice/?filter=invoiceID&filterBy=${pathArray[2]}`,
             {
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' }

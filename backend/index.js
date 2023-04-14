@@ -22,7 +22,6 @@ let PORT = '3001'
 const inElectron = false
 
 if(inElectron){
-    PORT='3000'
     const { app, BrowserWindow } = require('electron');
 
     const createWindow = () => {

@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, useRef} from "react";
 import DatabaseSelector from './Settings/DatabaseOperations'
 import {Outlet, Link} from 'react-router-dom'
 import Snackbar from "./Snackbar/Snackbar";
@@ -9,8 +9,9 @@ let Layout = (props) =>{
 
     const loadingSpinner = (<div className='m-3'><div className="spinner-border text-primary" role="status"></div></div>)
     let [snackbars, setSnackbars] = useState([])
-    const path  = window.location.href.indexOf("app") > -1 ? "/app/" : "/"
-    const port = window.location.href.indexOf("app") > -1 ? "3001" : "3000"  
+    let inElectron = navigator.userAgent.indexOf('Electron')>-1 ? true : false
+    let port = navigator.userAgent.indexOf('Electron')>-1 ? "3001" : "3000"
+    const path = "/" 
 
     let navigationElements = 
     [
