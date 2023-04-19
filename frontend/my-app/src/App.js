@@ -11,6 +11,7 @@ import Expenses from './Admins/Expenses'
 import Financials from './FinancialComponent/FinancialComponent'
 import BilledProducts from './Admins/BilledProducts.jsx'
 import Dashboard from './Dashboard';
+import { useEffect, useState } from 'react';
 
 let App =()=> {
 
@@ -26,6 +27,26 @@ let App =()=> {
   let router;  
   let inElectron = navigator.userAgent.indexOf('Electron')>-1 ? true : false;
   let path =  "/"
+  let [errorNotifier, setErrorNotifier] = useState(null)
+  let port = navigator.userAgent.indexOf('Electron')>-1 ? "3001" : "3000"
+
+  useEffect(()=>{
+    fetch(`http://localhost:${port}/pingDatabase`,
+    {
+        method:"GET",
+        headers: { 'Content-Type': 'application/json' },
+    })
+    .then(response=>response.json()).then(data=>{      
+        if(data.response===true){
+
+        }else{
+          setErrorNotifier("A existat o eroare in conectarea la baza de date! Baza de date nu exista sau aplicatia nu se poate conecta!")                  
+        }         
+    })
+    .catch(error=>{
+        console.log(error)
+    })
+  },[])
 
   //Electron env
   if(inElectron){
@@ -91,7 +112,11 @@ let App =()=> {
   }
 
   return(
-      <RouterProvider router={router} inElectron={inElectron}/>
+      <div>
+        {errorNotifier===null && <RouterProvider router={router} inElectron={inElectron}/>}
+        {errorNotifier!==null && <div className='p-3'><div class="alert alert-danger" role="alert">{errorNotifier}</div></div>}
+      </div>
+      
   )  
 
 }

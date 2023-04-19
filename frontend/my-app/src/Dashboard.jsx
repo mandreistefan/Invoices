@@ -8,8 +8,8 @@ let Dashboard = (props) =>{
     let {...context} = useOutletContext();
     const addSnackbar = context.addSnackbar 
     const port = context.port
-
     let [dashboardData, setData] = useState(null)
+    
 
     useEffect(()=>{
         fetch(`http://localhost:${port}/dashboardData`,
@@ -26,8 +26,11 @@ let Dashboard = (props) =>{
                 }else if(data.status==="NO_DATA"){
                     //setAlertUser({text: "Nu exista date"})
                 }else{
-
+                    //setErrorNotifier("A existat o eroare in conectarea la baza de date! Baza de date nu exista sau aplicatia nu se poate conecta!")
                 }            
+            })
+            .catch(error=>{
+                console.log(error)
             })
     },[])
 

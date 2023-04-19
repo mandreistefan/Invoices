@@ -58,6 +58,11 @@ let Clients = (props) =>{
         })
     }
 
+    /**
+     * Delete a client from the DB
+     * @param {*} cliendID ID of the client
+     * @returns 
+     */
     let deleteClient=(cliendID)=>{
         let client = cliendID
         if(!client) client = cliendID

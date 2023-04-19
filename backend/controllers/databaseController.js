@@ -623,6 +623,34 @@ async function getBilledProducts(orderobject){
     return ({status:"OK", data: data.data, limits})
 }
 
+async function updateVacationStatus(id, newStatus){
+    if(!id || !newStatus) return ({status: "INVALID_DATA", data: null}) 
+    return await databaseOperations.changeVacationStatus(id, newStatus)
+}
+
+async function daleteVacationDay(id){
+    if(!id) return ({status: "INVALID_DATA", data: null}) 
+    return await databaseOperations.deleteVacationDay(id)
+}
+
+async function deleteSalary(id){
+    if(!id) return ({status: "INVALID_DATA", data: null}) 
+    return await databaseOperations.deleteSalary(id)
+}
+
+async function getSalary(id){
+    let salary = await databaseOperations.getSalary(id)
+    if(salary===null) return ({status:"FAIL", data: null})
+    console.log(salary)
+    return({status: "OK", data:{
+        sum_gross: salary.sum_gross,
+        sum_net: salary.sum_net,
+        tax_cas: salary.tax_cas,
+        tax_cass: salary.tax_cass,
+        tax_income: salary.tax_income,
+        tax_cm: salary.tax_cm
+    }})
+}
 
 module.exports={ 
     fetchClients:fetchClients,
@@ -646,5 +674,5 @@ module.exports={
     getEmployees, addEmployee, editEmployee, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeOverview, archiveEmployee, deletePredefinedProduct, 
     exportData, dashboardData,
     pingDB, getRecentLogs,
-    getHistory, getBilledProducts
+    getHistory, getBilledProducts, updateVacationStatus, daleteVacationDay, deleteSalary, getSalary
 }

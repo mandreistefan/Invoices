@@ -1380,16 +1380,16 @@ async function addVacationDays(employee, daysObject){
                     reject("INVALID_DATE")
                 }else{
                     //create a query element
-                    let insertThing = `('${employee}', '${daysObject[0].date}', '${daysObject[0].type}')`
+                    let insertThing = `('${employee}', '${daysObject[0].date}', '${daysObject[0].type}', 'planned')`
                     if(daysObject.length>1){
                         daysObject.shift()
                         //build insert query
                         daysObject.forEach((element, index)=>{
-                            insertThing = insertThing + `,('${employee}', '${element.date}', '${element.type}')`
+                            insertThing = insertThing + `,('${employee}', '${element.date}', '${element.type}', 'planned')`
                         })
                     }
                     //add days to the DB
-                    connection.query(`INSERT INTO employees_vacation(employee_id, vacation_date, vacation_type) VALUES ${insertThing}`, function(error, result){
+                    connection.query(`INSERT INTO employees_vacation(employee_id, vacation_date, vacation_type, status) VALUES ${insertThing}`, function(error, result){
                         if(error){
                             console.log(error)
                             reject ({status:"FAIL", data:null})
@@ -1421,18 +1421,61 @@ async function addVacationDays(employee, daysObject){
 function getVacationDays(employee){
     let returnArr = []
     return new Promise((resolve, reject)=>{
-        connection.query(`SELECT DATE_FORMAT(vacation_date, '%Y-%m-%d') as vacation_date, vacation_type, DATE_FORMAT(date, '%Y-%m-%d') as date FROM employees_vacation WHERE employee_id='${employee}'`, function(error, result){
+        connection.query(`SELECT id, DATE_FORMAT(vacation_date, '%d-%m-%Y') as vacation_date_format, vacation_type, DATE_FORMAT(date, '%d-%m-%Y') as date, status FROM employees_vacation WHERE employee_id='${employee}' ORDER BY vacation_date ASC`, function(error, result){
             if(error){
                 console.log(error)
                 reject ({status:"ERROR", data:null})
             }
             if(result.length>0){
                 result.forEach(element=>{
-                    returnArr.push({date:element.vacation_date, type:element.vacation_type, registerDate: element.date})
+                    returnArr.push({id: element.id, date:element.vacation_date_format, type:element.vacation_type, registerDate: element.date, status: element.status})
                 })
                 resolve({status:"OK", data:returnArr})
             }else{
                 resolve({status:"OK", data:null})
+            }            
+        })
+    })
+}
+
+/**
+ * Changes the status of a vacation day
+ * @param {*} id ID of the vacation day
+ * @param {*} newStatus Status to be updated to
+ * @returns {Promise<{status:string}>} Status of the OP
+ */
+function changeVacationStatus(id, newStatus){
+    return new Promise((resolve, reject)=>{
+        connection.query(`UPDATE employees_vacation SET status='${newStatus}' WHERE id='${id}'`, function(error, result){
+            if(error){
+                console.log(error)
+                reject ({status:"ERROR", data:null})
+            }
+            if(result.affectedRows>0){
+                resolve({status:"OK", data: null})
+            }else{
+                resolve({status:"FAIL", data:null})
+            }            
+        })
+    }) 
+}
+
+/**
+ * Delete a requested vacation day; executed days will not be deleted
+ * @param {*} id ID of the vacation day
+ * @returns 
+ */
+function deleteVacationDay(id){
+    return new Promise((resolve, reject)=>{
+        connection.query(`DELETE FROM invoicemanager.employees_vacation WHERE id=${id} AND NOT status='executed'`, function(error, result){
+            if(error){
+                console.log(error)
+                reject ({status:"ERROR", data:null})
+            }
+            if(result.affectedRows>0){
+                resolve({status:"OK", data: null})
+            }else{
+                resolve({status:"FAIL", data:null})
             }            
         })
     })
@@ -1777,6 +1820,36 @@ async function getEmployeesDetails(clientsArray){
     return null
 }
 
+async function deleteSalary(id){
+    return new Promise((resolve, reject)=>{
+        connection.query(`DELETE FROM employees_salaries WHERE id='${id}'`, function(error, result){
+            if(error){
+                console.log(error)
+                reject ({status:"ERROR", data:null})
+            }
+            if(result.affectedRows>0){
+                resolve({status:"OK", data:result})
+            }
+            resolve({status:"FAIL", data:null})
+        })
+    })
+}
+
+function getSalary(id){
+    return new Promise((resolve, reject)=>{
+        connection.query(`SELECT * from employees_salaries WHERE id='${id}'`, function(error, result){
+            if(error){
+                console.log(error)
+                reject (null)
+            }
+            if(result){
+                resolve(result[0])
+            }
+            resolve(null)
+        })
+    })
+}
+
 
 module.exports ={
     getClients:getClients,
@@ -1804,5 +1877,5 @@ module.exports ={
     getRecordsNumber:getRecordsNumber, getDBinfo:getDBinfo, changeDatabase, getExpenses,addExpense, deleteExpense, searchDatabase, getEmployees, addEmployee, editEmployee, hasSalaryOnDate, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeInfo, archiveEmployee, deleteEmployee, removePredefinedProduct,
     exportData,
     getDashboardData, pingDB, databaseLog, getLatestLogs,
-    getHistory, getEmployeesDetails
+    getHistory, getEmployeesDetails, changeVacationStatus, deleteVacationDay, deleteSalary, getSalary
 }

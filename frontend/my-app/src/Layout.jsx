@@ -36,7 +36,7 @@ let Layout = (props) =>{
 
     //initial setup can be saved in localstorage
     let savedNavigationOption = localStorage.getItem('selectedNavigationOption')
-    let [selectedItem, setSelectedItem] = useState(null);
+    let [selectedItem, setSelectedItem] = useState(7);
 
     useEffect(()=>{
         //save in local storage

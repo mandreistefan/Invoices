@@ -1,6 +1,8 @@
 const express = require('express')
 let app = express.Router()
-let {getEmployees, addEmployee, editEmployee, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeOverview, archiveEmployee} = require('../controllers/databaseController.js')
+let {getEmployees, addEmployee, editEmployee, addSalary, getSalaries, addVacationDays, 
+    getVacationDays, getEmployeeOverview, archiveEmployee, updateVacationStatus, 
+    daleteVacationDay, deleteSalary, getSalary} = require('../controllers/databaseController.js')
 
 let filterObject={filter:"all", filterBy:"", page:1}
 
@@ -80,7 +82,7 @@ app.post("/employee_salary", (req,res)=>{
 })
 
 //get salaries
-app.get('/employee_salary', (req, res)=>{
+app.get('/employee_salaries', (req, res)=>{
     if(req.query.filter) filterObject.filter=req.query.filter
     if(req.query.filterBy) filterObject.filterBy=req.query.filterBy
     if(req.query.page) filterObject.page=req.query.page
@@ -95,6 +97,7 @@ app.get('/employee_salary', (req, res)=>{
     })   
 })
 
+//register a new vacation day
 app.post('/employee_vacation', (req, res)=>{
     addVacationDays(req.body).then(data=>{
         console.log(data)
@@ -114,6 +117,46 @@ app.post('/employee_vacation', (req, res)=>{
     })
 })
 
+//update a vacation day 
+app.put('/employee_vacation_status', (req, res)=>{
+    updateVacationStatus(req.body.id, req.body.status).then(data=>{
+        res.send(data)
+    }).catch(error=>{
+        res.send({status: "SERVER_ERROR", data:null}) 
+    })
+})
+
+//delete vacation day
+app.delete('/employee_vacation/:id', (req, res)=>{
+    daleteVacationDay(req.params.id).then(data=>{
+        res.send(data)
+    }).catch(error=>{
+        res.send({status:"SERVER_ERROR", data:null}) 
+        console.log(error) 
+    })
+})
+
+app.get('/employee_salary/:id', (req, res)=>{
+    getSalary(req.params.id).then(data=>{
+        console.log(data)
+        res.send(data)
+    }).catch(error=>{
+        res.send({status:"SERVER_ERROR", data:null}) 
+        console.log(error)   
+    })
+})
+
+//delete salary
+app.delete('/employee_salary/:id', (req, res)=>{
+    deleteSalary(req.params.id).then(data=>{
+        res.send(data)
+    }).catch(error=>{
+        res.send({status:"SERVER_ERROR", data:null}) 
+        console.log(error) 
+    })
+})
+
+//get a vacation day
 app.get('/employee_vacation/:id', (req, res)=>{
     getVacationDays(req.params.id).then(data=>{
         res.send({

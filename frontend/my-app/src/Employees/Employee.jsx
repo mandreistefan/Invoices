@@ -1,6 +1,7 @@
 import React from "react";
 import EmployeeForm from "./EmployeeForm.jsx";
 import Header from "../Header.jsx";
+import SalaryForm from "./SalaryForm.jsx";
 
 //the current date
 const currentDate = new Date()
@@ -26,6 +27,8 @@ export default class Employee extends React.Component{
             job_name:"",
             salary_gross:0,
             salary_net:0,
+            tax: false,
+            cass: false,
             salaries:[],
             salariesFilter:[],
             vacationDays:[],
@@ -36,15 +39,10 @@ export default class Employee extends React.Component{
             vacationDaysWindow:false,
             vacationDaysRequested:[{date: `${dateString.year}-${dateString.month}-${dateString.day}`, type:"vacation", disabled:false}], 
             availableVacationDays:0,
-            windows:[{name:"Angajat", active: true}, {name:"Salarii", active:false}, {name:"Zile libere", active:false}],
             emp_notes: "" ,
-            taxesPercentages: [
-                {name: "CAS", key:"CAS", description:"Asigurare sociale", value: 21.5},
-                {name: "CASS", key:"CASS", description: "Asigurari sociale sanatate", value: 10},
-                {name: "VENIT", key:"TAX", description: "Impozit venit", value: 10},
-                {name: "CAM", key:"CAM", description:"Contributie asiguratorie munca", value: 2.25}
-            ]  ,
-            port: window.location.href.indexOf("app") > -1 ? "3001" : "3000"       
+            windows:[{name:"Angajat", active: true}, {name:"Salarii", active:false}, {name:"Zile libere", active:false}],
+            port: window.location.href.indexOf("app") > -1 ? "3001" : "3000",
+            activeSalary: null     
         }
         this.handleMonthChange = this.handleMonthChange.bind(this);
     }
@@ -71,20 +69,10 @@ export default class Employee extends React.Component{
                     salaries:this.convertSalaries(data.data.salaries),
                     vacationDays:this.convertVacations(data.data.vacationDays),
                     emp_notes: data.data.info[0].emp_notes ? data.data.info[0].emp_notes : "",
-                    availableVacationDays: data.data.info[0].emp_vacation_days                        
+                    availableVacationDays: data.data.info[0].emp_vacation_days,
+                    tax: data.data.info[0].emp_tax,
+                    cass: data.data.info[0].emp_tax_cass                    
                 }) 
-                if(data.data.info[0].emp_tax===0){
-                    let taxesCopy = [...this.state.taxesPercentages]
-                    taxesCopy[2].value=0;
-                    this.setState({taxesPercentages: taxesCopy})                    
-                }                    
-                if(data.data.info[0].emp_tax_cass===0){
-                    let taxesCopy = [...this.state.taxesPercentages]
-                    taxesCopy[2].value=0;
-                    this.setState({taxesPercentages: taxesCopy})                    
-                }
-                this.calculateNet() 
-
             }else{
                 this.props.addSnackbar({text:"Eroare"})
             }
@@ -106,6 +94,7 @@ export default class Employee extends React.Component{
         let anArray=[]
         salaries.forEach(element=>{
             anArray.push({
+                id: element.id,
                 gross:element.sum_gross, 
                 net:element.sum_net, 
                 taxes:{cas:element.tax_cas, 
@@ -138,7 +127,7 @@ export default class Employee extends React.Component{
         let anArray = []
         if(vacationsObject!=null){
             vacationsObject.forEach(element=>{
-                anArray.push({date:element.date, type:element.type, registerDate:element.registerDate})
+                anArray.push({id: element.id, date:element.date, type:element.type, registerDate:element.registerDate, status: element.status})
             })
 
             //initially, the filter contains everything
@@ -149,28 +138,6 @@ export default class Employee extends React.Component{
             this.setState({vacationDaysFilter:initialVacationsFilter})
         }
         return anArray
-    }
-
-    handleSubmit=(event)=>{
-        event.preventDefault();
-        let taxes = []
-        this.state.taxesPercentages.forEach(element=>{
-            taxes.push(element.value)
-        })
-        fetch(`http://localhost:${this.state.port}/employee_salary`, {
-            method:"POST",
-            headers: { 'Content-Type': 'application/json' },
-            body:JSON.stringify({paid_to:this.state.id, salary_month:this.state.newSalaryMonth, salary_year:this.state.salaryYear, bank_ref:document.getElementById("bankref").value, taxes})
-        }).then(response=>response.json()).then(data=>{
-            if(data.status==="OK"){
-                this.props.addSnackbar({text:"Salariu inregistrat"})
-                this.updateEmployeeSalaries()
-            }else{
-                if(data.data==="SALARY_EXISTS") this.props.addSnackbar({text:"Exista o inregistrare pentru luna respectiva"})
-            }
-        }).catch(error=>{
-            console.log(error)
-        })
     }
 
     handleVacationForm=(event)=>{
@@ -271,7 +238,7 @@ export default class Employee extends React.Component{
     }
 
     updateEmployeeSalaries=()=>{
-        fetch(`http://localhost:${this.state.port}/employee_salary?filter=paid_to&filterBy=${this.state.id}`)
+        fetch(`http://localhost:${this.state.port}/employee_salaries?filter=paid_to&filterBy=${this.state.id}`)
         .then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 this.setState({salaries: this.convertSalaries(data.data)})
@@ -284,18 +251,6 @@ export default class Employee extends React.Component{
     calculateNet=()=>{
         let onePercentOfGross = parseFloat(this.state.salary_gross/100)
         this.setState({salary_net: parseFloat(this.state.salary_gross-(onePercentOfGross*this.state.taxesPercentages[0].value + onePercentOfGross*this.state.taxesPercentages[1].value + onePercentOfGross*this.state.taxesPercentages[2].value))})        
-    }
-
-    reacalculateTaxesWithThis=(event)=>{
-        let shallowCopy = [...this.state.taxesPercentages]        
-        shallowCopy.forEach(element=>{
-            if(element.key===event.target.name){
-                element.value=event.target.value
-                return
-            }
-        })
-        this.calculateNet()
-        this.setState({taxesPercentages:shallowCopy})
     }
 
     updateVacationDays=()=>{        
@@ -344,6 +299,103 @@ export default class Employee extends React.Component{
         this.setState({vacationDaysFilter:filtered})
     }
 
+    /**
+     * Updates the status of a vacation day
+     * @param {*} dayID ID of the vacation day
+     * @param {*} newStatus status to which we update
+     */
+    updateDayStatus=(dayID, newStatus)=>{
+        fetch(`http://localhost:${this.state.port}/employee_vacation_status`, 
+        {   
+            method:"PUT",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({id: dayID, status: newStatus})
+        }).then(response=>response.json()).then(data=>{
+            console.log(data)
+            if(data.status==="OK"){
+                let currentVacationDays = this.state.vacationDays
+                for(let i=0; i< currentVacationDays.length; i++){
+                    if(currentVacationDays[i].id===dayID){
+                        currentVacationDays[i].status=newStatus
+                        break
+                    }
+                }
+                this.setState({vacationDays: currentVacationDays})
+                this.props.addSnackbar({text:"Ziua a fost actualizata"})
+            }else{
+                this.props.addSnackbar({text:"Ceva nu a mers bine"})
+            }
+        }).catch(error=>{
+            console.log(error)
+            this.props.addSnackbar({text:"A aparut o eroare"})
+        })
+    }
+
+    deleteVacationDay=(id)=>{
+        fetch(`http://localhost:${this.state.port}/employee_vacation/${id}`, 
+        {   
+            method:"DELETE",
+            headers: { 'Content-Type': 'application/json' }
+        }).then(response=>response.json()).then(data=>{
+            if(data.status==="OK"){
+                let currentVacationDays = this.state.vacationDays
+                for(let i=0; i< currentVacationDays.length; i++){
+                    if(currentVacationDays[i].id===id){
+                        currentVacationDays.splice(i, 1)
+                        let newFilter = []
+                        for(let j=0;j<currentVacationDays.length;j++){
+                            newFilter.push(j) 
+                        }
+                        this.setState({vacationDaysFilter: newFilter})
+                        break
+                    }
+                }                
+                this.setState({vacationDays: currentVacationDays})
+                this.props.addSnackbar({text:"Ziua a fost staearsa"})
+            }else{
+                this.props.addSnackbar({text:"Ceva nu a mers bine"})
+            }
+        }).catch(error=>{
+            console.log(error)
+            this.props.addSnackbar({text:"A aparut o eroare"})
+        })
+    }
+
+    editSalary=(id)=>{
+        this.setState({activeSalary: id})
+    }
+
+    deleteSalary=(id)=>{
+        if(window.confirm("Stergeti salariul?") === false) return false
+        fetch(`http://localhost:${this.state.port}/employee_salary/${id}`,
+        {
+            method:"DELETE",
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response=>response.json()).then(data=>{
+            if(data.status==="OK"){
+                this.props.addSnackbar({text:"Salariu sters"})
+                let salariesCopy = this.state.salaries
+                for(let i=0; i< salariesCopy.length; i++){
+                    if(salariesCopy[i].id===id){
+                        salariesCopy.splice(i, 1)
+                        let newFilter = []
+                        for(let j=0;j<salariesCopy.length;j++){
+                            newFilter.push(j) 
+                        }
+                        this.setState({salariesFilter: newFilter})
+                        break
+                    }
+                }                
+                this.setState({salaries: salariesCopy})
+            }else if(data.status==="SERVER_ERROR"){
+                this.props.addSnackbar({text:"A aparut o eroare"})
+            }else{
+                this.props.addSnackbar({text:"A aparut o eroare"})
+            }            
+        })
+    }
+
      render(){
         return(
             <div className="bordered-container">
@@ -384,6 +436,7 @@ export default class Employee extends React.Component{
                                     <td>Venit</td>
                                     <td>CM</td>
                                     <td>Net</td>
+                                    <td></td>
                                 </tr>    
                             </thead>
                             <tbody>
@@ -399,6 +452,11 @@ export default class Employee extends React.Component{
                                         <td>{this.state.salaries[element].taxes.income}</td>
                                         <td>{this.state.salaries[element].taxes.cm}</td>
                                         <td><b>{this.state.salaries[element].net}</b></td>
+                                        <td>
+                                            <div class="btn-group">                                                
+                                                <button className="btn btn-light btn-sm mint-button" onClick={()=>{this.deleteSalary(this.state.salaries[element].id)}}><span class="material-icons-outlined">delete</span></button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -415,6 +473,7 @@ export default class Employee extends React.Component{
                                         <td>Data inregistrare</td>
                                         <td>Tip</td>
                                         <td>Status</td>
+                                        <td></td>
                                     </tr>    
                                 </thead>
                                 <tbody>
@@ -424,7 +483,13 @@ export default class Employee extends React.Component{
                                             <td><b>{this.state.vacationDays[element].date}</b></td>
                                             <td>{this.state.vacationDays[element].registerDate}</td>
                                             <td>{this.state.vacationDays[element].type}</td>
-                                            <td><b>{this.state.vacationDays[element].status}</b></td>            
+                                            <td>{this.state.vacationDays[element].status}</td>  
+                                            <td>
+                                                <div class="btn-group">
+                                                    <button className="btn btn-light btn-sm mint-button" disabled={this.state.vacationDays[element].status==="executed" ? true : false} onClick={()=>{this.updateDayStatus(this.state.vacationDays[element].id, "executed")}}><span class="material-icons-outlined">task_alt</span></button>
+                                                    <button className="btn btn-light btn-sm mint-button" disabled={this.state.vacationDays[element].status==="executed" ? true : false} onClick={()=>{this.deleteVacationDay(this.state.vacationDays[element].id)}}><span class="material-icons-outlined">delete</span></button>
+                                                </div>
+                                            </td>          
                                         </tr>
                                     ))}
                                 </tbody>
@@ -433,148 +498,73 @@ export default class Employee extends React.Component{
                     </div>  
                 </div>                          
                 {this.state.salaryWindow===true &&
-                <div> 
+                <div>
                     <div className="blur-overlap"></div> 
                     <div className="overlapping-component-inner">
                         <div className='overlapping-component-header'>
                             <span>Inregistrare salariu</span>
                             <button type="button" className="action-close-window" onClick={()=>{this.setState({salaryWindow: false})}}><span className="material-icons-outlined">close</span></button>
-                        </div>
-                        <div className="p-3" style={{display:'flex', flexDirection:'row'}}>
-                            <div className="col-md-7 col-lg-6 p-2">
-                                <h6>Informatii angajat</h6>
-                                <form onSubmit={this.handleSubmit}>
-                                    <div class="row g-2">
-                                        <div class="col-md">
-                                            <div class="form-floating mb-3">
-                                                <input type="text" placeholder="Nume" className="form-control" id="firstName" value={this.state.first_name} disabled={true} required=""></input>
-                                                <label for="firstName" className="form-label">Nume</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md">
-                                            <div class="form-floating mb-3">
-                                                <input type="text" className="form-control" id="lastName" placeholder="Prenume" value={this.state.last_name} disabled={true} required=""></input>
-                                                <label for="lastName" className="form-label">Prenume</label>
-                                            </div>
-                                        </div>
-                                    </div>      
-                                    <div className="row g-2">
-                                        <div className="col-md">
-                                            <div class="form-floating mb-3">                                                    
-                                                <select className="form-select" placeholder="Luna" id="paid_for" required="" onChange={this.handleMonthChange}>
-                                                    <option value="1">Ianuarie</option> 
-                                                    <option value="2">Februarie</option>
-                                                    <option value="3">Martie</option>
-                                                    <option value="4">Aprilie</option>
-                                                    <option value="5">Mai</option>
-                                                    <option value="6">Iunie</option>   
-                                                    <option value="7">Iulie</option> 
-                                                    <option value="8">August</option>
-                                                    <option value="9">Septembrie</option>
-                                                    <option value="10">Octombrie</option>
-                                                    <option value="11">Noiembrie</option>
-                                                    <option value="12">Decembrie</option> 
-                                                </select>
-                                                <label for="paid_for" className="form-label">Luna</label>
-                                            </div>
-                                        </div>
-                                        <div className="col-md">
-                                            <div class="form-floating mb-3">                                                     
-                                                <input type="text" className="form-control" id="paid_for_year" placeholder="An" value={this.state.salaryYear} onChange={this.handleYearChange}></input>
-                                                <label for="paid_for_year" className="form-label">Anul</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-sm-12">
-                                        <div class="form-floating mb-3">                                                 
-                                            <input type="text" className="form-control" id="bankref" placeholder="ID bancar"></input>
-                                            <label for="bankref" className="form-label">ID tranzactie bancara</label>
-                                        </div>
-                                    </div>
-                                    <div className="col-sm-12">
-                                        <div class="form-floating mb-3">                                                 
-                                            <input type="text" disabled={true} value={`${this.state.salary_gross} RON`} className="form-control" id="salariu_brut" placeholder="Salariu de baza"></input>
-                                            <label for="bankref" className="form-label">Salariu de baza</label>
-                                        </div>
-                                    </div>
-                                    <button className="btn btn-light btn-sm mt-3" type="submit"><span class="action-button-label"><span class="material-icons-outlined">check</span>Salvare</span></button>
-                                </form>
-                            </div>
-                            <div className="col-md-5 col-lg-6 order-md-last p-2">
-                                <ul className="list-group mb-3">
-                                    {
-                                        this.state.taxesPercentages.map(element=>(
-                                            <li className="list-group-item d-flex justify-content-between lh-sm">
-                                            <div>
-                                                <h6 className="my-0">{element.key}</h6>
-                                                <small className="text-muted">{element.description}</small><br/>
-                                                <small className="text-muted"><b>{parseFloat(this.state.salary_gross/100)*parseFloat(element.value)} RON</b></small>
-                                            </div>
-                                            <div>
-                                                <br/>
-                                                <div class="input-group">                                                    
-                                                    <input type="text" className="form-control shadow-none" style={{width:'50px', padding:'2px'}} value={element.value} onChange={this.reacalculateTaxesWithThis} name={element.key}></input>
-                                                    <span class="input-group-text" style={{padding:'2px'}}>%</span>
-                                                </div>                                                    
-                                            </div>  
-                                        </li> 
-                                        ))
-                                    }
-                                    <li className="list-group-item d-flex justify-content-between">
-                                        <span>Net</span>
-                                        <strong>{this.state.salary_net} RON</strong>
-                                    </li>                               
-                                </ul>
-                            </div>
-                        </div>
-                    </div>              
-                </div>                    
+                        </div> 
+                        <SalaryForm employeeInfo={{id: this.state.id, name: this.state.first_name, lastName: this.state.last_name, salary: this.state.salary_gross, netSalary: this.state.salary_net, emp_tax: this.state.tax, emp_tax_cass: this.state.cass}} updateEmployeeSalaries={this.updateEmployeeSalaries}/>
+                    </div>     
+                </div>             
                 }
                 {this.state.vacationDaysWindow &&
-                    <div> 
-                        <div className="blur-overlap"></div> 
-                        <div className="overlapping-component-inner">
-                            <div className='overlapping-component-header'>
-                                <span>Zile vacanta</span>
-                                <button type="button" className="action-close-window" onClick={()=>{this.setState({vacationDaysWindow: false})}}><span className="material-icons-outlined">close</span></button>
-                            </div>
-                            <form className="p-3" onSubmit={this.handleVacationForm} id="vacationDaysForm" style={{minWidth:'600px'}}>
-                                <div className="mb-3">                                    
-                                    <div className="row">
-                                        <div className="col-sm-4">
-                                            <span><b>Data</b></span>
-                                        </div>
-                                        <div className="col-sm-4">
-                                            <span><b>Tip cerere</b></span>
-                                        </div>
-                                    </div>
-                                    {this.state.vacationDaysRequested.map((element, index)=>(
-                                        <div key={index} className="row mb-1">
-                                            <div className="col-sm-4">
-                                                <input type="date" className="form-control shadow-none" name="trip-start" id={`date-${index}`} min={`${dateString.year}-${dateString.month}-${dateString.day}`} value={element.date} disabled={element.disabled}  onChange={this.handleVacationDaysInput}></input>
-                                            </div>
-                                            <div className="col-md-4">
-                                                <div style={{display:"flex", flexDirection:"row", alignItems:'center'}}>
-                                                    <select className="form-select shadow-none" id={`type-${index}`} value={element.type} disabled={element.disabled} onChange={this.handleVacationDaysInput}>
-                                                        <option value="vacation">Vacation</option>
-                                                        <option value="medical">Medical</option>
-                                                    </select>
-                                                </div>
-                                            </div>                   
-                                            <div className="col-md-4" style={{display:'flex', alignItems:'center', justifyContent:'flex-end'}}>  
-                                                <button type="button" title="Stergere" style={{float:"right"}} className="remove-product-button round-button" disabled={element.disabled} onClick={this.handleVacationDaysInput}><span className="material-icons-outlined">remove</span></button>
-                                            </div>         
-                                        </div>
-                                    ))
-                                    }                                
-                                </div> 
-                                <div class="btn-group" role="group">
-                                    <button type="button" id="new-vacation-day-button" title="Adauga zi" onClick={this.newVacationDay} className="btn btn-light btn-sm"><span className="action-button-label"><span class="material-icons-outlined">add</span></span></button>
-                                    <button type="submit" id="submit-vacation-day-button" className="btn btn-light btn-sm"><span className="action-button-label"><span class="material-icons-outlined">done</span>Inregistrare</span></button>                                             
-                                </div>
-                            </form>
+                <div> 
+                    <div className="blur-overlap"></div> 
+                    <div className="overlapping-component-inner">
+                        <div className='overlapping-component-header'>
+                            <span>Zile vacanta</span>
+                            <button type="button" className="action-close-window" onClick={()=>{this.setState({vacationDaysWindow: false})}}><span className="material-icons-outlined">close</span></button>
                         </div>
-                    </div>             
+                        <form className="p-3" onSubmit={this.handleVacationForm} id="vacationDaysForm" style={{minWidth:'600px'}}>
+                            <div className="mb-3">                                    
+                                <div className="row">
+                                    <div className="col-sm-4">
+                                        <span><b>Data</b></span>
+                                    </div>
+                                    <div className="col-sm-4">
+                                        <span><b>Tip cerere</b></span>
+                                    </div>
+                                </div>
+                                {this.state.vacationDaysRequested.map((element, index)=>(
+                                    <div key={index} className="row mb-1">
+                                        <div className="col-sm-4">
+                                            <input type="date" className="form-control shadow-none" name="trip-start" id={`date-${index}`} min={`${dateString.year}-${dateString.month}-${dateString.day}`} value={element.date} disabled={element.disabled}  onChange={this.handleVacationDaysInput}></input>
+                                        </div>
+                                        <div className="col-md-4">
+                                            <div style={{display:"flex", flexDirection:"row", alignItems:'center'}}>
+                                                <select className="form-select shadow-none" id={`type-${index}`} value={element.type} disabled={element.disabled} onChange={this.handleVacationDaysInput}>
+                                                    <option value="vacation">Vacation</option>
+                                                    <option value="medical">Medical</option>
+                                                </select>
+                                            </div>
+                                        </div>                   
+                                        <div className="col-md-4" style={{display:'flex', alignItems:'center', justifyContent:'flex-end'}}>  
+                                            <button type="button" title="Stergere" style={{float:"right"}} className="remove-product-button round-button" disabled={element.disabled} onClick={this.handleVacationDaysInput}><span className="material-icons-outlined">remove</span></button>
+                                        </div>         
+                                    </div>
+                                ))
+                                }                                
+                            </div> 
+                            <div class="btn-group" role="group">
+                                <button type="button" id="new-vacation-day-button" title="Adauga zi" onClick={this.newVacationDay} className="btn btn-light btn-sm"><span className="action-button-label"><span class="material-icons-outlined">add</span></span></button>
+                                <button type="submit" id="submit-vacation-day-button" className="btn btn-light btn-sm"><span className="action-button-label"><span class="material-icons-outlined">done</span>Inregistrare</span></button>                                             
+                            </div>
+                        </form>
+                    </div>
+                </div>}
+                {this.state.activeSalary!==null &&
+                <div> 
+                    <div className="blur-overlap"></div> 
+                    <div className="overlapping-component-inner">
+                        <div className='overlapping-component-header'>
+                            <span>Editare salariu</span>
+                            <button type="button" className="action-close-window" onClick={()=>{this.setState({activeSalary: null})}}><span className="material-icons-outlined">close</span></button>
+                        </div>
+                        <SalaryForm salaryID={this.state.activeSalary} updateEmployeeSalaries={this.updateEmployeeSalaries}/>
+                    </div>
+                </div>
                 }
             </div>
         )
