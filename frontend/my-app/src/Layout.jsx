@@ -13,6 +13,8 @@ let Layout = (props) =>{
     let port = navigator.userAgent.indexOf('Electron')>-1 ? "3001" : "3000"
     const path = "/" 
 
+    let [expanded, setExpanded] = useState(true)
+
     let navigationElements = 
     [
         {
@@ -42,6 +44,11 @@ let Layout = (props) =>{
         //save in local storage
         localStorage.setItem('selectedNavigationOption', selectedItem)
         //call the App.js function; App.js controls the components that are rendered
+        navigationElements.forEach(element=>{
+            element.elements.forEach(subElement=>{
+                if(window.location.pathname===subElement.path) setSelectedItem(subElement.id)
+            })
+        })
     },[selectedItem])
 
     function addSnackbar(snackbarObject){
@@ -59,7 +66,7 @@ let Layout = (props) =>{
     return(
         <div>
             <div style={{display:'flex', flexDirection:'row', height:"100vh", width:'100vw', justifyContent:'space-between'}}>
-                <div className="side-navigation-container expanded"> 
+                <div className={`side-navigation-container ${expanded ? "expanded" : "not-expanded"}`}> 
                     <div style={{display:'inherit', flexDirection:'column'}}>
                         {navigationElements.map((element, index)=>(
                             <ul key={index} className="side-navigation-list">
@@ -68,8 +75,9 @@ let Layout = (props) =>{
                                     <li key={element.id} className={parseInt(selectedItem)===parseInt(element.id) ? "nav-link active" : "nav-link"} onClick={()=>setSelectedItem(element.id)} >
                                         <Link to={element.path}>
                                             <div>
-                                                {element.icon!=="" && <span className="material-icons-outlined" style={{fontSize:'20px'}}>{element.icon}</span>}
+                                                {element.icon!=="" && <span className="material-icons-outlined">{element.icon}</span>}
                                                 <span className="side-navigation-element-name" style={{marginLeft: element.icon ? '0' : '25px'}}>{element.displayName}</span>
+                                                <span className="nav-tooltip">{element.displayName}</span>
                                             </div>
                                         </Link>
                                     </li>
@@ -77,9 +85,10 @@ let Layout = (props) =>{
                             </ul>
                         ))}
                     </div>                
-                    <div style={{display:'inherit', flexDirection:'row', alignItems:'center'}} className="p-2">
-                        <DatabaseSelector/>
-                    </div>                
+                    <div style={{display:'inherit', flexDirection:'column', alignItems:'center'}} className="p-2">                        
+                        <button style={{backgroundColor:'transparent', border:'none'}} onClick={()=>{setExpanded(!expanded)}}><span class="material-icons-outlined">menu</span></button>   
+                    </div> 
+                               
                 </div> 
                 <Outlet context={{addSnackbar, port, loadingSpinner}}/>            
         </div>

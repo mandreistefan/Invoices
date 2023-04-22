@@ -774,11 +774,54 @@ input[type=date]{
   justify-content: space-between; 
   padding-top: 10px; 
   padding-bottom: 10px; 
-  background-color: var(--navBackground);
   border-right: 1px solid lightgray;
   padding-top: 32px;
-  padding-bottom: 16px;
+  padding-bottom: 16px;  
+}
+
+.side-navigation-container.expanded{
   width: 200px!important;
+}
+
+.side-navigation-container.not-expanded{
+  width: 60px!important;
+}
+
+.side-navigation-container.not-expanded > div > ul{
+  margin: 0;
+}
+
+.side-navigation-container.not-expanded > div > ul > h6{
+  display: none;
+}
+
+.side-navigation-container.not-expanded > div > ul > li{
+  border-left: 5px solid transparent;
+}
+
+.side-navigation-container.not-expanded > div > ul > li:hover{
+  border-left: 5px solid var(--navActive);
+}
+
+.side-navigation-container.not-expanded > div > ul > .nav-link.active{
+  border-left: 5px solid var(--navActive);
+}
+
+.side-navigation-container.not-expanded > div > ul > li{
+  width: 60px;
+  height: 60px;
+}
+
+.side-navigation-container.not-expanded > div > ul > li > a > div{
+  padding: 0;
+}
+
+.side-navigation-container.not-expanded > div > ul > li > a > div > .material-icons-outlined{
+  font-size: 28px;
+}
+
+.side-navigation-container.not-expanded > div > ul > li > a > div > .side-navigation-element-name{
+  display: none;
 }
 
 .side-navigation-list{
@@ -825,7 +868,7 @@ input[type=date]{
 }
 
 .nav-link > a > div:hover{
-  color: #bccee4;
+  color: #708093;
 }
 
 .nav-link.active > a > div{
@@ -843,6 +886,28 @@ input[type=date]{
   display: flex;
   justify-content:center;
   align-items: center;
+}
+
+.nav-tooltip{
+  display: none;
+  position: absolute;
+  left: 55px;
+  background-color: #212529;
+  color:white;
+  border-radius: 4px;
+  padding: 4px;
+}
+
+.side-navigation-container.not-expanded{
+  padding-top: 0;
+}
+
+.side-navigation-container.not-expanded > div > ul > li:hover > a > div > .nav-tooltip{
+  display: block;
+}
+
+.side-navigation-container.not-expanded > div > ul > .nav-link.active:hover > a > div > .nav-tooltip{
+  display: none;
 }
 
 .add-new-button{

@@ -38,15 +38,24 @@ let Dashboard = (props) =>{
         <div className="app-data-container">
             {dashboardData!==null&&
                 <div>
-                    <h1 className="mb-3 fw-semibold lh-1 dashboard-header" style={{fontWeight:'700'}}>Aplicatie facturare</h1>
-                    <br/>
-                    <span className="mb-3 fw-semibold lh-1" style={{fontWeight:'700', textTransform:'capitalize', fontSize:'16px'}}>Baza de date</span> 
-                    <div style={{marginBottom:'25px'}}>
-                        <DatabaseSelector showDetailed={true}/>
-                    </div>   
-                    <span className="mb-3 fw-semibold lh-1" style={{fontWeight:'700', textTransform:'capitalize', fontSize:'16px'}}>Statistici</span> 
+                    <div className="px-4 my-5 text-center">                       
+                        <h1 className="display-5 fw-bold">Aplicatie facturare</h1>
+                        <div className="col-lg-8 mx-auto">
+                            <p className="lead mb-4">Aplicatie de inregistrare clienti, eliberare facturi, management angajati.</p>
+                            <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                                <button type="button" className="btn btn-primary btn-sm px-4 gap-3" onClick={()=>{window.location.href = './invoices'}}>Facturi</button>
+                                <button type="button" className="btn btn-outline-secondary btn-sm px-4" onClick={()=>{window.location.href = './clients'}}>Clienti</button>
+                                <button type="button" className="btn btn-outline-secondary btn-sm px-4" onClick={()=>{window.location.href = './employees'}}>Angajati</button>
+                            </div>
+                        </div>
+                    </div>
                     <div className="row" style={{marginBottom:'24px'}}>
-                        <div className="col-3">
+                        <div>
+                            <DatabaseSelector showDetailed={true}/>
+                        </div> 
+                    </div>   
+                    <div className="row" style={{marginBottom:'25px'}}>
+                        <div className="col-4">
                             <div className='financial-square'>
                                 <div className="p-1">
                                     <span style={{fontWeight:'500', color:'gray', marginBottom:'10px'}}>Ultima factura</span>
@@ -56,9 +65,19 @@ let Dashboard = (props) =>{
                                 </div>
                             </div>                         
                         </div>
-                    </div>         
-                    <div className="row">
-                        <div className="col-3">
+                        <div className="col-4">
+                            <div className='financial-square'>
+                                <div className="p-1">
+                                    <span style={{fontWeight:'500', color:'gray', marginBottom:'10px'}}>Cea mai mare factura</span>
+                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span className="material-icons-outlined m-1">person</span>{dashboardData.highestInvoice.client_first_name} {dashboardData.highestInvoice.client_last_name}</span>
+                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span className="material-icons-outlined m-1">calendar_today</span>{dashboardData.highestInvoice.date.substring(0, 10)}</span>
+                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span className="material-icons-outlined m-1">money</span>{dashboardData.highestInvoice.income} <small>RON</small></span>
+                                </div>
+                            </div>                     
+                        </div>
+                    </div>      
+                    <div className="row" >
+                        <div className="col-4">
                             <div className='financial-square'>
                                 <span  style={{color:'gray'}} className="material-icons-outlined p-1">receipt_long</span>
                                 <div className="p-1">
@@ -67,16 +86,7 @@ let Dashboard = (props) =>{
                                 </div>
                             </div>
                         </div>
-                        <div className="col-3">
-                            <div className='financial-square'>
-                                <div className="p-1">
-                                    <span style={{fontWeight:'500', color:'gray'}}>Cea mai mare factura</span>
-                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span className="material-icons-outlined m-1">calendar_today</span>{dashboardData.highestInvoice.date.substring(0, 10)}</span>
-                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}><span className="material-icons-outlined m-1">money</span>{dashboardData.highestInvoice.income} <small>RON</small></span>
-                                </div>
-                            </div>                     
-                        </div>
-                        <div className="col-3">
+                        <div className="col-4">
                             <div className='financial-square'>
                                 <span  style={{color:'gray'}} className="material-icons-outlined p-1">payments</span>
                                 <div className="p-1">
@@ -85,9 +95,19 @@ let Dashboard = (props) =>{
                                 </div>
                             </div>                     
                         </div>
+                        <div className="col-4">
+                            <div className='financial-square'>
+                                <span  style={{color:'gray'}} className="material-icons-outlined p-1">payments</span>
+                                <div className="p-1">
+                                    <span style={{fontWeight:'500', color:'gray'}}>Status facturi</span>
+                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}>{dashboardData.status.finalised} finalizate</span>
+                                    <span style={{fontWeight:'500', display:'flex', alignItems:'center'}}>{dashboardData.status.draft} ciorne</span>
+                                </div>
+                            </div>                     
+                        </div>
                     </div>
                     <br></br>
-                    <span className="mb-3 fw-semibold lh-1" style={{fontWeight:'700', textTransform:'capitalize', fontSize:'16px'}}>Ultimele actiuni</span>   
+                    <div className="px-1 text-center"> <span className="mb-3 fw-semibold lh-1" style={{fontWeight:'700', fontSize:'16px', color:'gray'}}>Ultimele actiuni</span></div>   
                     <div>
                         <Logs/>
                     </div>

@@ -573,7 +573,7 @@ async function dashboardData(){
         if(element.invoice_status==="finalised"){
             response.status.finalised = response.status.finalised + 1
             response.total_income = response.total_income + parseFloat(element.invoice_total_sum)
-            if(parseFloat(element.invoice_total_sum)>highestSum.income) highestSum={income: parseFloat(element.invoice_total_sum), date: element.invoice_date, id: element.invoice_number}
+            if(parseFloat(element.invoice_total_sum)>highestSum.income) highestSum={client_first_name: element.client_first_name, client_last_name: element.client_last_name ,income: parseFloat(element.invoice_total_sum), date: element.invoice_date, id: element.invoice_number}
         }
         response.total_invoices = response.total_invoices+1        
     });

@@ -55,7 +55,7 @@ let DatabaseOperations=(props)=>{
             {props.showDetailed===true&&
                 <div className="row">
                     {databaseInfo.available.length>0 &&
-                    <div className="col-3">
+                    <div className="col-4">
                         <div className='financial-square'>
                             <span style={{color:'gray', fontWeight:'500', marginBottom:'10px'}} className="material-icons-outlined p-1">cloud</span>
                             <div className="p-1">
@@ -73,7 +73,7 @@ let DatabaseOperations=(props)=>{
                     </div>                   
                     }            
                     {props.showDetailed===true && 
-                    <div className="col-3">
+                    <div className="col-4">
                         <div className='financial-square'>
                             <span style={{color:'gray', marginBottom:'10px'}}  className="material-icons-outlined p-1">sync_problem</span>
                             <div className="p-1">
