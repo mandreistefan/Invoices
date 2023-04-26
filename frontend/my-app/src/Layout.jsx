@@ -87,8 +87,7 @@ let Layout = (props) =>{
                     </div>                
                     <div style={{display:'inherit', flexDirection:'column', alignItems:'center'}} className="p-2">                        
                         <button style={{backgroundColor:'transparent', border:'none'}} onClick={()=>{setExpanded(!expanded)}}><span class="material-icons-outlined">menu</span></button>   
-                    </div> 
-                               
+                    </div>                              
                 </div> 
                 <Outlet context={{addSnackbar, port, loadingSpinner}}/>            
         </div>

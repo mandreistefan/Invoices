@@ -150,19 +150,18 @@ let Clients = (props) =>{
                     </div>
                 </div>}
                 {newClientWindow&&
-                    <div>
-                        <div className="blur-overlap"></div>
-                        <div className="overlapping-component-inner">
-                            <div className='overlapping-component-header'>
-                                <span>Client nou</span>
-                                <button type="button" className="action-close-window" onClick={()=>{showonewClientWindow(false)}}><span className="material-icons-outlined">close</span></button>
-                            </div>
-                            <div className='p-3'>
-                                <ClientForm editable={true} isSubmitable={true} clientID={null} addSnackbar={addSnackbar}/>
-                            </div>
+                <div>
+                    <div className="blur-overlap"></div>
+                    <div className="overlapping-component-inner">
+                        <div className='overlapping-component-header'>
+                            <span>Client nou</span>
+                            <button type="button" className="action-close-window" onClick={()=>{showonewClientWindow(false)}}><span className="material-icons-outlined">close</span></button>
+                        </div>
+                        <div className='p-3'>
+                            <ClientForm editable={true} isSubmitable={true} clientID={null} addSnackbar={addSnackbar}/>
                         </div>
                     </div>
-                }
+                </div>}
                 {invoiceClient!=null &&
                     <div>
                         <div className="blur-overlap"></div>                

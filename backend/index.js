@@ -199,6 +199,22 @@ myApp.get("/pingDatabase", (req, res)=>{
     })
 })
 
+myApp.post('/databaseSettings', (req, res)=>{
+    databaseController.changeDBsettings(req.body.host, req.body.user, req.body.pass).then(data=>{
+        res.send(data)
+    }).catch(error=>{
+        console.log(error)
+    })
+})
+
+myApp.put('/databaseProperties', (req, res)=>{
+    databaseController.changeTableProperties(req.body.alias, req.body.name).then(data=>{
+        res.send(data)
+    }).catch(error=>{
+        console.log(error)
+    })
+})
+
 //emit event to print the opened page
 myApp.get("/latestLogs", (req, res)=>{
     databaseController.getRecentLogs().then(data=>{

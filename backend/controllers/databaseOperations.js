@@ -2,28 +2,28 @@ const mysql = require('mysql2');
 const utile = require('../utils/util.js')
 const Json2csvParser = require("json2csv").Parser;
 const fs = require("fs");
-const { resolve } = require('path');
+const path=require('path');
 
-const testDB = "invoicemanager"
-const liveDB = "facturi"
-databases = [testDB, liveDB]
+//get some database options from a JSON file
+let databasesObject = JSON.parse(fs.readFileSync(path.join(__dirname, '../database.json'), 'utf8'))
+//globals
 const queryStep = 10
 let offSet = 0
-
-const connection=mysql.createConnection({
-    host:"localhost",
-    user:"root",
-    password:"root",
-    database:"invoicemanager",
+//connection parameters
+const connection = mysql.createConnection({
+    host:databasesObject.host,
+    user:databasesObject.user,
+    password:databasesObject.password,
+    database:databasesObject.databases[0].database,
     multipleStatements: true
 })
-
+//handle connection error
 connection.on('error', function (err) {
     console.log(err.code) 
     connection.destroy()
     return false
 });
-
+//connect to the DB
 try{
     connection.connect(function(err){
         if(err) {
@@ -50,7 +50,6 @@ function databaseLog(message){
         }
     })
 }
-
 
 /**
  * 
@@ -889,7 +888,7 @@ function getDBinfo(){
         host: connection.config.host,
         user:connection.config.user,
         database:connection.config.database,
-        databases:databases
+        databases:databasesObject.databases
     })
 }
 
@@ -901,13 +900,14 @@ function getDBinfo(){
 
 function changeDatabase(databaseName){
     return new Promise((resolve, reject)=>{ 
-        console.log(databaseName)    
-        connection.changeUser({database : databaseName}, function(err) {
+        console.log(databaseName)  
+        connection.changeUser({database : `${databaseName}`}, function(err) {
             if (err){
                 console.log(err)
                 reject({status:"ERROR"})
             }
             resolve({status:"OK"})
+            console.log(connection.database)
         })   
     })
 }
@@ -1773,6 +1773,22 @@ async function pingDB(){
     })
 }
 
+function checkIfTableExists(tablename){
+    return new Promise((resolve, reject)=>{
+        connection.query(`SELECT * FROM information_schema.tables WHERE table_name = '${tablename}' LIMIT 1;`, function(error, result){
+            if(error){
+                console.log(error)
+                reject ({status:"ERROR", data:null})
+            }
+            if(result){
+                resolve({status:"OK", data:result})
+            }
+            resolve({status:"FAIL", data:null})
+        })
+    })
+
+}
+
 async function getLatestLogs(){
     return new Promise((resolve, reject)=>{
         connection.query(`SELECT * from log order by date DESC LIMIT 3`, function(error, result){
@@ -1789,7 +1805,6 @@ async function getLatestLogs(){
 }
 
 async function getHistory(targetTerms){
-
     let query = ""
     if(Array.isArray(targetTerms)){
         query = `SELECT * FROM log WHERE MESSAGE like '%${targetTerms[0]} ${targetTerms[1]}%'`
@@ -1850,6 +1865,41 @@ function getSalary(id){
     })
 }
 
+/**
+ * Changes DB connection properties in the JSON file
+ * @param {*} host 
+ * @param {*} user 
+ * @param {*} pass 
+ * @returns {Promise<{status: string, data: array}>} status of the OP as string and the data as array containing key:pair values
+ */
+function changeDBsettings(host, user, pass){
+    let databasesObject = JSON.parse(fs.readFileSync(path.join(__dirname, '../database.json'), 'utf8'))
+    if(host) databasesObject.host = host
+    if(user) databasesObject.user = user
+    if(pass) databasesObject.password = pass
+    fs.writeFileSync('./database.json', JSON.stringify(databasesObject));
+    return ({status:"OK", data: null})
+}
+
+/**
+ * Changes the "alias" of a DB table
+ * @param {*} alias The alias of the table
+ * @param {*} name Database name
+ * @returns 
+ */
+function changeTableProperties(alias, name){
+    let databasesObject = JSON.parse(fs.readFileSync(path.join(__dirname, '../database.json'), 'utf8'))
+    for(let i=0;i<databasesObject.databases.length;i++){
+        console.log(i)
+        if(databasesObject.databases[i].database===name){
+            databasesObject.databases[i].alias = alias
+            fs.writeFileSync('./database.json', JSON.stringify(databasesObject));
+            return({status:"OK", data: null})
+        }        
+    }
+    return({status:"FAIL", data: "NOT_FOUND"})
+}
+
 
 module.exports ={
     getClients:getClients,
@@ -1877,5 +1927,5 @@ module.exports ={
     getRecordsNumber:getRecordsNumber, getDBinfo:getDBinfo, changeDatabase, getExpenses,addExpense, deleteExpense, searchDatabase, getEmployees, addEmployee, editEmployee, hasSalaryOnDate, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeInfo, archiveEmployee, deleteEmployee, removePredefinedProduct,
     exportData,
     getDashboardData, pingDB, databaseLog, getLatestLogs,
-    getHistory, getEmployeesDetails, changeVacationStatus, deleteVacationDay, deleteSalary, getSalary
+    getHistory, getEmployeesDetails, changeVacationStatus, deleteVacationDay, deleteSalary, getSalary, changeDBsettings, changeTableProperties
 }

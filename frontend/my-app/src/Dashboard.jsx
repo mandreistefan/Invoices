@@ -42,16 +42,11 @@ let Dashboard = (props) =>{
                         <h1 className="display-5 fw-bold">Aplicatie facturare</h1>
                         <div className="col-lg-8 mx-auto">
                             <p className="lead mb-4">Aplicatie de inregistrare clienti, eliberare facturi, management angajati.</p>
-                            <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                                <button type="button" className="btn btn-primary btn-sm px-4 gap-3" onClick={()=>{window.location.href = './invoices'}}>Facturi</button>
-                                <button type="button" className="btn btn-outline-secondary btn-sm px-4" onClick={()=>{window.location.href = './clients'}}>Clienti</button>
-                                <button type="button" className="btn btn-outline-secondary btn-sm px-4" onClick={()=>{window.location.href = './employees'}}>Angajati</button>
-                            </div>
                         </div>
                     </div>
                     <div className="row" style={{marginBottom:'24px'}}>
                         <div>
-                            <DatabaseSelector showDetailed={true}/>
+                            <DatabaseSelector showDetailed={true} addSnackbar={addSnackbar}/>
                         </div> 
                     </div>   
                     <div className="row" style={{marginBottom:'25px'}}>
