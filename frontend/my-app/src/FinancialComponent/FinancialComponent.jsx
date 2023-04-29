@@ -57,7 +57,6 @@ let Financial = (props) =>{
                 setExpensesPie(pieExpensesChartShallow)
                 delete data.data.salariesPercentIncome
                 delete data.data.expensesPercentIncome
-                delete data.data.profitPercentIncome
                 //contains totals and statistics
                 setFinancialData(data.data)
                 //contains data for plotting a chart
@@ -106,10 +105,9 @@ let Financial = (props) =>{
             {financialData ?
             <div className='financial-grid'>
                 {tableDisplay===false && financialData.total > 0 &&
-                <div className="">
-        
+                <div className="">        
                     <div className="row" style={{marginBottom:'24px'}}>
-                        <div className="col-3">
+                        <div className="col-2">
                             <div className='financial-square'>
                                 <span style={{color:'gray'}}  className="material-icons-outlined p-1">receipt</span>
                                 <div className="p-1">                                
@@ -117,56 +115,63 @@ let Financial = (props) =>{
                                     <span style={{fontSize:'32px', fontWeight:'600'}}>{parseFloat(financialData.total_number_invoices)}</span>
                                 </div>                                    
                             </div>                    
-                        </div>     
-  
-                        <div className="col-3">
+                        </div>  
+                        <div className="col">
                             <div className='financial-square'>
                                 <span style={{color:'gray'}} className="material-icons-outlined p-1">calculate</span>
                                 <div className="p-1">                                
                                     <span style={{color:'gray', fontWeight:'500'}}>Valoare medie factura</span>
-                                    <span style={{fontSize:'32px', fontWeight:'600', color:'#0d6efd'}}>{parseFloat(financialData.avg_per_invoice).toFixed(2)}</span><small>RON</small>
+                                    <span style={{fontSize:'32px', fontWeight:'600', color:'#0d6efd'}}>{Number(parseFloat(financialData.avg_per_invoice).toFixed(2)).toLocaleString()}</span><small>RON</small>
                                 </div>                                    
                             </div>                    
                         </div> 
-                
-                    </div>
-                    <div className="row" style={{marginBottom:'24px'}}>
-                        <div className="col-3">
+                        <div className="col">
                             <div className='financial-square'>
                                 <span style={{color:'gray'}}  className="material-icons-outlined p-1">payments</span>
                                 <div className="p-1">                                
                                     <span style={{color:'gray', fontWeight:'500'}}>Total incasat</span>
-                                    <span style={{fontSize:'32px', fontWeight:'600', color:'#35b653'}}>{parseFloat(financialData.total)}</span><small>RON</small>
+                                    <span style={{fontSize:'32px', fontWeight:'600', color:'#35b653'}}>{Number(parseFloat(financialData.total)).toLocaleString()}</span><small>RON</small>
                                 </div>                                    
                             </div>        
                         </div>  
-                        <div className="col-3">
+                    </div>
+                    <div className="row" style={{marginBottom:'24px'}}>
+                        <div className="col">
                             <div className='financial-square'>
                                 <span style={{color:'gray'}}  className="material-icons-outlined p-1">money_off</span>
                                 <div className="p-1">                                
                                     <span style={{color:'gray', fontWeight:'500'}}>Total cheltuieli</span>
-                                    <span style={{fontSize:'32px', fontWeight:'600', color:'#dc3545'}}>-{financialData.expenses.toFixed(2)}</span><small>RON</small>
+                                    <span style={{fontSize:'32px', fontWeight:'600', color:'#dc3545'}}>-{Number(financialData.expenses.toFixed(2)).toLocaleString()}</span><small>RON</small>
                                 </div>                                    
                             </div>                    
                         </div>    
-                        <div className="col-3">
+                        <div className="col">
                             <div className='financial-square'>
                                 <span style={{color:'gray'}}  className="material-icons-outlined p-1">money_off</span>
                                 <div className="p-1">                                
                                     <span style={{color:'gray', fontWeight:'500'}}>Total salarii</span>
-                                    <span style={{fontSize:'32px', fontWeight:'600', color:'#dc3545'}}>-{financialData.salaries.toFixed(2)}</span><small>RON</small>
+                                    <span style={{fontSize:'32px', fontWeight:'600', color:'#dc3545'}}>-{Number(financialData.salaries.toFixed(2)).toLocaleString()}</span><small>RON</small>
                                 </div>                                    
                             </div>                    
                         </div>  
-                        <div className="col-3">
+                        <div className="col">
                             <div className='financial-square'>
                                 <span style={{color:'gray'}} className="material-icons-outlined p-1">calculate</span>
                                 <div className="p-1">                                
-                                    <span style={{color:'gray', fontWeight:'500'}}>Net</span>
-                                    <span style={{fontSize:'32px', fontWeight:'600', color:parseFloat(financialData.total_gross)<0 ? '#dc3545' : '#35b653'}}>{financialData.total_gross.toFixed(2)}</span><small>RON</small>
+                                    <span style={{color:'gray', fontWeight:'500'}}>Profit net</span>
+                                    <span style={{fontSize:'32px', fontWeight:'600', color:parseFloat(financialData.total_gross)<0 ? '#dc3545' : '#35b653'}}>{Number(financialData.total_gross.toFixed(2)).toLocaleString()}</span><small>RON</small>
                                 </div>                                    
                             </div>                    
-                        </div>                 
+                        </div> 
+                        <div className="col">
+                            <div className='financial-square'>
+                                <span style={{color:'gray'}} className="material-icons-outlined p-1">calculate</span>
+                                <div className="p-1">                                
+                                    <span style={{color:'gray', fontWeight:'500'}}>Profit net (procentaj) </span>
+                                    <span style={{fontSize:'32px', fontWeight:'600', color:parseFloat(financialData.total_gross)<0 ? '#dc3545' : '#35b653'}}>{financialData.profitPercentIncome.toFixed(1)}</span><small>%</small>
+                                </div>                                    
+                            </div>                    
+                        </div>                  
                     </div>
                     <div className='row' style={{marginBottom:'24px'}}>
                         <div className="col-6">

@@ -82,17 +82,12 @@ let ExpenseForm = (props) =>{
             if(data.status==="OK"){
                 props.addSnackbar({text: "OK"})
                 props.reFetch()
+                setData({ id:null, exp_name: {value:"", modified:false}, exp_sum: {value: 0, modified:false}, exp_description: {value: "", modified:false}, exp_deduct: {value:true, modified:false}, exp_date: {value: currentDate, modified:false}, exp_type: {value: "tools", modified:false} })
             }else if(data.status==="SERVER_ERROR"){
                 props.addSnackbar({icon:"report_problem", text: "Baza de date nu poate fi accesata"}) 
             }else{
                 props.addSnackbar({icon:"report_problem", text: "Eroare"})
             }
-
-            for (const [key, value] of Object.entries(shallowCopy)) {
-                if(shallowCopy[key].modified===true) shallowCopy[key].modified=false                                            
-            }
-            shallowCopy.id = data.data.data
-            setData(shallowCopy)
         })
 
     }
