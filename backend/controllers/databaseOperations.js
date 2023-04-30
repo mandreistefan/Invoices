@@ -11,10 +11,10 @@ const queryStep = 10
 let offSet = 0
 //connection parameters
 const connection = mysql.createConnection({
-    host:databasesObject.host,
-    user:databasesObject.user,
-    password:databasesObject.password,
-    database:databasesObject.databases[0].database,
+    host: databasesObject.host,
+    user: databasesObject.user,
+    password: databasesObject.password,
+    database: databasesObject.databases[0].database,
     multipleStatements: true
 })
 //handle connection error
@@ -51,71 +51,104 @@ function databaseLog(message){
     })
 }
 
-function addDatabase(alias, name){
+async function applyDBschema(databaseName){
+    //switch the DB 
+    await changeDatabase(`${databaseName}`)
+
     return new Promise((resolve, reject)=>{
-        //check if the DB exists
-        let databasesObject = JSON.parse(fs.readFileSync(path.join(__dirname, '../database.json'), 'utf8'))
-        for(let i=0;i<databasesObject.databases.length;i++){
-            if(databasesObject.databases[i].database===name){
-                reject ({status:"FAIL", data:"DATABASE_EXISTS"}) 
-                return
-            }     
-        }
-        connection.query(`CREATE DATABASE ${name}`, function(error,result){
+        //read tables structure
+        let tables = fs.readFileSync(path.join(__dirname, '../createTables.txt'), 'utf8')
+        //build query
+        let query = ""
+        tables.split(";").forEach(element=>{ query = query + element + ";" })
+        console.log("query built")
+        //create tables
+        connection.query(query, function(error,result){
+            console.log(error)
             if(error){
                 console.log(`An error occured: ${error}`)
-                reject({status: "ERROR", data:"FAILED TO CREATE DB"})
-                return
+                reject({
+                    status: "FAIL",
+                    data: null
+                })
+                return 
             }
             if(result){
-                //go to new DB
-                changeDatabase(`${name}`).then((data)=>{
-                    if(data.status==="OK"){
-                        //read tables structure
-                        let tables = fs.readFileSync(path.join(__dirname, '../createTables.txt'), 'utf8')
-                        //build query
-                        let query = ""
-                        tables.split(";").forEach(element=>{
-                            query = query + element + ";"
-                        })
-                        //create tables
-                        connection.query(query, function(error,result){
-                            if(error){
-                                console.log(`An error occured: ${error}`)
-                                reject({
-                                    status: "FAIL",
-                                    data: "TABLES NOT IMPORTED"
-                                })
-                                return 
-                            }
-                            if(result){
-                                //register the new DB in the XML file
-                                databasesObject.databases.push({"database": name, "alias": alias})
-                                fs.writeFileSync('./database.json', JSON.stringify(databasesObject));
-                                resolve({status:"OK", data: null})
-                            }else{
-                                resolve({
-                                    status: "FAIL",
-                                    data: "TABLES NOT IMPORTED"
-                                })
-                            }
-                        })
-                    }else{
-                        resolve({
-                            status: "FAIL",
-                            data: "TABLES NOT IMPORTED"
-                        })
-                    }
-                }).catch(error=>{
-                    resolve({
-                        status: "FAIL",
-                        data: "TABLES NOT IMPORTED"
-                    })
+                resolve({status:"OK", data: null})
+            }else{
+                resolve({
+                    status: "FAIL",
+                    data: null
                 })
             }
         })
-        
+    })    
+
+}
+
+async function addDatabase(alias, name){
+    //if the datbaase in is the XML file, stop
+    let databasesObject = JSON.parse(fs.readFileSync(path.join(__dirname, '../database.json'), 'utf8'))
+    for(let i=0;i<databasesObject.databases.length;i++){
+        if(databasesObject.databases[i].database===name){
+            return ({status:"FAIL", data:"DATABASE_EXISTS"}) 
+        }     
+    }
+    //create the new database
+    let createDB = new Promise((resolve, reject)=>{
+        connection.query(`CREATE DATABASE ${name}`, function(error,result){
+            if(error){
+                console.log(`An error occured: ${error}`)
+                reject("ERROR")
+                return
+            }else{
+                databasesObject.databases.push({"database": name, "alias": alias})
+                fs.writeFileSync('./database.json', JSON.stringify(databasesObject));
+                resolve("OK")
+            }
+        })
     })
+    //switch to the new database
+    let changeDB = new Promise((resolve, reject)=>{ 
+        connection.changeUser({database : name}, function(err) {
+            if (err){
+                console.log(err)
+                reject("ERROR")
+            }
+            resolve("OK")
+        })   
+    })
+    //create tables for the database
+    let applyDBSchema = new Promise((resolve, reject)=>{
+        //read tables structure
+        let tables = fs.readFileSync(path.join(__dirname, '../createTables.txt'), 'utf8')
+        //build query
+        let query = ""
+        tables.split(";").forEach(element=>{ query = query + element + ";" })
+        //create tables
+        connection.query(query, function(error,result){
+            if(error){
+                console.log(`An error occured: ${error}`)
+                reject({
+                    status: "FAIL",
+                    data: null
+                })
+                return 
+            }
+            if(result){
+                resolve("OK")
+            }else{
+                resolve("ERROR")
+            }
+        })
+    }) 
+
+    let results =  await Promise.all([createDB, changeDB, applyDBSchema])
+    if(results[0]==="OK" && results[1]==="OK" && results[2]==="OK"){
+        return ({status:"OK", data:null})
+    }else{
+        return({status:"ERROR", data:null})
+    }
 
 }
 

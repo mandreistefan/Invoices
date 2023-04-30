@@ -96,11 +96,17 @@ let DatabaseOperations=(props)=>{
         }).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 addSnackbar({text: "OK"})
-                setDBsettings()
+                let availableDatabases = databaseInfo.available
+                availableDatabases.push({alias: anObject.alias, database: anObject.name})
+                setDBinfo({active: databaseInfo.active, available: availableDatabases})
             }else if(data.status==="FAIL"){
-                addSnackbar({text: "Baza de date nu a fost gasita"})
+                if(data.data==="DATABASE_EXISTS"){
+                    addSnackbar({text: "Baza de date exista"})
+                }else{
+                    addSnackbar({text: "Baza de date a fost adaugata insa tabelele nu au putut fi importate"})
+                }                
             }else{
-                addSnackbar({text: "A aparut o eroare"})
+                addSnackbar({text: "A aparut o eroare, baza de date nu a fost creata"})
             }
         }).catch(error=>{
             addSnackbar({text: "A aparut o eroare"})
@@ -117,7 +123,7 @@ let DatabaseOperations=(props)=>{
                 addSnackbar({text: "OK"})
                 let availableDatabases = [...databaseInfo.available]
                 availableDatabases.push({alias: anObject.alias, database: anObject.name})
-                setDBinfo({active: anObject.name, available: availableDatabases})
+                setDBinfo({active: databaseInfo.active, available: availableDatabases})
             }else{
                 addSnackbar({text: "A aparut o eroare"})
             }

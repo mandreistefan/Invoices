@@ -671,6 +671,7 @@ async function addDatabase(alias, name){
         return({status:"ERROR", data:"INVALID_DATA"})
     }
     return await databaseOperations.addDatabase(alias, name)
+
 }
 
 module.exports={ 
