@@ -84,12 +84,6 @@ myApp.use('/', employeesHandler)
 myApp.use('/app', express.static(path.join(__dirname, 'front_end')))
 
 
-cron.schedule('* 00 13 * *', () => {
-    console.log('Runnig scheduled task');
-});
-
-//recurrentController.handleRecurrencies()
-
 //recurrency
 myApp.get('/recurrent/*',(req,res)=>{
     let url_path_arr = urlmod.parse(req.url, true).path.split("/");
@@ -209,6 +203,15 @@ myApp.post('/databaseSettings', (req, res)=>{
 
 myApp.put('/databaseProperties', (req, res)=>{
     databaseController.changeTableProperties(req.body.alias, req.body.name).then(data=>{
+        res.send(data)
+    }).catch(error=>{
+        console.log(error)
+    })
+})
+
+//handles changing host, password, etc
+myApp.post('/addDatabase', (req, res)=>{
+    databaseController.addDatabase(req.body.alias, req.body.name).then(data=>{
         res.send(data)
     }).catch(error=>{
         console.log(error)

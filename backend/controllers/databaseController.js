@@ -666,6 +666,13 @@ async function changeTableProperties(alias, name){
     return await databaseOperations.changeTableProperties(alias, name)
 }
 
+async function addDatabase(alias, name){
+    if(!alias || !name){
+        return({status:"ERROR", data:"INVALID_DATA"})
+    }
+    return await databaseOperations.addDatabase(alias, name)
+}
+
 module.exports={ 
     fetchClients:fetchClients,
     addInvoice:addInvoice,
@@ -688,5 +695,5 @@ module.exports={
     getEmployees, addEmployee, editEmployee, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeOverview, archiveEmployee, deletePredefinedProduct, 
     exportData, dashboardData,
     pingDB, getRecentLogs,
-    getHistory, getBilledProducts, updateVacationStatus, daleteVacationDay, deleteSalary, getSalary, changeDBsettings, changeTableProperties
+    getHistory, getBilledProducts, updateVacationStatus, daleteVacationDay, deleteSalary, getSalary, changeDBsettings, changeTableProperties, addDatabase
 }

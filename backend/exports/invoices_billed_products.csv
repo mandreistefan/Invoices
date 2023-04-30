@@ -3,9 +3,34 @@
 3,2,,"Renovare plafoane","1",1,0,0,2500,2500,"Scoatere lut dintre grinzi, Montat izolatie de vata bazaltica"
 4,3,,"Renovare","1",1,0,0,6500,6500,"Daramat perete de caramida, facut fier si cofraj pentru o grinda si doi stalpi, turnat beton"
 5,4,,"Renovare","1",1,0,0,6000,6000,"Daramare cos, scos dusumea camera1 + hol, carat pamant afara"
-6,5,,"Construit cos de fum","1",1,0,0,1500,1500,""
-7,5,,"Ridicat soba","1",1,0,0,2500,2500,
-8,5,,"Instalatie sanitara","1",1,0,0,500,500,"Facut instalatie sanitara cupru"
-9,5,,"Zid caramida","1",1,0,0,1000,1000,"Ridicat zid de caramida"
-10,5,,"Ridicat perete","1",1,0,0,1000,1000,"Ridicat perete pe cadre OSB si rigips"
-11,5,,"Plafoane pe cadre","1",1,0,0,1000,1000,""
+6,5,,"Produs","unit",1,0,0,900,900,"Primul produs"
+7,6,1,"Produs sablon","unitate",1,0,0,150,150,"Un produs de tip sablon"
+8,6,,"Produs numarul 2","unit",1,0,0,800,800,"Un produs adaugat manual"
+9,6,,"Produs 3","",1,0,0,75,75,
+10,7,1,"Produs sablon","unitate",10,0,0,150,1500,"Un produs de tip sablon"
+11,7,,"PRodus","1",1,0,0,9000,9000,
+12,8,1,"Produs sablon","unitate",1,0,0,150,150,"Un produs de tip sablon"
+13,9,,"Produs","unitate",1,0,0,777,777,
+15,10,,"Produs","unitate",1,0,0,6000,6000,""
+16,11,,"Produs","unitate",1,0,0,1500,1500,""
+17,11,1,"Produs sablon","unitate",1,0,0,150,150,"Un produs de tip sablon"
+18,12,1,"Produs sablon","unitate",1,0,0,150,150,"Un produs de tip sablon"
+19,13,1,"Produs sablon","unitate",1,0,0,150,150,"Un produs de tip sablon"
+20,14,1,"Produs sablon","unitate",1,0,0,150,150,"Un produs de tip sablon"
+21,15,1,"Produs sablon","unitate",1,0,0,150,150,"Un produs de tip sablon"
+22,9,,"Produs","unit",1,0,0,100,100,
+23,16,1,"Produs sablon","unitate",1,0,0,150,150,"Un produs de tip sablon"
+24,17,,"Produs","unitate",1,0,0,670,670,"Scurta descriere"
+25,18,1,"Produs sablon","unitate",1,0,0,150,150,"Produs sablon"
+26,18,,"Nume","unitate",1,0,0,450,450,"Descriere"
+27,19,,"Nume","unitate",1,0,0,450,450,""
+28,19,1,"Produs sablon","unitate",1,0,0,150,150,"Un produs de tip sablon"
+31,20,,"prod","unit",1,0,0,56,56,
+32,21,1,"Produs sablon","unitate",1,0,0,150,150,"Un produs de tip sablon"
+33,21,,"Produs","unitate",1,0,0,3400,3400,
+34,22,2,"Produs","unitate",1,10,130,1300,1300,"Descriere"
+35,23,1,"Produs sablon","unitate",1,0,0,150,150,"Un produs de tip sablon"
+36,24,1,"Produs sablon","unitate",1,0,0,150,150,"Un produs de tip sablon"
+37,23,,"Produs","unitate",1,0,0,4500,4500,
+38,25,1,"Produs sablon","unitate",1,0,0,150,150,"Un produs de tip sablon"
+39,26,1,"Produs sablon","unitate",1,0,0,150,150,"Un produs de tip sablon"

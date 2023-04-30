@@ -11,6 +11,7 @@ import Expenses from './Admins/Expenses'
 import Financials from './FinancialComponent/FinancialComponent'
 import BilledProducts from './Admins/BilledProducts.jsx'
 import Dashboard from './Dashboard';
+import DatabaseOperations from './Settings/DatabaseOperations';
 import { useEffect, useState } from 'react';
 
 let App =()=> {
@@ -61,6 +62,7 @@ let App =()=> {
           <Route path='expenses' element={<Expenses/>}/>
           <Route path='financials' element={<Financials/>}/>
           <Route path='billedProducts' element={<BilledProducts/>}/>
+          <Route path='database' element={<DatabaseOperations/>}/>
         </Route>
       )
     )
@@ -76,6 +78,7 @@ let App =()=> {
           <Route path='expenses' element={<Expenses/>}/>
           <Route path='financials' element={<Financials/>}/>
           <Route path='billedProducts' element={<BilledProducts/>}/>
+          <Route path='database' element={<DatabaseOperations/>}/>
         </Route>
       )
     )

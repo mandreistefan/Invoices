@@ -51,6 +51,74 @@ function databaseLog(message){
     })
 }
 
+function addDatabase(alias, name){
+    return new Promise((resolve, reject)=>{
+        //check if the DB exists
+        let databasesObject = JSON.parse(fs.readFileSync(path.join(__dirname, '../database.json'), 'utf8'))
+        for(let i=0;i<databasesObject.databases.length;i++){
+            if(databasesObject.databases[i].database===name){
+                reject ({status:"FAIL", data:"DATABASE_EXISTS"}) 
+                return
+            }     
+        }
+        connection.query(`CREATE DATABASE ${name}`, function(error,result){
+            if(error){
+                console.log(`An error occured: ${error}`)
+                reject({status: "ERROR", data:"FAILED TO CREATE DB"})
+                return
+            }
+            if(result){
+                //go to new DB
+                changeDatabase(`${name}`).then((data)=>{
+                    if(data.status==="OK"){
+                        //read tables structure
+                        let tables = fs.readFileSync(path.join(__dirname, '../createTables.txt'), 'utf8')
+                        //build query
+                        let query = ""
+                        tables.split(";").forEach(element=>{
+                            query = query + element + ";"
+                        })
+                        //create tables
+                        connection.query(query, function(error,result){
+                            if(error){
+                                console.log(`An error occured: ${error}`)
+                                reject({
+                                    status: "FAIL",
+                                    data: "TABLES NOT IMPORTED"
+                                })
+                                return 
+                            }
+                            if(result){
+                                //register the new DB in the XML file
+                                databasesObject.databases.push({"database": name, "alias": alias})
+                                fs.writeFileSync('./database.json', JSON.stringify(databasesObject));
+                                resolve({status:"OK", data: null})
+                            }else{
+                                resolve({
+                                    status: "FAIL",
+                                    data: "TABLES NOT IMPORTED"
+                                })
+                            }
+                        })
+                    }else{
+                        resolve({
+                            status: "FAIL",
+                            data: "TABLES NOT IMPORTED"
+                        })
+                    }
+                }).catch(error=>{
+                    resolve({
+                        status: "FAIL",
+                        data: "TABLES NOT IMPORTED"
+                    })
+                })
+            }
+        })
+        
+    })
+
+}
+
 /**
  * 
  * @param {{filter: string, filterBy: string, page:int, target:string}} querryObject filter is the case, filterBy is the value, page is the page(offset), target can be used to specify the table
@@ -886,9 +954,9 @@ function getRecordsNumber(queryDB, queryFilter, queryFilterData){
 function getDBinfo(){
     return({
         host: connection.config.host,
-        user:connection.config.user,
-        database:connection.config.database,
-        databases:databasesObject.databases
+        user: connection.config.user,
+        database: connection.config.database,
+        databases: databasesObject.databases
     })
 }
 
@@ -900,14 +968,12 @@ function getDBinfo(){
 
 function changeDatabase(databaseName){
     return new Promise((resolve, reject)=>{ 
-        console.log(databaseName)  
         connection.changeUser({database : `${databaseName}`}, function(err) {
             if (err){
                 console.log(err)
                 reject({status:"ERROR"})
             }
             resolve({status:"OK"})
-            console.log(connection.database)
         })   
     })
 }
@@ -1890,7 +1956,6 @@ function changeDBsettings(host, user, pass){
 function changeTableProperties(alias, name){
     let databasesObject = JSON.parse(fs.readFileSync(path.join(__dirname, '../database.json'), 'utf8'))
     for(let i=0;i<databasesObject.databases.length;i++){
-        console.log(i)
         if(databasesObject.databases[i].database===name){
             databasesObject.databases[i].alias = alias
             fs.writeFileSync('./database.json', JSON.stringify(databasesObject));
@@ -1927,5 +1992,5 @@ module.exports ={
     getRecordsNumber:getRecordsNumber, getDBinfo:getDBinfo, changeDatabase, getExpenses,addExpense, deleteExpense, searchDatabase, getEmployees, addEmployee, editEmployee, hasSalaryOnDate, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeInfo, archiveEmployee, deleteEmployee, removePredefinedProduct,
     exportData,
     getDashboardData, pingDB, databaseLog, getLatestLogs,
-    getHistory, getEmployeesDetails, changeVacationStatus, deleteVacationDay, deleteSalary, getSalary, changeDBsettings, changeTableProperties
+    getHistory, getEmployeesDetails, changeVacationStatus, deleteVacationDay, deleteSalary, getSalary, changeDBsettings, changeTableProperties, addDatabase
 }

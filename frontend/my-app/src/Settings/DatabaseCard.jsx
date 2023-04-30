@@ -16,7 +16,7 @@ let DatabaseCard = (props) =>{
     }
 
     return(
-        <div>
+        <div style={{maxWidth:'400px'}} className="p-1">
             {properties!==null&&
                 <div className="shadow-sm p-3 mb-2 bg-body-tertiary rounded">
                     <div style={{display:'flex', alignItems:'center'}}>

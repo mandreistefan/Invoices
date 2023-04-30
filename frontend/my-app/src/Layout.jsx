@@ -23,7 +23,8 @@ let Layout = (props) =>{
                 {id:7, name: "dashboard", displayName:'Dashboard', icon:'home', path:`${path}`},
                 {id:0, name: "clients", displayName:'Clienti', icon:'account_circle', path:`${path}clients`},
                 {id:1, name: "invoices", displayName:'Facturi', icon:'receipt_long', path:`${path}invoices`},
-                {id:2, name: "employees", displayName:'Angajati', icon:'group', path:`${path}employees`}                
+                {id:2, name: "employees", displayName:'Angajati', icon:'group', path:`${path}employees`},
+                {id:8, name: "database", displayName:'Baza date', icon:'group', path:`${path}database`}                
             ]
         },
         {   name:"DIVERSE",
@@ -90,15 +91,15 @@ let Layout = (props) =>{
                     </div>                              
                 </div> 
                 <Outlet context={{addSnackbar, port, loadingSpinner}}/>            
+            </div>
+            <div className="snackbars-container">
+                {snackbars.length>0&&
+                    snackbars.map((element, index)=>(
+                    <Snackbar key={index} properties={{text: element.text, icon: element.icon}} closeSnack={()=>{closeSnack(index)}}/>
+                    ))
+                }
+            </div>
         </div>
-        <div className="snackbars-container">
-            {snackbars.length>0&&
-                snackbars.map((element, index)=>(
-                  <Snackbar key={index} properties={{text: element.text, icon: element.icon}} closeSnack={()=>{closeSnack(index)}}/>
-                ))
-              }
-        </div>
-    </div>
     )
 }
 

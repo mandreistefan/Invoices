@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import DatabaseSelector from './Settings/DatabaseOperations'
 import Logs from "./Logs"
 import { useOutletContext } from 'react-router-dom';
 
@@ -43,12 +42,7 @@ let Dashboard = (props) =>{
                         <div className="col-lg-8 mx-auto">
                             <p className="lead mb-4">Aplicatie de inregistrare clienti, eliberare facturi, management angajati.</p>
                         </div>
-                    </div>
-                    <div className="row" style={{marginBottom:'24px'}}>
-                        <div>
-                            <DatabaseSelector showDetailed={true} addSnackbar={addSnackbar}/>
-                        </div> 
-                    </div>   
+                    </div> 
                     <div className="row" style={{marginBottom:'25px'}}>
                         <div className="col-4">
                             <div className='financial-square'>
