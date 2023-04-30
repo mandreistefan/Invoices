@@ -51,41 +51,6 @@ function databaseLog(message){
     })
 }
 
-async function applyDBschema(databaseName){
-    //switch the DB 
-    await changeDatabase(`${databaseName}`)
-
-    return new Promise((resolve, reject)=>{
-        //read tables structure
-        let tables = fs.readFileSync(path.join(__dirname, '../createTables.txt'), 'utf8')
-        //build query
-        let query = ""
-        tables.split(";").forEach(element=>{ query = query + element + ";" })
-        console.log("query built")
-        //create tables
-        connection.query(query, function(error,result){
-            console.log(error)
-            if(error){
-                console.log(`An error occured: ${error}`)
-                reject({
-                    status: "FAIL",
-                    data: null
-                })
-                return 
-            }
-            if(result){
-                resolve({status:"OK", data: null})
-            }else{
-                resolve({
-                    status: "FAIL",
-                    data: null
-                })
-            }
-        })
-    })    
-
-}
-
 async function addDatabase(alias, name){
     //if the datbaase in is the XML file, stop
     let databasesObject = JSON.parse(fs.readFileSync(path.join(__dirname, '../database.json'), 'utf8'))
@@ -149,7 +114,29 @@ async function addDatabase(alias, name){
     }else{
         return({status:"ERROR", data:null})
     }
+}
 
+function deleteDatabase(databaseName){
+    if( databaseName === connection.config.database ) return ({status:"ERROR", data:"DATA DE BAZE E SELECTATA"})
+    return new Promise((resolve, reject)=>{
+        connection.query(`DROP DATABASE ${databaseName}`, function(error,result){
+            if(error){
+                console.log(`An error occured: ${error}`)
+                reject({status:"ERROR", data:null})
+                return
+            }else{
+                let databasesObject = JSON.parse(fs.readFileSync(path.join(__dirname, '../database.json'), 'utf8'))
+                for(let i=0;i<databasesObject.databases.length;i++){
+                    if(databasesObject.databases[i].database === databaseName){
+                        databasesObject.databases.splice(i, 1)
+                        break
+                    }     
+                }
+                fs.writeFileSync('./database.json', JSON.stringify(databasesObject));
+                resolve({status:"OK", data:null})
+            }
+        })
+    })
 }
 
 /**
@@ -985,6 +972,7 @@ function getRecordsNumber(queryDB, queryFilter, queryFilterData){
 }
 
 function getDBinfo(){
+    let databasesObject = JSON.parse(fs.readFileSync(path.join(__dirname, '../database.json'), 'utf8'))
     return({
         host: connection.config.host,
         user: connection.config.user,
@@ -2025,5 +2013,5 @@ module.exports ={
     getRecordsNumber:getRecordsNumber, getDBinfo:getDBinfo, changeDatabase, getExpenses,addExpense, deleteExpense, searchDatabase, getEmployees, addEmployee, editEmployee, hasSalaryOnDate, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeInfo, archiveEmployee, deleteEmployee, removePredefinedProduct,
     exportData,
     getDashboardData, pingDB, databaseLog, getLatestLogs,
-    getHistory, getEmployeesDetails, changeVacationStatus, deleteVacationDay, deleteSalary, getSalary, changeDBsettings, changeTableProperties, addDatabase
+    getHistory, getEmployeesDetails, changeVacationStatus, deleteVacationDay, deleteSalary, getSalary, changeDBsettings, changeTableProperties, addDatabase, deleteDatabase
 }

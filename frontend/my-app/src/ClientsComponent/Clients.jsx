@@ -21,9 +21,7 @@ let Clients = (props) =>{
     let [queryFilter, setFilter]=useState({filter: props.queryFilterBy ? props.queryFilterBy : defaultFilter.filter, filterBy: props.queryFilterData ? props.queryFilterData : defaultFilter.filterBy, page:1, step:10})
     //new ivoice for him
     let [invoiceClient, invoiceThisClient] = useState(null)
-    let {...context} = useOutletContext();
-    const addSnackbar = context.addSnackbar 
-    const port = context.port
+    let {addSnackbar, port, noDataMessage, loadingSpinner } = useOutletContext();
 
     useEffect(()=>{
         fetchClients()
@@ -42,7 +40,7 @@ let Clients = (props) =>{
         .then(response=>response.json())
         .then(data=>{
             if(data.status==="OK"){
-                setAllClients(data.data)
+                setAllClients(data.data!== null ? data.data : [])
                 setNOE(data.totalRecordsNumber)                
             }else if(data.status==="SERVER_ERROR"){
                 addSnackbar({icon:"report_problem", text:"Baza de date nu poate fi accesata"})
@@ -109,6 +107,7 @@ let Clients = (props) =>{
                 <div className="bordered-container" style={{display: activeClient===null ? "" : "none"}} >   
                     <Header title="Clienti" icon="account_circle" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[{title:"Client nou", action:()=>{showonewClientWindow(true)}, icon:"add", name:"Client nou"}]}/>
                     <div>
+                        {allClients!==null && allClients.length>0 && 
                         <table className="table" id="invoices-table">
                             <thead>
                                 <tr>
@@ -120,7 +119,7 @@ let Clients = (props) =>{
                                 </tr>
                             </thead>
                             <tbody>
-                                {allClients && allClients.map((element, index)=>(          
+                                {allClients.map((element, index)=>(          
                                     <tr key={index}>
                                         <td>{index+1}</td>
                                         <td>{element.client_first_name} {element.client_last_name}</td>
@@ -135,10 +134,10 @@ let Clients = (props) =>{
                                         </td>
                                     </tr> 
                                 ))}                                
-                            </tbody> 
-                            {allClients===null && context.loadingSpinner}  
-                            {allClients===[] && <h6>Nu exista date</h6>}  
-                        </table>
+                            </tbody>
+                        </table>}
+                        {allClients===null && loadingSpinner}  
+                        {allClients!== null && allClients.length===0 && noDataMessage}  
                         <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>
                     </div>
                 </div>}                           

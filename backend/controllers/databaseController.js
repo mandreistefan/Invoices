@@ -436,6 +436,7 @@ async function getEmployees(filterObject){
     }else{
         //can use + to replace the space in the search text
         [employeesObject, totalRecordsNumber] = await Promise.all([await databaseOperations.getEmployees({filter:"search", filterBy:await databaseOperations.searchDatabase({target:"employees", searchTerm:filterObject.filterBy.replace("+"," ")}), page:1}), 0])
+        console.log(employeesObject)
         if(employeesObject[0]===null) return {status:"NO_DATA", recordsNumber: 0, data: null}
     }
   
@@ -671,7 +672,10 @@ async function addDatabase(alias, name){
         return({status:"ERROR", data:"INVALID_DATA"})
     }
     return await databaseOperations.addDatabase(alias, name)
+}
 
+async function deleteDatabase(databaseName){
+    return await databaseOperations.deleteDatabase(databaseName)
 }
 
 module.exports={ 
@@ -696,5 +700,5 @@ module.exports={
     getEmployees, addEmployee, editEmployee, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeOverview, archiveEmployee, deletePredefinedProduct, 
     exportData, dashboardData,
     pingDB, getRecentLogs,
-    getHistory, getBilledProducts, updateVacationStatus, daleteVacationDay, deleteSalary, getSalary, changeDBsettings, changeTableProperties, addDatabase
+    getHistory, getBilledProducts, updateVacationStatus, daleteVacationDay, deleteSalary, getSalary, changeDBsettings, changeTableProperties, addDatabase, deleteDatabase
 }

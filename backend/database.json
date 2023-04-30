@@ -1,1 +1,1 @@
-{"host":"localhost","user":"root","password":"root","databases":[{"database":"invoicemanager","alias":"Baza de teste"},{"database":"baza_date_facturi","alias":"Baza live1"},{"database":"bazaTest","alias":"Baza de test"}]}
+{"host":"localhost","user":"root","password":"root","databases":[{"database":"invoicemanager","alias":"Baza de teste"},{"database":"baza_date_facturi","alias":"Baza live1"}]}

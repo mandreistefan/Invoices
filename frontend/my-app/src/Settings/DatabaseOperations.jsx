@@ -132,6 +132,27 @@ let DatabaseOperations=(props)=>{
         }) 
     }
 
+    
+    let deleteDB = ( name )=>{
+
+        if(window.confirm("Stergeti baza de date?") === false) return false
+
+        fetch(`http://localhost:${port}/database/${name}`, {
+            method:"DELETE",
+            headers: { 'Content-Type': 'application/json'},
+        }).then(response=>response.json()).then(data=>{
+            if(data.status==="OK"){
+
+            }else{
+                addSnackbar({text: "A aparut o eroare"})
+            }
+        }).catch(error=>{
+            addSnackbar({text: "A aparut o eroare"})
+        }) 
+        
+
+    }
+
     function exportData(){
         fetch(`http://localhost:${port}/export_data`).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
@@ -179,7 +200,11 @@ let DatabaseOperations=(props)=>{
                         <input type="text" className="form-control shadow-none" id="alias" name="alias" value={properties.alias} onChange={(e)=>{setProperties({...properties, alias: e.target.value, changed: true})}} placeholder="Alias"></input>
                         <label for="client_first_name">Alias</label>
                     </div>
-                    <button className="btn btn-success btn-sm" disabled={properties.changed===true ? false : true} onClick={()=>{submitForm()}}>{props.info ? "Schimba alias" : "Adauga"}</button>
+                    <div className="btn-group button-group-mint">
+                        <button className="btn btn-light btn-sm" disabled={properties.changed===true ? false : true} onClick={()=>{submitForm()}}>{props.info ? "Schimba alias" : "Adauga"}</button>
+                        {props.info && <button className="btn btn-light btn-sm" disabled={databaseInfo.active === properties.name ? true : false} onClick={()=>{deleteDB(properties.name)}}>Sterge</button>}
+                    </div>
+                   
                 </div>}
             </div>
         )
@@ -188,9 +213,13 @@ let DatabaseOperations=(props)=>{
 
     return(
         <div className="app-data-container">
+            <div class="bordered-container p-2" style={{display:'flex', flexDirection:'row', alignItems:'center', width:'fit-content', marginBottom:'25px'}}>
+                <span class="material-icons-outlined">storage</span>
+                <span style={{fontSize:'16px', fontWeight:'700', color: 'rgb(108, 117, 125)', textTransform:'uppercase', marginRight:'20px'}}>setari baza de date</span>
+            </div>
             {databaseInfo!==null &&
             <div>
-                <div className="row">
+                <div className="row" style={{marginBottom:'25px'}}>
                     <div className="col-4">
                         <div className='financial-square'>
                             <span style={{color:'gray', fontWeight:'500', marginBottom:'10px'}} className="material-icons-outlined p-1">cloud</span>
@@ -207,27 +236,31 @@ let DatabaseOperations=(props)=>{
                             </div>  
                         </div>
                     </div>     
-                    <div className="col-4">
+                    <div className="col-6">
                         <div className='financial-square'>
                             <span style={{color:'gray', marginBottom:'10px'}}  className="material-icons-outlined p-1">sync_problem</span>
                             <div className="p-1">
                                 <span style={{color:'gray', fontWeight:'500'}}>Ping</span>
                                 <span>Ultimul status: <strong>{ping.status}</strong></span>
                                 <span>Ultimul ping: <strong>{ping.date}</strong></span>
-                                <button className="btn btn-success btn-sm" style={{width:'fit-content'}} onClick={()=>{pingDatabase()}}>Ping</button>      
+                                <button className="btn btn-success btn-sm" style={{width:'fit-content'}} onClick={()=>{pingDatabase()}}>Contacteaza baza de date</button>      
                             </div> 
                         </div>         
                     </div>
-                    <div className="col-2">
+                </div>
+                <div className="row">
+                    <div className="col-4">
                         <div className='financial-square'>
+                            <span style={{color:'gray', marginBottom:'10px'}}  className="material-icons-outlined p-1">sync_problem</span>
                             <div className="p-1">
                                 <h6>Setari conexiune</h6>
                                 <button className="btn btn-success btn-sm" onClick={()=>{setshowXMLFileSettings(true)}}>Editare</button>
                             </div> 
                         </div>         
                     </div>
-                    <div className="col-2">
+                    <div className="col-4">
                         <div className='financial-square'>
+                            <span style={{color:'gray', marginBottom:'10px'}}  className="material-icons-outlined p-1">sync_problem</span>
                             <div className="p-1">
                                 <h6>Tabele</h6>
                                 <div className="btn-group button-group-mint">
@@ -276,7 +309,7 @@ let DatabaseOperations=(props)=>{
                     <div className="blur-overlap"></div> 
                     <div className="overlapping-component-inner">
                         <div className='overlapping-component-header'>
-                            <span>Tabele</span>
+                            <span>Baze de date</span>
                             <button type="button" className="action-close-window" onClick={()=>{setShowTables(false)}}><span className="material-icons-outlined">close</span></button>
                         </div> 
                         <div style={{display:'grid', gridTemplateColumns:'48% 48%'}}>
@@ -291,10 +324,12 @@ let DatabaseOperations=(props)=>{
                     <div className="blur-overlap"></div> 
                     <div className="overlapping-component-inner">
                         <div className='overlapping-component-header'>
-                            <span>Tabel nou</span>
+                            <span>Inregistrare baza noua de date</span>
                             <button type="button" className="action-close-window" onClick={()=>{setNewTable(false)}}><span className="material-icons-outlined">close</span></button>
                         </div> 
-                        <DatabaseCard /> 
+                        <div style={{width:'100%'}} className="p-2">
+                            <DatabaseCard /> 
+                        </div>
                     </div>     
                 </div>}
                 <div>

@@ -122,6 +122,15 @@ myApp.get("/database", (req, res)=>{
     })
 })
 
+//get some info on the DB
+myApp.delete("/database/:id", (req, res)=>{
+    databaseController.deleteDatabase(req.params.id).then(data=>{
+        res.send(data)
+    }).catch(error=>{
+        res.send({status: "ERROR", data: null})
+    })
+})
+
 //get a list of databases
 myApp.get("/databases", (req, res)=>{
     let data = databaseController.getDatabases()

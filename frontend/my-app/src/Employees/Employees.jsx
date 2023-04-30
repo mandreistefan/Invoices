@@ -7,9 +7,7 @@ import SmallMenu from "../SmallMenu/SmallMenu.jsx";
 import { useOutletContext } from "react-router-dom";
 
 let Employees=(props)=>{
-    let {...context} = useOutletContext();
-    const addSnackbar = context.addSnackbar 
-    const port = context.port
+    let {addSnackbar, port, noDataMessage, loadingSpinner } = useOutletContext();
 
     const defaultFilter={filter:"all", filterBy:"", page:1, step:10}
     const mS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -124,6 +122,7 @@ let Employees=(props)=>{
                     <div className="bordered-container">                        
                         <Header title="Angajati" icon="group" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[{title:"Angajat nou", action:()=>{showaddEmployeeWindow(true)}, icon:"add", name:"Angajat nou"}]}/>    
                         <div>
+                            {employees!==null && employees.length>0 && 
                             <table className="table" id="invoices-table">
                                 <thead>
                                     <tr>
@@ -139,7 +138,7 @@ let Employees=(props)=>{
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {employees && employees.length>0 && employees.map((element, index)=>(          
+                                    {employees.map((element, index)=>(          
                                         <tr key={index}>
                                             <td>{index+1}</td>
                                             <td>{element.emp_first_name} {element.emp_last_name}</td>
@@ -155,9 +154,9 @@ let Employees=(props)=>{
                                         </tr>    
                                     ))}
                                 </tbody> 
-                                {employees===null && context.loadingSpinner}  
-                                {employees===[] && <h6>Nu exista date</h6>}
-                            </table>
+                            </table>}
+                            {employees===null && loadingSpinner}  
+                            {employees!==null && employees.length===0 && noDataMessage}
                         </div>
                         <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>
                     </div>}

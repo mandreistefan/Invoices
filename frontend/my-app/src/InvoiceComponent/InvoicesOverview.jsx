@@ -8,9 +8,7 @@ import { useOutletContext } from 'react-router-dom';
 
 let InvoicesOverview = (props) =>{
 
-    let {...context} = useOutletContext();
-    const addSnackbar = context.addSnackbar 
-    const port = context.port
+    let {addSnackbar, port, noDataMessage, loadingSpinner } = useOutletContext();
 
     let defaultFilter = {filter:"all", filterBy:"", page:1, order:"invoice_number", orderBy:"desc", interval:""}
 
@@ -186,7 +184,8 @@ let InvoicesOverview = (props) =>{
                                     {activeFilters.date!==null && <span className="badge bg-success">Data: {activeFilters.date}</span>}
                                     {activeFilters.search!==null && <span className="badge bg-success">Cautare: {activeFilters.search}</span>}
                                 </div>
-                                <div style={{maxHeight:'80vh'}}>   
+                                <div style={{maxHeight:'80vh'}}>  
+                                    {invoicesData!==null && invoicesData.length!==0 && 
                                         <table className="table" id="invoices-table">
                                             <thead>
                                                 <tr>
@@ -200,7 +199,7 @@ let InvoicesOverview = (props) =>{
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {invoicesData && invoicesData.length>0 && invoicesData.map((element, index)=>(          
+                                                { invoicesData.map((element, index)=>(          
                                                     <tr key={index}>
                                                         <td>{((queryFilter.page*10)-10) +index+1}</td>
                                                         <td>{element.client_first_name} {element.client_last_name}</td>
@@ -215,10 +214,10 @@ let InvoicesOverview = (props) =>{
                                                     </tr>    
                                                 ))}                                                
                                             </tbody> 
-                                            {invoicesData===null && context.loadingSpinner} 
-                                            {invoicesData===[] && <h6>Nu exista date</h6>} 
-                                        </table>  
-                                    <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>
+                                        </table> } 
+                                        {invoicesData===null && loadingSpinner} 
+                                        {invoicesData!==null && invoicesData.length===0 && noDataMessage} 
+                                        <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>
                                 </div>                                
                             </div>  
                         } 

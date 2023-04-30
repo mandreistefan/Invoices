@@ -12,6 +12,7 @@ let Layout = (props) =>{
     let inElectron = navigator.userAgent.indexOf('Electron')>-1 ? true : false
     let port = navigator.userAgent.indexOf('Electron')>-1 ? "3001" : "3000"
     const path = "/" 
+    const noDataMessage = <div><h6>Nu exista date</h6></div>
 
     let [expanded, setExpanded] = useState(true)
 
@@ -24,7 +25,7 @@ let Layout = (props) =>{
                 {id:0, name: "clients", displayName:'Clienti', icon:'account_circle', path:`${path}clients`},
                 {id:1, name: "invoices", displayName:'Facturi', icon:'receipt_long', path:`${path}invoices`},
                 {id:2, name: "employees", displayName:'Angajati', icon:'group', path:`${path}employees`},
-                {id:8, name: "database", displayName:'Baza date', icon:'group', path:`${path}database`}                
+                {id:8, name: "database", displayName:'Baza date', icon:'storage', path:`${path}database`}                
             ]
         },
         {   name:"DIVERSE",
@@ -90,7 +91,7 @@ let Layout = (props) =>{
                         <button style={{backgroundColor:'transparent', border:'none'}} onClick={()=>{setExpanded(!expanded)}}><span class="material-icons-outlined">menu</span></button>   
                     </div>                              
                 </div> 
-                <Outlet context={{addSnackbar, port, loadingSpinner}}/>            
+                <Outlet context={{addSnackbar, port, loadingSpinner, noDataMessage}}/>            
             </div>
             <div className="snackbars-container">
                 {snackbars.length>0&&
