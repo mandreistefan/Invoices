@@ -38,7 +38,7 @@ let Financial = (props) =>{
         let querry = `http://localhost:${port}/financial?filter=interval&filterBy=${filterBy}`
         fetch(querry).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
-                if(data.total>0){
+                if(data.data.total>0){
                     //periodicalData has a different use
                     setChartData(data.data.periodicalData)
                     delete data.data.periodicalData
@@ -254,9 +254,9 @@ let Financial = (props) =>{
                         <tbody>  
                             {chartData.map((element, index)=>(
                                 <tr key={index}>
-                                    <td>{element.year}</td>
-                                    <td>{element.month}</td>                                    
-                                    <td>{element.total}</td>
+                                    <td>{element.year && element.year}</td>
+                                    <td>{element.month && element.month}</td>                                    
+                                    <td>{element.total && element.total}</td>
                                 </tr>
                             ))}  
                         </tbody>  
@@ -273,11 +273,11 @@ let Financial = (props) =>{
                             </tr>
                         </thead>
                         <tbody>  
-                            {expensesPie.map((element, index)=>(
+                            {expensesPie.length>0 && expensesPie.map((element, index)=>(
                                 <tr key={index}>
                                     <td>{element.label}</td>
-                                    <td>{element.sum.toFixed(2)}</td>                                    
-                                    <td>{element.value.toFixed(2)}</td>
+                                    <td>{element.sum && element.sum.toFixed(2)}</td>                                    
+                                    <td>{element.value && element.value.toFixed(2)}</td>
                                 </tr>
                             ))}  
                         </tbody>  
