@@ -142,11 +142,25 @@ let DatabaseOperations=(props)=>{
             headers: { 'Content-Type': 'application/json'},
         }).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
-
+                addSnackbar({text: "OK"})
+                let availableDatabases = [...databaseInfo.available]
+                for(let i=0; i<availableDatabases.length; i++){
+                    if( availableDatabases[i].database === name ){
+                        availableDatabases.splice(i, 1)
+                        break
+                    }
+                }
+                setDBinfo({active: databaseInfo.active, available: availableDatabases})
             }else{
-                addSnackbar({text: "A aparut o eroare"})
+                if(data.data==="DATA DE BAZE E SELECTATA"){
+                    addSnackbar({text: "Baza de date este selectata"})
+                }else{
+                    addSnackbar({text: "A aparut o eroare"})
+                }
+                
             }
         }).catch(error=>{
+            console.log(error)
             addSnackbar({text: "A aparut o eroare"})
         })        
 
