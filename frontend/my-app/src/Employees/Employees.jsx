@@ -175,7 +175,7 @@ let Employees=(props)=>{
                             <span>Angajat nou</span>
                             <button type="button" className="action-close-window" onClick={()=>{closeAndRefresh()}}><span className="material-icons-outlined">close</span></button>
                         </div>
-                        <div className="p-3"><EmployeeForm addSnackbar={addSnackbar}/></div>
+                        <div className="p-3"><EmployeeForm addSnackbar={addSnackbar} refreshBackground={fetchData}/></div>
                     </div>
                 </div>
             }

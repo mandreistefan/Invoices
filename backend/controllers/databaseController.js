@@ -444,13 +444,24 @@ async function getEmployees(filterObject){
     }
   
     employeesObject[0].forEach((element, index)=>{
-        element.lastSalaryDetails = {
-            pay_date: employeesObject[1][index*2][0].pay_date,
-            salary_month: employeesObject[1][index*2][0].salary_month,
-            salary_year: employeesObject[1][index*2][0].salary_year,
-            net: employeesObject[1][index*2][0].sum_net,
-            vacationDays: employeesObject[1][index+index+1][0].count
+        if(employeesObject[1][index*2].length>0){
+            element.lastSalaryDetails = {
+                pay_date:  'pay_date' in employeesObject[1][index*2][0] ? employeesObject[1][index*2][0].pay_date : 0,
+                salary_month: 'salary_month' in employeesObject[1][index*2][0] ? employeesObject[1][index*2][0].salary_month : 0,
+                salary_year: 'salary_year' in employeesObject[1][index*2][0] ? employeesObject[1][index*2][0].salary_year : 0,
+                net: 'sum_net' in employeesObject[1][index*2][0] ? employeesObject[1][index*2][0].sum_net : 0,
+                vacationDays: 'count' in employeesObject[1][index+index+1][0] ? employeesObject[1][index+index+1][0].count : 0
+            }
+        }else{
+            element.lastSalaryDetails = {
+                pay_date:  0,
+                salary_month:  0,
+                salary_year: 0,
+                net: 0,
+                vacationDays: 0
+            } 
         }
+
     })
 
     return({

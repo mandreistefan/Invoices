@@ -153,6 +153,7 @@ let EmployeeForm = (props)=>{
                 if(data.status==="OK"){
                     props.addSnackbar({text:"Angajat inregistrat"})
                     setID(data.data)
+                    if(props.refreshBackground) props.refreshBackground()
                 }else if(data.status==="SERVER_ERROR"){
                     props.addSnackbar({icon:"report_problem",text:"Baza de date nu poate fi accesata"})
                 }else{
