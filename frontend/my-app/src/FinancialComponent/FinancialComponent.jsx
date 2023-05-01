@@ -38,31 +38,33 @@ let Financial = (props) =>{
         let querry = `http://localhost:${port}/financial?filter=interval&filterBy=${filterBy}`
         fetch(querry).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
-                //periodicalData has a different use
-                setChartData(data.data.periodicalData)
-                delete data.data.periodicalData
-                //piechartData
-                let pieChartShallow = pieChartData
-                pieChartData[0].value = data.data.salariesPercentIncome
-                pieChartData[1].value = data.data.expensesPercentIncome
-                pieChartData[2].value = data.data.profitPercentIncome
-                setPieChartData(pieChartShallow)
-                let pieExpensesChartShallow = expensesPie
-                pieExpensesChartShallow[0].value = data.data.expensesCategories.tools.percentage
-                pieExpensesChartShallow[0].sum = data.data.expensesCategories.tools.value
-                pieExpensesChartShallow[1].value = data.data.expensesCategories.administrative.percentage
-                pieExpensesChartShallow[1].sum = data.data.expensesCategories.administrative.value
-                pieExpensesChartShallow[2].value = data.data.expensesCategories.transport.percentage
-                pieExpensesChartShallow[2].sum = data.data.expensesCategories.transport.value
-                setExpensesPie(pieExpensesChartShallow)
-                delete data.data.salariesPercentIncome
-                delete data.data.expensesPercentIncome
-                //contains totals and statistics
-                setFinancialData(data.data)
-                //contains data for plotting a chart
-                setChartTile(`${dateInterval.start} - ${dateInterval.end}`)
-                //calcualtes taxes
-                setTaxes({...taxes, profitTax: parseFloat(((data.data.total-data.data.expenses-data.data.salaries)/100)*taxes.profitTaxPercentage).toFixed(2), profit:parseFloat(data.data.total-taxes.profitTax)})
+                if(data.total>0){
+                    //periodicalData has a different use
+                    setChartData(data.data.periodicalData)
+                    delete data.data.periodicalData
+                    //piechartData
+                    let pieChartShallow = pieChartData
+                    pieChartData[0].value = data.data.salariesPercentIncome
+                    pieChartData[1].value = data.data.expensesPercentIncome
+                    pieChartData[2].value = data.data.profitPercentIncome
+                    setPieChartData(pieChartShallow)
+                    let pieExpensesChartShallow = expensesPie
+                    pieExpensesChartShallow[0].value = data.data.expensesCategories.tools.percentage
+                    pieExpensesChartShallow[0].sum = data.data.expensesCategories.tools.value
+                    pieExpensesChartShallow[1].value = data.data.expensesCategories.administrative.percentage
+                    pieExpensesChartShallow[1].sum = data.data.expensesCategories.administrative.value
+                    pieExpensesChartShallow[2].value = data.data.expensesCategories.transport.percentage
+                    pieExpensesChartShallow[2].sum = data.data.expensesCategories.transport.value
+                    setExpensesPie(pieExpensesChartShallow)
+                    delete data.data.salariesPercentIncome
+                    delete data.data.expensesPercentIncome
+                    //contains totals and statistics
+                    setFinancialData(data.data)
+                    //contains data for plotting a chart
+                    setChartTile(`${dateInterval.start} - ${dateInterval.end}`)
+                    //calcualtes taxes
+                    setTaxes({...taxes, profitTax: parseFloat(((data.data.total-data.data.expenses-data.data.salaries)/100)*taxes.profitTaxPercentage).toFixed(2), profit:parseFloat(data.data.total-taxes.profitTax)})
+                }
             }else if(data.status==="NO_DATA"){
                 addSnackbar({text: "Nu exista date"})
             }else if(data.status==="SERVER_ERROR"){
@@ -91,7 +93,9 @@ let Financial = (props) =>{
 
     return( 
         <div className="app-data-container"> 
-            <div className="bordered-container p-2" style={{width:'fit-content', display:'flex', justifyContent:'flex-start'}}>
+            <div className="bordered-container p-2" style={{width:'fit-content', display:'flex', justifyContent:'flex-start', alignItems:'center'}}>
+                <span class="material-icons-outlined">attach_money</span>
+                <span style={{fontSize:'16px', fontWeight:'700', color: 'rgb(108, 117, 125)', textTransform:'uppercase', marginRight:'20px'}}>finante</span>
                 <div style={{display: 'flex', alignItems: 'center'}}>
                     <span title="Interval" className="material-icons-outlined" style={{marginRight: '5px'}}>date_range</span>
                     <input type="date" className="form-control shadow-none" style={{width:'fit-content'}} id="start" name="trip-start" value={dateInterval.start} onChange={someFunction}></input>
@@ -99,7 +103,6 @@ let Financial = (props) =>{
                 </div>
                 <div className="btn-group">
                     <button title={tableDisplay ? 'Vezi grafic' : 'Vezi tabel'} className="btn btn-light btn-sm mint-button" onClick={()=>{setDisplay(!tableDisplay)}}><div className="inner-button-content"><span className="material-icons-outlined" style={{fontSize:'18px'}}>{tableDisplay ? 'grid_view' : 'table_rows'}</span>Display</div></button>    
-                    <button title="Export date" className="btn btn-light btn-sm mint-button" onClick={()=>{exportData()}}><div className="inner-button-content"><span className="material-icons-outlined" style={{fontSize:'18px'}}>file_download</span>Export</div></button>                    
                 </div> 
             </div>
             {financialData ?
@@ -282,7 +285,7 @@ let Financial = (props) =>{
                 </div>
             </div>
             }
-            </div>:"Nu exista date"}     
+            </div>:<h6 style={{textAlign:'center'}}>Nu exista date</h6>}     
         </div>
     )
 

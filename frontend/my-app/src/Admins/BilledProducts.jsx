@@ -9,9 +9,7 @@ let BilledProducts = (props) =>{
     let [grouped, setGrouped] = useState(false)
     let [filterObject, setFilter] = useState({orderBy: null, order: null})
 
-    let {...context} = useOutletContext();
-    const addSnackbar = context.addSnackbar 
-    const port = context.port
+    let {addSnackbar, port, loadingSpinner } = useOutletContext();
     
     useEffect(()=>{
         fetchData()
@@ -25,36 +23,38 @@ let BilledProducts = (props) =>{
 
         fetch(fetchLink).then(response=>response.json()).then(data=>{
             if(data.status==="ERROR"){
-
+                addSnackbar({text: "A aparut o eroare!"})
             }else{
                 setData(data.data)
-                setLimits(data.limits)
-                if(groupedObject.length===0){
-                    let theObject=[]
-                    let startIndex=0
-                    let sum=0, invoices=[], lowestPrice=null, highestPrice=0, variation=0
-                    let mostFrequent={index:0, numberOfTimes:0}
-                    data.limits.forEach((element, index)=>{
-                        for(let i=startIndex; i<startIndex+element; i++){
-                            sum=sum+data.data[i].product_price
-                            invoices.push(data.data[i].invoiceID)
-                            if(data.data[i].product_price>highestPrice) highestPrice = data.data[i].product_price
-                            if(lowestPrice===null){
-                                lowestPrice = data.data[i].product_price
-                            }else{
-                                if(data.data[i].product_price < lowestPrice) lowestPrice = data.data[i].product_price
+                if(data.data.length>0){
+                    setLimits(data.limits)
+                    if(groupedObject.length===0){
+                        let theObject=[]
+                        let startIndex=0
+                        let sum=0, invoices=[], lowestPrice=null, highestPrice=0, variation=0
+                        let mostFrequent={index:0, numberOfTimes:0}
+                        data.limits.forEach((element, index)=>{
+                            for(let i=startIndex; i<startIndex+element; i++){
+                                sum=sum+data.data[i].product_price
+                                invoices.push(data.data[i].invoiceID)
+                                if(data.data[i].product_price>highestPrice) highestPrice = data.data[i].product_price
+                                if(lowestPrice===null){
+                                    lowestPrice = data.data[i].product_price
+                                }else{
+                                    if(data.data[i].product_price < lowestPrice) lowestPrice = data.data[i].product_price
+                                }
                             }
-                        }
-                        theObject.push({name:data.data[startIndex].product_name, sum, invoices, lowestPrice, highestPrice})
-                        sum=0;
-                        highestPrice=0
-                        lowestPrice=null
-                        invoices=[]
-                        startIndex=startIndex+element
-                        if(element>mostFrequent.numberOfTimes) mostFrequent={index, numberOfTimes:element}
-                    })
-                    theObject[mostFrequent.index].mostFrequent=true
-                    setGroupedObject(theObject)
+                            theObject.push({name:data.data[startIndex].product_name, sum, invoices, lowestPrice, highestPrice})
+                            sum=0;
+                            highestPrice=0
+                            lowestPrice=null
+                            invoices=[]
+                            startIndex=startIndex+element
+                            if(element>mostFrequent.numberOfTimes) mostFrequent={index, numberOfTimes:element}
+                        })
+                        theObject[mostFrequent.index].mostFrequent=true
+                        setGroupedObject(theObject)
+                    }
                 }
             }
         }).catch(error=>{
@@ -95,9 +95,9 @@ let BilledProducts = (props) =>{
                             ))
                         }
                     </tbody>
-                    {data===null && context.loadingSpinner}  
-                    {data===[] && <h6>Nu exista date</h6>}  
-                </table>                 
+                </table>   
+                {data===null && loadingSpinner}  
+                {data!==null && data.length===0 && <h6 style={{textAlign:'center'}}>Nu exista date</h6>}              
             </div>}
             {grouped===true &&
             <div>
@@ -126,8 +126,8 @@ let BilledProducts = (props) =>{
                             </div>                             
                         ))}
                     </div>}
-                    {data===null && context.loadingSpinner}  
-                    {data===[] && <h6>Nu exista date</h6>} 
+                    {data===null && loadingSpinner}  
+                    {data!==null && data.length===0 && <h6 style={{textAlign:'center'}}>Nu exista date</h6>}  
                 </div>
             </div>
             }

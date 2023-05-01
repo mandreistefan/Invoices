@@ -428,15 +428,18 @@ async function deleteExpense(id){
  */
 async function getEmployees(filterObject){
     let employeesObject, totalRecordsNumber
-    if(filterObject.filter!="search"){
-        //client data
-        [employeesObject, totalRecordsNumber] = await Promise.all([databaseOperations.getEmployees(filterObject), databaseOperations.getRecordsNumber("employees", filterObject.filter, filterObject.filterBy)])
-        //first element is the list of all employees
-        if(employeesObject[0]===null) return {status:"NO_DATA", recordsNumber: 0, data: null}
-    }else{
+    if(filterObject.filter!=="search"){
+        try{
+            //employee data
+            [employeesObject, totalRecordsNumber] = await Promise.all([databaseOperations.getEmployees(filterObject), databaseOperations.getRecordsNumber("employees", filterObject.filter, filterObject.filterBy)])
+        }catch(error){
+            console.log(error)
+            return {status:"ERROR", recordsNumber: 0, data: null}
+        }        
+        if(employeesObject[0].length===0) return ({status: "OK", totalRecordsNumber:0, data: null})
+    }else{        
         //can use + to replace the space in the search text
         [employeesObject, totalRecordsNumber] = await Promise.all([await databaseOperations.getEmployees({filter:"search", filterBy:await databaseOperations.searchDatabase({target:"employees", searchTerm:filterObject.filterBy.replace("+"," ")}), page:1}), 0])
-        console.log(employeesObject)
         if(employeesObject[0]===null) return {status:"NO_DATA", recordsNumber: 0, data: null}
     }
   
@@ -564,8 +567,13 @@ async function exportData(filterObject){
 }
 
 async function dashboardData(){
+
+    if( databaseOperations.checkForDatabases() === false ) return ({status:"NO_DATABASE", data: null})
+
     let response = {status:{finalised: 0, draft: 0}, lastInvoice:{client_last_name:"", client_first_name: "", date:"", total:0}, total_income: 0, total_invoices: 0}
     let invoiceData = await databaseOperations.getDashboardData()
+
+    if(invoiceData.length===0) return ({status:"NO_DATA", data: null})
 
     let highestSum = {income: 0, date: null, id:null}
 

@@ -179,13 +179,12 @@ let InvoicesOverview = (props) =>{
                     <div className="" style={{width:'100%'}}>
                         {!activeInvoice &&
                             <div> 
-                                <Header title="Facturi" icon="receipt_long" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[]} intervalFunction={intervalFunction}/>    
+                                <Header title="Facturi" icon="receipt_long" display={invoicesData!==null && invoicesData.length>0 ? true : false} searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[]} intervalFunction={intervalFunction}/>    
                                 <div style={{backgroundColor:"#f8f9fa", padding:'6px', paddingLeft:'20px'}}>
                                     {activeFilters.date!==null && <span className="badge bg-success">Data: {activeFilters.date}</span>}
                                     {activeFilters.search!==null && <span className="badge bg-success">Cautare: {activeFilters.search}</span>}
                                 </div>
-                                <div style={{maxHeight:'80vh'}}>  
-                                    {invoicesData!==null && invoicesData.length!==0 && 
+                                <div style={{maxHeight:'80vh'}}> 
                                         <table className="table" id="invoices-table">
                                             <thead>
                                                 <tr>
@@ -199,7 +198,7 @@ let InvoicesOverview = (props) =>{
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                { invoicesData.map((element, index)=>(          
+                                                {invoicesData!==null && invoicesData.length!==0 &&  invoicesData.map((element, index)=>(          
                                                     <tr key={index}>
                                                         <td>{((queryFilter.page*10)-10) +index+1}</td>
                                                         <td>{element.client_first_name} {element.client_last_name}</td>
@@ -214,9 +213,9 @@ let InvoicesOverview = (props) =>{
                                                     </tr>    
                                                 ))}                                                
                                             </tbody> 
-                                        </table> } 
+                                        </table> 
                                         {invoicesData===null && loadingSpinner} 
-                                        {invoicesData!==null && invoicesData.length===0 && noDataMessage} 
+                                        {invoicesData!==null && invoicesData.length===0 && <h6 style={{textAlign:'center'}}>Nu exista date</h6>} 
                                         <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>
                                 </div>                                
                             </div>  

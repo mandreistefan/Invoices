@@ -7,7 +7,7 @@ import SmallMenu from "../SmallMenu/SmallMenu.jsx";
 import { useOutletContext } from "react-router-dom";
 
 let Employees=(props)=>{
-    let {addSnackbar, port, noDataMessage, loadingSpinner } = useOutletContext();
+    let {addSnackbar, port, loadingSpinner } = useOutletContext();
 
     const defaultFilter={filter:"all", filterBy:"", page:1, step:10}
     const mS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -28,7 +28,7 @@ let Employees=(props)=>{
     function fetchData(){
         fetch(`http://localhost:${port}/employees?filter=${queryFilter.filter}&filterBy=${queryFilter.filterBy}&page=${queryFilter.page-1}&step=${queryFilter.step}`).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
-                setEmployees(data.data)
+                setEmployees(data.data!==null ? data.data : [])
                 setNOE(data.recordsNumber)
             }else if(data.status==="NO_DATA"){
                 addSnackbar({text:"Nu sunt date"})
@@ -120,9 +120,8 @@ let Employees=(props)=>{
                 <div className="" style={{width:'100%'}}>
                     {!activeEmployee &&
                     <div className="bordered-container">                        
-                        <Header title="Angajati" icon="group" searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[{title:"Angajat nou", action:()=>{showaddEmployeeWindow(true)}, icon:"add", name:"Angajat nou"}]}/>    
+                        <Header title="Angajati" icon="group" display={employees!==null && employees.length>0 ? true : false} searchAction={handleSearchSubmit} refreshData={refreshData} buttons={[{title:"Angajat nou", action:()=>{showaddEmployeeWindow(true)}, icon:"add", name:"Angajat nou"}]}/>    
                         <div>
-                            {employees!==null && employees.length>0 && 
                             <table className="table" id="invoices-table">
                                 <thead>
                                     <tr>
@@ -138,7 +137,7 @@ let Employees=(props)=>{
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {employees.map((element, index)=>(          
+                                    {employees!==null && employees.length>0 && employees.map((element, index)=>(          
                                         <tr key={index}>
                                             <td>{index+1}</td>
                                             <td>{element.emp_first_name} {element.emp_last_name}</td>
@@ -154,9 +153,9 @@ let Employees=(props)=>{
                                         </tr>    
                                     ))}
                                 </tbody> 
-                            </table>}
+                            </table>
                             {employees===null && loadingSpinner}  
-                            {employees!==null && employees.length===0 && noDataMessage}
+                            {employees!==null && employees.length===0 && <h6 style={{textAlign:'center'}}>Nu exista date</h6>}
                         </div>
                         <PageNavigation key={numberOfElements} numberOfItems={numberOfElements} changePage={changePage}/>
                     </div>}

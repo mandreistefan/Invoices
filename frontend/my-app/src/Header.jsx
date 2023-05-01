@@ -21,6 +21,8 @@ let Header = (props) =>{
         end: `${currentDate.getFullYear()}-12-31`
     })
 
+    const isShown = props.display
+
     useEffect(()=>{
 
         let intervalSelections = []
@@ -80,7 +82,7 @@ let Header = (props) =>{
 
     return(
         <div>
-            {properties!==null &&
+            {properties!==null && 
             <div style={{display:'flex', flexDirection:'column'}}>
                 <div style={{display:'inherit', justifyContent:'space-between', padding:'16px', borderBottom:'1px solid lightgray', alignItems:'center'}}>
                     <span style={{fontSize:'16px', fontWeight:'700', color:'#6c757d', textTransform:'uppercase'}}>{properties.title}</span> 
@@ -94,7 +96,7 @@ let Header = (props) =>{
                     </div> 
                 </div>
 
-                {(properties.hasSearch===true || properties.hasInterval===true) &&
+                {(properties.hasSearch===true || properties.hasInterval===true) && isShown === true &&
                 <div style={{display:'inherit', justifyContent:'space-between', alignItems:'center', padding:'10px', backgroundColor:'#f8f9fa'}}> 
                     <div style={{display:'flex', alignItems:'center', width:'fit-content', borderRadius:'6px', padding:'3px', marginRight:'5px', visibility:properties.hasInterval===true ? "visible" : "hidden"}}>
                         <span title="Interval" style={{marginRight:'5px', color: '#6c757d'}} className="material-icons-outlined" >date_range</span>

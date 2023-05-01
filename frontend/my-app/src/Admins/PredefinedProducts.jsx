@@ -100,9 +100,9 @@ let Products=()=>{
                             ))
                         }
                         </tbody>
-                        {predefinedProducts===null && context.loadingSpinner}  
-                        {predefinedProducts===[] && <h6>Nu exista date</h6>}  
                     </table>
+                    {predefinedProducts===null && context.loadingSpinner}  
+                    {predefinedProducts!==null && predefinedProducts.length===0 && <h6 style={{textAlign:'center'}}>Nu exista date</h6>}  
                     {productProps!=null &&
                         <div> 
                             <div className="blur-overlap"></div>    

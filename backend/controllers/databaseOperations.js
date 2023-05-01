@@ -51,6 +51,12 @@ function databaseLog(message){
     })
 }
 
+function checkForDatabases(){
+    let databasesObject = JSON.parse(fs.readFileSync(path.join(__dirname, '../database.json'), 'utf8'))
+    if(databasesObject.databases.length === 0 ) return false
+    return true
+}
+
 async function addDatabase(alias, name){
     //if the datbaase in is the XML file, stop
     let databasesObject = JSON.parse(fs.readFileSync(path.join(__dirname, '../database.json'), 'utf8'))
@@ -960,6 +966,7 @@ function getRecordsNumber(queryDB, queryFilter, queryFilterData){
             querry=`SELECT COUNT(*) AS recordsNumber FROM ${queryDB}`
             break
     }
+
     return new Promise((resolve, reject)=>{
         connection.query(querry, function(error, result){
             if(error){
@@ -1199,51 +1206,48 @@ async function getEmployees(queryObject){
             querry=`SELECT * FROM employees`
             break
     }
-    let clients =  await new Promise((resolve, reject)=>{
+
+    let employees =  await new Promise((resolve, reject)=>{
         connection.query(querry, function(err, result){
             if(err){
                 console.log(err)
                 reject(null)
+                return
             }
             if(result){
-                if(result.length>0){
-                    resolve(result)
-                }else{
-                    resolve(null)
-                }
+                resolve(result)
             }else{
-                resolve(null)
+                resolve("NO_DATA")
             }
         })
     })
 
-    let clientsDetails = await new Promise((resolve, reject)=>{
+    let employeesDetails = await new Promise((resolve, reject)=>{
         let query = ""
-        let currentYear = new Date()
-        //no employees fetched
-        if(clients===null) reject (null)
+        let currentYear = new Date() 
         //get the IDs of the employees
-        clients.forEach(element=>{
+        employees.forEach(element=>{
             query = query + `SELECT DATE_FORMAT(paid_on, '%d-%m-%Y') as pay_date, sum_net, salary_month, salary_year FROM employees_salaries WHERE paid_to=${element.id} AND paid_on > '${currentYear.getFullYear()}-01-01' AND paid_on < '${currentYear.getFullYear()}-12-31' ORDER BY paid_on DESC LIMIT 1; SELECT count(*) AS count FROM employees_vacation WHERE employee_id = ${element.id} AND date > '${currentYear.getFullYear()}-01-01' AND date < '${currentYear.getFullYear()}-12-31';`
         })
+        if(query === ""){
+            resolve(null)
+            return
+        }
         connection.query(query, function(err, result){
             if(err){
                 console.log(err)
                 reject(null)
             }
             if(result){
-                if(result.length>0){
-                    resolve(result)
-                }else{
-                    resolve(null)
-                }
+                resolve(result)
             }else{
                 resolve(null)
             }
         })
     })
     //client data and financial data for each client
-    return Promise.all([clients, clientsDetails])
+    return Promise.all([employees, employeesDetails])
+
 }
 
 /**
@@ -2013,5 +2017,5 @@ module.exports ={
     getRecordsNumber:getRecordsNumber, getDBinfo:getDBinfo, changeDatabase, getExpenses,addExpense, deleteExpense, searchDatabase, getEmployees, addEmployee, editEmployee, hasSalaryOnDate, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeInfo, archiveEmployee, deleteEmployee, removePredefinedProduct,
     exportData,
     getDashboardData, pingDB, databaseLog, getLatestLogs,
-    getHistory, getEmployeesDetails, changeVacationStatus, deleteVacationDay, deleteSalary, getSalary, changeDBsettings, changeTableProperties, addDatabase, deleteDatabase
+    getHistory, getEmployeesDetails, changeVacationStatus, deleteVacationDay, deleteSalary, getSalary, changeDBsettings, changeTableProperties, addDatabase, deleteDatabase, checkForDatabases
 }

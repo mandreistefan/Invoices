@@ -148,8 +148,7 @@ let DatabaseOperations=(props)=>{
             }
         }).catch(error=>{
             addSnackbar({text: "A aparut o eroare"})
-        }) 
-        
+        })        
 
     }
 

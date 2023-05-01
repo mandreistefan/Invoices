@@ -5,9 +5,7 @@ import { useOutletContext } from "react-router-dom";
 
 let Expenses=()=>{
 
-    let {...context} = useOutletContext();
-    const addSnackbar = context.addSnackbar 
-    const port = context.port
+    let {addSnackbar, port, loadingSpinner } = useOutletContext();
 
     let [expenses, setExpenses] = useState(null)
     let [addexpensesWindow, setaddexpensesWindow] = useState(false)
@@ -131,9 +129,9 @@ let Expenses=()=>{
                                     ))
                                 }
                             </tbody>
-                            {expenses===null && context.loadingSpinner}  
-                            {expenses===[] && <h6>Nu exista date</h6>}  
                         </table>
+                        {expenses===null && loadingSpinner}  
+                        {expenses!==null && expenses.length===0 && <h6 style={{textAlign:'center'}}>Nu exista date</h6>}
                     </div>                  
                 </div>
                 {addexpensesWindow&&
