@@ -215,6 +215,7 @@ let ClientForm = (props)=>{
                 if(data.status==="OK"){
                     props.addSnackbar({text:"Client inregistrat"})
                     clientData(shallowCopy) 
+                    if(props.refreshBackground) props.refreshBackground()
                 }else if(data.status==="SERVER_ERROR"){
                     props.addSnackbar({icon:"report_problem",text:"Baza de date nu poate fi accesata"})
                 }else{

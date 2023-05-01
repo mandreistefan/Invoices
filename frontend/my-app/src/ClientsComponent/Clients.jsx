@@ -156,7 +156,7 @@ let Clients = (props) =>{
                             <button type="button" className="action-close-window" onClick={()=>{showonewClientWindow(false)}}><span className="material-icons-outlined">close</span></button>
                         </div>
                         <div className='p-3'>
-                            <ClientForm editable={true} isSubmitable={true} clientID={null} addSnackbar={addSnackbar}/>
+                            <ClientForm editable={true} isSubmitable={true} clientID={null} addSnackbar={addSnackbar} refreshBackground={fetchClients} />
                         </div>
                     </div>
                 </div>}
