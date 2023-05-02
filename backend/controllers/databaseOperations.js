@@ -1897,6 +1897,7 @@ async function getLatestLogs(){
 
 async function getHistory(targetTerms){
     let query = ""
+    console.log(targetTerms)
     if(Array.isArray(targetTerms)){
         query = `SELECT * FROM log WHERE MESSAGE like '%${targetTerms[0]} ${targetTerms[1]}%'`
     }else{

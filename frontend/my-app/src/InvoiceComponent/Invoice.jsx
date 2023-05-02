@@ -490,7 +490,7 @@ export default class Invoice extends React.Component{
                     <hr></hr>
                     {this.state.invoiceID && 
                     <div className="mt-3">
-                        <div key={this.state.invoiceID}><History target={`invoice ${this.state.invoiceID}`}/></div>
+                        <div key={this.state.invoiceID}><History target={`Factura cu numarul ${this.state.invoiceID}`}/></div>
                     </div>}
                     {this.state.predefinedList&&
                         <div> 
