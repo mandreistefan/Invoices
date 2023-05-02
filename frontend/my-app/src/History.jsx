@@ -41,10 +41,15 @@ let History = (props) =>{
         <div>
             {logs!==null&&
             logs.map((element, index)=>(
-                <div key={index} className="mb-2 shadow-sm p-2 bg-white rounded" style={{display:"flex", flexDirection:'row'}}>
-                    <span style={{color:'gray'}} className="material-icons-outlined">schedule</span>
-                    <span style={{color:'gray', fontWeight:'500'}}>{processedDate(element.date, true)}</span>
-                    <span style={{marginLeft:'10px'}}>{element.message}</span>                    
+                <div>
+                    <div key={index} className="shadow-sm p-2 bg-white rounded" style={{display:"flex", flexDirection:'row'}}>
+                        <span style={{color:'gray'}} className="material-icons-outlined">schedule</span>
+                        <span style={{color:'gray', fontWeight:'500'}}>{processedDate(element.date, true)}</span>
+                        <span style={{marginLeft:'10px'}}>{element.message}</span>                    
+                    </div>
+                    {index!==logs.length-1 &&
+                        <div style={{borderLeft:'3px solid lightgray', height:'10px', marginLeft:'25px'}}></div>
+                    }
                 </div>
             ))}
             {logs===null&&dataFetchStatus}

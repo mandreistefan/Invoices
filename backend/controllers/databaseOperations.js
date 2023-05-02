@@ -205,7 +205,7 @@ function addClient(data){
                 reject("ERROR")
             }
             if(result.insertId){
-                databaseLog(`Client ${result.insertId} has been created`)
+                databaseLog(`Clientul ${result.insertId} a fost creat`)
                 resolve({
                     status: "OK",
                     data: result.insertId
@@ -243,7 +243,7 @@ function createNewInvoice(data)
                 reject(null)
             }
             if(result.insertId){
-                databaseLog(`Invoice ${result.insertId} has been created`)
+                databaseLog(`Factura cu numarul ${result.insertId} a fost creata`)
                 resolve(result.insertId)
             }else{
                 resolve(null)
@@ -283,7 +283,7 @@ function registerBilledProducts(invoiceID, billedProductsArray){
             if(result.insertId>0){
                 //products registered, update the totals
                 updateInvoiceTotals(invoiceID)
-                databaseLog(`A new product added to invoice ${invoiceID}`)
+                databaseLog(`Unul sau mai multe produse au fost adaugate in factura cu numarul ${invoiceID}`)
                 resolve({
                     status:"OK",
                     data:total_tax
@@ -501,7 +501,7 @@ function archiveInvoice(invoiceID){
                 })
             }
             if(result.insertId>0){
-                databaseLog(`Invoice ${invoiceID} has been archived`)
+                databaseLog(`Factura cu numarul ${invoiceID} a fost arhivata`)
                 resolve({
                     status:"OK",
                     data:null
@@ -732,7 +732,7 @@ function updateInvoice(invoice_number, data){
                 reject(0)
             }
             if(result.affectedRows!=0){
-                databaseLog(`Invoice ${invoice_number} has been updated`)
+                databaseLog(`Factura cu numarul ${invoice_number} a fost modificata`)
                 resolve(1)
             }else{
                 resolve(2)
@@ -885,7 +885,7 @@ function removeProduct(id){
                     data:null
                 })
             }
-            databaseLog(`A product has been removed from an invoice`)
+            databaseLog(`Un produs a fost sters`)
             resolve({
                 status:"OK",
                 data:null
@@ -1833,7 +1833,7 @@ async function exportData(){
         });
     })
     //chain data
-    databaseLog(`Data exported`)
+    databaseLog("Au fost exportate datele")
     return await Promise.all([exportInvoices, exportBilledProjects, clients, expenses, employees, emp_sal, emp_vac])    
 }
 

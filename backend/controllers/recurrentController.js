@@ -31,7 +31,6 @@ async function buildInvoiceData(element){
 
 //async function that creates an invoice based on schema data and calculates and sets the next invoice date
 async function createInvoiceFromSchema(invoiceData){
-    console.log(`Creating invoice`)
     //invoice data to be sent to the function that creates invoices
     let procData = await buildInvoiceData(invoiceData)
     //adds an invoice in the database
