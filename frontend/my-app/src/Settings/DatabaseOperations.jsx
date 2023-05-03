@@ -96,8 +96,13 @@ let DatabaseOperations=(props)=>{
         }).then(response=>response.json()).then(data=>{
             if(data.status==="OK"){
                 addSnackbar({text: "OK"})
-                let availableDatabases = databaseInfo.available
-                availableDatabases.push({alias: anObject.alias, database: anObject.name})
+                let availableDatabases = [...databaseInfo.available]
+                for(let i=0; i< availableDatabases.length; i++){
+                    if(availableDatabases[i].database === anObject.name ){
+                        availableDatabases[i].alias = anObject.alias
+                        break
+                    }
+                }
                 setDBinfo({active: databaseInfo.active, available: availableDatabases})
             }else if(data.status==="FAIL"){
                 if(data.data==="DATABASE_EXISTS"){
@@ -109,6 +114,7 @@ let DatabaseOperations=(props)=>{
                 addSnackbar({text: "A aparut o eroare, baza de date nu a fost creata"})
             }
         }).catch(error=>{
+            console.log(error)
             addSnackbar({text: "A aparut o eroare"})
         }) 
     }
@@ -213,11 +219,10 @@ let DatabaseOperations=(props)=>{
                         <input type="text" className="form-control shadow-none" id="alias" name="alias" value={properties.alias} onChange={(e)=>{setProperties({...properties, alias: e.target.value, changed: true})}} placeholder="Alias"></input>
                         <label for="client_first_name">Alias</label>
                     </div>
-                    <div className="btn-group button-group-mint">
-                        <button className="btn btn-light btn-sm" disabled={properties.changed===true ? false : true} onClick={()=>{submitForm()}}>{props.info ? "Schimba alias" : "Adauga"}</button>
-                        {props.info && <button className="btn btn-light btn-sm" disabled={databaseInfo.active === properties.name ? true : false} onClick={()=>{deleteDB(properties.name)}}>Sterge</button>}
-                    </div>
-                   
+                    <div>
+                        <button className="btn btn-success btn-sm" disabled={properties.changed===true ? false : true} onClick={()=>{submitForm()}}>{props.info ? "Schimba alias" : "Adauga"}</button>
+                        {props.info && <button className="btn btn-danger btn-sm"  style={{marginLeft:'5px'}} disabled={databaseInfo.active === properties.name ? true : false} onClick={()=>{deleteDB(properties.name)}}>Sterge</button>}
+                    </div>                   
                 </div>}
             </div>
         )
@@ -276,9 +281,9 @@ let DatabaseOperations=(props)=>{
                             <span style={{color:'gray', marginBottom:'10px'}}  className="material-icons-outlined p-1">sync_problem</span>
                             <div className="p-1">
                                 <h6>Tabele</h6>
-                                <div className="btn-group button-group-mint">
-                                    <button className="btn btn-light btn-sm" onClick={()=>{setShowTables(true)}}>Vizualizare</button>
-                                    <button className="btn btn-light btn-sm" onClick={()=>{setNewTable(true)}}>Adaugare</button>
+                                <div >
+                                    <button className="btn btn-success btn-sm" onClick={()=>{setShowTables(true)}}>Vizualizare</button>
+                                    <button className="btn btn-success btn-sm" style={{marginLeft:'10px'}} onClick={()=>{setNewTable(true)}}>Adaugare</button>
                                 </div>
                             </div> 
                         </div>         
@@ -325,7 +330,7 @@ let DatabaseOperations=(props)=>{
                             <span>Baze de date</span>
                             <button type="button" className="action-close-window" onClick={()=>{setShowTables(false)}}><span className="material-icons-outlined">close</span></button>
                         </div> 
-                        <div style={{display:'grid', gridTemplateColumns:'48% 48%'}}>
+                        <div style={{display:'flex',flexDirection:'column', width:'100%'}} className="p-2">
                             {databaseInfo.available.map((element, index)=>(
                                 <DatabaseCard info={{alias:element.alias, name:element.database, isActive:databaseInfo.active===element.database ? true : false}} changeDBproperties={changeDBproperties}/>
                             ))}                        
