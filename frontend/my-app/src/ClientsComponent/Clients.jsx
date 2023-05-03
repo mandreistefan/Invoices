@@ -125,7 +125,7 @@ let Clients = (props) =>{
                                         <td>{element.client_type==="pers" ? <div className='badge badge-gray'><span className="material-icons-outlined" style={{fontSize:'16px'}}>person</span>Persoana fizica</div> : <div className='badge badge-gray'><span className="material-icons-outlined" style={{fontSize:'16px'}}>store</span>Firma</div>}</td> 
                                         <td>{element.client_county}, {element.client_city}, {element.client_street}, {element.client_adress_number}, {element.client_zip}</td>                                          
                                         <td className="table-actions-container">                                                    
-                                            <SmallMenu buttons={[
+                                            <SmallMenu expanded={true}  buttons={[
                                                 {title:"Deschide client", action:()=>{setActive(element.id)}, name:"Deschide", icon:"file_open"}, 
                                                 {title:"Factureaza client", action:()=>{invoiceThisClient(element)}, name:"Factureaza", icon:"receipt_long"}, 
                                                 {title:"Arhiveaza client", action:()=>{deleteClient(element.id)}, name:"Sterge", icon:"delete"}

@@ -1382,3 +1382,30 @@ input[type=date]{
   color: black;
   background-color: #e2e3e5;
 }
+
+.expanded-container-buttons{
+  display: flex;
+  flex-direction: row;
+}
+
+.expanded-container-buttons > div > button{
+  color: #6c757d
+}
+
+.expanded-container-buttons > div > button:hover{
+  color: black;
+}
+
+.expanded-container-buttons > div > .button-tooltip{
+  display: none;
+  position: absolute;
+  background-color: #212529;
+  color: white;
+  padding: 4px;
+  border-radius: 4px;
+  /*transform: translate(-20px, 0px);*/
+}
+
+.expanded-container-buttons > div:hover > .button-tooltip{
+  display: block;
+}

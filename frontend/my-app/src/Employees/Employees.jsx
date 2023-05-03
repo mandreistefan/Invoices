@@ -148,7 +148,7 @@ let Employees=(props)=>{
                                             <td>{isSalaryUpToDate(element.lastSalaryDetails.salary_month, element.lastSalaryDetails.salary_year)}</td>
                                             <td>{element.lastSalaryDetails.vacationDays}</td>
                                             <td className="table-actions-container">
-                                                <SmallMenu buttons={[{title:"Deschide angajat", action:()=>{setActiveEmployee(element.id)}, name:"Deschide", icon:"file_open"}, {title:"Arhiveaza angajat", action:()=>{deleteEmployee(element.id)}, name:"Sterge", icon:"delete"}]}/>
+                                                <SmallMenu expanded={true} buttons={[{title:"Deschide angajat", action:()=>{setActiveEmployee(element.id)}, name:"Deschide", icon:"file_open"}, {title:"Arhiveaza angajat", action:()=>{deleteEmployee(element.id)}, name:"Sterge", icon:"delete"}]}/>
                                             </td>
                                         </tr>    
                                     ))}
