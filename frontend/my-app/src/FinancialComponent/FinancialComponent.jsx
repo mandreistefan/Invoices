@@ -25,6 +25,8 @@ let Financial = (props) =>{
     let [tableDisplay, setDisplay] = useState(false)
     let [taxes, setTaxes]= useState({profitTaxPercentage: 1, profitTax: 0, profit: 0})
 
+    let months = ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"]
+
     useEffect(()=>{
         fetchData()
     }, [dateInterval])
@@ -211,77 +213,79 @@ let Financial = (props) =>{
                 </div> 
             }   
             {tableDisplay===true && financialData.total > 0 &&
-            <div>
-                <div className='bordered-container mb-3'>
-                    <h5 className="p-3">Total</h5>
-                    <table className="table" id="invoices-table">
-                        <thead>
-                            <tr>
-                                <td>Nume</td>
-                                <td>Valoare</td>
-                            </tr>
-                        </thead>
-                        <tbody>         
-                            <tr>
-                                <td>Total incasari</td>
-                                <td>{financialData.total.toFixed(2)}</td>
-                            </tr>
-                            <tr>
-                                <td>Salarii</td>
-                                <td> - {financialData.salaries.toFixed(2)}</td>
-                            </tr>
-                            <tr>
-                                <td>Cheltuieli</td>
-                                <td> - {financialData.expenses.toFixed(2)}</td>
-                            </tr>
-                            <tr>
-                                <td>Total net</td>
-                                <td>{financialData.total_gross.toFixed(2)}</td>
-                            </tr>
-                        </tbody>  
-                    </table>
-                </div>
-                <div className='bordered-container mb-3'>
-                    <h5 className='p-3'>Incasari</h5>
-                    <table className="table" id="invoices-table">
-                        <thead>
-                            <tr>
-                                <td>An</td>
-                                <td>Luna</td>
-                                <td>Valoare</td>
-                            </tr>
-                        </thead>
-                        <tbody>  
-                            {chartData.map((element, index)=>(
-                                <tr key={index}>
-                                    <td>{element.year && element.year}</td>
-                                    <td>{element.month && element.month}</td>                                    
-                                    <td>{element.total && element.total}</td>
+            <div style={{display:'flex', flexDirection:'row'}}>
+                <div style={{display:'flex', flexDirection:'column', paddingRight:'5px'}} className='col-6'>
+                    <div className='bordered-container mb-3 col-12'>
+                        <h5 className="p-3">Total</h5>
+                        <table className="table" id="invoices-table">
+                            <thead>
+                                <tr>
+                                    <td>Nume</td>
+                                    <td>Valoare</td>
                                 </tr>
-                            ))}  
-                        </tbody>  
-                    </table>
-                </div>
-                <div className='bordered-container mb-3'>
-                    <h5 className='p-3'>Cheltuieli</h5>
-                    <table className="table" id="invoices-table">
-                        <thead>
-                            <tr>
-                                <td>Categorie</td>
-                                <td>Valoare</td>
-                                <td>Procent</td>
-                            </tr>
-                        </thead>
-                        <tbody>  
-                            {expensesPie.length>0 && expensesPie.map((element, index)=>(
-                                <tr key={index}>
-                                    <td>{element.label}</td>
-                                    <td>{element.sum && element.sum.toFixed(2)}</td>                                    
-                                    <td>{element.value && element.value.toFixed(2)}</td>
+                            </thead>
+                            <tbody>         
+                                <tr>
+                                    <td>Total incasari</td>
+                                    <td className="text-success">{financialData.total.toFixed(2)}</td>
                                 </tr>
-                            ))}  
-                        </tbody>  
-                    </table>
+                                <tr>
+                                    <td>Salarii</td>
+                                    <td className="text-danger"> - {financialData.salaries.toFixed(2)}</td>
+                                </tr>
+                                <tr>
+                                    <td>Cheltuieli</td>
+                                    <td className="text-danger"> - {financialData.expenses.toFixed(2)}</td>
+                                </tr>
+                                <tr>
+                                    <td>Total net</td>
+                                    <td className={financialData.total_gross.toFixed(2) < 0 ? "text-danger" : "text-success"}>{financialData.total_gross.toFixed(2)}</td>
+                                </tr>
+                            </tbody>  
+                        </table>
+                    </div>
+                    <div className='bordered-container mb-3 col-12'>
+                        <h5 className='p-3'>Cheltuieli</h5>
+                        <table className="table" id="invoices-table">
+                            <thead>
+                                <tr>
+                                    <td>Categorie</td>
+                                    <td>Valoare</td>
+                                    <td>Procent</td>
+                                </tr>
+                            </thead>
+                            <tbody>  
+                                {expensesPie.length>0 && expensesPie.map((element, index)=>(
+                                    <tr key={index}>
+                                        <td>{element.label}</td>
+                                        <td>{element.sum && element.sum.toFixed(2)}</td>                                    
+                                        <td>{element.value && element.value.toFixed(2)}</td>
+                                    </tr>
+                                ))}  
+                            </tbody>  
+                        </table>
+                    </div>
+                </div>
+                <div className='pl-2 col-6'>
+                    <div className='bordered-container mb-3 col-12'>
+                        <h5 className='p-3'>Incasari</h5>
+                        <table className="table" id="invoices-table">
+                            <thead>
+                                <tr>
+                                    <td>Data</td>
+                                    <td>Valoare</td>
+                                </tr>
+                            </thead>
+                            <tbody>  
+                                {chartData.map((element, index)=>(
+                                    <tr key={index}>
+                                        <td>{months[(element.month-1)]} {element.year}</td>                                    
+                                        <td>{element.total && element.total}</td>
+                                    </tr>
+                                ))}  
+                            </tbody>  
+                        </table>
+                    </div>
                 </div>
             </div>
             }
