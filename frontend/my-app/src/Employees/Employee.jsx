@@ -47,6 +47,8 @@ export default class Employee extends React.Component{
         this.handleMonthChange = this.handleMonthChange.bind(this);
     }
 
+    months = ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"]
+
     componentDidMount(){
         if(this.state.id){
             this.fetchData()
@@ -87,8 +89,7 @@ export default class Employee extends React.Component{
         if(salaries===null) return ([])
 
         let readableMonth=(monthInteger)=>{
-            let months = ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"]
-            return months[monthInteger]
+            return this.months[monthInteger]
         }
 
         let anArray=[]
@@ -118,9 +119,8 @@ export default class Employee extends React.Component{
     }
 
     normalDate=((date,bool)=>{
-        let months = ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"]
         let dateObject=new Date(date)
-        return bool ? `${dateObject.getDate()} ${months[dateObject.getMonth()]} ${dateObject.getFullYear()}` : `${dateObject.getDate()}/${dateObject.getMonth()+1}/${dateObject.getFullYear()}`
+        return bool ? `${dateObject.getDate()} ${this.months[dateObject.getMonth()]} ${dateObject.getFullYear()}` : `${dateObject.getDate()}/${dateObject.getMonth()+1}/${dateObject.getFullYear()}`
     })
 
     convertVacations=(vacationsObject)=>{
@@ -427,8 +427,7 @@ export default class Employee extends React.Component{
                         <table className='table' id="salaries-table" style={{marginBottom:'1rem'}}>
                             <thead>
                                 <tr>
-                                    <td>Luna</td>
-                                    <td>An</td>
+                                    <td>Aplicabil lunii</td>
                                     <td>Data</td>
                                     <td>Brut</td>
                                     <td>CAS</td>
@@ -443,8 +442,7 @@ export default class Employee extends React.Component{
                                 {this.state.salariesFilter!==[] && 
                                 this.state.salariesFilter.map((element, index)=>(
                                     <tr key={index}>
-                                        <td><b>{this.state.salaries[element].month}</b></td>
-                                        <td><b>{this.state.salaries[element].year}</b></td>
+                                        <td>{this.state.salaries[element].month} {this.state.salaries[element].year}</td>
                                         <td>{this.state.salaries[element].date}</td>
                                         <td><b>{this.state.salaries[element].gross}</b></td>
                                         <td>{this.state.salaries[element].taxes.cas}</td>

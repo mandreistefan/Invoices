@@ -5,7 +5,7 @@ import { useOutletContext } from "react-router-dom"
 let DatabaseOperations=(props)=>{
 
     let [databaseInfo, setDBinfo] = useState(null)
-    let [ping, setPing] = useState({status:"NA", date:"NA"})
+    let [ping, setPing] = useState({status:"Fara date", date:"Fara date"})
 
     let [showTables, setShowTables] = useState(false)
     let [showXMLFileSettings, setshowXMLFileSettings] = useState(false)
@@ -56,12 +56,12 @@ let DatabaseOperations=(props)=>{
             headers: { 'Content-Type': 'application/json'}
         }).then(response=>response.json()).then(data=>{
             let pingstatus = "Conexiunea a esuat"
-            if(data.response===true) pingstatus="Conexiunea este activa"
+            if(data.response===true) pingstatus=<span>Conexiunea este <b>activa</b></span>
             let pingDate = new Date()
             setPing({status:pingstatus, date: `${pingDate.getHours()}:${pingDate.getMinutes()}:${pingDate.getSeconds()}`})
         }).catch(error=>{
             let pingDate = new Date()
-            setPing({status:"FAIL", date: `${pingDate.getHours()}:${pingDate.getMinutes()}:${pingDate.getSeconds()}`})
+            setPing({status: <span>Conexiunea a <b>esuat</b></span>, date: `${pingDate.getHours()}:${pingDate.getMinutes()}:${pingDate.getSeconds()}`})
         }) 
     }
 
@@ -259,9 +259,9 @@ let DatabaseOperations=(props)=>{
                             <span style={{color:'gray', marginBottom:'10px'}}  className="material-icons-outlined p-1">sync_problem</span>
                             <div className="p-1">
                                 <span style={{color:'gray', fontWeight:'500'}}>Ping</span>
-                                <span>Ultimul status: <strong>{ping.status}</strong></span>
-                                <span>Ultimul ping: <strong>{ping.date}</strong></span>
-                                <button className="btn btn-success btn-sm" style={{width:'fit-content'}} onClick={()=>{pingDatabase()}}>Contacteaza baza de date</button>      
+                                <small>Contactare baza de date pentru verificarea conexiunii</small>
+                                <span>Ultimul status: {ping.status}, {ping.date}</span>
+                                <button className="btn btn-success btn-sm" style={{width:'fit-content'}} onClick={()=>{pingDatabase()}}>Contacteaza</button>      
                             </div> 
                         </div>         
                     </div>
@@ -269,18 +269,20 @@ let DatabaseOperations=(props)=>{
                 <div className="row">
                     <div className="col-4">
                         <div className='financial-square'>
-                            <span style={{color:'gray', marginBottom:'10px'}}  className="material-icons-outlined p-1">sync_problem</span>
+                            <span style={{color:'gray', marginBottom:'10px'}}  className="material-icons-outlined p-1">person</span>
                             <div className="p-1">
-                                <h6>Setari conexiune</h6>
-                                <button className="btn btn-success btn-sm" onClick={()=>{setshowXMLFileSettings(true)}}>Editare</button>
+                                <h6>Date conectare</h6>
+                                <small>Editare date de conexiune la baza de date: host, user, parola</small><br></br>
+                                <button className="btn btn-success btn-sm" style={{width:'fit-content'}} onClick={()=>{setshowXMLFileSettings(true)}}>Editare</button>
                             </div> 
                         </div>         
                     </div>
                     <div className="col-4">
                         <div className='financial-square'>
-                            <span style={{color:'gray', marginBottom:'10px'}}  className="material-icons-outlined p-1">sync_problem</span>
+                            <span style={{color:'gray', marginBottom:'10px'}}  className="material-icons-outlined p-1">storage</span>
                             <div className="p-1">
-                                <h6>Tabele</h6>
+                                <h6>Baze de date</h6>
+                                <small>Vizualizare baze de date existene si editarea numelui</small><br></br>
                                 <div >
                                     <button className="btn btn-success btn-sm" onClick={()=>{setShowTables(true)}}>Vizualizare</button>
                                     <button className="btn btn-success btn-sm" style={{marginLeft:'10px'}} onClick={()=>{setNewTable(true)}}>Adaugare</button>
@@ -350,7 +352,7 @@ let DatabaseOperations=(props)=>{
                         </div>
                     </div>     
                 </div>}
-                <div>
+                <div className="bordered-container mt-3 p-3" style={{width:'fit-content'}}>
                     <button title="Export date" className="btn btn-light btn-sm mint-button" onClick={()=>{exportData()}}><div className="inner-button-content"><span className="material-icons-outlined" style={{fontSize:'18px'}}>file_download</span>Export</div></button>                    
                 </div>
             </div>} 
