@@ -256,5 +256,13 @@ myApp.get("/app/*", (req, res)=>{
     res.sendFile(path.join(__dirname, './front_end/Aplicatie.html'));
 })
 
+myApp.get('/nationalholidays', (req, res)=>{
+    databaseController.fetchHolidays().then(data=>{
+        console.log(data)
+        res.send(data)
+    }).catch(error=>{
+        res.send(null)
+    })
+})
 
 myApp.listen(PORT)

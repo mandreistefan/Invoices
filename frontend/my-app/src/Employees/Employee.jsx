@@ -142,19 +142,42 @@ export default class Employee extends React.Component{
 
     handleVacationForm=(event)=>{
         event.preventDefault()
-        let allGood = true
+        let noRepeat = true
+        let noHolidays = true
         //check that dates do not repeat
         this.state.vacationDaysRequested.forEach((element, index)=>{
             this.state.vacationDaysRequested.forEach((element2, index2)=>{
                 if(index!==index2){
                     if(element.date===element2.date){  
-                        allGood=false
+                        noRepeat=false
                         return
                     }
                 }                
             })
         })
-        if(allGood){
+
+        let holidays = localStorage.getItem('holidays') ? JSON.parse(localStorage.getItem('holidays')) : null
+
+        let isHoliday=(date)=>{
+            let dateAsArray = date.split("-")
+            let reverseDate = (`${dateAsArray[2]}-${dateAsArray[1]}-${dateAsArray[0]}`)
+            for(let i=0; i<holidays.length; i++){
+                if(holidays[i]===reverseDate) return true
+            }
+        }
+
+        if(holidays!==null){
+            let copy = this.state.vacationDaysRequested
+            copy.forEach((element, index)=>{
+                if(isHoliday(element.date)){
+                    element.holiday = true
+                    noHolidays = false
+                }
+            })
+            this.setState({vacationDaysRequested: copy})
+        }
+
+        if(noRepeat===true && noHolidays===true){
             fetch(`http://localhost:${this.state.port}/employee_vacation`, {
                 method:"POST",
                 headers: { 'Content-Type': 'application/json' },
@@ -165,20 +188,16 @@ export default class Employee extends React.Component{
             }).then(response=>response.json()).then(data=>{
                 if(data.status==="OK"){
                     this.props.addSnackbar({text:"Cerere inregistrata"})
-                    let vacationsCopy = [...this.state.vacationDaysRequested]
-                    vacationsCopy.forEach(element=>{
-                        element.disabled=true
-                    })
-                    this.setState({vacationDaysRequested: vacationsCopy})
-                    document.getElementById("new-vacation-day-button").disabled=true
-                    document.getElementById("submit-vacation-day-button").disabled=true
+                    this.setState({vacationDaysRequested: [{date: `${dateString.year}-${dateString.month}-${dateString.day}`, type:"vacation", disabled:false}]})
+                    document.getElementById("new-vacation-day-button").disabled=false
+                    document.getElementById("submit-vacation-day-button").disabled=false
                     this.updateVacationDays()
                 }else{
                     this.props.addSnackbar({icon:"report_problem",text:"Ceva nu a functionat"})
                 }                
             })
         }else{
-            this.props.addSnackbar({text:"O data este repetata"})
+            this.props.addSnackbar({text:"Unele zile se repeta sau sunt sarbatori legale"})
         }        
     }
 
@@ -224,11 +243,14 @@ export default class Employee extends React.Component{
             }else{
                 curVac.push({date:curVac[theID].date, type:event.target.value})
             }               
-        }else{
-            if(curVac.length===1) return false
-            curVac.splice(theID, 1)
         }
         this.setState({vacationDaysRequested: curVac})
+    }
+
+    removeVacationDay=(index)=>{
+        let copy = this.state.vacationDaysRequested
+        copy.splice(index, 1)
+        this.setState({vacationDaysRequested: copy})
     }
 
     //month starts with 0
@@ -351,7 +373,7 @@ export default class Employee extends React.Component{
                     }
                 }                
                 this.setState({vacationDays: currentVacationDays})
-                this.props.addSnackbar({text:"Ziua a fost staearsa"})
+                this.props.addSnackbar({text:"Ziua a fost stearsa"})
             }else{
                 this.props.addSnackbar({text:"Ceva nu a mers bine"})
             }
@@ -537,9 +559,12 @@ export default class Employee extends React.Component{
                                                     <option value="medical">Medical</option>
                                                 </select>
                                             </div>
-                                        </div>                   
-                                        <div className="col-md-4" style={{display:'flex', alignItems:'center', justifyContent:'flex-end'}}>  
-                                            <button type="button" title="Stergere" style={{float:"right"}} className="remove-product-button round-button" disabled={element.disabled} onClick={this.handleVacationDaysInput}><span className="material-icons-outlined">remove</span></button>
+                                        </div>   
+                                        <div className="col-md-3" style={{display: element.holiday ? "flex" : "none", alignItems:'center'}}>
+                                            <span className="text-danger">Sarbatoare legala</span>
+                                        </div>                
+                                        <div className="col-md-1" style={{display:'flex', alignItems:'center', justifyContent:'flex-end'}}>  
+                                            <button type="button" title="Stergere" style={{float:"right"}} className="remove-product-button round-button" disabled={element.disabled} onClick={()=>{this.removeVacationDay(index)}}><span className="material-icons-outlined">remove</span></button>
                                         </div>         
                                     </div>
                                 ))

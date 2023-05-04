@@ -1991,6 +1991,12 @@ function changeTableProperties(alias, name){
     return({status:"FAIL", data: "NOT_FOUND"})
 }
 
+function fetchHolidays(){
+    let holidaysText = fs.readFileSync(path.join(__dirname, '../zilelibere.txt'), 'utf8')
+    console.log(holidaysText)
+    return holidaysText.length > 0 ? holidaysText.split(";") : null
+}
+
 
 module.exports ={
     getClients:getClients,
@@ -2018,5 +2024,5 @@ module.exports ={
     getRecordsNumber:getRecordsNumber, getDBinfo:getDBinfo, changeDatabase, getExpenses,addExpense, deleteExpense, searchDatabase, getEmployees, addEmployee, editEmployee, hasSalaryOnDate, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeInfo, archiveEmployee, deleteEmployee, removePredefinedProduct,
     exportData,
     getDashboardData, pingDB, databaseLog, getLatestLogs,
-    getHistory, getEmployeesDetails, changeVacationStatus, deleteVacationDay, deleteSalary, getSalary, changeDBsettings, changeTableProperties, addDatabase, deleteDatabase, checkForDatabases
+    getHistory, getEmployeesDetails, changeVacationStatus, deleteVacationDay, deleteSalary, getSalary, changeDBsettings, changeTableProperties, addDatabase, deleteDatabase, checkForDatabases, fetchHolidays
 }

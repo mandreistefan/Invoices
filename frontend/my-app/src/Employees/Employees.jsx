@@ -22,7 +22,16 @@ let Employees=(props)=>{
     let [numberOfElements, setNOE] = useState(null)
 
     useEffect(()=>{
-        fetchData()        
+        fetchData()    
+        if(!localStorage.getItem('holidays')){
+            fetch(`http://localhost:${port}/nationalholidays`).then(response=>response.json()).then(data=>{
+                if(data!==null){
+                    localStorage.setItem('holidays', JSON.stringify(data))
+                }           
+            }).catch(error=>{
+                console.log(error)
+            }) 
+        }
     },[queryFilter.page, queryFilter.step, queryFilter.filterBy])
 
     function fetchData(){

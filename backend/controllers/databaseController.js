@@ -697,6 +697,10 @@ async function deleteDatabase(databaseName){
     return await databaseOperations.deleteDatabase(databaseName)
 }
 
+async function fetchHolidays(){
+    return databaseOperations.fetchHolidays()
+}
+
 module.exports={ 
     fetchClients:fetchClients,
     addInvoice:addInvoice,
@@ -719,5 +723,5 @@ module.exports={
     getEmployees, addEmployee, editEmployee, addSalary, getSalaries, addVacationDays, getVacationDays, getEmployeeOverview, archiveEmployee, deletePredefinedProduct, 
     exportData, dashboardData,
     pingDB, getRecentLogs,
-    getHistory, getBilledProducts, updateVacationStatus, daleteVacationDay, deleteSalary, getSalary, changeDBsettings, changeTableProperties, addDatabase, deleteDatabase
+    getHistory, getBilledProducts, updateVacationStatus, daleteVacationDay, deleteSalary, getSalary, changeDBsettings, changeTableProperties, addDatabase, deleteDatabase, fetchHolidays
 }
