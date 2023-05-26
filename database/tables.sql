@@ -191,7 +191,7 @@ CREATE TABLE `invoices_billed_products` (
   `id` int NOT NULL AUTO_INCREMENT,
   `invoiceID` int NOT NULL,
   `product_id` int DEFAULT NULL,
-  `product_name` varchar(25) NOT NULL,
+  `product_name` varchar(50) NOT NULL,
   `product_mu` varchar(10) NOT NULL,
   `product_quantity` int NOT NULL,
   `product_tax_pr` float NOT NULL,

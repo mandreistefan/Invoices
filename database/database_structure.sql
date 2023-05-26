@@ -230,7 +230,7 @@ CREATE TABLE `invoices_billed_products` (
   `id` int(11) NOT NULL,
   `invoiceID` int(10) NOT NULL,
   `product_id` int(5) DEFAULT NULL,
-  `product_name` varchar(25) NOT NULL,
+  `product_name` varchar(50) NOT NULL,
   `product_mu` varchar(10) NOT NULL,
   `product_quantity` int(11) NOT NULL,
   `product_tax_pr` float NOT NULL,

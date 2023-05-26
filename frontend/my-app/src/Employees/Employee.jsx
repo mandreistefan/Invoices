@@ -172,6 +172,8 @@ export default class Employee extends React.Component{
                 if(isHoliday(element.date)){
                     element.holiday = true
                     noHolidays = false
+                }else{
+                    element.holiday = false
                 }
             })
             this.setState({vacationDaysRequested: copy})
